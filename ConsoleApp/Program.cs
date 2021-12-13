@@ -6,6 +6,9 @@ using System;
 using System.Collections.ObjectModel;
 using DataBase;
 using System.Text.RegularExpressions;
+using System.Data.Entity;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace ConsoleApp
 {
@@ -13,96 +16,303 @@ namespace ConsoleApp
     {
         
 
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-           Selenium();
+            try
+            {
+                //await Selenium("https://www.amazon.com/-/es/s?i=mobile&bbn=7072561011&rh=n%3A7072561011%2Cp_36%3A-30000%2Cp_72%3A2491149011&dc&fs=true&language=es&qid=1614961572&rnid=2491147011&ref=sr_pg_");
+               var task1 = Task.Run(async () =>
+                {
+                    await Selenium("https://www.amazon.com/-/es/s?i=mobile&bbn=7072561011&rh=n%3A7072561011%2Cp_36%3A-30000%2Cp_72%3A2491149011&dc&fs=true&language=es&qid=1614961572&rnid=2491147011&ref=sr_pg_");
+                });
+                var task2 = Task.Run(async () =>
+                {
+                    await Selenium("https://thestore.com/c/refurbished-cell-phones-58");
+                });
+
+                await Task.WhenAll(task1, task2);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Console.ReadLine();
+            }
+            
+           
             
         }
         public static string RemoveSpecialCharacters(string str)
         {
             return Regex.Replace(str, "[,.+'\":;]", "", RegexOptions.Compiled);
         }
-        private static void Selenium()
+        private async static Task Selenium(String url)
         {
-            string[] conditionList = { "renovado", "renewed", "reacondicionado", "refurbished", "restaurado" };
-            ChromeOptions options = new ChromeOptions();
-            options.AddArguments("start-maximized","disable-infobars", "--no-sandbox", "--disable-dev-shm-usage",
-                "--disable-gpu", "--disable-extensions", "--allow-running-insecure-content", "--ignore-certificate-errors",
-                $"--user-data-dir={AppDomain.CurrentDomain.BaseDirectory}/User Data");
+            await Task.Run(() => {
 
+                string[] conditionList = { "renovado", "renewed", "reacondicionado", "refurbished", "restaurado" , "restored" };
+                string[] filterList = { "tracfone", "total wireless", "net10", "simple mobile", "straight talk", "verizon", "soporte", "carcasa","funda","cover", "carcasa" };
+                string[] includeList = { "huawei", "lg ", "moto", "xiaomi", "iphone", "samsung"};
+                ChromeOptions options = new ChromeOptions();
+                options.AddArguments("start-maximized", "disable-infobars", "--no-sandbox", "--disable-dev-shm-usage",
+                    "--disable-gpu", "--disable-extensions", "--allow-running-insecure-content", "--ignore-certificate-errors",
+                    "headless");
+
+                if (url.Contains("amazon.com"))
+                {
+                    Amazon(options, url, conditionList, filterList, includeList);
+                }
+                else if (url.Contains("thestore.com"))
+                {
+                    TheStore(options, url, conditionList, filterList, includeList);
+                }
+            });
+            
+            
+           
+         
+    
+        }
+         
+        public static async Task SaveOrUpdate(bool save, string name, string link, string image, decimal price, int condition,string shop)
+        {
+            using (WebScrapingEntities context = new WebScrapingEntities())
+            {
+                var data = await context.SmartPhone.FirstOrDefaultAsync(i => i.LINK == link);
+
+                if (data != null)
+                {
+                    decimal oldPrice = (decimal)data.PRICE;
+                    if (oldPrice != price)
+                    {
+                        decimal saving = oldPrice - price > 0 ? oldPrice - price : 0;
+                        context.Configuration.EnsureTransactionsForFunctionsAndCommands = false;
+                        context.SP_UPDATE_PRICE(data.ID, price, oldPrice, saving);
+                        await context.SaveChangesAsync();
+                        //Console.WriteLine("\nUpdated\n");
+                    }
+                }
+                else if (save)
+                {
+                    context.Configuration.EnsureTransactionsForFunctionsAndCommands = false;
+                    context.SP_ADD(name, price, link, condition, shop, image);
+                    await context.SaveChangesAsync();
+                    //Console.WriteLine("\nSaved\n");
+                }
+                else
+                {
+                    Console.WriteLine(name);
+
+                }
+            }
+        }
+
+        public static void Amazon(ChromeOptions options, string url, string[] conditionList, string[] filterList, string [] includeList)
+        {
+            options.AddArgument($"--user-data-dir={AppDomain.CurrentDomain.BaseDirectory}/User Data/Amazon");
             using (IWebDriver driver = new ChromeDriver(options))
             {
-                //string url = "https://www.amazon.com/-/es/s?i=mobile&bbn=7072561011&rh=n%3A7072561011%2Cp_36%3A-30000%2Cp_72%3A2491149011&dc&fs=true&language=es&qid=1614961572&rnid=2491147011&ref=sr_pg_";
-                string url = "https://www.amazon.com/-/es/s?i=mobile&bbn=7072561011&rh=n%3A7072561011%2Cp_36%3A-30000%2Cp_72%3A2491149011&dc&fs=true&page=95&language=es&qid=1639093987&rnid=2491147011&ref=sr_pg_94";
                 driver.Navigate().GoToUrl(url);
-                WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(5));
+                WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+
                 while (true)
                 {
-                    
-
                     By selector = By.CssSelector("div[data-component-type='s-search-result']");
 
                     wait.Until(ExpectedConditions.ElementIsVisible(selector));
                     ReadOnlyCollection<IWebElement> elements = driver.FindElements(selector);
-                    int i = 1;
-                    foreach (IWebElement element in elements)
+                    Parallel.ForEach(elements, async (element) =>
                     {
                         try
                         {
-                            Console.WriteLine(i);
-                            i++;
                             IWebElement eName = element.FindElement(By.XPath(".//h2/a/span"));
                             IWebElement eLink = element.FindElement(By.XPath(".//h2/a"));
                             IWebElement eImage = element.FindElement(By.ClassName("s-image"));
                             IWebElement ePriceWhole = element.FindElement(By.CssSelector("span[class='a-price-whole']"));
                             IWebElement ePriceFraction = element.FindElement(By.ClassName("a-price-fraction"));
-                            string name = RemoveSpecialCharacters(eName.Text);                     
+                            string name = RemoveSpecialCharacters(eName.Text);
                             string link = eLink.GetAttribute("href");
                             link = link.Substring(0, link.IndexOf("/ref"));
                             string image = eImage.GetAttribute("src");
-                            decimal price = decimal.Parse(ePriceWhole.Text + "," + ePriceFraction.Text);
+                            decimal price = decimal.Parse(ePriceWhole.Text.Replace(",","") + "," + ePriceFraction.Text);
                             int condition = 1;
-                           
-                            foreach(string data in conditionList)
+                            bool save = true;
+                            bool valide = false;
+                            string shop = "Amazon";
+
+                            Parallel.ForEach(conditionList, (data, state) =>
                             {
-                                if (name.Contains(data))
+                                if (name.ToLower().Contains(data))
                                 {
                                     condition = 0;
-                                    break;
+                                    state.Break();
                                 }
-                            }
+                            });
 
-
-                            using (WebScrapingEntities context = new WebScrapingEntities())
+                            Parallel.ForEach(filterList, (data, state) =>
                             {
-                                context.Configuration.EnsureTransactionsForFunctionsAndCommands = false;
-                                context.SP_ADD(name, price, link, condition, "Amazon", image);
-                                context.SaveChanges();
+                                if (name.ToLower().Contains(data))
+                                {
+                                    save = false;
+                                    state.Break();
+                                }
+                            });
+                            
+                            Parallel.ForEach(includeList, (data, state) =>
+                            {
+                                if (name.ToLower().Contains(data))
+                                {
+                                    valide = true;
+                                    state.Break();
+                                }
+                                
+                            });
+
+                            if(valide && price>25 && save)
+                            {
+                                save = true;
                             }
-                            Console.WriteLine("Done");
+                            else
+                            {
+                                save = false;
+                            }
+
+                            await SaveOrUpdate(save, name, link, image, price, condition, shop);
+
                         }
-                        catch (NoSuchElementException e)
+                        catch (NoSuchElementException)
                         {
-                            Console.WriteLine(e.Message);
                         }
 
-                    }
-                    
-                    
+                    });
+
+                    Console.WriteLine("\nAmazon");
+
                     try
                     {
                         wait.Until(ExpectedConditions.ElementToBeClickable(By.CssSelector("li[class='a-last'"))).Click();
                     }
                     catch (WebDriverTimeoutException e)
                     {
+                        Console.WriteLine(e.Message);
+                        Console.WriteLine("\nwaiting");
                         Console.ReadLine();
                         break;
                     }
-                    
+
                 }
-                
+
             }
-    
+        }
+
+        public static void TheStore(ChromeOptions options, string url, string[] conditionList, string[] filterList, string [] includeList)
+        {
+            options.AddArgument($"--user-data-dir={AppDomain.CurrentDomain.BaseDirectory}/User Data/The Store");
+            using (IWebDriver driver = new ChromeDriver(options))
+            {
+                driver.Navigate().GoToUrl(url);
+                bool removeElement = true;
+
+               
+                while (true)
+                {
+                    WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+                    By selector = By.CssSelector("div[class='column is-6-mobile is-6-tablet is-4-desktop product-listing__item']");
+                    wait.Until(ExpectedConditions.ElementToBeClickable(selector));
+                    Thread.Sleep(2000);
+                 
+                    ReadOnlyCollection<IWebElement> elements = driver.FindElements(selector);
+                    Parallel.ForEach(elements, async (element) =>
+                    {
+                        try
+                        {
+                            IWebElement eName = element.FindElement(By.ClassName("product-tile__name"));
+                            IWebElement eLink = element.FindElement(By.ClassName("product-tile__link"));
+                            IWebElement eImage = element.FindElement(By.XPath(".//div/a/div/img"));
+                            IWebElement ePriceWhole = element.FindElement(By.CssSelector("span[class='amount']"));
+                            IWebElement conditionName = element.FindElement(By.ClassName("product-tile__condition"));
+                            string name = $"{RemoveSpecialCharacters(eName.Text)} ({conditionName.Text})";
+                            string link = eLink.GetAttribute("href");
+                            string image = "https://thestore.com"+eImage.GetAttribute("data-src");
+                            decimal price = decimal.Parse(ePriceWhole.Text.Replace("$","").Replace(".",","));
+                            int condition = 1;
+                            bool save = true;
+                            bool valide = true;
+                            string shop = "TheStore";
+
+                            Parallel.ForEach(conditionList, (data, state) =>
+                            {
+                                if (name.ToLower().Contains(data))
+                                {
+                                    condition = 0;
+                                    state.Break();
+                                }
+                            });
+
+                            Parallel.ForEach(filterList, (data, state) =>
+                            {
+                                if (name.ToLower().Contains(data))
+                                {
+                                    save = false;
+                                    state.Break();
+                                }
+                            });
+
+
+                            Parallel.ForEach(includeList, (data, state) =>
+                            {
+                                if (name.ToLower().Contains(data))
+                                {
+                                    valide = true;
+                                    state.Break();
+                                }
+
+                            });
+
+                            if (valide && price > 25 && save)
+                            {
+                                save = true;
+                            }
+                            else
+                            {
+                                save = false;
+                            }
+
+                            await SaveOrUpdate(save, name, link, image, price, condition, shop);
+
+                        }
+                        catch (NoSuchElementException)
+                        {
+                        }
+
+                    });
+
+                    Console.WriteLine("\nThe Store");
+
+                    try
+                    {
+                        if (removeElement)
+                        {
+                            IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
+                            try { js.ExecuteScript("document.getElementsByClassName('acsb-trigger acsb-bg-lead acsb-trigger-size-medium acsb-trigger-position-x-right acsb-trigger-position-y-bottom acsb-ready').forEach(e=> e.remove())"); } catch (Exception) { }
+                            try { js.ExecuteScript("document.getElementById('cc-button').remove()"); } catch (Exception) { }
+                            try { js.ExecuteScript("document.getElementsByClassName('hello-bar').forEach(e=> e.remove())"); } catch (Exception) { }
+                            removeElement = false;
+                        }
+                        wait.Until(ExpectedConditions.ElementToBeClickable(By.CssSelector("button[class='round-button round-button__next']"))).Click();
+                    }
+          
+                    catch (WebDriverTimeoutException e)
+                    {
+                        Console.WriteLine(e.Message);
+                        Console.WriteLine("\nwaiting");
+                        Console.ReadLine();
+                        break;
+                    }
+
+                }
+
+            }
+
         }
     }
 }

@@ -36,6 +36,12 @@
           <Parameter Name="SHOP" Type="varchar" Mode="In" />
           <Parameter Name="IMAGE" Type="varchar(max)" Mode="In" />
         </Function>
+        <Function Name="SP_UPDATE_PRICE" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="int" Mode="In" />
+          <Parameter Name="PRICE" Type="decimal" Mode="In" />
+          <Parameter Name="OLD_PRICE" Type="decimal" Mode="In" />
+          <Parameter Name="SAVNG" Type="decimal" Mode="In" />
+        </Function>
         <EntityContainer Name="WebScrapingModelStoreContainer">
           <EntitySet Name="BlackList" EntityType="Self.BlackList" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SmartPhone" EntityType="Self.SmartPhone" Schema="dbo" store:Type="Tables" />
@@ -68,7 +74,7 @@
           <Property Name="IMAGE" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="DATE_PRICE_CHANGE" Type="DateTime" Precision="0" />
         </EntityType>
-        <EntityContainer Name="WebScrapingEntities" annotation:LazyLoadingEnabled="true">
+        <EntityContainer Name="WebScrapingEntities1" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="BlackList" EntityType="Self.BlackList" />
           <EntitySet Name="SmartPhone" EntityType="Self.SmartPhone" />
           <FunctionImport Name="SP_ADD">
@@ -79,13 +85,19 @@
             <Parameter Name="SHOP" Mode="In" Type="String" />
             <Parameter Name="IMAGE" Mode="In" Type="String" />
           </FunctionImport>
+          <FunctionImport Name="SP_UPDATE_PRICE">
+            <Parameter Name="ID" Mode="In" Type="Int32" />
+            <Parameter Name="PRICE" Mode="In" Type="Decimal" />
+            <Parameter Name="OLD_PRICE" Mode="In" Type="Decimal" />
+            <Parameter Name="SAVNG" Mode="In" Type="Decimal" />
+          </FunctionImport>
         </EntityContainer>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="WebScrapingModelStoreContainer" CdmEntityContainer="WebScrapingEntities">
+        <EntityContainerMapping StorageEntityContainer="WebScrapingModelStoreContainer" CdmEntityContainer="WebScrapingEntities1">
           <EntitySetMapping Name="BlackList">
             <EntityTypeMapping TypeName="WebScrapingModel.BlackList">
               <MappingFragment StoreEntitySet="BlackList">
@@ -112,6 +124,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="SP_ADD" FunctionName="WebScrapingModel.Store.SP_ADD" />
+          <FunctionImportMapping FunctionImportName="SP_UPDATE_PRICE" FunctionName="WebScrapingModel.Store.SP_UPDATE_PRICE" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

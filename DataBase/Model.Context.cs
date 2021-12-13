@@ -58,5 +58,26 @@ namespace DataBase
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_ADD", nAMEParameter, pRICEParameter, lINKParameter, cONDITIONParameter, sHOPParameter, iMAGEParameter);
         }
+    
+        public virtual int SP_UPDATE_PRICE(Nullable<int> iD, Nullable<decimal> pRICE, Nullable<decimal> oLD_PRICE, Nullable<decimal> sAVNG)
+        {
+            var iDParameter = iD.HasValue ?
+                new ObjectParameter("ID", iD) :
+                new ObjectParameter("ID", typeof(int));
+    
+            var pRICEParameter = pRICE.HasValue ?
+                new ObjectParameter("PRICE", pRICE) :
+                new ObjectParameter("PRICE", typeof(decimal));
+    
+            var oLD_PRICEParameter = oLD_PRICE.HasValue ?
+                new ObjectParameter("OLD_PRICE", oLD_PRICE) :
+                new ObjectParameter("OLD_PRICE", typeof(decimal));
+    
+            var sAVNGParameter = sAVNG.HasValue ?
+                new ObjectParameter("SAVNG", sAVNG) :
+                new ObjectParameter("SAVNG", typeof(decimal));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_UPDATE_PRICE", iDParameter, pRICEParameter, oLD_PRICEParameter, sAVNGParameter);
+        }
     }
 }
