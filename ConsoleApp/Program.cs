@@ -9,18 +9,27 @@ using System.Text.RegularExpressions;
 using System.Data.Entity;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Media;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace ConsoleApp
 {
     class Program
     {
+        static ArrayList checkList = new ArrayList();
+        static string[] conditionList = { "renovado", "renewed", "reacondicionado", "refurbished", "restaurado", "restored" };
+        static string[] filterList = { "tracfone", "total wireless", "net10", "simple mobile", "straight talk", "verizon", "soporte", "carcasa", "funda", "cover", "carcasa" };
+        static string[] includeList = { "huawei", "lg ", "moto", "xiaomi", "iphone", "samsung" };
         
+
+
 
         static async Task Main(string[] args)
         {
+            var listSmartPhone = new List<SmartPhone>();
             try
             {
-                //await Selenium("https://www.amazon.com/-/es/s?i=mobile&bbn=7072561011&rh=n%3A7072561011%2Cp_36%3A-30000%2Cp_72%3A2491149011&dc&fs=true&language=es&qid=1614961572&rnid=2491147011&ref=sr_pg_");
                var task1 = Task.Run(async () =>
                 {
                     await Selenium("https://www.amazon.com/-/es/s?i=mobile&bbn=7072561011&rh=n%3A7072561011%2Cp_36%3A-30000%2Cp_72%3A2491149011&dc&fs=true&language=es&qid=1614961572&rnid=2491147011&ref=sr_pg_");
@@ -31,6 +40,35 @@ namespace ConsoleApp
                 });
 
                 await Task.WhenAll(task1, task2);
+                
+                using (WebScrapingEntities context = new WebScrapingEntities())
+                {
+                    context.Configuration.EnsureTransactionsForFunctionsAndCommands = false;
+                    listSmartPhone = await context.SmartPhone.ToListAsync();
+                }
+
+                Parallel.ForEach(listSmartPhone, (i) =>
+                {
+                    if (checkList.Contains(i.LINK))
+                    {
+                        using (WebScrapingEntities context = new WebScrapingEntities())
+                        {
+                            context.Configuration.EnsureTransactionsForFunctionsAndCommands = false;
+                            context.SP_UPDATE_STATUS(i.ID, true);
+                        }  
+                    }
+                    else
+                    {
+                        using (WebScrapingEntities context = new WebScrapingEntities())
+                        {
+                            context.Configuration.EnsureTransactionsForFunctionsAndCommands = false;
+                            context.SP_UPDATE_STATUS(i.ID, false);
+                        }
+                    }
+
+                });
+
+                SystemSounds.Asterisk.Play();
             }
             catch (Exception e)
             {
@@ -49,28 +87,20 @@ namespace ConsoleApp
         {
             await Task.Run(() => {
 
-                string[] conditionList = { "renovado", "renewed", "reacondicionado", "refurbished", "restaurado" , "restored" };
-                string[] filterList = { "tracfone", "total wireless", "net10", "simple mobile", "straight talk", "verizon", "soporte", "carcasa","funda","cover", "carcasa" };
-                string[] includeList = { "huawei", "lg ", "moto", "xiaomi", "iphone", "samsung"};
                 ChromeOptions options = new ChromeOptions();
                 options.AddArguments("start-maximized", "disable-infobars", "--no-sandbox", "--disable-dev-shm-usage",
-                    "--disable-gpu", "--disable-extensions", "--allow-running-insecure-content", "--ignore-certificate-errors",
-                    "headless");
+                      "--disable-gpu", "--disable-extensions", "--allow-running-insecure-content", "--ignore-certificate-errors","headless");
 
                 if (url.Contains("amazon.com"))
                 {
-                    Amazon(options, url, conditionList, filterList, includeList);
+                    Amazon(url, options);
                 }
                 else if (url.Contains("thestore.com"))
                 {
-                    TheStore(options, url, conditionList, filterList, includeList);
+                    TheStore(url, options);
                 }
             });
             
-            
-           
-         
-    
         }
          
         public static async Task SaveOrUpdate(bool save, string name, string link, string image, decimal price, int condition,string shop)
@@ -81,6 +111,7 @@ namespace ConsoleApp
 
                 if (data != null)
                 {
+                    checkList.Add(link);
                     decimal oldPrice = (decimal)data.PRICE;
                     if (oldPrice != price)
                     {
@@ -88,7 +119,6 @@ namespace ConsoleApp
                         context.Configuration.EnsureTransactionsForFunctionsAndCommands = false;
                         context.SP_UPDATE_PRICE(data.ID, price, oldPrice, saving);
                         await context.SaveChangesAsync();
-                        //Console.WriteLine("\nUpdated\n");
                     }
                 }
                 else if (save)
@@ -96,18 +126,14 @@ namespace ConsoleApp
                     context.Configuration.EnsureTransactionsForFunctionsAndCommands = false;
                     context.SP_ADD(name, price, link, condition, shop, image);
                     await context.SaveChangesAsync();
-                    //Console.WriteLine("\nSaved\n");
                 }
-                else
-                {
-                    Console.WriteLine(name);
-
-                }
+                
             }
         }
 
-        public static void Amazon(ChromeOptions options, string url, string[] conditionList, string[] filterList, string [] includeList)
+        public static void Amazon(string url, ChromeOptions options)
         {
+            
             options.AddArgument($"--user-data-dir={AppDomain.CurrentDomain.BaseDirectory}/User Data/Amazon");
             using (IWebDriver driver = new ChromeDriver(options))
             {
@@ -193,9 +219,6 @@ namespace ConsoleApp
                     }
                     catch (WebDriverTimeoutException e)
                     {
-                        Console.WriteLine(e.Message);
-                        Console.WriteLine("\nwaiting");
-                        Console.ReadLine();
                         break;
                     }
 
@@ -204,7 +227,7 @@ namespace ConsoleApp
             }
         }
 
-        public static void TheStore(ChromeOptions options, string url, string[] conditionList, string[] filterList, string [] includeList)
+        public static void TheStore(string url, ChromeOptions options)
         {
             options.AddArgument($"--user-data-dir={AppDomain.CurrentDomain.BaseDirectory}/User Data/The Store");
             using (IWebDriver driver = new ChromeDriver(options))
@@ -215,7 +238,7 @@ namespace ConsoleApp
                
                 while (true)
                 {
-                    WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+                    WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(15));
                     By selector = By.CssSelector("div[class='column is-6-mobile is-6-tablet is-4-desktop product-listing__item']");
                     wait.Until(ExpectedConditions.ElementToBeClickable(selector));
                     Thread.Sleep(2000);
@@ -303,9 +326,6 @@ namespace ConsoleApp
           
                     catch (WebDriverTimeoutException e)
                     {
-                        Console.WriteLine(e.Message);
-                        Console.WriteLine("\nwaiting");
-                        Console.ReadLine();
                         break;
                     }
 
