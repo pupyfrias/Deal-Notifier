@@ -10,9 +10,8 @@
 namespace DataBase
 {
     using System;
-    using System.Collections.Generic;
     
-    public partial class SmartPhone
+    public partial class SP_Filter_Result
     {
         public int ID { get; set; }
         public string NAME { get; set; }
@@ -25,5 +24,6 @@ namespace DataBase
         public string SHOP { get; set; }
         public string IMAGE { get; set; }
         public Nullable<System.DateTime> DATE_PRICE_CHANGE { get; set; }
+        public Nullable<decimal> SAVING_PERCENT { get; set; }
     }
 }

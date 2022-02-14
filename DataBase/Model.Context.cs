@@ -27,10 +27,10 @@ namespace DataBase
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<BlackList> BlackList { get; set; }
-        public virtual DbSet<Condition> Condition { get; set; }
-        public virtual DbSet<SmartPhone> SmartPhone { get; set; }
-        public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
+        public virtual DbSet<BlackList> BlackLists { get; set; }
+        public virtual DbSet<Condition> Conditions { get; set; }
+        public virtual DbSet<Item> Items { get; set; }
+        public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
     
         public virtual int SP_ADD(string nAME, Nullable<decimal> pRICE, string lINK, Nullable<int> cONDITION, string sHOP, string iMAGE)
         {
@@ -116,6 +116,32 @@ namespace DataBase
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_dropdiagram", diagramnameParameter, owner_idParameter);
         }
     
+        public virtual ObjectResult<SP_Filter_Result> SP_Filter(string parametros, string order_by, Nullable<decimal> min, Nullable<decimal> max)
+        {
+            var parametrosParameter = parametros != null ?
+                new ObjectParameter("parametros", parametros) :
+                new ObjectParameter("parametros", typeof(string));
+    
+            var order_byParameter = order_by != null ?
+                new ObjectParameter("order_by", order_by) :
+                new ObjectParameter("order_by", typeof(string));
+    
+            var minParameter = min.HasValue ?
+                new ObjectParameter("min", min) :
+                new ObjectParameter("min", typeof(decimal));
+    
+            var maxParameter = max.HasValue ?
+                new ObjectParameter("max", max) :
+                new ObjectParameter("max", typeof(decimal));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_Filter_Result>("SP_Filter", parametrosParameter, order_byParameter, minParameter, maxParameter);
+        }
+    
+        public virtual ObjectResult<SP_GetAllLinks_Result> SP_GetAllLinks()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_GetAllLinks_Result>("SP_GetAllLinks");
+        }
+    
         public virtual ObjectResult<sp_helpdiagramdefinition_Result> sp_helpdiagramdefinition(string diagramname, Nullable<int> owner_id)
         {
             var diagramnameParameter = diagramname != null ?
@@ -159,7 +185,7 @@ namespace DataBase
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_renamediagram", diagramnameParameter, owner_idParameter, new_diagramnameParameter);
         }
     
-        public virtual int SP_UPDATE_PRICE(Nullable<int> iD, Nullable<decimal> pRICE, Nullable<decimal> oLD_PRICE, Nullable<decimal> sAVNG)
+        public virtual int SP_UPDATE_PRICE(Nullable<int> iD, Nullable<decimal> pRICE, Nullable<decimal> oLD_PRICE, Nullable<decimal> sAVNG, Nullable<decimal> sAVNG_PERCENT)
         {
             var iDParameter = iD.HasValue ?
                 new ObjectParameter("ID", iD) :
@@ -177,7 +203,11 @@ namespace DataBase
                 new ObjectParameter("SAVNG", sAVNG) :
                 new ObjectParameter("SAVNG", typeof(decimal));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_UPDATE_PRICE", iDParameter, pRICEParameter, oLD_PRICEParameter, sAVNGParameter);
+            var sAVNG_PERCENTParameter = sAVNG_PERCENT.HasValue ?
+                new ObjectParameter("SAVNG_PERCENT", sAVNG_PERCENT) :
+                new ObjectParameter("SAVNG_PERCENT", typeof(decimal));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_UPDATE_PRICE", iDParameter, pRICEParameter, oLD_PRICEParameter, sAVNGParameter, sAVNG_PERCENTParameter);
         }
     
         public virtual int SP_UPDATE_STATUS(Nullable<int> iD, Nullable<bool> sTATUS)

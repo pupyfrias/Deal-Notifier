@@ -19,7 +19,7 @@
           <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="condition" Type="varchar" MaxLength="15" />
         </EntityType>
-        <EntityType Name="SmartPhone">
+        <EntityType Name="Item">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
@@ -28,13 +28,19 @@
           <Property Name="PRICE" Type="decimal" Precision="13" Scale="2" />
           <Property Name="OLD_PRICE" Type="decimal" Precision="13" Scale="2" />
           <Property Name="SAVING" Type="decimal" Precision="13" Scale="2" />
-          <Property Name="LINK" Type="varchar(max)" />
+          <Property Name="LINK" Type="nvarchar" MaxLength="450" />
           <Property Name="CONDITION" Type="int" />
           <Property Name="STATUS" Type="bit" />
           <Property Name="SHOP" Type="varchar" MaxLength="50" />
           <Property Name="IMAGE" Type="varchar(max)" />
           <Property Name="DATE_PRICE_CHANGE" Type="datetime" />
+          <Property Name="SAVING_PERCENT" Type="decimal" Precision="13" Scale="2" />
         </EntityType>
+        <!--Errores durante la generación:
+advertencia 6013: La tabla o vista 'WebScraping.dbo.log' no tiene definida una clave principal y no es posible inferir ninguna clave principal válida. Esta tabla o vista se ha excluido. Para usar la entidad, necesitará revisar el esquema, agregar las claves correctas y quitar sus comentarios.
+        <EntityType Name="log">
+          <Property Name="log" Type="nvarchar(max)" />
+        </EntityType>-->
         <EntityType Name="sysdiagrams">
           <Key>
             <PropertyRef Name="diagram_id" />
@@ -70,6 +76,13 @@
           <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
           <Parameter Name="owner_id" Type="int" Mode="In" />
         </Function>
+        <Function Name="SP_Filter" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="parametros" Type="nvarchar" Mode="In" />
+          <Parameter Name="order_by" Type="nvarchar" Mode="In" />
+          <Parameter Name="min" Type="decimal" Mode="In" />
+          <Parameter Name="max" Type="decimal" Mode="In" />
+        </Function>
+        <Function Name="SP_GetAllLinks" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="sp_helpdiagramdefinition" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
           <Parameter Name="owner_id" Type="int" Mode="In" />
@@ -88,6 +101,7 @@
           <Parameter Name="PRICE" Type="decimal" Mode="In" />
           <Parameter Name="OLD_PRICE" Type="decimal" Mode="In" />
           <Parameter Name="SAVNG" Type="decimal" Mode="In" />
+          <Parameter Name="SAVNG_PERCENT" Type="decimal" Mode="In" />
         </Function>
         <Function Name="SP_UPDATE_STATUS" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ID" Type="int" Mode="In" />
@@ -97,7 +111,7 @@
         <EntityContainer Name="WebScrapingModelStoreContainer">
           <EntitySet Name="BlackList" EntityType="Self.BlackList" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Condition" EntityType="Self.Condition" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="SmartPhone" EntityType="Self.SmartPhone" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Item" EntityType="Self.Item" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
       </Schema>
@@ -119,7 +133,7 @@
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="condition1" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
         </EntityType>
-        <EntityType Name="SmartPhone">
+        <EntityType Name="Item">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
@@ -128,14 +142,15 @@
           <Property Name="PRICE" Type="Decimal" Precision="13" Scale="2" />
           <Property Name="OLD_PRICE" Type="Decimal" Precision="13" Scale="2" />
           <Property Name="SAVING" Type="Decimal" Precision="13" Scale="2" />
-          <Property Name="LINK" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="LINK" Type="String" MaxLength="450" FixedLength="false" Unicode="true" />
           <Property Name="CONDITION" Type="Int32" />
           <Property Name="STATUS" Type="Boolean" />
           <Property Name="SHOP" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="IMAGE" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="DATE_PRICE_CHANGE" Type="DateTime" Precision="3" />
+          <Property Name="SAVING_PERCENT" Type="Decimal" Precision="13" Scale="2" />
         </EntityType>
-        <EntityType Name="sysdiagrams">
+        <EntityType Name="sysdiagram">
           <Key>
             <PropertyRef Name="diagram_id" />
           </Key>
@@ -146,10 +161,10 @@
           <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
         </EntityType>
         <EntityContainer Name="WebScrapingEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="BlackList" EntityType="Self.BlackList" />
-          <EntitySet Name="Condition" EntityType="Self.Condition" />
-          <EntitySet Name="SmartPhone" EntityType="Self.SmartPhone" />
-          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" />
+          <EntitySet Name="BlackLists" EntityType="Self.BlackList" />
+          <EntitySet Name="Conditions" EntityType="Self.Condition" />
+          <EntitySet Name="Items" EntityType="Self.Item" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagram" />
           <FunctionImport Name="SP_ADD">
             <Parameter Name="NAME" Mode="In" Type="String" />
             <Parameter Name="PRICE" Mode="In" Type="Decimal" />
@@ -174,6 +189,13 @@
             <Parameter Name="diagramname" Mode="In" Type="String" />
             <Parameter Name="owner_id" Mode="In" Type="Int32" />
           </FunctionImport>
+          <FunctionImport Name="SP_Filter" ReturnType="Collection(WebScrapingModel.SP_Filter_Result)">
+            <Parameter Name="parametros" Mode="In" Type="String" />
+            <Parameter Name="order_by" Mode="In" Type="String" />
+            <Parameter Name="min" Mode="In" Type="Decimal" />
+            <Parameter Name="max" Mode="In" Type="Decimal" />
+          </FunctionImport>
+          <FunctionImport Name="SP_GetAllLinks" ReturnType="Collection(WebScrapingModel.SP_GetAllLinks_Result)" />
           <FunctionImport Name="sp_helpdiagramdefinition" ReturnType="Collection(WebScrapingModel.sp_helpdiagramdefinition_Result)">
             <Parameter Name="diagramname" Mode="In" Type="String" />
             <Parameter Name="owner_id" Mode="In" Type="Int32" />
@@ -192,6 +214,7 @@
             <Parameter Name="PRICE" Mode="In" Type="Decimal" />
             <Parameter Name="OLD_PRICE" Mode="In" Type="Decimal" />
             <Parameter Name="SAVNG" Mode="In" Type="Decimal" />
+            <Parameter Name="SAVNG_PERCENT" Mode="In" Type="Decimal" />
           </FunctionImport>
           <FunctionImport Name="SP_UPDATE_STATUS">
             <Parameter Name="ID" Mode="In" Type="Int32" />
@@ -199,6 +222,24 @@
           </FunctionImport>
           <FunctionImport Name="sp_upgraddiagrams" />
         </EntityContainer>
+        <ComplexType Name="SP_Filter_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="NAME" Nullable="true" />
+          <Property Type="Decimal" Name="PRICE" Nullable="true" Precision="13" Scale="2" />
+          <Property Type="Decimal" Name="OLD_PRICE" Nullable="true" Precision="13" Scale="2" />
+          <Property Type="Decimal" Name="SAVING" Nullable="true" Precision="13" Scale="2" />
+          <Property Type="String" Name="LINK" Nullable="true" MaxLength="450" />
+          <Property Type="Int32" Name="CONDITION" Nullable="true" />
+          <Property Type="Boolean" Name="STATUS" Nullable="true" />
+          <Property Type="String" Name="SHOP" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="IMAGE" Nullable="true" />
+          <Property Type="DateTime" Name="DATE_PRICE_CHANGE" Nullable="true" Precision="23" />
+          <Property Type="Decimal" Name="SAVING_PERCENT" Nullable="true" Precision="13" Scale="2" />
+        </ComplexType>
+        <ComplexType Name="SP_GetAllLinks_Result">
+          <Property Type="Int32" Name="id" Nullable="false" />
+          <Property Type="String" Name="link" Nullable="true" MaxLength="450" />
+        </ComplexType>
         <ComplexType Name="sp_helpdiagramdefinition_Result">
           <Property Type="Int32" Name="version" Nullable="true" />
           <Property Type="Binary" Name="definition" Nullable="true" />
@@ -216,7 +257,7 @@
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="WebScrapingModelStoreContainer" CdmEntityContainer="WebScrapingEntities">
-          <EntitySetMapping Name="BlackList">
+          <EntitySetMapping Name="BlackLists">
             <EntityTypeMapping TypeName="WebScrapingModel.BlackList">
               <MappingFragment StoreEntitySet="BlackList">
                 <ScalarProperty Name="ID" ColumnName="ID" />
@@ -224,7 +265,7 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Condition">
+          <EntitySetMapping Name="Conditions">
             <EntityTypeMapping TypeName="WebScrapingModel.Condition">
               <MappingFragment StoreEntitySet="Condition">
                 <ScalarProperty Name="id" ColumnName="id" />
@@ -232,9 +273,9 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="SmartPhone">
-            <EntityTypeMapping TypeName="WebScrapingModel.SmartPhone">
-              <MappingFragment StoreEntitySet="SmartPhone">
+          <EntitySetMapping Name="Items">
+            <EntityTypeMapping TypeName="WebScrapingModel.Item">
+              <MappingFragment StoreEntitySet="Item">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="NAME" ColumnName="NAME" />
                 <ScalarProperty Name="PRICE" ColumnName="PRICE" />
@@ -246,11 +287,12 @@
                 <ScalarProperty Name="SHOP" ColumnName="SHOP" />
                 <ScalarProperty Name="IMAGE" ColumnName="IMAGE" />
                 <ScalarProperty Name="DATE_PRICE_CHANGE" ColumnName="DATE_PRICE_CHANGE" />
+                <ScalarProperty Name="SAVING_PERCENT" ColumnName="SAVING_PERCENT" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="sysdiagrams">
-            <EntityTypeMapping TypeName="WebScrapingModel.sysdiagrams">
+            <EntityTypeMapping TypeName="WebScrapingModel.sysdiagram">
               <MappingFragment StoreEntitySet="sysdiagrams">
                 <ScalarProperty Name="name" ColumnName="name" />
                 <ScalarProperty Name="principal_id" ColumnName="principal_id" />
@@ -264,6 +306,32 @@
           <FunctionImportMapping FunctionImportName="sp_alterdiagram" FunctionName="WebScrapingModel.Store.sp_alterdiagram" />
           <FunctionImportMapping FunctionImportName="sp_creatediagram" FunctionName="WebScrapingModel.Store.sp_creatediagram" />
           <FunctionImportMapping FunctionImportName="sp_dropdiagram" FunctionName="WebScrapingModel.Store.sp_dropdiagram" />
+          <FunctionImportMapping FunctionImportName="SP_Filter" FunctionName="WebScrapingModel.Store.SP_Filter">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="WebScrapingModel.SP_Filter_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="NAME" ColumnName="NAME" />
+                <ScalarProperty Name="PRICE" ColumnName="PRICE" />
+                <ScalarProperty Name="OLD_PRICE" ColumnName="OLD_PRICE" />
+                <ScalarProperty Name="SAVING" ColumnName="SAVING" />
+                <ScalarProperty Name="LINK" ColumnName="LINK" />
+                <ScalarProperty Name="CONDITION" ColumnName="CONDITION" />
+                <ScalarProperty Name="STATUS" ColumnName="STATUS" />
+                <ScalarProperty Name="SHOP" ColumnName="SHOP" />
+                <ScalarProperty Name="IMAGE" ColumnName="IMAGE" />
+                <ScalarProperty Name="DATE_PRICE_CHANGE" ColumnName="DATE_PRICE_CHANGE" />
+                <ScalarProperty Name="SAVING_PERCENT" ColumnName="SAVING_PERCENT" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SP_GetAllLinks" FunctionName="WebScrapingModel.Store.SP_GetAllLinks">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="WebScrapingModel.SP_GetAllLinks_Result">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="link" ColumnName="link" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="sp_helpdiagramdefinition" FunctionName="WebScrapingModel.Store.sp_helpdiagramdefinition">
             <ResultMapping>
               <ComplexTypeMapping TypeName="WebScrapingModel.sp_helpdiagramdefinition_Result">
@@ -301,7 +369,7 @@
     <Options>
       <DesignerInfoPropertySet>
         <DesignerProperty Name="ValidateOnBuild" Value="true" />
-        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
         <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
         <DesignerProperty Name="UseLegacyProvider" Value="false" />
         <DesignerProperty Name="CodeGenerationStrategy" Value="Ninguno" />
