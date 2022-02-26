@@ -53,15 +53,15 @@ namespace ConsoleApp
                     
                      foreach (string link in amazonLinkList)
                      {
-                        /* await Selenium(link);
-                         amazonLinkPositon++;*/
+                         await Selenium(link);
+                         amazonLinkPositon++;
                      }
                  });
 
 
                 var task2 = Task.Run(async () =>
                 {
-                    //await Selenium("https://thestore.com/c/refurbished-cell-phones-58");
+                    await Selenium("https://thestore.com/c/refurbished-cell-phones-58");
                 });
 
                 var task3 = Task.Run(async () =>
