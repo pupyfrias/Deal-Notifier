@@ -11,13 +11,13 @@ namespace ConsoleApp
 {
     internal class TheStore: Program
     {
-        public TheStore(string url, ChromeOptions options)
+        public TheStore(object[,] links, ChromeOptions options, ChromeDriverService service)
         {
             options.AddArguments($@"--user-data-dir={AppDomain.CurrentDomain.BaseDirectory}User Data\The Store");
             
-            using (IWebDriver driver = new ChromeDriver(options))
+            using (IWebDriver driver = new ChromeDriver(service, options))
             {
-                driver.Navigate().GoToUrl(url);
+                driver.Navigate().GoToUrl((string)links[0,0]);
                 bool removeElement = true;
                 int counter = 1;
                 WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(15));
@@ -48,13 +48,14 @@ namespace ConsoleApp
                                 int condition = 1;
                                 bool save = true;
                                 string shop = "TheStore";
+                                int type = (int)links[0, 1];
 
 
                                 Parallel.ForEach(conditionList, (data, state) =>
                                 {
                                     if (name.ToLower().Contains(data))
                                     {
-                                        condition = 0;
+                                        condition = 2;
                                         state.Break();
                                     }
                                 });
@@ -68,11 +69,16 @@ namespace ConsoleApp
                                     }
                                 });
 
-                                await SaveOrUpdate(save, name, link, image, price, condition, shop);
+                                if (blackList.Contains(link))
+                                {
+                                    save = false;
+                                }
+
+                                await SaveOrUpdate(save, name, link, image, price, condition, shop, type);
                             }
                             catch (Exception e) when (e is NoSuchElementException | e is StaleElementReferenceException)
                             {
-                                WriteLogs($"ERROR: ---> {e.Message}","the store");
+                                WriteLogs($"ERROR: ---> {e.Message}","the store ");
                             }
                             
                         });

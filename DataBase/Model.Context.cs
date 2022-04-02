@@ -30,9 +30,42 @@ namespace DataBase
         public virtual DbSet<BlackList> BlackLists { get; set; }
         public virtual DbSet<Condition> Conditions { get; set; }
         public virtual DbSet<Item> Items { get; set; }
+        public virtual DbSet<Status> Status { get; set; }
+        public virtual DbSet<Supported> Supporteds { get; set; }
         public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
+        public virtual DbSet<Type> Types { get; set; }
     
-        public virtual int SP_ADD(string nAME, Nullable<decimal> pRICE, string lINK, Nullable<int> cONDITION, string sHOP, string iMAGE)
+        public virtual int Filter(string data, string order, string min, string max, string type)
+        {
+            var dataParameter = data != null ?
+                new ObjectParameter("Data", data) :
+                new ObjectParameter("Data", typeof(string));
+    
+            var orderParameter = order != null ?
+                new ObjectParameter("Order", order) :
+                new ObjectParameter("Order", typeof(string));
+    
+            var minParameter = min != null ?
+                new ObjectParameter("Min", min) :
+                new ObjectParameter("Min", typeof(string));
+    
+            var maxParameter = max != null ?
+                new ObjectParameter("Max", max) :
+                new ObjectParameter("Max", typeof(string));
+    
+            var typeParameter = type != null ?
+                new ObjectParameter("Type", type) :
+                new ObjectParameter("Type", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("Filter", dataParameter, orderParameter, minParameter, maxParameter, typeParameter);
+        }
+    
+        public virtual ObjectResult<Offer_Result> Offer()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Offer_Result>("Offer");
+        }
+    
+        public virtual int SP_ADD(string nAME, Nullable<decimal> pRICE, string lINK, Nullable<int> cONDITION, string sHOP, string iMAGE, Nullable<int> tYPE)
         {
             var nAMEParameter = nAME != null ?
                 new ObjectParameter("NAME", nAME) :
@@ -58,7 +91,11 @@ namespace DataBase
                 new ObjectParameter("IMAGE", iMAGE) :
                 new ObjectParameter("IMAGE", typeof(string));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_ADD", nAMEParameter, pRICEParameter, lINKParameter, cONDITIONParameter, sHOPParameter, iMAGEParameter);
+            var tYPEParameter = tYPE.HasValue ?
+                new ObjectParameter("TYPE", tYPE) :
+                new ObjectParameter("TYPE", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_ADD", nAMEParameter, pRICEParameter, lINKParameter, cONDITIONParameter, sHOPParameter, iMAGEParameter, tYPEParameter);
         }
     
         public virtual int sp_alterdiagram(string diagramname, Nullable<int> owner_id, Nullable<int> version, byte[] definition)
@@ -103,6 +140,15 @@ namespace DataBase
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_creatediagram", diagramnameParameter, owner_idParameter, versionParameter, definitionParameter);
         }
     
+        public virtual int SP_DELETE(string lINK)
+        {
+            var lINKParameter = lINK != null ?
+                new ObjectParameter("LINK", lINK) :
+                new ObjectParameter("LINK", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_DELETE", lINKParameter);
+        }
+    
         public virtual int sp_dropdiagram(string diagramname, Nullable<int> owner_id)
         {
             var diagramnameParameter = diagramname != null ?
@@ -135,6 +181,20 @@ namespace DataBase
                 new ObjectParameter("max", typeof(decimal));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_Filter_Result>("SP_Filter", parametrosParameter, order_byParameter, minParameter, maxParameter);
+        }
+    
+        public virtual ObjectResult<string> SP_GET_BLACK_LIST()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("SP_GET_BLACK_LIST");
+        }
+    
+        public virtual ObjectResult<SP_GET_ONE_Result> SP_GET_ONE(string lINK)
+        {
+            var lINKParameter = lINK != null ?
+                new ObjectParameter("LINK", lINK) :
+                new ObjectParameter("LINK", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_GET_ONE_Result>("SP_GET_ONE", lINKParameter);
         }
     
         public virtual ObjectResult<SP_GetAllLinks_Result> SP_GetAllLinks()
@@ -185,7 +245,7 @@ namespace DataBase
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_renamediagram", diagramnameParameter, owner_idParameter, new_diagramnameParameter);
         }
     
-        public virtual int SP_UPDATE_PRICE(Nullable<int> iD, Nullable<decimal> pRICE, Nullable<decimal> oLD_PRICE, Nullable<decimal> sAVNG, Nullable<decimal> sAVNG_PERCENT)
+        public virtual int SP_UPDATE_PRICE(Nullable<int> iD, Nullable<decimal> pRICE, Nullable<decimal> oLD_PRICE, Nullable<decimal> sAVNG, Nullable<decimal> sAVNG_PERCENT, string nAME, Nullable<int> tYPE)
         {
             var iDParameter = iD.HasValue ?
                 new ObjectParameter("ID", iD) :
@@ -207,10 +267,18 @@ namespace DataBase
                 new ObjectParameter("SAVNG_PERCENT", sAVNG_PERCENT) :
                 new ObjectParameter("SAVNG_PERCENT", typeof(decimal));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_UPDATE_PRICE", iDParameter, pRICEParameter, oLD_PRICEParameter, sAVNGParameter, sAVNG_PERCENTParameter);
+            var nAMEParameter = nAME != null ?
+                new ObjectParameter("NAME", nAME) :
+                new ObjectParameter("NAME", typeof(string));
+    
+            var tYPEParameter = tYPE.HasValue ?
+                new ObjectParameter("TYPE", tYPE) :
+                new ObjectParameter("TYPE", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_UPDATE_PRICE", iDParameter, pRICEParameter, oLD_PRICEParameter, sAVNGParameter, sAVNG_PERCENTParameter, nAMEParameter, tYPEParameter);
         }
     
-        public virtual int SP_UPDATE_STATUS(Nullable<int> iD, Nullable<bool> sTATUS)
+        public virtual int SP_UPDATE_STATUS(Nullable<int> iD, Nullable<int> sTATUS)
         {
             var iDParameter = iD.HasValue ?
                 new ObjectParameter("ID", iD) :
@@ -218,7 +286,7 @@ namespace DataBase
     
             var sTATUSParameter = sTATUS.HasValue ?
                 new ObjectParameter("STATUS", sTATUS) :
-                new ObjectParameter("STATUS", typeof(bool));
+                new ObjectParameter("STATUS", typeof(int));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_UPDATE_STATUS", iDParameter, sTATUSParameter);
         }

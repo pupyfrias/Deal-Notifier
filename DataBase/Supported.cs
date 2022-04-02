@@ -12,18 +12,15 @@ namespace DataBase
     using System;
     using System.Collections.Generic;
     
-    public partial class Condition
+    public partial class Supported
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Condition()
-        {
-            this.Items = new HashSet<Item>();
-        }
-    
-        public int id { get; set; }
-        public string condition1 { get; set; }
-    
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Item> Items { get; set; }
+        public int ID { get; set; }
+        public string NUMBER_MODEL { get; set; }
+        public string NAME_MODEL { get; set; }
+        public string TOOL { get; set; }
+        public string SUPPORT_VERSION { get; set; }
+        public string SUPPORT_BIT { get; set; }
+        public string CARRIERS { get; set; }
+        public string COMMENT { get; set; }
     }
 }

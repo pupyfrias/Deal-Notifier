@@ -4,11 +4,17 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="69a4594c1673489ba3cbd4a6be0b5965" Name="Diagram1">
-        <EntityTypeShape EntityType="WebScrapingModel.BlackList" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="WebScrapingModel.Condition" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="WebScrapingModel.Item" Width="1.5" PointX="0.75" PointY="3.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="WebScrapingModel.sysdiagram" Width="1.5" PointX="2.75" PointY="3.75" IsExpanded="true" />
+      <Diagram DiagramId="3145aa2d922f41d6ac2abdd29299128e" Name="Diagram1">
+        <EntityTypeShape EntityType="WebScrapingModel.BlackList" Width="1.5" PointX="5.75" PointY="2" IsExpanded="true" />
+        <EntityTypeShape EntityType="WebScrapingModel.Condition" Width="1.5" PointX="0.75" PointY="3.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="WebScrapingModel.Item" Width="1.5" PointX="3" PointY="2.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="WebScrapingModel.Status" Width="1.5" PointX="0.75" PointY="6.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="WebScrapingModel.Supported" Width="1.5" PointX="5.75" PointY="5" IsExpanded="true" />
+        <EntityTypeShape EntityType="WebScrapingModel.sysdiagram" Width="1.5" PointX="2.75" PointY="8" IsExpanded="true" />
+        <EntityTypeShape EntityType="WebScrapingModel.Type" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <AssociationConnector Association="WebScrapingModel.FK_ID_CONDITION" ManuallyRouted="false" />
+        <AssociationConnector Association="WebScrapingModel.FK_ID_STATUS" ManuallyRouted="false" />
+        <AssociationConnector Association="WebScrapingModel.FK_ID_TYPE" ManuallyRouted="false" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

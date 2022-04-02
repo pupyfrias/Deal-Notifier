@@ -11,7 +11,7 @@ namespace DataBase
 {
     using System;
     
-    public partial class SP_Filter_Result
+    public partial class SP_GET_ONE_Result
     {
         public int ID { get; set; }
         public string NAME { get; set; }

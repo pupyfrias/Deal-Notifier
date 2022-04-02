@@ -17,154 +17,174 @@ namespace ConsoleApp
 {
     class Program
     {
-        public static int amazonLinkPositon = 1 , ebayLinkPositon = 1;
         public static ArrayList checkList = new ArrayList();
+        public static List<string>  blackList = new List<string>();
         public static string[] conditionList = { "renovado", "renewed", "reacondicionado", "refurbished", "restaurado", "restored" };
         public static string[] filterList = {"tracfone", "total wireless", "net10", "simple mobile", "straight talk"};
         public static string[] includeList = { };//{ "huawei", "lg ", "moto", "xiaomi", "iphone", "samsung" };
-        public static string[] amazonLinkList = {"https://www.amazon.com/-/es/s?i=computers&bbn=17923671011&rh=n%3A17923671011%2Cp_76%3A1249137011%2Cp_72%3A1248879011%2Cp_36%3A-20000%2Cp_n_condition-type%3A2224371011%2Cp_89%3AARCTIC%7CCorsair%7CCrucial%7CElgato%7CNoctua%7CSAMSUNG%7CSamsung+Electronics%7CSeagate%2Cp_n_deal_type%3A23566065011&dc&language=es&brr=1&pd_rd_r=d14c0261-e650-46e8-a548-15bac2fa9b3d&pd_rd_w=8M1il&pd_rd_wg=cdnkB&qid=1645624352&rd=1&rnid=23566063011&ref=sr_nr_p_n_deal_type_2",
-                    "https://www.amazon.com/-/es/s?keywords=Teclados%2C+Mouse+y+Perif%C3%A9ricos+de+Entrada&i=computers&rh=n%3A11548956011%2Cp_76%3A1249137011%2Cp_72%3A1248879011%2Cp_n_condition-type%3A2224371011%2Cp_89%3AApple%7CDell%7CLenovo%7CLogitech%7CMicrosoft%2Cp_n_deal_type%3A23566065011&dc&language=es&_encoding=UTF8&c=ts&qid=1645624521&rnid=23566063011&ts_id=11548956011&ref=sr_nr_p_n_deal_type_1",
-                    "https://www.amazon.com/-/es/s?keywords=Accesorios+para+Monitor+de+Computadora&i=computers&rh=n%3A281062%2Cp_76%3A1249137011%2Cp_72%3A1248879011%2Cp_n_condition-type%3A2224371011%2Cp_n_deal_type%3A23566065011&dc&language=es&_encoding=UTF8&c=ts&qid=1645624615&rnid=23566063011&ts_id=281062&ref=sr_nr_p_n_deal_type_2",
-                    "https://www.amazon.com/-/es/s?keywords=Tarjetas+de+Memoria&i=computers&rh=n%3A516866%2Cp_76%3A1249137011%2Cp_72%3A1248879011%2Cp_n_feature_two_browse-bin%3A13203834011%7C13203835011%7C6518304011%7C6518305011%2Cp_36%3A-30000%2Cp_n_condition-type%3A2224371011%2Cp_89%3AKingston%7CSAMSUNG%2Cp_n_deal_type%3A23566065011&dc&language=es&_encoding=UTF8&c=ts&qid=1645624707&rnid=23566063011&ts_id=516866&ref=sr_nr_p_n_deal_type_1",
-                    "https://www.amazon.com/-/es/s?i=computers&bbn=1232597011&rh=n%3A1232597011%2Cp_76%3A1249137011%2Cp_72%3A1248879011%2Cp_36%3A-10000%2Cp_n_condition-type%3A2224371011%2Cp_n_deal_type%3A23566065011&dc&fs=true&language=es&qid=1645624780&rnid=23566063011&ref=sr_nr_p_n_deal_type_2",
-                    "https://www.amazon.com/-/es/s?i=computers&bbn=565098&rh=n%3A565098%2Cp_76%3A1249137011%2Cp_72%3A1248879011%2Cp_36%3A2421880011%2Cp_n_condition-type%3A2224371011%2Cp_n_deal_type%3A23566065011&dc&fs=true&language=es&qid=1645624869&rnid=23566063011&ref=sr_nr_p_n_deal_type_2",
-                    "https://www.amazon.com/-/es/s?i=computers&bbn=565108&rh=n%3A565108%2Cp_76%3A1249137011%2Cp_72%3A1248879011%2Cp_36%3A2421886011%2Cp_n_size_browse-bin%3A2423840011%7C2423841011%7C7817234011%2Cp_n_condition-type%3A2224371011%2Cp_89%3AASUS%7CAcer%7CDell%7CHP%7CLenovo%7CSamsung+Electronics%2Cp_n_deal_type%3A23566065011&dc&fs=true&language=es&qid=1645624946&rnid=23566063011&ref=sr_nr_p_n_deal_type_2",
-                    "https://www.amazon.com/-/es/s?keywords=Micr%C3%B3fonos+de+Grabaci%C3%B3n+y+Accesorios&i=mi&rh=n%3A11974521%2Cp_76%3A1249167011%2Cp_72%3A1248939011%2Cp_36%3A-10000%2Cp_n_deal_type%3A23566065011&dc&language=es&_encoding=UTF8&c=ts&qid=1645625078&rnid=403792011&ts_id=11974521&ref=sr_nr_p_n_condition-type_1",
-                    "https://www.amazon.com/-/es/s?i=mobile&bbn=7072561011&rh=n%3A7072561011%2Cp_72%3A2491149011%2Cp_76%3A2491146011%2Cp_36%3A-30000%2Cp_n_condition-type%3A6503240011%2Cp_n_deal_type%3A23566065011&dc&fs=true&language=es&qid=1645625128&rnid=23566063011&ref=sr_nr_p_n_deal_type_2",
-                    "https://www.amazon.com/-/es/s?i=electronics&bbn=13447451&rh=n%3A13447451%2Cp_72%3A1248879011%2Cp_76%3A1249137011%2Cp_36%3A-30000%2Cp_n_condition-type%3A2224371011%2Cp_n_deal_type%3A23566065011&dc&fs=true&language=es&qid=1645625208&rnid=23566063011&ref=sr_nr_p_n_deal_type_2",
-                    "https://www.amazon.com/-/es/s?keywords=Accesorios+de+Cine+En+Casa%2C+TV+y+Video&i=electronics&rh=n%3A3230976011%2Cp_n_condition-type%3A2224371011%2Cp_76%3A1249137011%2Cp_72%3A1248879011%2Cp_36%3A-30000%2Cp_n_deal_type%3A23566065011&dc&language=es&_encoding=UTF8&c=ts&qid=1645625259&rnid=23566063011&ts_id=3230976011&ref=sr_nr_p_n_deal_type_2",
-                    "https://www.amazon.com/-/es/s?i=electronics&bbn=172659&rh=n%3A172659%2Cp_72%3A1248879011%2Cp_n_condition-type%3A2224371011%2Cp_36%3A-30000%2Cp_n_deal_type%3A23566065011&dc&fs=true&language=es&qid=1645625307&rnid=23566063011&ref=sr_nr_p_n_deal_type_2"};
-        
-        static string[] ebayLinkList = { "https://www.ebay.com/b/Cell-Phones-Smartphones/9355?Brand=HTC%7CHuawei%7CAlcatel%7CAmazon%7CApple%7CBLU%7CGoogle%7CLenovo%7CLG%7CMotorola%7CNokia%7CSamsung%7CRedmi%7CT%252DMobile%7CXiaomi%7CZTE&Connectivity=4G%7C4G%252B%7C5G%7CLTE&LH_BIN=1&LH_FS=1&LH_ItemCondition=1000&Operating%2520System=Android%7CiOS&RAM=2%2520GB%7C3%2520GB%7C16%2520GB%7C12%2520GB%7C8%2520GB%7C6%2520GB%7C4%2520GB&Screen%2520Size=5%252E5%2520%252D%25205%252E9%2520in%7C6%2520in%2520or%2520More&Storage%2520Capacity=128%2520GB%7C512%2520GB%7C64%2520GB%7C32%2520GB%7C256%2520GB&mag=1&rt=nc&_fsrp=0&_pgn=1&_sacat=9355&_udhi=120",
-                    "https://www.ebay.com/b/TVs/11071?Brand=Haier%7CRCA%7CSamsung%7CSony%7CLG%7CPhilips%7CTCL&Display%2520Technology=LCD%7CLED%7COLED%7CPlasma%7CQLED&LH_BIN=1&LH_FS=1&LH_ItemCondition=1000&Screen%2520Size=20%252D29%2520in%7C30%252D39%2520in%7C40%252D49%2520in%7C50%252D59%2520in%7C60%252D69%2520in%7C70%252D80%2520in&mag=1&rt=nc&_fsrp=0&_pgn=1&_sacat=11071&_udhi=300",
-                    "https://www.ebay.com/b/PC-Laptops-Netbooks/177?Brand=Acer%7CIntel%7CLenovo%7CSamsung%7CSony%7CHP%7CDell%7CASUS%7CApple%7CMicrosoft&LH_BIN=1&LH_FS=1&LH_ItemCondition=1000&Screen%2520Size=15%252D15%252E9%2520in%7C16%252D16%252E9%2520in&mag=1&rt=nc&_fsrp=0&_pgn=1&_sacat=177&_udhi=320"};
+        public static object[,] amazonLinkList = {{"https://www.amazon.com/s?k=Recording+Microphones+%26+Accessories&i=mi&rh=n%3A11974521%2Cp_n_specials_match%3A21213697011%2Cp_72%3A1248939011%2Cp_n_condition-type%3A404228011&dc=&c=ts&qid=1648604195&rnid=386685011&ts_id=11974521&ref=sr_nr_p_36_5&low-price=&high-price=100",6},
+                                                  {"https://www.amazon.com/s?i=mobile&bbn=7072561011&rh=n%3A7072561011%2Cp_n_condition-type%3A6503240011%2Cp_36%3A-20000%2Cp_n_feature_twelve_browse-bin%3A14674909011%7C14674910011%7C14674911011%7C17352550011%2Cp_n_feature_nineteen_browse-bin%3A9521921011%2Cp_72%3A2491149011&dc&qid=1648600689&rnid=2491147011&ref=sr_nr_p_72_1",1},
+                                                  {"https://www.amazon.com/s?keywords=Tripod+Accessories&i=photo&rh=n%3A3347771%2Cp_n_specials_match%3A21213697011%2Cp_72%3A1248879011&dc&c=ts&qid=1648600102&rnid=1248877011&ts_id=3347771&ref=sr_nr_p_72_1",8},
+                                                  {"https://www.amazon.com/s?keywords=Micro+SD+Memory+Cards&i=computers&rh=n%3A3015433011%2Cp_72%3A1248879011%2Cp_89%3ASAMSUNG%2Cp_n_condition-type%3A2224371011&dc&c=ts&qid=1648600035&rnid=2224369011&ts_id=3015433011&ref=sr_nr_p_n_condition-type_1",3},
+                                                  {"https://www.amazon.com/s?keywords=Wireless+%26+Streaming+Audio+Systems&i=electronics&rh=n%3A322215011%2Cp_n_specials_match%3A21213697011%2Cp_72%3A1248879011%2Cp_n_condition-type%3A2224371011&dc&c=ts&qid=1648599708&rnid=2224369011&ts_id=322215011&ref=sr_nr_p_n_condition-type_1",5},
+                                                  {"https://www.amazon.com/s?k=Home+Audio+Sound+Bars&i=electronics&rh=n%3A3237803011%2Cp_72%3A1248879011%2Cp_n_specials_match%3A21213697011&dc=&c=ts&qid=1648599657&rnid=386442011&ts_id=3237803011&ref=sr_nr_p_36_2&low-price=&high-price=100",5},
+                                                  {"https://www.amazon.com/s?k=Outdoor+Speakers&i=electronics&rh=n%3A12097477011%2Cp_72%3A1248879011%2Cp_n_condition-type%3A2224371011&dc=&c=ts&qid=1648599583&rnid=386442011&ts_id=12097477011&ref=sr_nr_p_36_5&low-price=&high-price=100",5},
+                                                  {"https://www.amazon.com/s?k=Home+Audio+Subwoofers&i=electronics&rh=n%3A172568%2Cp_72%3A1248879011%2Cp_n_condition-type%3A2224371011&dc=&c=ts&qid=1648599442&rnid=386442011&ts_id=172568&ref=sr_nr_p_36_5&low-price=&high-price=150",5},
+                                                  {"https://www.amazon.com/s?keywords=Center-Channel+Speakers&i=electronics&rh=n%3A3236452011%2Cp_72%3A1248879011%2Cp_n_specials_match%3A21213697011&dc&c=ts&qid=1648599328&rnid=21213696011&ts_id=3236452011&ref=sr_nr_p_n_specials_match_1",5},
+                                                  {"https://www.amazon.com/s?keywords=Bookshelf+Speakers&i=electronics&rh=n%3A3236451011%2Cp_72%3A1248879011%2Cp_n_condition-type%3A2224371011%2Cp_n_specials_match%3A21213697011&dc&c=ts&qid=1648599241&rnid=21213696011&ts_id=3236451011&ref=sr_nr_p_n_specials_match_1",5},
+                                                  {"https://www.amazon.com/s?keywords=Portable+Bluetooth+Speakers&i=electronics&rh=n%3A7073956011%2Cp_n_specials_match%3A21213697011%2Cp_72%3A1248879011%2Cp_n_condition-type%3A2224371011&dc&c=ts&qid=1648599185&rnid=2224369011&ts_id=7073956011&ref=sr_nr_p_n_condition-type_1",5},
+                                                  {"https://www.amazon.com/s?k=Recording+Headphone+%26+In-Ear+Audio+Monitors&i=mi&rh=n%3A11974971%2Cp_72%3A1248939011%2Cp_n_condition-type%3A404228011&dc=&c=ts&qid=1648599024&rnid=386685011&ts_id=11974971&ref=sr_nr_p_36_5&low-price=&high-price=100",4},
+                                                  {"https://www.amazon.com/s?i=electronics&bbn=509318&rh=n%3A509318%2Cp_n_specials_match%3A21213697011%2Cp_72%3A2661618011%2Cp_n_condition-type%3A6461716011&dc&qid=1648598900&rnid=6461714011&ref=sr_nr_p_n_condition-type_1",4},
+                                                  {"https://www.amazon.com/s?keywords=Earbud+%26+In-Ear+Headphones&i=electronics&rh=n%3A12097478011%2Cp_72%3A1248879011%2Cp_n_condition-type%3A2224371011%2Cp_36%3A-10000%2Cp_89%3AJBL%7CMonster%7CPanasonic%7CSAMSUNG%7CSony&dc&c=ts&qid=1648598737&rnid=2528832011&ts_id=12097478011&ref=sr_nr_p_89_4",4},
+                                                  {"https://www.amazon.com/s?keywords=On-Ear+Headphones&i=electronics&rh=n%3A12097480011%2Cp_72%3A1248879011%2Cp_n_specials_match%3A21213697011%2Cp_n_condition-type%3A2224371011&dc&c=ts&qid=1648598442&rnid=2224369011&ts_id=12097480011&ref=sr_nr_p_n_condition-type_1",4},
+                                                  {"https://www.amazon.com/s?keywords=Over-Ear+Headphones&i=electronics&rh=n%3A12097479011%2Cp_72%3A1248879011%2Cp_n_specials_match%3A21213697011%2Cp_n_condition-type%3A2224371011&dc&c=ts&qid=1648598374&rnid=2224369011&ts_id=12097479011&ref=sr_nr_p_n_condition-type_1",4},
+                                                  {"https://www.amazon.com/s?i=electronics&bbn=12097486011&rh=n%3A172282%2Cn%3A13900851%2Cn%3A513014%2Cn%3A12097486011%2Cn%3A667846011%2Cn%3A172563%2Cp_72%3A1248879011%2Cp_n_specials_match%3A21213697011&lo=image&dc&pf_rd_i=12097486011&pf_rd_m=ATVPDKIKX0DER&pf_rd_p=193b68f4-40b1-46b8-b92d-cbf6ce8d1697&pf_rd_r=66TR224D6DY4PXB64A03&pf_rd_s=merchandised-search-5&pf_rd_t=101&qid=1648598224&rnid=21213696011&ref=sr_nr_p_n_specials_match_1",5},
+                                                  {"https://www.amazon.com/s?keywords=Home+Theater+Systems&i=electronics&rh=n%3A281056%2Cp_72%3A1248879011%2Cp_n_condition-type%3A2224371011%2Cp_n_specials_match%3A21213697011&dc&c=ts&qid=1648598000&rnid=21213696011&ts_id=281056&ref=sr_nr_p_n_specials_match_1",5},
+                                                  {"https://www.amazon.com/s?i=electronics&bbn=13447451&rh=n%3A13447451%2Cp_72%3A1248879011%2Cp_n_condition-type%3A2224371011%2Cp_n_specials_match%3A21213697011&dc&qid=1648597962&rnid=21213696011&ref=sr_nr_p_n_specials_match_1",7},
+                                                  {"https://www.amazon.com/s?i=electronics&bbn=172659&rh=n%3A172659%2Cp_n_condition-type%3A2224371011%2Cp_72%3A1248879011%2Cp_n_specials_match%3A21213697011&dc&qid=1648597881&rnid=21213696011&ref=sr_nr_p_n_specials_match_1",2}};
+                                                     
 
+        static object[,] ebayLinkList = {{"https://www.ebay.com/sch/i.html?_dcat=9355&_fsrp=1&_blrs=recall_filtering&_from=R40&LH_TitleDesc=0&LH_ItemCondition=1000&Brand=Samsung%7CApple%7CMotorola%7CAlcatel%7CXiaomi%7CHuawei%7CLG&_nkw=phones&_sacat=9355&Network=AT%2526T%7CCricket%2520Wireless%7CSprint%7CT%252DMobile%7CUnlocked%7CBoom%2520Mobile%7CBoost%2520Mobile%7CMetro%7CVerizon%7CUS%2520Mobile%7CU%252ES%252E%2520Cellular%7CVirgin%2520Mobile&LH_BIN=1&Storage%2520Capacity=32%2520GB%7C64%2520GB%7C256%2520GB%7C512%2520GB%7C128%2520GB&_sop=15&_udhi=120&rt=nc&_stpos=19720&_sadis=2000&LH_PrefLoc=99&_fspt=1&_ipg=240",1 },
+                                        { "https://www.ebay.com/sch/i.html?_dcat=11071&_fsrp=1&rt=nc&_from=R40&LH_PrefLoc=99&LH_ItemCondition=1000&_stpos=19720&_nkw=tv&_sacat=32852&LH_BIN=1&_fspt=1&Screen%2520Size=60%252D69%2520in%7C20%252D29%2520in%7C40%252D49%2520in%7C30%252D39%2520in%7C50%252D59%2520in%7C70%252D80%2520in&_udhi=200&_sadis=2000&_ipg=240" ,2}
+                                        };
+
+        static object [,] theStoreLinkList = { { "https://thestore.com/c/refurbished-cell-phones-58", 1 } };
         static string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)+"/logs";
 
-        static async Task Main(string[] args)
+    static async Task Main(string[] args)
+    {
+
+        var listItems = new List<SP_GetAllLinks_Result>();
+
+        using (WebScrapingEntities context = new WebScrapingEntities())
         {
-            var listItems = new List<SP_GetAllLinks_Result>();
-            
+            context.Configuration.EnsureTransactionsForFunctionsAndCommands = false;
+            blackList = context.SP_GET_BLACK_LIST().ToList();
+        }
 
-            try
+        try
+        {
+            var task1 = Task.Run(async () =>
+            {   
+                await Selenium("amazon", amazonLinkList);
+            });
+
+
+            var task2 = Task.Run(async () =>
             {
-                var task1 = Task.Run(async () =>
-                 {   
-                    
-                     foreach (string link in amazonLinkList)
-                     {
-                         await Selenium(link);
-                         amazonLinkPositon++;
-                     }
-                 });
+                await Selenium("thestore", theStoreLinkList);
+            });
 
+            var task3 = Task.Run(async () =>
+            {
+                await Selenium("eBay",ebayLinkList);
+                
+            });
 
-                var task2 = Task.Run(async () =>
-                {
-                    await Selenium("https://thestore.com/c/refurbished-cell-phones-58");
-                });
+            await Task.WhenAll(task1, task2, task3);
 
-                var task3 = Task.Run(async () =>
-                {
-                    foreach (string link in ebayLinkList)
-                    {
-                        await Selenium(link);
-                        ebayLinkPositon++;
-                    }
-                });
+            using (WebScrapingEntities context = new WebScrapingEntities())
+            {
+                context.Configuration.EnsureTransactionsForFunctionsAndCommands = false;
+                listItems =  context.SP_GetAllLinks().ToList();
+            }
 
-                await Task.WhenAll(task1, task2, task3);
+        
 
+            Parallel.ForEach(listItems, (i) =>
+            {
                 using (WebScrapingEntities context = new WebScrapingEntities())
                 {
                     context.Configuration.EnsureTransactionsForFunctionsAndCommands = false;
-                    listItems =  context.SP_GetAllLinks().ToList();
-                }
 
-        
-
-                Parallel.ForEach(listItems, (i) =>
-                {
-                    using (WebScrapingEntities context = new WebScrapingEntities())
+                    if (checkList.Contains(i.link))
                     {
-                        context.Configuration.EnsureTransactionsForFunctionsAndCommands = false;
-
-                        if (checkList.Contains(i.link))
-                        {
-                            context.SP_UPDATE_STATUS(i.id, true);
-                        }
-                        else
-                        {
-                             context.SP_UPDATE_STATUS(i.id, false);
-                        }
+                        context.SP_UPDATE_STATUS(i.id, 1);
                     }
-                });
+                    else
+                    {
+                        context.SP_UPDATE_STATUS(i.id, 2);
+                    }
+                }
+            });
              
-                Console.WriteLine("DONE");   
-                SystemSounds.Asterisk.Play();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);   
-            }
-                  
+            Console.WriteLine("DONE");   
+            SystemSounds.Asterisk.Play();
         }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);   
+        }
+                  
+    }
 
 
-        private async static Task Selenium(String url)
+        private async static Task Selenium(string web, object[,] links)
         {
             await Task.Run(() => {
                 ChromeOptions options = new ChromeOptions();
                 string userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36";
                 options.AddArguments("disable-infobars", "--no-sandbox", "--disable-dev-shm-usage", " --lang=en-us", $"--user-agent={userAgent}",
                       "--disable-gpu", "--disable-extensions", "--allow-running-insecure-content", "--ignore-certificate-errors",
-                      "--window-size=1920,1080", "--disable-browser-side-navigation", "--headless");
+                      "--window-size=1920,1080", "--disable-browser-side-navigation", "--headless", "--log-level=3", "--silent");
                 options.AddExcludedArgument("enable-automation");
+                
+                ChromeDriverService service = ChromeDriverService.CreateDefaultService();
+                service.SuppressInitialDiagnosticInformation = true;
 
-                if (url.Contains("amazon.com"))
+                if (web == "amazon")
                 {
-                    new Amazon(url, options);
+                    new Amazon(links, options, service);
                 }
-                else if (url.Contains("thestore.com"))
+                else if (web =="thestore")
                 {
-                    new TheStore(url, options);
+                    new TheStore(links, options, service);
                 }
-                else if (url.Contains("ebay.com"))
+                else if (web == "eBay")
                 {
-                    new Ebay(url, options);
+                    new Ebay(links, options, service);
                 }
             });
             
         }
          
-        public static async Task SaveOrUpdate(bool save, string name, string link, string image, decimal price, int condition,string shop)
+        public static async Task SaveOrUpdate(bool save, string name, string link, string image, decimal price,
+            int condition,string shop, int type)
         {
             using (WebScrapingEntities context = new WebScrapingEntities())
             {
-                var data = await context.Items.FirstOrDefaultAsync(i=> i.LINK == link);
+                context.Configuration.EnsureTransactionsForFunctionsAndCommands = false;
+
+                //var data = await Task.Run(() => context.SP_GET_ONE(link).AsEnumerable().FirstOrDefault());
+                var data = await context.Items.SingleOrDefaultAsync(i => i.LINK == link);
                 checkList.Add(link);
 
                 if (data != null)
                 {
-                    decimal oldPrice = (decimal) ((decimal) data.OLD_PRICE >0? data.OLD_PRICE: data.PRICE);
+                    decimal oldPrice = (decimal) ((decimal) data.OLD_PRICE > 0? data.OLD_PRICE: data.PRICE);
                     decimal saving =0, saving_percent= 0;
-                    bool validate = true;
+                    bool validate = false;
 
                     if (oldPrice > price)
                     {
                        saving = oldPrice - price;
                        saving_percent = saving / oldPrice * 100;
+                       validate = true;
                     }
                     else if (oldPrice < price)
                     {
                         oldPrice = 0;
+                        validate = true;
                     }
-                    else { validate = false; }
-
-                    if (validate)
+                    else if (name!= data.NAME)
                     {
-                        context.Configuration.EnsureTransactionsForFunctionsAndCommands = false;
-                        context.SP_UPDATE_PRICE(data.ID, price, oldPrice, saving, saving_percent);
+                        validate = true;
+                    }
+                    
+
+                    if (true)//validate)
+                    {
+                        context.SP_UPDATE_PRICE(data.ID, price, oldPrice, saving, saving_percent,name, type);//quitar type
                         await context.SaveChangesAsync();
                     }
                     
@@ -172,8 +192,7 @@ namespace ConsoleApp
                 }
                 else if (save)
                 {
-                    context.Configuration.EnsureTransactionsForFunctionsAndCommands = false;
-                    context.SP_ADD(name, price, link, condition, shop, image);
+                    context.SP_ADD(name, price, link, condition, shop, image, type);
                     await context.SaveChangesAsync();
                 }
                 
@@ -198,8 +217,8 @@ namespace ConsoleApp
             EventWaitHandle waitHandle = new EventWaitHandle(true, EventResetMode.AutoReset, "SHARED_BY_ALL_PROCESSES");
             string logPath = $"{path}/log {shop} {DateTime.Now.ToShortDateString().Replace("/", "_")}.txt";
             
-            if (!Directory.Exists(path)) { Directory.CreateDirectory(path); }
-            if (!File.Exists(logPath)) { using (FileStream fs = new FileStream(logPath, FileMode.Create)) ; }
+            if (!Directory.Exists(path)) { Directory.CreateDirectory(path);}
+            if (!File.Exists(logPath)) { using (FileStream fs = new FileStream(logPath, FileMode.Create));}
            
             waitHandle.WaitOne();
             var sw = new StreamWriter(logPath, true);
