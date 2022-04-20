@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium;
+﻿using ConsoleApp.Classes;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
@@ -9,22 +10,23 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp
 {
-    internal class TheStore: Program
+    internal class TheStore: Method, IRun
     {
-        public TheStore(object[,] links, ChromeOptions options, ChromeDriverService service)
+    
+        public  async Task Run(object[,] links, ChromeOptions options, ChromeDriverService service)
         {
             options.AddArguments($@"--user-data-dir={AppDomain.CurrentDomain.BaseDirectory}User Data\The Store");
-            
+
             using (IWebDriver driver = new ChromeDriver(service, options))
             {
-                driver.Navigate().GoToUrl((string)links[0,0]);
+                driver.Navigate().GoToUrl((string)links[0, 0]);
                 bool removeElement = true;
                 int counter = 1;
                 WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(15));
-                
+
                 while (true)
                 {
-                   
+
                     try
                     {
                         By selector = By.CssSelector("div[class='product-tile restored']");
@@ -43,7 +45,7 @@ namespace ConsoleApp
                                 IWebElement conditionName = element.FindElement(By.ClassName("product-tile__condition"));
                                 string name = $"{RemoveSpecialCharacters(eName.Text)} ({conditionName.Text})";
                                 string link = eLink.GetAttribute("href");
-                                string image = "https://thestore.com" + eImage.GetAttribute("data-src");
+                                string image = "https://thestore.com" + eImage.GetAttribute("data-src").Replace("height=300", "height=400");
                                 decimal price = decimal.Parse(ePriceWhole.Text.Replace("$", ""));
                                 int condition = 1;
                                 bool save = true;
@@ -78,9 +80,9 @@ namespace ConsoleApp
                             }
                             catch (Exception e) when (e is NoSuchElementException | e is StaleElementReferenceException)
                             {
-                                WriteLogs($"ERROR: ---> {e.Message}","the store ");
+                                await WriteLogs($"ERROR: ---> {e.Message}", "The Store ");
                             }
-                            
+
                         });
                     }
                     catch (WebDriverTimeoutException)
@@ -89,7 +91,7 @@ namespace ConsoleApp
                     }
                     catch (StaleElementReferenceException e)
                     {
-                        WriteLogs($"ERROR: ---> {e.Message}", "the store");
+                        await WriteLogs($"ERROR: ---> {e.Message}", "The Store");
                     }
 
 
@@ -118,7 +120,7 @@ namespace ConsoleApp
                 }
 
             }
-
         }
+
     }
 }

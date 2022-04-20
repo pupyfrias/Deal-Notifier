@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium;
+﻿using ConsoleApp.Classes;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
@@ -10,27 +11,27 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp
 {
-    internal class Ebay: Program
+    internal class Ebay: Method, IRun
     {
-        public Ebay(object[,] links, ChromeOptions options, ChromeDriverService service)
+        public async Task Run(object[,] links, ChromeOptions options, ChromeDriverService service)
         {
             options.AddArguments($@"--user-data-dir={AppDomain.CurrentDomain.BaseDirectory}User Data\Ebay");
-            
+
             bool run = true;
             using (IWebDriver driver = new ChromeDriver(service, options))
             {
 
 
-                for(int i = 0; i < links.Length/2; i++)
+                for (int i = 0; i < links.Length / 2; i++)
                 {
 
                     try
                     {
-                        driver.Navigate().GoToUrl((string) links[i,0]);
+                        driver.Navigate().GoToUrl((string)links[i, 0]);
                     }
                     catch (WebDriverException e)
                     {
-                        WriteLogs($"ERROR: ---> {e.Message} | url:{(string)links[i, 0]}", "ebay");
+                        await WriteLogs($"ERROR: ---> {e.Message} | URL:{(string)links[i, 0]}", "eBay");
                         run = false;
                         driver.Quit();
                     }
@@ -62,7 +63,7 @@ namespace ConsoleApp
                                     string name = RemoveSpecialCharacters((eName.Text).Replace("NEW LISTING", ""));
                                     string link = eLink.GetAttribute("href");
                                     link = link.Substring(0, link.IndexOf("?"));
-                                    string image = eImage.GetAttribute("src");
+                                    string image = eImage.GetAttribute("src").Replace("225", "425");
                                     if (image.ToLower().Contains("ebaystatic.com")) { image = eImage.GetAttribute("data-src"); }
                                     string priceBruto = ePriceWhole.Text.Replace("$", "");
                                     if (priceBruto.ToLower().Contains("to")) { priceBruto = priceBruto.Substring(0, priceBruto.IndexOf("to")); }
@@ -71,7 +72,7 @@ namespace ConsoleApp
                                     int condition = 1;
                                     bool save = true;
                                     string shop = "Ebay";
-                                    int type =(int) links[i, 1];
+                                    int type = (int)links[i, 1];
 
                                     Parallel.ForEach(conditionList, (data, state) =>
                                     {
@@ -100,7 +101,11 @@ namespace ConsoleApp
                                 }
                                 catch (Exception e) when (e is NoSuchElementException | e is StaleElementReferenceException | e is FormatException)
                                 {
-                                    WriteLogs($"ERROR: --->  | {e.Message}", $"ebay {i}");
+                                   await WriteLogs($"ERROR: --->  | URL: {i} | {e.Message}", "eBay");
+                                }
+                                catch (Exception ex)
+                                {
+                                    await WriteLogs($"ERROR: --->  | URL: {i} | {ex.Message}", "eBay");
                                 }
 
                             });
@@ -110,10 +115,10 @@ namespace ConsoleApp
                         {
                             ScreensShot(driver, $"Ebay-End {i}", counter);
                         }
-                        /*catch (Exception)
+                        catch (Exception)
                         {
-                           ScreensShot(driver, $"Ebay-End {i}", counter );
-                        }*/
+                            ScreensShot(driver, $"Ebay-End {i}", counter);
+                        }
 
                         Console.WriteLine($"\nEbay {i} | {counter} ");
                         counter++;
@@ -145,7 +150,6 @@ namespace ConsoleApp
                 driver.Quit();
 
             }
-
         }
     }
 }

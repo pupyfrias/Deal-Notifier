@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium;
+﻿using ConsoleApp.Classes;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
@@ -11,26 +12,26 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp
 {
-    internal class Amazon: Program
+    internal class Amazon: Method , IRun
     {
-        public Amazon(object[,] links, ChromeOptions options, ChromeDriverService service)
+
+        public async Task Run(object[,] links, ChromeOptions options, ChromeDriverService service)
         {
             options.AddArguments($@"--user-data-dir={AppDomain.CurrentDomain.BaseDirectory}User Data\Amazon");
             using (IWebDriver driver = new ChromeDriver(service, options))
             {
-                
-                for(int i = 0; i < links.Length/2; i++)
+                for (int i = 0; i < links.Length / 2; i++)
                 {
                     int counter = 1;
                     bool run = true;
 
                     try
                     {
-                        driver.Navigate().GoToUrl((string)links[i,0]);
+                        driver.Navigate().GoToUrl((string)links[i, 0]);
                     }
                     catch (WebDriverException e)
                     {
-                        WriteLogs($"BAD URL: ---> {e.Message} | url:{(string)links[i, 0]}", "Amazon");
+                        await WriteLogs($"BAD URL: ---> {e.Message} | url:{(string)links[i, 0]}", "Amazon");
                         run = false;
                         driver.Quit();
                     }
@@ -59,12 +60,12 @@ namespace ConsoleApp
                                     string name = RemoveSpecialCharacters(eName.Text);
                                     string link = eLink.GetAttribute("href");
                                     link = link.Substring(0, link.IndexOf("/ref"));
-                                    string image = eImage.GetAttribute("src");
+                                    string image = eImage.GetAttribute("src").Replace("218", "320");
                                     decimal price = decimal.Parse(ePriceWhole.Text.Replace(",", "") + "." + ePriceFraction.Text);
                                     int condition = 1;
                                     bool save = true;
                                     string shop = "Amazon";
-                                    int type = (int) links[i, 1];
+                                    int type = (int)links[i, 1];
 
                                     error = link;
 
@@ -95,8 +96,7 @@ namespace ConsoleApp
                                 }
                                 catch (Exception e) when (e is NoSuchElementException | e is StaleElementReferenceException)
                                 {
-
-                                    WriteLogs($"ERROR: --->  | {e.Message}", $"amazon {i}" );
+                                    await WriteLogs($"ERROR: --->  | URL: {i} | {e.Message}", "Amazon");
                                 }
                                 catch (EntityCommandExecutionException)
                                 {
@@ -131,7 +131,6 @@ namespace ConsoleApp
                 driver.Quit();
 
             }
-
-        }   
+        }
     }
 }
