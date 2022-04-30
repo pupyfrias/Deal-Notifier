@@ -1,10 +1,10 @@
 ﻿using OpenQA.Selenium.Chrome;
 using System.Threading.Tasks;
 
-namespace ConsoleApp
+namespace WebScraping
 {
     internal interface IRun
     {
-        Task Run(object[,] links, ChromeOptions options, ChromeDriverService service);
+        Task Run(ChromeOptions options, ChromeDriverService service);
     }
 }

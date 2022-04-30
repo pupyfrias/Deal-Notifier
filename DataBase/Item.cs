@@ -22,14 +22,10 @@ namespace DataBase
         public string LINK { get; set; }
         public Nullable<int> CONDITION { get; set; }
         public Nullable<int> STATUS { get; set; }
-        public string SHOP { get; set; }
+        public Nullable<int> SHOP { get; set; }
         public string IMAGE { get; set; }
         public Nullable<System.DateTime> DATE_PRICE_CHANGE { get; set; }
         public Nullable<decimal> SAVING_PERCENT { get; set; }
         public Nullable<int> TYPE { get; set; }
-    
-        public virtual Condition Condition1 { get; set; }
-        public virtual Status Status1 { get; set; }
-        public virtual Type Type1 { get; set; }
     }
 }

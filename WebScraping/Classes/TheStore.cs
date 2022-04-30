@@ -1,5 +1,4 @@
-﻿using ConsoleApp.Classes;
-using OpenQA.Selenium;
+﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
@@ -7,13 +6,15 @@ using System;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
+using WebScraping.Classes;
 
-namespace ConsoleApp
+namespace WebScraping
 {
-    internal class TheStore: Method, IRun
+    internal class TheStore : Method, IRun
     {
-    
-        public  async Task Run(object[,] links, ChromeOptions options, ChromeDriverService service)
+        private object[,] links = { { "https://thestore.com/c/refurbished-cell-phones-58", 1 } };
+
+        public async Task Run(ChromeOptions options, ChromeDriverService service)
         {
             options.AddArguments($@"--user-data-dir={AppDomain.CurrentDomain.BaseDirectory}User Data\The Store");
 
@@ -49,7 +50,7 @@ namespace ConsoleApp
                                 decimal price = decimal.Parse(ePriceWhole.Text.Replace("$", ""));
                                 int condition = 1;
                                 bool save = true;
-                                string shop = "TheStore";
+                                int shop = 3;
                                 int type = (int)links[0, 1];
 
 
@@ -80,18 +81,18 @@ namespace ConsoleApp
                             }
                             catch (Exception e) when (e is NoSuchElementException | e is StaleElementReferenceException)
                             {
-                                await WriteLogs($"ERROR: ---> {e.Message}", "The Store ");
+                                await WriteLogs($"TheStore: ---> {e.Message.Trim()}");
                             }
 
                         });
                     }
                     catch (WebDriverTimeoutException)
                     {
-                        ScreensShot(driver, "The Store", counter);
+                        await ScreensShot(driver, "The Store", 0, counter);
                     }
                     catch (StaleElementReferenceException e)
                     {
-                        await WriteLogs($"ERROR: ---> {e.Message}", "The Store");
+                        await WriteLogs($"TheStore: ---> {e.Message.Trim()}");
                     }
 
 
@@ -112,7 +113,7 @@ namespace ConsoleApp
 
                     catch (WebDriverTimeoutException)
                     {
-                        ScreensShot(driver, "TheStore", counter);
+                        await ScreensShot(driver, "TheStore", 0, counter);
                         driver.Quit();
                         break;
                     }

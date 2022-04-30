@@ -1,5 +1,4 @@
-﻿using ConsoleApp.Classes;
-using OpenQA.Selenium;
+﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
@@ -8,12 +7,19 @@ using System.Collections;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
+using WebScraping.Classes;
 
-namespace ConsoleApp
+namespace WebScraping
 {
-    internal class Ebay: Method, IRun
+    internal class Ebay : Method, IRun
     {
-        public async Task Run(object[,] links, ChromeOptions options, ChromeDriverService service)
+        private object[,] links =
+         {
+           {"https://www.ebay.com/sch/i.html?_dcat=9355&_fsrp=1&_blrs=recall_filtering&_from=R40&LH_TitleDesc=0&LH_ItemCondition=1000&Brand=Samsung%7CApple%7CMotorola%7CAlcatel%7CXiaomi%7CHuawei%7CLG&_nkw=phones&_sacat=9355&Network=AT%2526T%7CCricket%2520Wireless%7CSprint%7CT%252DMobile%7CUnlocked%7CBoom%2520Mobile%7CBoost%2520Mobile%7CMetro%7CVerizon%7CUS%2520Mobile%7CU%252ES%252E%2520Cellular%7CVirgin%2520Mobile&LH_BIN=1&Storage%2520Capacity=32%2520GB%7C64%2520GB%7C256%2520GB%7C512%2520GB%7C128%2520GB&_sop=15&_udhi=120&rt=nc&_stpos=19720&_sadis=2000&LH_PrefLoc=99&_fspt=1&_ipg=240",1 },
+           {"https://www.ebay.com/sch/i.html?_dcat=11071&_fsrp=1&rt=nc&_from=R40&LH_PrefLoc=99&LH_ItemCondition=1000&_stpos=19720&_nkw=tv&_sacat=32852&LH_BIN=1&_fspt=1&Screen%2520Size=60%252D69%2520in%7C20%252D29%2520in%7C40%252D49%2520in%7C30%252D39%2520in%7C50%252D59%2520in%7C70%252D80%2520in&_udhi=200&_sadis=2000&_ipg=240" ,2}
+          };
+
+        public async Task Run(ChromeOptions options, ChromeDriverService service)
         {
             options.AddArguments($@"--user-data-dir={AppDomain.CurrentDomain.BaseDirectory}User Data\Ebay");
 
@@ -24,16 +30,16 @@ namespace ConsoleApp
 
                 for (int i = 0; i < links.Length / 2; i++)
                 {
-
                     try
                     {
                         driver.Navigate().GoToUrl((string)links[i, 0]);
                     }
                     catch (WebDriverException e)
                     {
-                        await WriteLogs($"ERROR: ---> {e.Message} | URL:{(string)links[i, 0]}", "eBay");
+                        await WriteLogs($"eBay: ---> {e.Message.Trim()} | URL:{(string)links[i, 0]}");
+                        driver.Close();
                         run = false;
-                        driver.Quit();
+
                     }
 
                     int counter = 1;
@@ -51,7 +57,6 @@ namespace ConsoleApp
                             Thread.Sleep(2000);
 
                             ReadOnlyCollection<IWebElement> elements = driver.FindElements(selector);
-
                             Parallel.ForEach(elements, async (element, stateMain) =>
                             {
                                 try
@@ -71,7 +76,7 @@ namespace ConsoleApp
                                     decimal price = decimal.Parse(priceBruto);
                                     int condition = 1;
                                     bool save = true;
-                                    string shop = "Ebay";
+                                    int shop = 2;
                                     int type = (int)links[i, 1];
 
                                     Parallel.ForEach(conditionList, (data, state) =>
@@ -99,26 +104,21 @@ namespace ConsoleApp
 
                                     await SaveOrUpdate(save, name, link, image, price, condition, shop, type);
                                 }
-                                catch (Exception e) when (e is NoSuchElementException | e is StaleElementReferenceException | e is FormatException)
+                                catch (Exception e) when (e is NoSuchElementException | e is StaleElementReferenceException | e is FormatException |
+                                                          e is WebDriverException)
                                 {
-                                   await WriteLogs($"ERROR: --->  | URL: {i} | {e.Message}", "eBay");
+                                    await WriteLogs($"eBay: --->  | URL: {i} | {e.Message.Trim()}");
                                 }
-                                catch (Exception ex)
-                                {
-                                    await WriteLogs($"ERROR: --->  | URL: {i} | {ex.Message}", "eBay");
-                                }
+
 
                             });
 
                         }
-                        catch (WebDriverTimeoutException)
+                        catch (WebDriverTimeoutException e)
                         {
-                            ScreensShot(driver, $"Ebay-End {i}", counter);
+                            await WriteLogs($"eBay: --->  | URL: {i} | {e}");
                         }
-                        catch (Exception)
-                        {
-                            ScreensShot(driver, $"Ebay-End {i}", counter);
-                        }
+
 
                         Console.WriteLine($"\nEbay {i} | {counter} ");
                         counter++;
@@ -130,7 +130,7 @@ namespace ConsoleApp
 
                             if (currentLink == driver.Url)
                             {
-                                ScreensShot(driver, $"Ebay-End {i}", counter);
+                                await ScreensShot(driver, "Ebay", i, counter);
                                 break;
                             }
                             else
@@ -141,12 +141,13 @@ namespace ConsoleApp
                         }
                         catch (Exception e) when (e is WebDriverTimeoutException || e is WebDriverException)
                         {
-                            ScreensShot(driver, $"Ebay-End {i}", counter);
+                            await ScreensShot(driver, "Ebay", i, counter);
                             break;
                         }
 
                     }
                 }
+
                 driver.Quit();
 
             }
