@@ -1,0 +1,65 @@
+
+<mat-card class="mt-2" *ngFor="let item of list | paginate:
+{ itemsPerPage: 40, currentPage: page} ">
+  <mat-grid-list cols="12" rowHeight="fit">
+    <mat-grid-tile colspan="4">
+      <a [href]="item.link" target="blank" class="text-decaration">
+        <img [src]="item.image" class="img-limit">
+      </a>
+    </mat-grid-tile>
+    <mat-grid-tile colspan="7" id="p">
+      <mat-grid-tile-header>
+        <a [href]="item.link" target="blank" class="text-decaration">
+          <p class="card-title">{{item.name}}</p>
+        </a>
+        <p class="card-text mb-0"> US$ {{item.price}}&nbsp;
+          <span class="line-t old-price" *ngIf="item.saving > 0"> {{item.old_price}}</span>
+        </p>
+        <div *ngIf="item.saving > 0">
+          <p class="card-text saving mb-0">
+            Ahorro US$ {{item.saving}} &nbsp;|
+            {{ parseDate(item.date_price_change)}}
+          </p>
+          <br>
+          <p class="card-text saving mb-0">
+            %{{item.saving_percent}}
+          </p>
+        </div>
+        <p class="card-text mb-0" *ngIf="item.condition == 2">Used</p>
+        <p class="card-text mb-0" *ngIf="item.condition == 1">New</p>
+        <p class="card-text"><small class="text-muted">{{item.shop}}</small></p>
+
+      </mat-grid-tile-header>
+    </mat-grid-tile>
+    <mat-grid-tile colspan="1" id="p">
+      <mat-checkbox [value]="item.id.toString()" class="check_box" (change)="ListDelete($event)" color="primary"
+        [checked]="listIds.includes(item.id)" name="item"></mat-checkbox>
+    </mat-grid-tile>
+  </mat-grid-list>
+
+</mat-card>
+
+<div class="row float-element " [hidden]="selected ===0"  id="f-element">
+  <div class="col-md-2">
+    <mat-label class="text-light center-element">selected: {{selected}}</mat-label>
+  </div>
+  <div class="col-md-8"></div>
+  <div class="col-md-2">
+    <button mat-raised-button class="center-element" type="button" (click)="Delete()">Delete</button>
+  </div>
+</div>
+
+<div class="text-center mt-4" id="pagination" >
+  <pagination-controls (pageChange)="page = $event; onPageChange()"
+  [autoHide]="true" >
+  </pagination-controls>
+</div>
+<div class="select-all" style="border-radius: 50%;"  >
+  <mat-checkbox name="selector" (change)="Select($event)" class="center-select">
+  </mat-checkbox>
+</div>
+
+
+<button mat-fab color="primary" class="scrollToUp" id="scrollToUp" hidden="true" (click)="onPageChange()">
+  <mat-icon>arrow_upward</mat-icon>
+</button>

@@ -1,0 +1,171 @@
+<mat-accordion [multi]="true" displayMode="flat">
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <mat-icon class="custom-icon">local_offer</mat-icon>
+        Offer
+      </mat-panel-title>
+
+    </mat-expansion-panel-header>
+    <mat-checkbox type="checkbox" name="offer" (change)="Offer($event.source)" color="primary" [checked]="offerExpand">
+      Super Offer
+    </mat-checkbox>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <mat-icon class="custom-icon">sort</mat-icon>
+        Order by
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <mat-radio-button *ngFor="let item of orderBy" name="orderBy" [value]="item[0]" [id]="item[0]"
+      [checked]=" item[0]== orderByNow" (change)="OrderByChange($event.source)" color="primary" class="d-block m-2">
+      {{item[1]}}
+    </mat-radio-button>
+  </mat-expansion-panel>
+
+  <!--  BEGIN BRANDS -->
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <mat-icon class="custom-icon">label</mat-icon>
+        Brands
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <mat-slide-toggle name="brands" (change)="exclude($event)" [checked]="excludesQuery.includes('brands')">
+      Exclude
+    </mat-slide-toggle>
+    <mat-checkbox type="checkbox" color="primary" (change)="checkboxChange($event.source)"
+      *ngFor="let brand of brandsList" [checked]="brandsQuery.includes(brand)" [id]="brand" class="d-block">
+      {{ToTitleCase(brand)}}
+    </mat-checkbox>
+    <button class="mt-2" mat-raised-button color="primary" *ngIf="brandsQuery.length>0 || excludesQuery.includes('brands')"
+      (click)="cleanBrands()">clean</button>
+  </mat-expansion-panel>
+  <!--  END BRANDS -->
+  <!-- BEGIN SHOP -->
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <mat-icon class="custom-icon">store</mat-icon>
+        Shop
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <mat-checkbox type="checkbox" color="primary" (change)="checkboxChange($event.source)"
+      *ngFor="let item of shopsList" [checked]="shopsQuery.includes(item[1])" [id]="item[0]" class="d-block">
+      {{item[0]}}
+    </mat-checkbox>
+    <button class="mt-2" mat-raised-button color="primary" *ngIf="shopsQuery.length>0"
+      (click)="cleanShops()">clean</button>
+  </mat-expansion-panel>
+  <!-- END SHOP -->
+
+  <!-- BEGIN TYPE -->
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <mat-icon class="custom-icon">phonelink</mat-icon>
+        Type
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <mat-checkbox type="checkbox" color="primary" (change)="checkboxChange($event.source)"
+      *ngFor="let item of typesList" [checked]="typesQuery.includes(item[1])" [id]="item[0]" class="d-block">
+      {{ToTitleCase(item[0])}}
+    </mat-checkbox>
+    <button class="mt-2" mat-raised-button color="primary" *ngIf="typesQuery.length>0"
+      (click)="cleanTypes()">clean</button>
+  </mat-expansion-panel>
+  <!-- END TYPE -->
+
+  <!-- BEGIN CARRIERS -->
+  <mat-expansion-panel [hidden]="typesQuery.includes('1') === false">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <mat-icon class="custom-icon">business</mat-icon>
+        Carriers
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <mat-slide-toggle name="carriers" (change)="exclude($event)" [checked]="excludesQuery.includes('carriers')">
+      Exclude
+    </mat-slide-toggle>
+    <mat-checkbox type="checkbox" color="primary" (change)="checkboxChange($event.source)"
+      *ngFor="let item of carriersList" [checked]="carriersQuery.includes(item)" [id]="item" class="d-block">
+      {{ToTitleCase(item)}}
+    </mat-checkbox>
+    <button class="mt-2" mat-raised-button color="primary"
+      *ngIf="carriersQuery.length>0 || excludesQuery.includes('carriers')" (click)="cleanCarriers()">clean</button>
+  </mat-expansion-panel>
+  <!-- END CARRIERS -->
+
+  <!-- BEGIN STORAGE -->
+  <mat-expansion-panel [hidden]="typesQuery.includes('1') === false && typesQuery.includes('3') === false">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <mat-icon class="custom-icon">sd_storage</mat-icon>
+        Storage
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <mat-slide-toggle name="storages" (change)="exclude($event)" [checked]="excludesQuery.includes('storages')">
+      Exclude
+    </mat-slide-toggle>
+    <button class="mt-2" mat-raised-button color="primary" *ngIf="storagesQuery.length>0"
+      (click)="cleanStorages()">clean</button>
+    <mat-checkbox type="checkbox" color="primary" (change)="checkboxChange($event.source)"
+      *ngFor="let item of storagesList" [checked]="storagesQuery.includes(item+'gb')" [id]="item" class="d-block">
+      {{item}} GB
+    </mat-checkbox>
+  </mat-expansion-panel>
+  <!-- END STORAGE -->
+
+
+  <!-- BEGIN PRICE -->
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <mat-icon class="custom-icon">monetization_on</mat-icon>
+        Price
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <form>
+      <mat-form-field>
+        <mat-label>Minimum</mat-label>
+        <input matInput class="mt-2" type="number" id="min" [value]="minPrice" #min>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Maximum</mat-label>
+        <input matInput class="mt-2" type="number" id="max" [value]="maxPrice" #max>
+      </mat-form-field>
+      <button mat-raised-button color="primary" (click)="priceChange({min,max})" class="mt-2">Go</button>
+    </form>
+    <button class="mt-2" mat-raised-button  *ngIf="maxPrice !== ''|| minPrice !== '' " 
+    (click)="cleanPrices()" color="primary">clean</button>
+  </mat-expansion-panel>
+  <!-- END PRICE -->
+
+  <!-- BEGIN CONDITION -->
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <mat-icon class="custom-icon">check_circle</mat-icon>
+        Condition
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <mat-checkbox type="checkbox" color="primary" (change)="checkboxChange($event.source)"
+      [checked]="conditionsQuery.includes('1')" id="new" class="d-block">
+      Brand new
+    </mat-checkbox>
+    <mat-checkbox type="checkbox" color="primary" (change)="checkboxChange($event.source)"
+      [checked]="conditionsQuery.includes('2')" id="used" class="d-block">
+      Used
+    </mat-checkbox>
+    <button class="mt-2" mat-raised-button color="primary" *ngIf="conditionsQuery.length>0"
+      (click)="cleanConditions()">clean</button>
+  </mat-expansion-panel>
+  <!-- END CONDITION -->
+  <!-- BEGIN CLEAN ALL -->
+  <button mat-raised-button color="primary" class="w-100" (click)="CleanAll()">Clean All</button>
+  <!-- END CLEAN ALL -->
+</mat-accordion>

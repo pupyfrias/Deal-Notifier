@@ -364,41 +364,41 @@ FodyWeavers.xsd
 
 # -----------------------Angular --------------
 # Compiled output
-Stores/dist
-Stores/tmp
-Stores/out-tsc
-Stores/bazel-out
+Font End/dist
+Font End/tmp
+Font End/out-tsc
+Font End/bazel-out
 
 # Node
-Stores/node_modules
-npm-debug.log
-yarn-error.log
+Font End/node_modules
+Font End/npm-debug.log
+Font End/yarn-error.log
 
 # IDEs and editors
-.idea/
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
+Font End/.idea/
+Font End/.project
+Font End/.classpath
+Font End/.c9/
+Font End/*.launch
+Font End/.settings/
+Font End/*.sublime-workspace
 
 # Visual Studio Code
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-.history/*
+Font End/.vscode/*
+Font End/!.vscode/settings.json
+Font End/!.vscode/tasks.json
+Font End/!.vscode/launch.json
+Font End/!.vscode/extensions.json
+Font End/.history/*
 
 # Miscellaneous
-Stores/.angular/cache
-.sass-cache/
-Stores/connect.lock
-Stores/coverage
-Stores/libpeerconnection.log
-testem.log
-Stores/typings
+Font End/.angular/cache
+Font End/.sass-cache/
+Font End/connect.lock
+Font End/coverage
+Font End/libpeerconnection.log
+Font End/testem.log
+Font End/typings
 
 # System files
 .DS_Store

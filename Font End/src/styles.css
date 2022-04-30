@@ -1,0 +1,60 @@
+img.rounded-start.m-3.img-limit {
+  max-height: 285px;
+}
+
+.line-t {
+  text-decoration: line-through;
+}
+
+.old-price {
+  font-size: 70%;
+  position: absolute;
+}
+
+.card-body a {
+  text-decoration: none;
+  color: black;
+}
+
+.card-body a:hover {
+  text-decoration: none;
+  color: #0d6efd;
+}
+
+.saving {
+  font-family: "Amazon Ember", Arial, sans-serif;
+  font-size: 14px !important;
+  line-height: 20px !important;
+  display: inline-block;
+  padding: 0 6px;
+  background-color: #7fda69;
+  color: #111;
+}
+
+.between {
+  position: relative;
+  bottom: -33px;
+  border-radius: 5px;
+}
+
+input.col-6.form-control {
+  width: 878px !important;
+  display: inline-block;
+}
+
+.buscar {
+  margin-left: 205px;
+}
+
+.top {
+  right: 60px;
+  position: fixed;
+  display: -webkit-box;
+}
+
+.ngx-pagination.ng-star-inserted {
+  margin-top: 3% !important;
+  padding-left: 0 !important;
+}
+
+

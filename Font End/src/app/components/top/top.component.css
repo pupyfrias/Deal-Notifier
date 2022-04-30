@@ -1,0 +1,11 @@
+.mat-badge-content  {
+  font-size: 11px !important;
+  width: 30px !important;
+  height: 30px !important;
+  line-height: 30px !important;
+}
+
+.mat-toolbar-row{
+
+    padding: 0 3% 0 2%;
+}
