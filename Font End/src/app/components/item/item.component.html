@@ -1,4 +1,3 @@
-
 <mat-card class="mt-2" *ngFor="let item of list | paginate:
 { itemsPerPage: 40, currentPage: page} ">
   <mat-grid-list cols="12" rowHeight="fit">
@@ -33,33 +32,47 @@
     </mat-grid-tile>
     <mat-grid-tile colspan="1" id="p">
       <mat-checkbox [value]="item.id.toString()" class="check_box" (change)="ListDelete($event)" color="primary"
-        [checked]="listIds.includes(item.id)" name="item"></mat-checkbox>
+        name="item" [checked]="listIds.includes(item.id.toString())" [id]="item.id.toString()">
+      </mat-checkbox>
     </mat-grid-tile>
   </mat-grid-list>
 
 </mat-card>
 
-<div class="row float-element " [hidden]="selected ===0"  id="f-element">
+<!-- BEGIN FLOAT ELEMENT -->
+<div class="row float-element " [hidden]="selected ===0" id="f-element">
   <div class="col-md-2">
     <mat-label class="text-light center-element">selected: {{selected}}</mat-label>
   </div>
-  <div class="col-md-8"></div>
+  <div class="col-md-6"></div>
   <div class="col-md-2">
-    <button mat-raised-button class="center-element" type="button" (click)="Delete()">Delete</button>
+    <button mat-raised-button class="center-element" type="button" (click)="Delete()" color="warn">
+      Delete
+    </button>
+  </div>
+  <div class="col-md-2">
+    <button mat-raised-button class="center-element" type="button" (click)="CleanAllCheckboxes()">Clean All</button>
   </div>
 </div>
+<!-- END FLOAT ELEMENT -->
 
-<div class="text-center mt-4" id="pagination" >
-  <pagination-controls (pageChange)="page = $event; onPageChange()"
-  [autoHide]="true" >
+<!-- BEGIN PAGINATION -->
+<div class="text-center mt-4" id="pagination">
+  <pagination-controls (pageChange)="page = $event; onPageChange()" [autoHide]="true">
   </pagination-controls>
 </div>
-<div class="select-all" style="border-radius: 50%;"  >
-  <mat-checkbox name="selector" (change)="Select($event)" class="center-select">
+<!-- END PAGINATION -->
+
+
+<!-- BEGIN SELECT ALL -->
+<div class="select-all" style="border-radius: 50%;">
+  <mat-checkbox name="selector" (change)="Select($event)" class="center-select" [(ngModel)]="checkAll">
   </mat-checkbox>
 </div>
+<!-- END SELECT ALL -->
 
-
+<!-- BEGIN SCROLL TOP -->
 <button mat-fab color="primary" class="scrollToUp" id="scrollToUp" hidden="true" (click)="onPageChange()">
   <mat-icon>arrow_upward</mat-icon>
 </button>
+<!-- END SCROLL TOP -->

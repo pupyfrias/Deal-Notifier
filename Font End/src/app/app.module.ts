@@ -25,6 +25,7 @@ import {MatInputModule} from '@angular/material/input';
 
 
 
+
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ItemComponent } from './components/item/item.component';
@@ -32,6 +33,7 @@ import { sidenavComponent } from './components/sidenav/sidenav.component';
 import { TopComponent } from './components/top/top.component';
 import { TitleCasePipe } from '@angular/common';
 import { DialogComponent } from './components/dialog/dialog.component';
+
 
 
 @NgModule({
@@ -66,7 +68,8 @@ import { DialogComponent } from './components/dialog/dialog.component';
     MatBadgeModule,
     MatExpansionModule,
     MatRadioModule,
-    MatInputModule
+    MatInputModule,
+    MatCardModule
   ],
   providers: [TitleCasePipe],
   bootstrap: [AppComponent]

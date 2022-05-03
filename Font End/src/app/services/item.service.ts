@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { throwError, observable, BehaviorSubject, Observable } from 'rxjs';
-import { catchError, finalize } from 'rxjs/operators';
+import { throwError, BehaviorSubject, Observable } from 'rxjs';
+import { catchError} from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { item } from '../models/item';
+import { Global } from 'src/assets/global';
 
 
 
@@ -25,9 +26,7 @@ export class ItemService {
 
   GetRequest():Observable<any> {
 
-
-    let api = 'http://localhost:59573/api/Items/' + location.search;
-    //let api = 'http://webscraping.com:8045/api/Items/' + location.search;
+    const api = Global.baseApi + location.search;
     return this.httpClient.get(api).pipe(catchError(this.HandlerError));
 
   }

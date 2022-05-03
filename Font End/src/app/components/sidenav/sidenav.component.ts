@@ -20,12 +20,13 @@ export class sidenavComponent implements OnInit {
   public carriersQuery: string[] = [];
   public excludesQuery: string[] = [];
   public offerExpand: boolean = false;
-  public maxPrice: string
-  public minPrice: string
+  public maxPrice: string;
+  public minPrice: string;
   private queryParams: URLSearchParams;
   public orderByNow: any;
   public isChecked: boolean = false;
   panelOpenState = false;
+  brandsExpande = false;
 
   public orderBy: Array<any> = [["price-low-high", "Low-High"], ["price-high-low", "High-Low"],
   ["saving-high-low", "Saving"], ["saving-percent-high-low", "Saving Percent"]];
@@ -65,11 +66,13 @@ export class sidenavComponent implements OnInit {
           this.service.serch.next(this.queryParams.get('search') != null ? this.queryParams.get('search')! : '');
           this.orderByNow = this.queryParams.get('order_by') != null ? this.queryParams.get('order_by') : '';
 
+          this.brandsExpande = this.brandsQuery.length>0;
         }
       }
     );
 
   }
+
 
   //#region Cleaning
   cleanShops(){
@@ -127,7 +130,6 @@ export class sidenavComponent implements OnInit {
   // }
   //#endregion
 
-
   //#region  Offer
   Offer(e: any): void {
 
@@ -169,7 +171,6 @@ export class sidenavComponent implements OnInit {
 
   //#region Order By Change
   OrderByChange(e: any): void {
-
     this.queryParams.set("order_by", e.value)
     this.SettingsNavigation();
   }
@@ -455,6 +456,8 @@ export class sidenavComponent implements OnInit {
       relativeTo: this.route,
       queryParams: queryJson
     })
+    //SCROLL TO UP
+    document.querySelector('mat-sidenav-content')?.scroll(0, 0);
   }
   //#endregion
 }

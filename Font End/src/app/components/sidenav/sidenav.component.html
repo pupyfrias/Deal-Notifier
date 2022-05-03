@@ -1,5 +1,5 @@
 <mat-accordion [multi]="true" displayMode="flat">
-  <mat-expansion-panel>
+  <mat-expansion-panel (opened)="true">
     <mat-expansion-panel-header>
       <mat-panel-title>
         <mat-icon class="custom-icon">local_offer</mat-icon>
@@ -26,11 +26,11 @@
   </mat-expansion-panel>
 
   <!--  BEGIN BRANDS -->
-  <mat-expansion-panel>
+  <mat-expansion-panel [(expanded)]="brandsExpande">
     <mat-expansion-panel-header>
       <mat-panel-title>
         <mat-icon class="custom-icon">label</mat-icon>
-        Brands
+        Brands 
       </mat-panel-title>
     </mat-expansion-panel-header>
     <mat-slide-toggle name="brands" (change)="exclude($event)" [checked]="excludesQuery.includes('brands')">

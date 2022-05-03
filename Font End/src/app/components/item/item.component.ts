@@ -1,25 +1,25 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChildren, QueryList, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
 import { ItemService } from '../../services/item.service';
 import { item } from '../../models/item'
-import { ActivatedRoute, NavigationEnd, NavigationStart, Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { NgxSpinnerService } from "ngx-spinner";
 import { MatDialog } from '@angular/material/dialog';
 import { DialogComponent } from '../dialog/dialog.component';
-
-
-
-
+import { Global } from 'src/assets/global';
+import { } from '@angular/core';
+import { MatCheckbox } from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-item',
   templateUrl: './item.component.html',
   styleUrls: ['./item.component.css']
 })
-export class ItemComponent implements OnInit, OnDestroy {
+export class ItemComponent implements OnInit, OnDestroy, AfterViewChecked {
 
+  @ViewChildren(MatCheckbox) checkBoxes: QueryList<MatCheckbox>;
 
   list: item[];
   date: Date = new Date();
@@ -27,6 +27,7 @@ export class ItemComponent implements OnInit, OnDestroy {
   selected: number = 0;
   subscription: Subscription;
   page: number = 1;
+  checkAll = false;
 
 
   constructor(
@@ -36,8 +37,10 @@ export class ItemComponent implements OnInit, OnDestroy {
     private router: Router,
     private toastr: ToastrService,
     private spinner: NgxSpinnerService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private changeDetectorRef: ChangeDetectorRef
   ) { }
+
 
 
 
@@ -50,6 +53,7 @@ export class ItemComponent implements OnInit, OnDestroy {
           this.list = data;
           this.itemService.total.next(this.list.length);
           this.page = 1;
+          this.CleanAllCheckboxes();
         },
         error: (error) => {
           this.itemService.ShowError(error);
@@ -63,10 +67,7 @@ export class ItemComponent implements OnInit, OnDestroy {
       this.itemService.select.subscribe(data => {
         this.selected = data
       });
-
     });
-
-
   }
 
   ngOnDestroy(): void {
@@ -74,23 +75,36 @@ export class ItemComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
+  ngAfterViewChecked(): void {
 
-  public onPageChange(): void {
+    //Checking all checkeboxes are checked
+    let counter = 0;
+    this.checkBoxes.forEach(i => {
+      const element = i._elementRef.nativeElement;
+      const name: string = element.getAttribute('name');
+      const checked: string = element.classList.contains("mat-checkbox-checked")
 
-    document.querySelector('mat-sidenav-content')?.scroll(0, 0);
-    /* 
- 
-     this.listIds.forEach(i => {
-       var checkbox = document.querySelector(`input[type=checkbox][value='${i}']`)
-       checkbox?.setAttribute("aria-checked", "true");
-       var input = document.querySelector(`mat-checkbox[ng-reflect-value="${i}"]`);
-       input?.classList.add("mat-checkbox-checked");
-       console.log(checkbox);
-     }); */
+      if (name === 'item' && checked) {
+        ++counter;
+      }
+    });
 
+    if (counter === 40) {
+      this.checkAll = true;
+    }
+    else {
+      this.checkAll = false;
+    }
+    this.changeDetectorRef.detectChanges();
   }
 
+  //#region On Page Change
+  public onPageChange(): void {
+    document.querySelector('mat-sidenav-content')?.scroll(0, 0);
+  }
+  //#endregion
 
+  //#region Parse Date
   parseDate(date: Date) {
 
     let endDate = new Date();
@@ -102,47 +116,37 @@ export class ItemComponent implements OnInit, OnDestroy {
     return diffDays + " days, " + diffHrs + " hours, " + diffMins + "minutes";
 
   }
+  //#endregion 
 
+  //#region  List Delete
   ListDelete(e: any) {
-
-    console.log(e);
-    const id = e.source.value
-    if (e.checked === true) {
-      this.listIds.push(id)
-    }
-    else {
-      const index = this.listIds.indexOf(id, 0);
-      if (index > -1) {
-        this.listIds.splice(index, 1);
-      }
-    }
-
-    this.itemService.select.next(this.listIds.length)
+ 
+    const id = e.source.value;
+    this.SetListIds(e.checked, id);
+    this.itemService.select.next(this.listIds.length);
   }
+  //#endregion
 
-
+  //#region Delete
   Delete() {
     if (this.listIds.length > 0) {
-      
       this.itemService.select.next(this.listIds.length);
       const dialogRef = this.dialog.open(DialogComponent);
-
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
-          
-          const api = "http://localhost:59573/api/Items/";
-          // const api = "http://webscraping.com:8045/api/Items/"
+
+          const api = Global.baseApi;
           this.spinner.show();
 
           let promises: any = [];
-          this.listIds.forEach(async (id) => {
+          this.listIds.forEach((id) => {
             promises.push(new Promise(async (resolve, rejects) => {
 
-              await this.httpClient.delete(api + id)
-                .subscribe(() => { },
-                  () => { rejects() },
-                  () => { resolve('done') }
-                );
+              this.httpClient.delete(api + id)
+                .subscribe({
+                  error: () => { rejects(); },
+                  complete: () => { resolve('done'); }
+                });
             })
             );
 
@@ -156,7 +160,7 @@ export class ItemComponent implements OnInit, OnDestroy {
 
             this.toastr.error("ocurrend an error");
             this.spinner.hide();
-            
+
           });
           this.itemService.select.next(0);
         }
@@ -165,7 +169,9 @@ export class ItemComponent implements OnInit, OnDestroy {
 
     }
   }
+  //#endregion 
 
+  //#region  reload
   Reload() {
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
     this.router.onSameUrlNavigation = 'reload';
@@ -174,34 +180,46 @@ export class ItemComponent implements OnInit, OnDestroy {
       queryParamsHandling: 'preserve'
     });
   }
+  //#endregion
 
+  //#region Select
   Select(e: any) {
 
-    var checks = document.querySelectorAll("input[type=checkbox][name='item']")
-
-    if (e.checked === true) {
-      checks.forEach(item => {
-        item.setAttribute("aria-checked", "true");
-        var input = document.querySelector(`mat-checkbox[ng-reflect-value="${item.getAttribute("value")}"]`);
-        input?.classList.add("mat-checkbox-checked");
-        this.listIds.push(item.getAttribute("value"));
-      });
-
-    }
-    else {
-      checks.forEach(item => {
-        if (item.className == "mat-checkbox-input cdk-visually-hidden") {
-          item.removeAttribute("aria-checked");
-          var input = document.querySelector(`mat-checkbox[ng-reflect-value="${item.getAttribute("value")}"]`);
-          input?.classList.remove("mat-checkbox-checked");
-        }
-      });
-
-      this.listIds = [];
-    }
-
+    this.Checking(e.checked);
     this.itemService.select.next(this.listIds.length);
   }
+  //#endregion
 
+  SetListIds(bool: boolean, id: string):void {
+    if (bool) {
+
+      if (!this.listIds.includes(id)) {
+        this.listIds.push(id);
+      }
+    }
+    else {
+      const index = this.listIds.indexOf(id, 0);
+      if (index > -1) {
+        this.listIds.splice(index, 1);
+      }
+    }
+  }
+
+  Checking(bool: boolean):void {
+    this.checkBoxes.forEach(i => {
+      const element = i._elementRef.nativeElement;
+      const name = element.getAttribute('name');
+      const id = element.getAttribute('id');     
+      if (name === 'item') {
+        this.SetListIds(bool, id);
+        
+      }
+    });
+  }
+
+  CleanAllCheckboxes():void{
+    this.listIds = [];
+    this.itemService.select.next(0);
+  }
 }
 

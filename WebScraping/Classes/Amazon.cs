@@ -48,16 +48,19 @@ namespace WebScraping
                     int counter = 1;
                     bool run = true;
 
-                    try
-                    {
-                        driver.Navigate().GoToUrl((string)links[i, 0]);
-                    }
-                    catch (WebDriverException e)
-                    {
-                        await WriteLogs($"BAD URL: ---> {e.Message.Trim()} | url:{(string)links[i, 0]}");
-                        run = false;
-                        driver.Quit();
-                    }
+                    /*    try
+                        {
+                            driver.Navigate().GoToUrl((string)links[i, 0]);
+                        }
+                        catch (WebDriverException e)
+                        {
+                            await WriteLogs($"BAD URL: ---> {e.Message.Trim()} | url:{(string)links[i, 0]}");
+                            run = false;
+                            driver.Quit();
+                        }*/
+
+
+                    driver.Navigate().GoToUrl((string)links[i, 0]);
 
                     WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(20));
                     WebDriverWait wait2 = new WebDriverWait(driver, TimeSpan.FromSeconds(2));
@@ -130,9 +133,10 @@ namespace WebScraping
 
                             });
                         }
-                        catch (WebDriverTimeoutException)
+                        catch (WebDriverTimeoutException e)
                         {
-                            await ScreensShot(driver, "Amazon", i, counter);
+                            await ScreensShot(driver, "Error", i, counter);
+                            await WriteLogs($"Amazon: --->  | URL: {i} | {e.Message.Trim()}");
                         }
 
 

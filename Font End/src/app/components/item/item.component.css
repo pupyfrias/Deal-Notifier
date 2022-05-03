@@ -18,8 +18,8 @@ mat-grid-list {
 
 .img-limit {
   max-width: 281px;
-  height: 281px;
-  object-fit: cover;
+  max-height: 300px;
+  object-fit: contain;
 }
 
 .mat-grid-tile .mat-grid-tile-header {
@@ -73,4 +73,3 @@ mat-grid-list {
   top: 50%;
   transform: translate(0, -50%);
 }
-
