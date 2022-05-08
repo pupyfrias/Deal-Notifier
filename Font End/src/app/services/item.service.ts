@@ -4,7 +4,7 @@ import { throwError, BehaviorSubject, Observable } from 'rxjs';
 import { catchError} from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { item } from '../models/item';
-import { Global } from 'src/assets/global';
+import { environment } from 'src/environments/environment';
 
 
 
@@ -14,10 +14,10 @@ import { Global } from 'src/assets/global';
 })
 export class ItemService {
 
-  total = new BehaviorSubject<number>(0)
-  select = new BehaviorSubject<number>(0)
-  serch = new BehaviorSubject<string>("")
-  data = new BehaviorSubject<item[]>({} as item[])
+  total$ = new BehaviorSubject<number>(0)
+  select$ = new BehaviorSubject<number>(0)
+  serch$ = new BehaviorSubject<string>("")
+  data$ = new BehaviorSubject<item[]>({} as item[])
 
   constructor(
     private httpClient: HttpClient,
@@ -26,7 +26,7 @@ export class ItemService {
 
   GetRequest():Observable<any> {
 
-    const api = Global.baseApi + location.search;
+    const api = environment.baseApi + location.search;
     return this.httpClient.get(api).pipe(catchError(this.HandlerError));
 
   }

@@ -13,7 +13,7 @@ export class DialogComponent implements OnInit {
 
     }
     ngOnInit(): void {
-        this.service.select.subscribe(data => {
+        this.service.select$.subscribe(data => {
             this.selected = data;
         })
     }

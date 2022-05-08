@@ -1,0 +1,9 @@
+<app-top></app-top>
+<mat-sidenav-container class="main-container">
+  <mat-sidenav mode='side' opened>
+    <app-sidenav></app-sidenav>
+  </mat-sidenav>
+  <mat-sidenav-content (scroll)="onScrol($event)">
+    <router-outlet name="item"></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>

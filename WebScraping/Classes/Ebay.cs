@@ -3,7 +3,6 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
 using System;
-using System.Collections;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,23 +25,20 @@ namespace WebScraping
             
             using (IWebDriver driver = new ChromeDriver(service, options))
             {
-
                 for (int i = 0; i < links.Length / 2; i++)
                 {
-                    /* try
-                     {
-                         driver.Navigate().GoToUrl((string)links[i, 0]);
-                     }
-                     catch (WebDriverException e)
-                     {
-                         await WriteLogs($"eBay Close: ---> {e.Message.Trim()} | URL:{(string)links[i, 0]}");
 
-                         driver.Close();
-                         run = false;
+                    try
+                    {
+                        driver.Navigate().GoToUrl((string)links[i, 0]);
+                    }
+                    catch (WebDriverException e)
+                    {
+                        await WriteLogs($"eBay Close: ---> {e} | URL:{(string)links[i, 0]}");
+                        driver.Close();
+                        run = false;
 
-                     }*/
-
-                    driver.Navigate().GoToUrl((string)links[i, 0]);
+                    }
 
                     int counter = 1;
                     WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(15));
@@ -53,21 +49,28 @@ namespace WebScraping
                         try
                         {
                             By selector = By.CssSelector("div[class=\"s-item__wrapper clearfix\"]");
-                            wait.Until(ExpectedConditions.ElementToBeClickable(selector));
-                            Thread.Sleep(2000);
+                            wait.Until(ExpectedConditions.ElementIsVisible(selector));
+                            IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
+                            js.ExecuteScript("document.getElementsByClassName('srp-rail__right')[0]?.remove()");
+                            js.ExecuteScript("document.getElementsByClassName('srp-rail__left')[0]?.remove()");
+                            js.ExecuteScript("document.getElementsByClassName('srp-main-below-river')[0]?.remove()");
+                            js.ExecuteScript("document.getElementsByClassName('s-answer-region s-answer-region-center-top')[0]?.remove()");
 
+                            
                             ReadOnlyCollection<IWebElement> elements = driver.FindElements(selector);
                             Parallel.ForEach(elements, async (element, stateMain) =>
                             {
+                                string link = null;
+
                                 try
                                 {
                                     IWebElement eName = element.FindElement(By.ClassName("s-item__title"));
                                     IWebElement eLink = element.FindElement(By.ClassName("s-item__link"));
                                     IWebElement eImage = element.FindElement(By.ClassName("s-item__image-img"));
                                     IWebElement ePriceWhole = element.FindElement(By.ClassName("s-item__price"));
+                                    link = eLink.GetAttribute("href");
                                     string name = RemoveSpecialCharacters((eName.Text).Replace("NEW LISTING", ""));
-                                    string link = eLink.GetAttribute("href");
-                                    link = link.Substring(0, link.IndexOf("?"));
+                                    link = link.Contains("?") ? link.Substring(0, link.IndexOf("?")) : link;
                                     string image = eImage.GetAttribute("src").Replace("225", "425");
                                     if (image.ToLower().Contains("ebaystatic.com")) { image = eImage.GetAttribute("data-src"); }
                                     string priceBruto = ePriceWhole.Text.Replace("$", "");
@@ -104,10 +107,9 @@ namespace WebScraping
 
                                     await SaveOrUpdate(save, name, link, image, price, condition, shop, type);
                                 }
-                                catch (Exception e) when (e is NoSuchElementException | e is StaleElementReferenceException | e is FormatException |
-                                                          e is WebDriverException)
+                                catch (Exception e) 
                                 {
-                                    await WriteLogs($"eBay: --->  | URL: {i} | {e.Message.Trim()}");
+                                    await WriteLogs($"\neBay: --->  | URL: {link} | {e}");
                                 }
 
 
@@ -116,11 +118,10 @@ namespace WebScraping
                         }
                         catch (WebDriverTimeoutException e)
                         {
-                            await WriteLogs($"eBay: --->  | URL: {i} | {e}");
+                            await WriteLogs($"\neBay: --->  | URL: {i} | {e}");
                         }
 
-
-                        Console.WriteLine($"\nEbay {i} | {counter} ");
+                        Console.WriteLine($"\nEbay   {i}\t{counter} ");
                         counter++;
 
                         try
@@ -129,7 +130,7 @@ namespace WebScraping
 
                             if (currentLink == driver.Url)
                             {
-                                await ScreensShot(driver, "Ebay", i, counter);
+                                await ScreensShot(driver, "Ebay", i, counter, "getElementsByClassName('s-pagination')[0]");
                                 break;
                             }
                             else
@@ -140,7 +141,7 @@ namespace WebScraping
                         }
                         catch (Exception e) when (e is WebDriverTimeoutException || e is WebDriverException)
                         {
-                            await ScreensShot(driver, "Ebay", i, counter);
+                            await ScreensShot(driver, "Ebay", i, counter, "getElementsByClassName('s-pagination')[0]");
                             break;
                         }
 

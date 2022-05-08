@@ -38,7 +38,7 @@
     </mat-slide-toggle>
     <mat-checkbox type="checkbox" color="primary" (change)="checkboxChange($event.source)"
       *ngFor="let brand of brandsList" [checked]="brandsQuery.includes(brand)" [id]="brand" class="d-block">
-      {{ToTitleCase(brand)}}
+      {{brand | titlecase}}
     </mat-checkbox>
     <button class="mt-2" mat-raised-button color="primary" *ngIf="brandsQuery.length>0 || excludesQuery.includes('brands')"
       (click)="cleanBrands()">clean</button>
@@ -71,7 +71,7 @@
     </mat-expansion-panel-header>
     <mat-checkbox type="checkbox" color="primary" (change)="checkboxChange($event.source)"
       *ngFor="let item of typesList" [checked]="typesQuery.includes(item[1])" [id]="item[0]" class="d-block">
-      {{ToTitleCase(item[0])}}
+      {{item[0] | titlecase}}
     </mat-checkbox>
     <button class="mt-2" mat-raised-button color="primary" *ngIf="typesQuery.length>0"
       (click)="cleanTypes()">clean</button>
@@ -91,7 +91,7 @@
     </mat-slide-toggle>
     <mat-checkbox type="checkbox" color="primary" (change)="checkboxChange($event.source)"
       *ngFor="let item of carriersList" [checked]="carriersQuery.includes(item)" [id]="item" class="d-block">
-      {{ToTitleCase(item)}}
+      {{item | titlecase}}
     </mat-checkbox>
     <button class="mt-2" mat-raised-button color="primary"
       *ngIf="carriersQuery.length>0 || excludesQuery.includes('carriers')" (click)="cleanCarriers()">clean</button>

@@ -3,6 +3,7 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using WebScraping.Classes;
@@ -12,7 +13,7 @@ using WebScraping.Classes;
 namespace WebScraping
 {
     internal class Amazon : Method, IRun
-    {
+    {           
         public object[,] links =
         {
             {"https://www.amazon.com/s?k=Recording+Microphones+%26+Accessories&i=mi&rh=n%3A11974521%2Cp_n_specials_match%3A21213697011%2Cp_72%3A1248939011%2Cp_n_condition-type%3A404228011&dc=&c=ts&qid=1648604195&rnid=386685011&ts_id=11974521&ref=sr_nr_p_36_5&low-price=&high-price=100",6},
@@ -48,21 +49,9 @@ namespace WebScraping
                     int counter = 1;
                     bool run = true;
 
-                    /*    try
-                        {
-                            driver.Navigate().GoToUrl((string)links[i, 0]);
-                        }
-                        catch (WebDriverException e)
-                        {
-                            await WriteLogs($"BAD URL: ---> {e.Message.Trim()} | url:{(string)links[i, 0]}");
-                            run = false;
-                            driver.Quit();
-                        }*/
-
-
                     driver.Navigate().GoToUrl((string)links[i, 0]);
 
-                    WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(20));
+                    WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
                     WebDriverWait wait2 = new WebDriverWait(driver, TimeSpan.FromSeconds(2));
 
                     while (run)
@@ -122,23 +111,17 @@ namespace WebScraping
                                 {
                                     if (!e.Message.Contains("a-price-whole"))
                                     {
-                                        await WriteLogs($"Amazon: --->  | URL: {i} | {e.Message.Trim()}");
+                                        await WriteLogs($"Amazon: --->  | URL: {i} | {e}");
                                     }
 
                                 }
-                                /*catch (EntityCommandExecutionException)
-                                {
-                                    Console.WriteLine(error);
-                                }*/
-
                             });
                         }
                         catch (WebDriverTimeoutException e)
                         {
                             await ScreensShot(driver, "Error", i, counter);
-                            await WriteLogs($"Amazon: --->  | URL: {i} | {e.Message.Trim()}");
+                            await WriteLogs($"Amazon: --->  | URL: {i} | {e}");
                         }
-
 
                         try
                         {
@@ -147,11 +130,13 @@ namespace WebScraping
                         }
                         catch (WebDriverTimeoutException)
                         {
-                            await ScreensShot(driver, "Amazon", i, counter);
+                            
+                            var by = "getElementsByClassName('s-pagination-item s-pagination-next s-pagination-button s-pagination-separator')[0]";
+                            await ScreensShot(driver, "Amazon", i, counter, by);
                             break;
                         }
 
-                        Console.WriteLine($"\nAmazon {i} | {counter} ");
+                        Console.WriteLine($"\nAmazon {i}\t{counter} ");
                         counter++;
 
                     }

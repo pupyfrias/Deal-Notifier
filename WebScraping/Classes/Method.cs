@@ -31,7 +31,8 @@ namespace WebScraping.Classes
                 options.AddArguments("disable-infobars", "--no-sandbox", "--disable-dev-shm-usage", " --lang=en-us", $"--user-agent={userAgent}",
                       "--disable-gpu", "--disable-extensions", "--allow-running-insecure-content", "--ignore-certificate-errors",
                       "--window-size=1920,1080", "--disable-browser-side-navigation", "--headless", "--log-level=3", "--silent"
-                      );
+                      , "--enable-features=NetworkService,NetworkServiceInProcess");
+
                 options.AddExcludedArgument("enable-automation");
 
                 ChromeDriverService service = ChromeDriverService.CreateDefaultService();
@@ -67,9 +68,10 @@ namespace WebScraping.Classes
 
                 if (data != null)
                 {
-                    decimal oldPrice = (decimal)((decimal)data.OLD_PRICE > 0 ? data.OLD_PRICE : data.PRICE);
+                    decimal oldPrice = (decimal)((decimal)data.PRICE);
                     decimal saving = 0, saving_percent = 0;
                     bool validate = false;
+
 
                     if (oldPrice > price)
                     {
@@ -109,7 +111,7 @@ namespace WebScraping.Classes
             return Regex.Replace(str, "[,.+'\":;]", "", RegexOptions.Compiled);
         }
 
-        public static async Task ScreensShot(IWebDriver driver, string shop, int link, int counter)
+        public static async Task ScreensShot(IWebDriver driver, string shop, int link, int counter, string by)
         {
             await Task.Run(async () =>
            {
@@ -120,16 +122,41 @@ namespace WebScraping.Classes
 
                try
                {
+                   IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
+                   js.ExecuteScript($"document.{by}?.scrollIntoView();"); 
                    ((ITakesScreenshot)driver).GetScreenshot().SaveAsFile($"{path}/{shop}/{link}_{counter - 1}.png", ScreenshotImageFormat.Png);
                }
                catch (WebDriverException e)
                {
-                   await WriteLogs($"ScreensShot ----> {e.Message}");
+                   await WriteLogs($"ScreensShot ----> {e}");
                }
 
            });
 
         }
+
+        public static async Task ScreensShot(IWebDriver driver, string shop, int link, int counter)
+        {
+            await Task.Run(async () =>
+            {
+                if (!Directory.Exists($"{path}/{shop}"))
+                {
+                    Directory.CreateDirectory($"{path}/{shop}");
+                }
+
+                try
+                {
+                    ((ITakesScreenshot)driver).GetScreenshot().SaveAsFile($"{path}/{shop}/{link}_{counter - 1}.png", ScreenshotImageFormat.Png);
+                }
+                catch (WebDriverException e)
+                {
+                    await WriteLogs($"ScreensShot ----> {e}");
+                }
+
+            });
+
+        }
+
 
         public async static Task WriteLogs(string log)
         {

@@ -31,8 +31,7 @@ namespace WebScraping
                     try
                     {
                         By selector = By.CssSelector("div[class='product-tile restored']");
-                        wait.Until(ExpectedConditions.ElementToBeClickable(selector));
-                        Thread.Sleep(2000);
+                        wait.Until(ExpectedConditions.ElementIsVisible(selector));
 
                         ReadOnlyCollection<IWebElement> elements = driver.FindElements(selector);
                         Parallel.ForEach(elements, async (element) =>
@@ -81,7 +80,7 @@ namespace WebScraping
                             }
                             catch (Exception e) when (e is NoSuchElementException | e is StaleElementReferenceException)
                             {
-                                await WriteLogs($"TheStore: ---> {e.Message.Trim()}");
+                                await WriteLogs($"\nTheStore: ---> {e}");
                             }
 
                         });
@@ -92,20 +91,20 @@ namespace WebScraping
                     }
                     catch (StaleElementReferenceException e)
                     {
-                        await WriteLogs($"TheStore: ---> {e.Message.Trim()}");
+                        await WriteLogs($"\nTheStore: ---> {e}");
                     }
 
 
-                    Console.WriteLine($"\nThe Store {counter}");
+                    Console.WriteLine($"\nThe Store\t{counter}");
                     counter++;
                     try
                     {
                         if (removeElement)
                         {
                             IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
-                            try { js.ExecuteScript("document.getElementsByClassName('acsb-trigger acsb-bg-lead acsb-trigger-size-medium acsb-trigger-position-x-right acsb-trigger-position-y-bottom acsb-ready').forEach(e=> e.remove())"); } catch (Exception) { }
-                            try { js.ExecuteScript("document.getElementById('cc-button').remove()"); } catch (Exception) { }
-                            try { js.ExecuteScript("document.getElementsByClassName('hello-bar').forEach(e=> e.remove())"); } catch (Exception) { }
+                            js.ExecuteScript("document.getElementsByClassName('acsb-trigger acsb-bg-lead acsb-trigger-size-medium acsb-trigger-position-x-right acsb-trigger-position-y-bottom acsb-ready')[0]?.remove()");
+                            js.ExecuteScript("document.getElementById('cc-button')?.remove()"); 
+                            js.ExecuteScript("document.getElementsByClassName('hello-bar')[0]?.remove()");
                             removeElement = false;
                         }
                         wait.Until(ExpectedConditions.ElementToBeClickable(By.CssSelector("button[class='round-button round-button__next']"))).Click();
@@ -113,7 +112,7 @@ namespace WebScraping
 
                     catch (WebDriverTimeoutException)
                     {
-                        await ScreensShot(driver, "TheStore", 0, counter);
+                        await ScreensShot(driver, "TheStore", 0, counter, " getElementsByClassName('pagination is-centered')[0]");
                         driver.Quit();
                         break;
                     }

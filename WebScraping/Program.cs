@@ -9,7 +9,7 @@ using WebScraping.Classes;
 
 namespace WebScraping
 {
-    class Program : Method
+   class Program : Method
     {
         static async Task Main(string[] args)
         {
@@ -44,7 +44,7 @@ namespace WebScraping
                 UpdateItems();
 
                 SystemSounds.Asterisk.Play();
-                await WriteLogs("Done");
+                await WriteLogs("Done\a");
 
 
             }
