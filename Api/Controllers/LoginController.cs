@@ -37,12 +37,12 @@ namespace Api.Controllers
 
             if (user == null)
             {
-                return NotFound("Usuario no Existe");
+                return NotFound("User doesn't exist");
             }
 
             if (data.Password != user.Password)
             {
-                return Forbid();
+                return new ObjectResult("Invalid Password") { StatusCode = 403 };
             }
             else
             {
@@ -55,7 +55,7 @@ namespace Api.Controllers
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
                     Subject = claims,
-                    Expires = DateTime.UtcNow.AddMinutes(2),
+                    Expires = DateTime.UtcNow.AddMinutes(30),
                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
 
                 };

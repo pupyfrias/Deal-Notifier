@@ -14,7 +14,7 @@ import { Observable } from 'rxjs';
 export class ItemsResolver implements Resolve<Observable<any>> {
   constructor(private service: ItemService) {}
 
-  resolve() {
-    return this.service.GetRequest();
+  async resolve() {
+    return await this.service.GetRequest();
   }
 }

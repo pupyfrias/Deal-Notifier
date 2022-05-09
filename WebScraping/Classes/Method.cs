@@ -19,7 +19,7 @@ namespace WebScraping.Classes
         public static ArrayList checkList = new ArrayList();
         public static List<string> blackList = new List<string>();
         public static string[] conditionList = { "renovado", "renewed", "reacondicionado", "refurbished", "restaurado", "restored" };
-        public static string[] filterList = { "tracfone", "total wireless", "net10", "simple mobile", "straight talk" };
+        public static string[] filterList = { "tracfone", "total wireless", "net10", "simple mobile", "straight talk", "family mobile" };
         public static string[] includeList = { };//{ "huawei", "lg ", "moto", "xiaomi", "iphone", "samsung" };
 
         public async static Task Selenium(string web)
@@ -31,7 +31,7 @@ namespace WebScraping.Classes
                 options.AddArguments("disable-infobars", "--no-sandbox", "--disable-dev-shm-usage", " --lang=en-us", $"--user-agent={userAgent}",
                       "--disable-gpu", "--disable-extensions", "--allow-running-insecure-content", "--ignore-certificate-errors",
                       "--window-size=1920,1080", "--disable-browser-side-navigation", "--headless", "--log-level=3", "--silent"
-                      , "--enable-features=NetworkService,NetworkServiceInProcess");
+                      ,"--enable-features=NetworkService,NetworkServiceInProcess");
 
                 options.AddExcludedArgument("enable-automation");
 

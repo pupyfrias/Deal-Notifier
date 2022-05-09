@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { query } from '@angular/animations';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  OnInit,
+  Query,
+} from '@angular/core';
 import { ActivatedRoute, Router, NavigationStart } from '@angular/router';
 import { ItemService } from '../../services/item.service';
 
@@ -6,9 +14,9 @@ import { ItemService } from '../../services/item.service';
   selector: 'app-sidenav',
   templateUrl: './sidenav.component.html',
   styleUrls: ['./sidenav.component.css'],
-  //changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class sidenavComponent implements OnInit {
+export class sidenavComponent implements OnInit , OnDestroy{
   public checkList: CheckeBoxes[] = [];
   public brandsQuery: string[] = [];
   public storagesQuery: string[] = [];
@@ -21,10 +29,11 @@ export class sidenavComponent implements OnInit {
   public maxPrice: string;
   public minPrice: string;
   private queryParams: URLSearchParams = new URLSearchParams();
-  public orderByNow: any;
+  public orderByNow: any = '';
   public isChecked: boolean = false;
   panelOpenState = false;
   brandsExpande = false;
+  private subscription: Subscription;
 
   public orderBy: Array<any> = [
     ['price-low-high', 'Low-High'],
@@ -74,67 +83,62 @@ export class sidenavComponent implements OnInit {
     private router: Router,
     private service: ItemService
   ) {}
-
+ 
   ngOnInit(): void {
-    
-    this.router.events.subscribe((event) => {
-      if (event instanceof NavigationStart) {
-        const { url } = event;
-        this.queryParams = new URLSearchParams(
-          decodeURIComponent(url).replace('/', '')
-        );
-        this.brandsQuery =
-          this.queryParams.get('brands') != null
-            ? this.queryParams.get('brands')?.split(',')!
-            : [];
-        this.storagesQuery =
-          this.queryParams.get('storages') != null
-            ? this.queryParams.get('storages')?.split(',')!
-            : [];
-        this.shopsQuery =
-          this.queryParams.get('shops') != null
-            ? this.queryParams.get('shops')?.split(',')!
-            : [];
-        this.conditionsQuery =
-          this.queryParams.get('condition') != null
-            ? this.queryParams.get('condition')?.split(',')!
-            : [];
-        this.typesQuery =
-          this.queryParams.get('types') != null
-            ? this.queryParams.get('types')?.split(',')!
-            : [];
-        this.carriersQuery =
-          this.queryParams.get('carriers') != null
-            ? this.queryParams.get('carriers')?.split(',')!
-            : [];
-        this.excludesQuery =
-          this.queryParams.get('excludes') != null
-            ? this.queryParams.get('excludes')?.split(',')!
-            : [];
-        this.maxPrice =
-          this.queryParams.get('max') != null
-            ? this.queryParams.get('max')!
-            : '';
-        this.minPrice =
-          this.queryParams.get('min') != null
-            ? this.queryParams.get('min')!
-            : '';
-        this.offerExpand = this.queryParams.get('offer') != null ? true : false;
-        this.service.serch$.next(
-          this.queryParams.get('search') != null
-            ? this.queryParams.get('search')!
-            : ''
-        );
-        this.orderByNow =
-          this.queryParams.get('order_by') != null
-            ? this.queryParams.get('order_by')
-            : '';
+    this.subscription = this.route.queryParams.subscribe((query) => {
+      this.queryParams = new URLSearchParams(query);
 
-        this.brandsExpande = this.brandsQuery.length > 0;
-        
-      }
-      
+      this.brandsQuery =
+        this.queryParams.get('brands') != null
+          ? this.queryParams.get('brands')?.split(',')!
+          : [];
+      this.storagesQuery =
+        this.queryParams.get('storages') != null
+          ? this.queryParams.get('storages')?.split(',')!
+          : [];
+      this.shopsQuery =
+        this.queryParams.get('shops') != null
+          ? this.queryParams.get('shops')?.split(',')!
+          : [];
+      this.conditionsQuery =
+        this.queryParams.get('condition') != null
+          ? this.queryParams.get('condition')?.split(',')!
+          : [];
+      this.typesQuery =
+        this.queryParams.get('types') != null
+          ? this.queryParams.get('types')?.split(',')!
+          : [];
+      this.carriersQuery =
+        this.queryParams.get('carriers') != null
+          ? this.queryParams.get('carriers')?.split(',')!
+          : [];
+      this.excludesQuery =
+        this.queryParams.get('excludes') != null
+          ? this.queryParams.get('excludes')?.split(',')!
+          : [];
+      this.maxPrice =
+        this.queryParams.get('max') != null ? this.queryParams.get('max')! : '';
+      this.minPrice =
+        this.queryParams.get('min') != null ? this.queryParams.get('min')! : '';
+      this.offerExpand = this.queryParams.get('offer') != null ? true : false;
+      this.service.serch$.next(
+        this.queryParams.get('search') != null
+          ? this.queryParams.get('search')!
+          : ''
+      );
+      this.orderByNow =
+        this.queryParams.get('order_by') != null
+          ? this.queryParams.get('order_by')
+          : '';
+
+      this.brandsExpande = this.brandsQuery.length > 0;
     });
+  }
+
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+    console.log('destroy', 'sidenav')
   }
 
   //#region Cleaning
@@ -193,7 +197,7 @@ export class sidenavComponent implements OnInit {
   // }
   //#endregion
 
-  //#region  Offer
+
   Offer(e: any): void {
     if (e.checked === true) {
       this.router.navigate([], {
@@ -206,16 +210,16 @@ export class sidenavComponent implements OnInit {
       });
     }
   }
-  //#endregion
+ 
 
-  //#region CleanAll
+
   CleanAll(): void {
     this.service.select$.next(0);
     this.router.navigate([], {
       relativeTo: this.route,
     });
   }
-  //#endregion
+
 
   //#region Order By Change
   OrderByChange(e: any): void {

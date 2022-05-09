@@ -15,15 +15,13 @@ export class SpinerInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     this.spinner.show();
-    
     const {method} = request;
+  
     return next.handle(request)
     .pipe(finalize(()=> {
-
       if(method != "DELETE"){
         this.spinner.hide()
       }
-      
     }));
   }
 }

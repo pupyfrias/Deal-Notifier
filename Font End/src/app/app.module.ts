@@ -1,3 +1,4 @@
+import { TokenInterceptor } from './interceptors/token.interceptor';
 import { SpinerInterceptor } from './interceptors/spiner.interceptor';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
@@ -75,6 +76,7 @@ import { ContainerComponent } from './components/container/container.component';
   exports: [sidenavComponent],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: SpinerInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
   ],
   bootstrap: [AppComponent],
 })

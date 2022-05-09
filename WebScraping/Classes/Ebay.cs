@@ -4,7 +4,6 @@ using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
 using System;
 using System.Collections.ObjectModel;
-using System.Threading;
 using System.Threading.Tasks;
 using WebScraping.Classes;
 
@@ -56,7 +55,6 @@ namespace WebScraping
                             js.ExecuteScript("document.getElementsByClassName('srp-main-below-river')[0]?.remove()");
                             js.ExecuteScript("document.getElementsByClassName('s-answer-region s-answer-region-center-top')[0]?.remove()");
 
-                            
                             ReadOnlyCollection<IWebElement> elements = driver.FindElements(selector);
                             Parallel.ForEach(elements, async (element, stateMain) =>
                             {
@@ -70,7 +68,7 @@ namespace WebScraping
                                     IWebElement ePriceWhole = element.FindElement(By.ClassName("s-item__price"));
                                     link = eLink.GetAttribute("href");
                                     string name = RemoveSpecialCharacters((eName.Text).Replace("NEW LISTING", ""));
-                                    link = link.Contains("?") ? link.Substring(0, link.IndexOf("?")) : link;
+                                    link = link.Substring(0, link.IndexOf("?"));
                                     string image = eImage.GetAttribute("src").Replace("225", "425");
                                     if (image.ToLower().Contains("ebaystatic.com")) { image = eImage.GetAttribute("data-src"); }
                                     string priceBruto = ePriceWhole.Text.Replace("$", "");

@@ -1,1 +1,57 @@
-<p>login works!</p>
+
+<p>
+    <mat-toolbar color="primary">
+      <span>Login</span>
+    </mat-toolbar>
+  </p>
+<div class="container-center">
+  <form [formGroup]="formGroup">
+    <div>
+      <mat-form-field appearance="outline" floatLabel="always" ngClass="w-100">
+        <mat-label>Username</mat-label>
+        <input
+          matInput
+          type="text"
+          formControlName="user_name"
+          placeholder="username.."
+        />
+        <mat-icon color="primary" matPrefix>account_circle</mat-icon>
+        <mat-hint slot="end"
+          >{{ user_name?.value.toString()?.length || 0 }}/11</mat-hint
+        >
+      </mat-form-field>
+    </div>
+    <div>
+      <mat-form-field appearance="outline" floatLabel="always">
+        <mat-label>Contraseña</mat-label>
+        <input
+          matInput
+          [type]="hide ? 'password' : 'text'"
+          formControlName="password"
+          size="100"
+        />
+        <mat-icon color="primary" matPrefix>key</mat-icon>
+        <button
+          mat-icon-button
+          matSuffix
+          (click)="hide = !hide"
+          [attr.aria-label]="'Hide password'"
+          [attr.aria-pressed]="hide"
+        >
+          <mat-icon color="primary">{{ hide ? "visibility_off" : "visibility" }}</mat-icon>
+        </button>
+        <mat-hint slot="end">{{ password?.value?.length || 0 }}/30</mat-hint>
+      </mat-form-field>
+    </div>
+
+    <button
+      mat-raised-button
+      [disabled]="formGroup.invalid"
+      (click)="Submit()"
+      color="primary"
+      ngClass="w-50"
+    >
+      Log IN
+    </button>
+  </form>
+</div>

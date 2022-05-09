@@ -21,7 +21,6 @@ namespace WebScraping
             using (IWebDriver driver = new ChromeDriver(service, options))
             {
                 driver.Navigate().GoToUrl((string)links[0, 0]);
-                bool removeElement = true;
                 int counter = 1;
                 WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(15));
 
@@ -32,6 +31,13 @@ namespace WebScraping
                     {
                         By selector = By.CssSelector("div[class='product-tile restored']");
                         wait.Until(ExpectedConditions.ElementIsVisible(selector));
+
+                        IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
+                        js.ExecuteScript("document.getElementsByClassName('acsb-trigger acsb-bg-lead acsb-trigger-size-medium acsb-trigger-position-x-right acsb-trigger-position-y-bottom acsb-ready')[0]?.remove()");
+                        js.ExecuteScript("document.getElementById('cc-button')?.remove()");
+                        js.ExecuteScript("document.getElementsByClassName('hello-bar')[0]?.remove()");
+                        js.ExecuteScript($"document.getElementsByClassName('pagination is-centered')[0]?.scrollIntoView();");
+                        Thread.Sleep(2000);
 
                         ReadOnlyCollection<IWebElement> elements = driver.FindElements(selector);
                         Parallel.ForEach(elements, async (element) =>
@@ -98,21 +104,13 @@ namespace WebScraping
                     Console.WriteLine($"\nThe Store\t{counter}");
                     counter++;
                     try
-                    {
-                        if (removeElement)
-                        {
-                            IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
-                            js.ExecuteScript("document.getElementsByClassName('acsb-trigger acsb-bg-lead acsb-trigger-size-medium acsb-trigger-position-x-right acsb-trigger-position-y-bottom acsb-ready')[0]?.remove()");
-                            js.ExecuteScript("document.getElementById('cc-button')?.remove()"); 
-                            js.ExecuteScript("document.getElementsByClassName('hello-bar')[0]?.remove()");
-                            removeElement = false;
-                        }
+                    { 
                         wait.Until(ExpectedConditions.ElementToBeClickable(By.CssSelector("button[class='round-button round-button__next']"))).Click();
                     }
 
                     catch (WebDriverTimeoutException)
                     {
-                        await ScreensShot(driver, "TheStore", 0, counter, " getElementsByClassName('pagination is-centered')[0]");
+                        await ScreensShot(driver, "TheStore", 0, counter, "getElementsByClassName('pagination is-centered')[0]");
                         driver.Quit();
                         break;
                     }

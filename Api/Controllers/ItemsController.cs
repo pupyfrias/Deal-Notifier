@@ -1,4 +1,5 @@
 ﻿using Api.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,9 +10,10 @@ using System.Threading.Tasks;
 
 namespace Api.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    
     public class ItemsController : ControllerBase
     {
         private readonly contextItem _context;
@@ -23,7 +25,6 @@ namespace Api.Controllers
 
         // GET: api/Items
         [HttpGet]
-        [AllowAnonymous]
         public async Task<List<Item>> GetItem(string brands, string storages, string search, string max, string min,
             string order_by, string offer, string types, string condition, string carriers, string excludes, string shops)
         {
@@ -155,7 +156,6 @@ namespace Api.Controllers
 
         // GET: api/Items/5
         [HttpGet("{id}")]
-        [AllowAnonymous]
         public async Task<ActionResult<object>> GetItem(int id)
         {
             var item = await Task.Run(() => _context.Item.FromSqlRaw($"EXEC SP_GET_ONE @ID={id}").AsEnumerable().FirstOrDefault());
@@ -214,7 +214,6 @@ namespace Api.Controllers
 
         // DELETE: api/Items/5
         [HttpDelete("{id}")]
-        [AllowAnonymous]
         public async Task<ActionResult<Item>> DeleteItem(int id)
         {
             var item = await Task.Run(() => _context.Item.FromSqlRaw($"EXEC SP_GET_ONE @ID={id}").AsEnumerable().FirstOrDefault());
@@ -237,4 +236,7 @@ namespace Api.Controllers
             return _context.Item.Any(e => e.id == id);
         }
     }
+
+
+    
 }
