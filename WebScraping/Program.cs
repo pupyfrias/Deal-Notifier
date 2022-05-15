@@ -1,4 +1,5 @@
 ﻿using DataBase;
+using OpenQA.Selenium.Chrome;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,30 +14,23 @@ namespace WebScraping
     {
         static async Task Main(string[] args)
         {
-            using (WebScrapingEntities context = new WebScrapingEntities())
-            {
-                context.Configuration.EnsureTransactionsForFunctionsAndCommands = false;
-                blackList = context.SP_GET_BLACK_LIST().ToList();
-                Console.WriteLine("Loaded black list\n");
-                CreateLogDir();
-            }
+            LoadBlackList();
 
             try
             {
-                var task1 = Task.Run(async () =>
+                var task1 = Task.Run(() =>
                 {
-                    await Selenium("amazon");
+                     Selenium("amazon");
                 });
 
-
-                var task2 = Task.Run(async () =>
+                var task2 = Task.Run(() =>
                 {
-                    await Selenium("thestore");
+                    Selenium("thestore");
                 });
 
-                var task3 = Task.Run(async () =>
+                var task3 = Task.Run(() =>
                 {
-                    await Selenium("eBay");
+                    Selenium("eBay");
 
                 });
 
@@ -44,15 +38,12 @@ namespace WebScraping
                 UpdateItems();
 
                 SystemSounds.Asterisk.Play();
-                await WriteLogs("Done\a");
-
-
+                WriteLogs("Done\a");
             }
             catch (Exception e)
             {
                 UpdateItems();
-                await WriteLogs($"\nERROR ----> {e}");
-
+                WriteLogs($"\nERROR ----> {e}");
             }
 
         }
@@ -85,6 +76,16 @@ namespace WebScraping
             });
         }
 
+        static void LoadBlackList()
+        {
+            using (WebScrapingEntities context = new WebScrapingEntities())
+            {
+                context.Configuration.EnsureTransactionsForFunctionsAndCommands = false;
+                blackList = context.SP_GET_BLACK_LIST().ToList();
+                Console.WriteLine("Loaded black list\n");
+                CreateLogDir();
+            }
+        }
 
 
     }

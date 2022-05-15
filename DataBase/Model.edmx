@@ -33,9 +33,6 @@
           <Parameter Name="TYPE" Type="int" Mode="In" />
         </Function>
         <Function Name="SP_GET_BLACK_LIST" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
-        <Function Name="SP_GET_ONE" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="ID" Type="varchar(max)" Mode="In" />
-        </Function>
         <Function Name="SP_GetAllLinks" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="SP_UPDATE_PRICE" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ID" Type="int" Mode="In" />
@@ -44,6 +41,7 @@
           <Parameter Name="SAVNG" Type="decimal" Mode="In" />
           <Parameter Name="SAVNG_PERCENT" Type="decimal" Mode="In" />
           <Parameter Name="NAME" Type="varchar(max)" Mode="In" />
+          <Parameter Name="IMAGE" Type="varchar(max)" Mode="In" />
         </Function>
         <Function Name="SP_UPDATE_STATUS" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ID" Type="int" Mode="In" />
@@ -87,9 +85,6 @@
             <Parameter Name="TYPE" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="SP_GET_BLACK_LIST" ReturnType="Collection(String)" />
-          <FunctionImport Name="SP_GET_ONE" ReturnType="Collection(WebScrapingModel.SP_GET_ONE_Result)">
-            <Parameter Name="ID" Mode="In" Type="String" />
-          </FunctionImport>
           <FunctionImport Name="SP_GetAllLinks" ReturnType="Collection(WebScrapingModel.SP_GetAllLinks_Result)" />
           <FunctionImport Name="SP_UPDATE_PRICE">
             <Parameter Name="ID" Mode="In" Type="Int32" />
@@ -98,27 +93,13 @@
             <Parameter Name="SAVNG" Mode="In" Type="Decimal" />
             <Parameter Name="SAVNG_PERCENT" Mode="In" Type="Decimal" />
             <Parameter Name="NAME" Mode="In" Type="String" />
+            <Parameter Name="IMAGE" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="SP_UPDATE_STATUS">
             <Parameter Name="ID" Mode="In" Type="Int32" />
             <Parameter Name="STATUS" Mode="In" Type="Int32" />
           </FunctionImport>
         </EntityContainer>
-        <ComplexType Name="SP_GET_ONE_Result">
-          <Property Type="Int32" Name="ID" Nullable="false" />
-          <Property Type="String" Name="NAME" Nullable="true" />
-          <Property Type="Decimal" Name="PRICE" Nullable="true" Precision="13" Scale="2" />
-          <Property Type="Decimal" Name="OLD_PRICE" Nullable="true" Precision="13" Scale="2" />
-          <Property Type="Decimal" Name="SAVING" Nullable="true" Precision="13" Scale="2" />
-          <Property Type="String" Name="LINK" Nullable="true" MaxLength="450" />
-          <Property Type="Int32" Name="CONDITION" Nullable="true" />
-          <Property Type="Int32" Name="STATUS" Nullable="true" />
-          <Property Type="Int32" Name="SHOP" Nullable="true" />
-          <Property Type="String" Name="IMAGE" Nullable="true" />
-          <Property Type="DateTime" Name="DATE_PRICE_CHANGE" Nullable="true" Precision="23" />
-          <Property Type="Decimal" Name="SAVING_PERCENT" Nullable="true" Precision="13" Scale="2" />
-          <Property Type="Int32" Name="TYPE" Nullable="true" />
-        </ComplexType>
         <ComplexType Name="SP_GetAllLinks_Result">
           <Property Type="Int32" Name="id" Nullable="false" />
           <Property Type="String" Name="link" Nullable="true" MaxLength="450" />
@@ -150,25 +131,6 @@
           </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="SP_ADD" FunctionName="WebScrapingModel.Store.SP_ADD" />
           <FunctionImportMapping FunctionImportName="SP_GET_BLACK_LIST" FunctionName="WebScrapingModel.Store.SP_GET_BLACK_LIST" />
-          <FunctionImportMapping FunctionImportName="SP_GET_ONE" FunctionName="WebScrapingModel.Store.SP_GET_ONE">
-            <ResultMapping>
-              <ComplexTypeMapping TypeName="WebScrapingModel.SP_GET_ONE_Result">
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="NAME" ColumnName="NAME" />
-                <ScalarProperty Name="PRICE" ColumnName="PRICE" />
-                <ScalarProperty Name="OLD_PRICE" ColumnName="OLD_PRICE" />
-                <ScalarProperty Name="SAVING" ColumnName="SAVING" />
-                <ScalarProperty Name="LINK" ColumnName="LINK" />
-                <ScalarProperty Name="CONDITION" ColumnName="CONDITION" />
-                <ScalarProperty Name="STATUS" ColumnName="STATUS" />
-                <ScalarProperty Name="SHOP" ColumnName="SHOP" />
-                <ScalarProperty Name="IMAGE" ColumnName="IMAGE" />
-                <ScalarProperty Name="DATE_PRICE_CHANGE" ColumnName="DATE_PRICE_CHANGE" />
-                <ScalarProperty Name="SAVING_PERCENT" ColumnName="SAVING_PERCENT" />
-                <ScalarProperty Name="TYPE" ColumnName="TYPE" />
-              </ComplexTypeMapping>
-            </ResultMapping>
-          </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="SP_GetAllLinks" FunctionName="WebScrapingModel.Store.SP_GetAllLinks">
             <ResultMapping>
               <ComplexTypeMapping TypeName="WebScrapingModel.SP_GetAllLinks_Result">

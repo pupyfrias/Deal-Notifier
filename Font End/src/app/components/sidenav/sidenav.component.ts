@@ -90,31 +90,31 @@ export class sidenavComponent implements OnInit , OnDestroy{
 
       this.brandsQuery =
         this.queryParams.get('brands') != null
-          ? this.queryParams.get('brands')?.split(',')!
+          ? this.queryParams.get('brands')?.split('%2C')!
           : [];
       this.storagesQuery =
         this.queryParams.get('storages') != null
-          ? this.queryParams.get('storages')?.split(',')!
+          ? this.queryParams.get('storages')?.split('%2C')!
           : [];
       this.shopsQuery =
         this.queryParams.get('shops') != null
-          ? this.queryParams.get('shops')?.split(',')!
+          ? this.queryParams.get('shops')?.split('%2C')!
           : [];
       this.conditionsQuery =
         this.queryParams.get('condition') != null
-          ? this.queryParams.get('condition')?.split(',')!
+          ? this.queryParams.get('condition')?.split('%2C')!
           : [];
       this.typesQuery =
         this.queryParams.get('types') != null
-          ? this.queryParams.get('types')?.split(',')!
+          ? this.queryParams.get('types')?.split('%2C')!
           : [];
       this.carriersQuery =
         this.queryParams.get('carriers') != null
-          ? this.queryParams.get('carriers')?.split(',')!
+          ? this.queryParams.get('carriers')?.split('%2C')!
           : [];
       this.excludesQuery =
         this.queryParams.get('excludes') != null
-          ? this.queryParams.get('excludes')?.split(',')!
+          ? this.queryParams.get('excludes')?.split('%2C')!
           : [];
       this.maxPrice =
         this.queryParams.get('max') != null ? this.queryParams.get('max')! : '';
@@ -131,7 +131,8 @@ export class sidenavComponent implements OnInit , OnDestroy{
           ? this.queryParams.get('order_by')
           : '';
 
-      this.brandsExpande = this.brandsQuery.length > 0;
+      //this.brandsExpande = this.brandsQuery.length > 0;
+   
     });
   }
 
@@ -183,59 +184,40 @@ export class sidenavComponent implements OnInit , OnDestroy{
     this.queryParams.delete('max');
     this.SettingsNavigation();
   }
-  // cleanShop(){
-  //   this.shopsQuery = [];
-  //   this.SettingsNavigation();
-  // }
-  // cleanShop(){
-  //   this.shopsQuery = [];
-  //   this.SettingsNavigation();
-  // }
-  // cleanShop(){
-  //   this.shopsQuery = [];
-  //   this.SettingsNavigation();
-  // }
-  //#endregion
-
-
-  Offer(e: any): void {
-    if (e.checked === true) {
-      this.router.navigate([], {
-        relativeTo: this.route,
-        queryParams: { offer: 'true' },
-      });
-    } else {
-      this.router.navigate([], {
-        relativeTo: this.route,
-      });
-    }
-  }
- 
 
 
   CleanAll(): void {
     this.service.select$.next(0);
-    this.router.navigate([], {
-      relativeTo: this.route,
-    });
+    this.router.navigate([]);
+
   }
 
 
-  //#region Order By Change
+
+ 
+  //#endregion
+
+  Offer(e: any): void {
+    
+      this.router.navigate([], {
+        queryParams: { offer: e.value },
+      });
+    
+    }
+  
+
   OrderByChange(e: any): void {
     this.queryParams.set('order_by', e.value);
     this.SettingsNavigation();
   }
-  //#endregion
 
-  //#region DeleteElement
   DeleteElement(category: string[], data: string): void {
     const index = category.indexOf(data, 0);
     if (index > -1) {
       category.splice(index, 1);
     }
   }
-  //#endregion
+
 
   //#region Exclude
   exclude(e: any): void {
@@ -257,9 +239,8 @@ export class sidenavComponent implements OnInit , OnDestroy{
 
     this.SettingsNavigation();
   }
-  //#endregion
+ 
 
-  //#region  Price Change
   priceChange(e: any): void {
     //MAXIMUS
     if (e.max.value === undefined || e.max.value.length === 0) {
@@ -276,9 +257,8 @@ export class sidenavComponent implements OnInit , OnDestroy{
 
     this.SettingsNavigation();
   }
-  //#endregion
 
-  //#region Setting Query Params
+
   settingQueryParams(
     params: string,
     checked: boolean,
@@ -290,7 +270,6 @@ export class sidenavComponent implements OnInit , OnDestroy{
       this.DeleteElement(category, params);
     }
   }
-  //#endregion
 
   //#region Checkbox Change
   checkboxChange(e: any): void {
@@ -439,7 +418,6 @@ export class sidenavComponent implements OnInit , OnDestroy{
   }
   //#endregion
 
-  //#region Settings Navigation
   SettingsNavigation() {
     let queryJson;
     const listParams = [
@@ -487,7 +465,6 @@ export class sidenavComponent implements OnInit , OnDestroy{
     //SCROLL TO UP
     document.querySelector('mat-sidenav-content')?.scroll(0, 0);
   }
-  //#endregion
 }
 
 class CheckeBoxes {

@@ -28,9 +28,9 @@ namespace Api.Controllers
         public async Task<List<Item>> GetItem(string brands, string storages, string search, string max, string min,
             string order_by, string offer, string types, string condition, string carriers, string excludes, string shops)
         {
-            string listBrands = brands != null ? brands.Replace("%2C", @"* "" or """) : null;
-            string listStorages = storages != null ? storages.Replace("%2C", @"* "" or """).Replace("%2B", " ").Replace("+", @"* "" and """) : null;
-            string listCarriers = carriers != null ? carriers.Replace("%2C", @"* "" or """).Replace("%2B", " ").Replace("+", @"* "" and """) : null;
+            string listBrands = brands?.Replace("%2C", @"* "" or """);
+            string listStorages = storages?.Replace("%2C", @"* "" or """).Replace("%2B", " ").Replace("+", @"* "" and """);
+            string listCarriers = carriers?.Replace("%2C", @"* "" or """).Replace("%2B", " ").Replace("+", @"* "" and """);
             string listTypes = types != null ? " and (type= ''" + types.Replace("%2C", "'' or type= ''") + "'')" : "";
             string listShops = shops != null ? " and (shop= ''" + shops.Replace("%2C", "'' or shop= ''") + "'')" : "";
             string listCondition = condition != null ? " and (condition= " + condition.Replace("%2C", " or condition= ") + ")" : "";
@@ -44,8 +44,9 @@ namespace Api.Controllers
             //OFFER
             if (offer != null)
             {
-                return await _context.Item.FromSqlRaw("EXEC Offer").ToListAsync();
+                return await _context.Item.FromSqlRaw($"EXEC Offer @TYPE ='{offer}'").ToListAsync();
             }
+
 
             //BRANDS
             if (listBrands != null)
@@ -213,21 +214,28 @@ namespace Api.Controllers
         }
 
         // DELETE: api/Items/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<Item>> DeleteItem(int id)
+        [HttpDelete]
+        public async Task<ActionResult> DeleteItem(string delete)
         {
-            var item = await Task.Run(() => _context.Item.FromSqlRaw($"EXEC SP_GET_ONE @ID={id}").AsEnumerable().FirstOrDefault());
-
-            if (item == null)
+            try
             {
-                return NotFound();
+               await Task.Run(() =>
+                {
+                    string query = $"EXEC SP_DELETE @IDS= '{delete}'" ;
+                    _context.Database.ExecuteSqlRaw(query);
+
+                });
+                
+                return NoContent();
             }
+            catch(Exception ex)
+            {
+                return BadRequest(ex);
+            }
+            
 
-            string query = $"EXEC SP_DELETE @LINK= '{item.link}'";
-            _context.Database.ExecuteSqlRaw(query);
 
-
-            return item;
+            
 
         }
 

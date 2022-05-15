@@ -67,21 +67,12 @@ namespace DataBase
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("SP_GET_BLACK_LIST");
         }
     
-        public virtual ObjectResult<SP_GET_ONE_Result> SP_GET_ONE(string iD)
-        {
-            var iDParameter = iD != null ?
-                new ObjectParameter("ID", iD) :
-                new ObjectParameter("ID", typeof(string));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_GET_ONE_Result>("SP_GET_ONE", iDParameter);
-        }
-    
         public virtual ObjectResult<SP_GetAllLinks_Result> SP_GetAllLinks()
         {
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_GetAllLinks_Result>("SP_GetAllLinks");
         }
     
-        public virtual int SP_UPDATE_PRICE(Nullable<int> iD, Nullable<decimal> pRICE, Nullable<decimal> oLD_PRICE, Nullable<decimal> sAVNG, Nullable<decimal> sAVNG_PERCENT, string nAME)
+        public virtual int SP_UPDATE_PRICE(Nullable<int> iD, Nullable<decimal> pRICE, Nullable<decimal> oLD_PRICE, Nullable<decimal> sAVNG, Nullable<decimal> sAVNG_PERCENT, string nAME, string iMAGE)
         {
             var iDParameter = iD.HasValue ?
                 new ObjectParameter("ID", iD) :
@@ -107,7 +98,11 @@ namespace DataBase
                 new ObjectParameter("NAME", nAME) :
                 new ObjectParameter("NAME", typeof(string));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_UPDATE_PRICE", iDParameter, pRICEParameter, oLD_PRICEParameter, sAVNGParameter, sAVNG_PERCENTParameter, nAMEParameter);
+            var iMAGEParameter = iMAGE != null ?
+                new ObjectParameter("IMAGE", iMAGE) :
+                new ObjectParameter("IMAGE", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_UPDATE_PRICE", iDParameter, pRICEParameter, oLD_PRICEParameter, sAVNGParameter, sAVNG_PERCENTParameter, nAMEParameter, iMAGEParameter);
         }
     
         public virtual int SP_UPDATE_STATUS(Nullable<int> iD, Nullable<int> sTATUS)

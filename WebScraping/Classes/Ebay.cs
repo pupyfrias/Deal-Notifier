@@ -17,7 +17,7 @@ namespace WebScraping
            {"https://www.ebay.com/sch/i.html?_dcat=11071&_fsrp=1&_from=R40&LH_PrefLoc=99&LH_ItemCondition=1000&_stpos=19720&_nkw=tv&_sacat=32852&LH_BIN=1&_fspt=1&Screen%2520Size=60%252D69%2520in%7C20%252D29%2520in%7C40%252D49%2520in%7C30%252D39%2520in%7C50%252D59%2520in%7C70%252D80%2520in&_udhi=200&_sadis=2000&_ipg=60&rt=nc&_udlo=50" ,2}
           };
 
-        public async Task Run(ChromeOptions options, ChromeDriverService service)
+        public void Run(ChromeOptions options, ChromeDriverService service)
         {
             options.AddArguments($@"--user-data-dir={AppDomain.CurrentDomain.BaseDirectory}User Data\Ebay");
             bool run = true;
@@ -26,14 +26,13 @@ namespace WebScraping
             {
                 for (int i = 0; i < links.Length / 2; i++)
                 {
-
                     try
                     {
                         driver.Navigate().GoToUrl((string)links[i, 0]);
                     }
                     catch (WebDriverException e)
                     {
-                        await WriteLogs($"eBay Close: ---> {e} | URL:{(string)links[i, 0]}");
+                        WriteLogs($"eBay Close: ---> {e} | URL:{(string)links[i, 0]}");
                         driver.Close();
                         run = false;
 
@@ -67,7 +66,8 @@ namespace WebScraping
                                     IWebElement eImage = element.FindElement(By.ClassName("s-item__image-img"));
                                     IWebElement ePriceWhole = element.FindElement(By.ClassName("s-item__price"));
                                     link = eLink.GetAttribute("href");
-                                    string name = RemoveSpecialCharacters((eName.Text).Replace("NEW LISTING", ""));
+                                    string name = eName.Text.Replace("NEW LISTING", "");
+                                    RemoveSpecialCharacters(ref name);
                                     link = link.Substring(0, link.IndexOf("?"));
                                     string image = eImage.GetAttribute("src").Replace("225", "425");
                                     if (image.ToLower().Contains("ebaystatic.com")) { image = eImage.GetAttribute("data-src"); }
@@ -80,34 +80,45 @@ namespace WebScraping
                                     int shop = 2;
                                     int type = (int)links[i, 1];
 
-                                    Parallel.ForEach(conditionList, (data, state) =>
-                                    {
-                                        if (name.ToLower().Contains(data))
-                                        {
-                                            condition = 2;
-                                            state.Break();
-                                        }
-                                    });
-
-                                    Parallel.ForEach(filterList, (data, state) =>
-                                    {
-                                        if (name.ToLower().Contains(data))
-                                        {
-                                            save = false;
-                                            state.Break();
-                                        }
-                                    });
 
                                     if (blackList.Contains(link))
                                     {
                                         save = false;
                                     }
+                                    else
+                                    {
+                                        var task1 = Task.Run(() =>
+                                        {
+                                            Parallel.ForEach(conditionList, (data, state) =>
+                                            {
+                                                if (name.ToLower().Contains(data))
+                                                {
+                                                    condition = 2;
+                                                    state.Break();
+                                                }
+                                            });
+                                        });
 
-                                    await SaveOrUpdate(save, name, link, image, price, condition, shop, type);
+                                        var task2 = Task.Run(() =>
+                                        {
+                                            Parallel.ForEach(filterList, (data, state) =>
+                                            {
+                                                if (name.ToLower().Contains(data))
+                                                {
+                                                    save = false;
+                                                    state.Break();
+                                                }
+                                            });
+                                        });
+
+                                        await Task.WhenAll(task1, task2);
+                                    }
+                                    SaveOrUpdate(ref save, ref name, link, ref image,ref price,ref condition, ref shop, ref type);
                                 }
                                 catch (Exception e) 
                                 {
-                                    await WriteLogs($"\neBay: --->  | URL: {link} | {e}");
+                                    if(link!= "https://ebay.com/itm/123456")
+                                    WriteLogs($"\neBay: --->  | URL: {link} | {e}");
                                 }
 
 
@@ -116,7 +127,7 @@ namespace WebScraping
                         }
                         catch (WebDriverTimeoutException e)
                         {
-                            await WriteLogs($"\neBay: --->  | URL: {i} | {e}");
+                            WriteLogs($"\neBay: --->  | URL: {i} | {e}");
                         }
 
                         Console.WriteLine($"\nEbay   {i}\t{counter} ");
@@ -128,7 +139,9 @@ namespace WebScraping
 
                             if (currentLink == driver.Url)
                             {
-                                await ScreensShot(driver, "Ebay", i, counter, "getElementsByClassName('s-pagination')[0]");
+                                string shop = "Ebay";
+                                string by = "getElementsByClassName('s-pagination')[0]";
+                                ScreensShot(driver, ref shop, ref i, ref counter, ref by);
                                 break;
                             }
                             else
@@ -139,7 +152,9 @@ namespace WebScraping
                         }
                         catch (Exception e) when (e is WebDriverTimeoutException || e is WebDriverException)
                         {
-                            await ScreensShot(driver, "Ebay", i, counter, "getElementsByClassName('s-pagination')[0]");
+                            string shop = "Ebay";
+                            string by = "getElementsByClassName('s-pagination')[0]";
+                            ScreensShot(driver, ref shop, ref i, ref counter, ref by);
                             break;
                         }
 

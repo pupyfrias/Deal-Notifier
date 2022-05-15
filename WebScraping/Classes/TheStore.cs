@@ -12,9 +12,9 @@ namespace WebScraping
 {
     internal class TheStore : Method, IRun
     {
-        private object[,] links = { { "https://thestore.com/c/refurbished-cell-phones-58", 1 } };
+        private object[,] links = { { "https://thestore.com/c/refurbished-cell-phones-58?condition=Brand%20New&showMore=0", 1 } };
 
-        public async Task Run(ChromeOptions options, ChromeDriverService service)
+        public void Run(ChromeOptions options, ChromeDriverService service)
         {
             options.AddArguments($@"--user-data-dir={AppDomain.CurrentDomain.BaseDirectory}User Data\The Store");
 
@@ -26,7 +26,6 @@ namespace WebScraping
 
                 while (true)
                 {
-
                     try
                     {
                         By selector = By.CssSelector("div[class='product-tile restored']");
@@ -49,7 +48,9 @@ namespace WebScraping
                                 IWebElement eImage = element.FindElement(By.CssSelector("img[lazy='loaded'], img[lazy='loading']"));
                                 IWebElement ePriceWhole = element.FindElement(By.ClassName("amount"));
                                 IWebElement conditionName = element.FindElement(By.ClassName("product-tile__condition"));
-                                string name = $"{RemoveSpecialCharacters(eName.Text)} ({conditionName.Text})";
+
+                                string name = $"{eName.Text} {conditionName.Text}";
+                                RemoveSpecialCharacters(ref name);
                                 string link = eLink.GetAttribute("href");
                                 string image = "https://thestore.com" + eImage.GetAttribute("data-src").Replace("height=300", "height=400");
                                 decimal price = decimal.Parse(ePriceWhole.Text.Replace("$", ""));
@@ -59,45 +60,57 @@ namespace WebScraping
                                 int type = (int)links[0, 1];
 
 
-                                Parallel.ForEach(conditionList, (data, state) =>
-                                {
-                                    if (name.ToLower().Contains(data))
-                                    {
-                                        condition = 2;
-                                        state.Break();
-                                    }
-                                });
-
-                                Parallel.ForEach(filterList, (data, state) =>
-                                {
-                                    if (name.ToLower().Contains(data))
-                                    {
-                                        save = false;
-                                        state.Break();
-                                    }
-                                });
-
                                 if (blackList.Contains(link))
                                 {
                                     save = false;
                                 }
+                                else
+                                {
+                                    var task1 = Task.Run(() =>
+                                    {
+                                        Parallel.ForEach(conditionList, (data, state) =>
+                                        {
+                                            if (name.ToLower().Contains(data))
+                                            {
+                                                condition = 2;
+                                                state.Break();
+                                            }
+                                        });
+                                    });
 
-                                await SaveOrUpdate(save, name, link, image, price, condition, shop, type);
+                                    var task2 = Task.Run(() =>
+                                    {
+                                        Parallel.ForEach(filterList, (data, state) =>
+                                        {
+                                            if (name.ToLower().Contains(data))
+                                            {
+                                                save = false;
+                                                state.Break();
+                                            }
+                                        });
+                                    });
+
+                                    await Task.WhenAll(task1, task2);
+                                }
+
+                                SaveOrUpdate(ref save, ref name, link, ref image, ref price, ref condition, ref shop, ref type);
                             }
                             catch (Exception e) when (e is NoSuchElementException | e is StaleElementReferenceException)
                             {
-                                await WriteLogs($"\nTheStore: ---> {e}");
+                                WriteLogs($"\nTheStore: ---> {e}");
                             }
 
                         });
                     }
                     catch (WebDriverTimeoutException)
                     {
-                        await ScreensShot(driver, "The Store", 0, counter);
+                        string shop = "The Store";
+                        int link = 0;
+                        ScreensShot(driver, ref shop, ref link,ref counter);
                     }
                     catch (StaleElementReferenceException e)
                     {
-                        await WriteLogs($"\nTheStore: ---> {e}");
+                        WriteLogs($"\nTheStore: ---> {e}");
                     }
 
 
@@ -110,7 +123,11 @@ namespace WebScraping
 
                     catch (WebDriverTimeoutException)
                     {
-                        await ScreensShot(driver, "TheStore", 0, counter, "getElementsByClassName('pagination is-centered')[0]");
+                        string shop = "Ebay";
+                        string by = "getElementsByClassName('pagination is-centered')[0]";
+                        int link=0;
+                      
+                        ScreensShot(driver,ref shop, ref link,ref counter,ref by );
                         driver.Quit();
                         break;
                     }

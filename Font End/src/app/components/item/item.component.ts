@@ -1,3 +1,5 @@
+import { NgxSpinnerService } from 'ngx-spinner';
+import { catchError } from 'rxjs/operators';
 import { item } from './../../models/item';
 import {
   Component,
@@ -7,16 +9,18 @@ import {
   QueryList,
   AfterViewChecked,
   ChangeDetectorRef,
+  ViewChild,
 } from '@angular/core';
 import { ItemService } from '../../services/item.service';
 import { ActivatedRoute, Router, NavigationStart } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogComponent } from '../dialog/dialog.component';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { environment } from 'src/environments/environment';
+import { MatSidenavContent } from '@angular/material/sidenav';
 
 @Component({
   selector: 'app-item',
@@ -25,6 +29,7 @@ import { environment } from 'src/environments/environment';
 })
 export class ItemComponent implements OnInit, OnDestroy, AfterViewChecked {
   @ViewChildren(MatCheckbox) checkBoxes: QueryList<MatCheckbox>;
+  @ViewChild('SideNav') sideNav: any;
 
   list: item[];
   date: Date = new Date();
@@ -41,33 +46,38 @@ export class ItemComponent implements OnInit, OnDestroy, AfterViewChecked {
     private router: Router,
     private toastr: ToastrService,
     private dialog: MatDialog,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
+    private NgxSpinnerService: NgxSpinnerService
   ) {}
 
   ngOnInit(): void {
+    // const subscription  = this.route.parent?.data.subscribe((data) => {
+    //   this.list = data['items'];
+    //   this.itemService.total$.next(this.list.length);
+    //   this.page = 1;
+    //   this.CleanAllCheckboxes();
+    // });
     this.route.queryParams.subscribe(() => {
-      const subscription1 = this.itemService.GetRequest().subscribe({
-        next: (data: item[]) => {
+      const subscription = this.itemService.GetRequest().subscribe({
+        next: (data) => {
           this.list = data;
           this.itemService.total$.next(this.list.length);
           this.page = 1;
           this.CleanAllCheckboxes();
         },
-        error: (error) => {
-          this.itemService.ShowError(error);
-        }
       });
-      this.subscriptionList.push(subscription1);
+
+      this.subscriptionList.push(subscription);
     });
 
-    const subscription2 = this.itemService.select$
-    .subscribe(data=> this.selected = data);
-
-    this.subscriptionList.push(subscription2)
+    const subscription2 = this.itemService.select$.subscribe(
+      (data) => (this.selected = data)
+    );
+    this.subscriptionList.push(subscription2);
   }
 
   ngOnDestroy(): void {
-    this.subscriptionList.forEach(i=>{
+    this.subscriptionList.forEach((i) => {
       i.unsubscribe();
     });
     console.log('destroyed');
@@ -93,8 +103,14 @@ export class ItemComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.checkAll = false;
     }
     this.changeDetectorRef.detectChanges();
-  }
 
+    const sideNavElement = this.sideNav?.elementRef?.nativeElement;
+    //console.log(this.sideNav);
+
+    // this.sideNav.forEach(i=>{
+    //   console.log('sideNav',i);
+    // })
+  }
 
   public onPageChange(): void {
     document.querySelector('mat-sidenav-content')?.scroll(0, 0);
@@ -114,31 +130,21 @@ export class ItemComponent implements OnInit, OnDestroy, AfterViewChecked {
       dialogRef.afterClosed().subscribe((result) => {
         if (result) {
           const api = environment.baseApi;
-          let promises: any = [];
-          this.listIds.forEach((id) => {
-            promises.push(
-              new Promise(async (resolve, rejects) => {
-                this.httpClient.delete(api + id).subscribe({
-                  error: () => {
-                    rejects();
-                  },
-                  complete: () => {
-                    resolve('done');
-                  },
-                });
-              })
-            );
-          });
 
-          Promise.all(promises)
-            .then(() => {
-              this.Reload();
-              this.toastr.success(`${this.listIds.length} Item deleted`);
-              this.listIds = [];
-            })
-            .catch(() => {
-              this.toastr.error('ocurrend an error');
+          this.httpClient
+            .delete(`${api}items/?delete=${this.listIds}`)
+            .subscribe({
+              error: (error) => {
+                this.itemService.ShowError(catchError(error));
+                this.NgxSpinnerService.hide();
+              },
+              complete: () => {
+                this.Reload();
+                this.toastr.success(`${this.listIds.length} Item deleted`);
+                this.listIds = [];
+              },
             });
+
           this.itemService.select$.next(0);
         }
       });

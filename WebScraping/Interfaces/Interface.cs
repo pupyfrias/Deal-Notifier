@@ -5,6 +5,6 @@ namespace WebScraping
 {
     internal interface IRun
     {
-        Task Run(ChromeOptions options, ChromeDriverService service);
+        void Run(ChromeOptions options, ChromeDriverService service);
     }
 }

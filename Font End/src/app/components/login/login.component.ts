@@ -29,8 +29,6 @@ export class LoginComponent implements OnInit {
 
    const enc = this.service.Encrypt('pupy frias');
    const dec = this.service.Decrypt('U2FsdGVkX18INfZ7TRB+YcGTy+84mea6Emy48nEC4lr4=');
-    console.log(enc)
-    console.log(dec.length)
 
     this.formGroup = this.fb.group({
       user_name: ['', [Validators.required]],
@@ -46,10 +44,7 @@ export class LoginComponent implements OnInit {
           const encryptToken = this.service.Encrypt(respon);
           sessionStorage.setItem('token', encryptToken);
           this.router.navigateByUrl('/');
-        },
-        error: (error) => {
-          this.toastService.error(error?.error);
-        },
+        }
       });
     }
   }

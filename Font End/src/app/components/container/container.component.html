@@ -3,7 +3,7 @@
   <mat-sidenav mode='side' opened>
     <app-sidenav></app-sidenav>
   </mat-sidenav>
-  <mat-sidenav-content (scroll)="onScrol($event)">
+  <mat-sidenav-content (scroll)="onScrol($event)" #SideNav>
     <router-outlet name="item"></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>

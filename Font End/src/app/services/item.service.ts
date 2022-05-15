@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { throwError, BehaviorSubject, Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { item } from '../models/item';
 import { environment } from 'src/environments/environment';
-import { AES,enc }  from 'crypto-js';
+import { AES, enc } from 'crypto-js';
 
 @Injectable({
   providedIn: 'root',
@@ -20,47 +20,41 @@ export class ItemService {
 
   GetRequest(): Observable<any> {
     const api = environment.baseApi + 'items/' + location.search;
-    return this.httpClient.get(api).pipe(catchError(this.HandlerError));
+    return this.httpClient.get(api);
   }
 
   Login(data: JSON): Observable<any> {
     const api = environment.baseApi + 'login';
-
-    return this.httpClient.post(api, data, { responseType: 'text' });
-  }
-
-  HandlerError(error: HttpErrorResponse) {
-    return throwError(error.status);
+    return this.httpClient.post(api, data, { responseType: 'text' }).pipe(
+      catchError((error) => {
+        this.ShowError(error);
+        return [];
+      })
+    );
   }
 
   Encrypt(data: string): string {
-    try{
+    try {
       return AES.encrypt(data, environment.encryptKey).toString();
-    }
-    catch{
+    } catch {
       return '';
     }
-    
   }
 
   Decrypt(data: string): string {
-    try{
-      return AES.decrypt(data, environment.encryptKey)
-      .toString(enc.Utf8);
-    }
-    catch{
+    try {
+      return AES.decrypt(data, environment.encryptKey).toString(enc.Utf8);
+    } catch {
       return '';
     }
-   
   }
 
-  ShowError(error: any) {
+  ShowError(error: any): void {
     if (error) {
       if (error === 401) {
         this.toastr.warning('Expired Session');
-      }
-      else if (error === 404) {
-        this.toastr.error('404');
+      } else if (error === 404) {
+        this.toastr.error('Page not Found');
       } else if (error === 409) {
         this.toastr.info('409');
       } else {
