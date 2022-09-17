@@ -1,34 +1,41 @@
-﻿using OpenQA.Selenium;
+﻿using Microsoft.Extensions.Logging;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
 using WebScraping.Classes;
+using WebScraping.Emuns;
+using WebScraping.Models;
 
 namespace WebScraping
 {
-    internal class TheStore : Method, IRun
+    public class TheStore : Method, IRun
     {
-        private object[,] links = { { "https://thestore.com/c/refurbished-cell-phones-58?condition=Brand%20New&showMore=0", 1 } };
+        private static ILogger _logger;
+        private object[,] links = { { "https://thestore.com/c/refurbished-cell-phones-58?condition=Brand%20New&showMore=0", Emuns.Type.Phone } };
 
-        public void Run(ChromeOptions options, ChromeDriverService service)
+        public void Run()
         {
-            options.AddArguments($@"--user-data-dir={AppDomain.CurrentDomain.BaseDirectory}User Data\The Store");
+            _logger = CreateLogger<TheStore>();
+            string option = $@"--user-data-dir={AppDomain.CurrentDomain.BaseDirectory}User Data\The Store";
 
-            using (IWebDriver driver = new ChromeDriver(service, options))
+            using (IWebDriver driver = CreateChromeDriver(option))
             {
                 driver.Navigate().GoToUrl((string)links[0, 0]);
                 int counter = 1;
                 WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(15));
+                List<Item> itemsList = new List<Item>();
 
                 while (true)
                 {
                     try
                     {
-                        By selector = By.CssSelector("div[class='product-tile restored']");
+                        By selector = By.CssSelector("div[class='product-tile']");
                         wait.Until(ExpectedConditions.ElementIsVisible(selector));
 
                         IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
@@ -49,20 +56,19 @@ namespace WebScraping
                                 IWebElement ePriceWhole = element.FindElement(By.ClassName("amount"));
                                 IWebElement conditionName = element.FindElement(By.ClassName("product-tile__condition"));
 
-                                string name = $"{eName.Text} {conditionName.Text}";
-                                RemoveSpecialCharacters(ref name);
-                                string link = eLink.GetAttribute("href");
-                                string image = "https://thestore.com" + eImage.GetAttribute("data-src").Replace("height=300", "height=400");
-                                decimal price = decimal.Parse(ePriceWhole.Text.Replace("$", ""));
-                                int condition = 1;
-                                bool save = true;
-                                int shop = 3;
-                                int type = (int)links[0, 1];
+                                var item = new Item();
+                                item.Name = RemoveSpecialCharacters($"{eName.Text} {conditionName.Text}");
+                                item.Link = Uri.UnescapeDataString(eLink.GetAttribute("href"));
+                                item.Image = "https://thestore.com" + eImage.GetAttribute("data-src").Replace("height=300", "height=400");
+                                item.Price = decimal.Parse(ePriceWhole.Text.Replace("$", ""));
+                                item.Shop = (int)Shop.TheStore;
+                                item.Type = (int)links[0, 1];
+                                item.Condition = (int)Condition.New;
+                                item.Save = true;
 
-
-                                if (blackList.Contains(link))
+                                if (blackList.Contains(item.Link))
                                 {
-                                    save = false;
+                                    item.Save = false;
                                 }
                                 else
                                 {
@@ -70,9 +76,9 @@ namespace WebScraping
                                     {
                                         Parallel.ForEach(conditionList, (data, state) =>
                                         {
-                                            if (name.ToLower().Contains(data))
+                                            if (item.Name.ToLower().Contains(data))
                                             {
-                                                condition = 2;
+                                                item.Condition = (int)Condition.Used;
                                                 state.Break();
                                             }
                                         });
@@ -82,9 +88,9 @@ namespace WebScraping
                                     {
                                         Parallel.ForEach(filterList, (data, state) =>
                                         {
-                                            if (name.ToLower().Contains(data))
+                                            if (item.Name.ToLower().Contains(data))
                                             {
-                                                save = false;
+                                                item.Save = false;
                                                 state.Break();
                                             }
                                         });
@@ -93,28 +99,26 @@ namespace WebScraping
                                     await Task.WhenAll(task1, task2);
                                 }
 
-                                SaveOrUpdate(ref save, ref name, link, ref image, ref price, ref condition, ref shop, ref type);
+                                if(item.Save)
+                                    itemsList.Add(item);
+                                
                             }
                             catch (Exception e) when (e is NoSuchElementException | e is StaleElementReferenceException)
                             {
-                                WriteLogs($"\nTheStore: ---> {e}");
+                                _logger.LogWarning(e.ToString());
                             }
 
                         });
                     }
-                    catch (WebDriverTimeoutException)
+                    catch (Exception e)
                     {
                         string shop = "The Store";
                         int link = 0;
+                        _logger.LogError(e.ToString());
                         ScreensShot(driver, ref shop, ref link,ref counter);
                     }
-                    catch (StaleElementReferenceException e)
-                    {
-                        WriteLogs($"\nTheStore: ---> {e}");
-                    }
 
-
-                    Console.WriteLine($"\nThe Store\t{counter}");
+                    _logger.LogInformation($"0\t| {counter}\t| {itemsList.Count}");
                     counter++;
                     try
                     { 
@@ -123,7 +127,7 @@ namespace WebScraping
 
                     catch (WebDriverTimeoutException)
                     {
-                        string shop = "Ebay";
+                        string shop = "The Store";
                         string by = "getElementsByClassName('pagination is-centered')[0]";
                         int link=0;
                       
@@ -134,6 +138,7 @@ namespace WebScraping
 
                 }
 
+                Save(ref itemsList);
             }
         }
 

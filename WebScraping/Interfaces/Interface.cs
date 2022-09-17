@@ -1,10 +1,9 @@
 ﻿using OpenQA.Selenium.Chrome;
-using System.Threading.Tasks;
 
 namespace WebScraping
 {
-    internal interface IRun
+    public interface IRun
     {
-        void Run(ChromeOptions options, ChromeDriverService service);
+        void Run();
     }
 }

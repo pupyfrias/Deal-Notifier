@@ -10,9 +10,8 @@
 namespace DataBase
 {
     using System;
-    using System.Collections.Generic;
     
-    public partial class Item
+    public partial class Offer_Result
     {
         public int ID { get; set; }
         public string NAME { get; set; }
@@ -27,10 +26,5 @@ namespace DataBase
         public Nullable<System.DateTime> DATE_PRICE_CHANGE { get; set; }
         public Nullable<decimal> SAVING_PERCENT { get; set; }
         public Nullable<int> TYPE { get; set; }
-    
-        public virtual Condition Condition1 { get; set; }
-        public virtual Shop Shop1 { get; set; }
-        public virtual Status Status1 { get; set; }
-        public virtual Type Type1 { get; set; }
     }
 }

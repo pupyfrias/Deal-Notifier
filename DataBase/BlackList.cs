@@ -10,10 +10,12 @@
 namespace DataBase
 {
     using System;
+    using System.Collections.Generic;
     
-    public partial class SP_GetAllLinks_Result
+    public partial class BlackList
     {
-        public int id { get; set; }
-        public string link { get; set; }
+        public int ID { get; set; }
+        public string LINK { get; set; }
+        public Nullable<System.DateTime> Date { get; set; }
     }
 }

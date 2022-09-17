@@ -1,5 +1,4 @@
 import { Subscription } from 'rxjs';
-import { query } from '@angular/animations';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -16,7 +15,7 @@ import { ItemService } from '../../services/item.service';
   styleUrls: ['./sidenav.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class sidenavComponent implements OnInit , OnDestroy{
+export class sidenavComponent implements OnInit, OnDestroy {
   public checkList: CheckeBoxes[] = [];
   public brandsQuery: string[] = [];
   public storagesQuery: string[] = [];
@@ -25,14 +24,14 @@ export class sidenavComponent implements OnInit , OnDestroy{
   public typesQuery: string[] = [];
   public carriersQuery: string[] = [];
   public excludesQuery: string[] = [];
-  public offerExpand: boolean = false;
+  public orderByNow: string| null;
+  public dealQuery: string | null;
   public maxPrice: string;
   public minPrice: string;
   private queryParams: URLSearchParams = new URLSearchParams();
-  public orderByNow: any = '';
-  public isChecked: boolean = false;
-  panelOpenState = false;
-  brandsExpande = false;
+
+  public radioButton: any = null;
+
   private subscription: Subscription;
 
   public orderBy: Array<any> = [
@@ -83,7 +82,7 @@ export class sidenavComponent implements OnInit , OnDestroy{
     private router: Router,
     private service: ItemService
   ) {}
- 
+
   ngOnInit(): void {
     this.subscription = this.route.queryParams.subscribe((query) => {
       this.queryParams = new URLSearchParams(query);
@@ -120,26 +119,25 @@ export class sidenavComponent implements OnInit , OnDestroy{
         this.queryParams.get('max') != null ? this.queryParams.get('max')! : '';
       this.minPrice =
         this.queryParams.get('min') != null ? this.queryParams.get('min')! : '';
-      this.offerExpand = this.queryParams.get('offer') != null ? true : false;
+      this.dealQuery =
+        this.queryParams.get('offer') != null
+          ? this.queryParams.get('offer')
+          : null;
       this.service.serch$.next(
         this.queryParams.get('search') != null
           ? this.queryParams.get('search')!
           : ''
       );
       this.orderByNow =
-        this.queryParams.get('order_by') != null
-          ? this.queryParams.get('order_by')
-          : '';
+        this.queryParams.get('order_by');
 
       //this.brandsExpande = this.brandsQuery.length > 0;
-   
     });
   }
 
-
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
-    console.log('destroy', 'sidenav')
+    console.log('destroy', 'sidenav');
   }
 
   //#region Cleaning
@@ -149,10 +147,19 @@ export class sidenavComponent implements OnInit , OnDestroy{
     this.SettingsNavigation();
   }
 
+  cleanOrder() {
+    this.queryParams.delete('order_by');
+    console.log(this.queryParams.toString())
+    this.SettingsNavigation();
+  }
+  cleanDeals(): void {
+    this.dealQuery = null;
+    this.router.navigate([]);
+  }
+
   cleanBrands() {
     this.brandsQuery = [];
     this.DeleteElement(this.excludesQuery, 'brands');
-
     this.SettingsNavigation();
   }
 
@@ -169,7 +176,6 @@ export class sidenavComponent implements OnInit , OnDestroy{
   cleanCarriers() {
     this.carriersQuery = [];
     this.DeleteElement(this.excludesQuery, 'carriers');
-
     this.SettingsNavigation();
   }
 
@@ -185,26 +191,17 @@ export class sidenavComponent implements OnInit , OnDestroy{
     this.SettingsNavigation();
   }
 
-
   CleanAll(): void {
     this.service.select$.next(0);
     this.router.navigate([]);
-
   }
 
-
-
- 
   //#endregion
-
-  Offer(e: any): void {
-    
-      this.router.navigate([], {
-        queryParams: { offer: e.value },
-      });
-    
-    }
-  
+  Deal(e: any): void {
+    this.router.navigate([], {
+      queryParams: { offer: e.value },
+    });
+  }
 
   OrderByChange(e: any): void {
     this.queryParams.set('order_by', e.value);
@@ -218,8 +215,6 @@ export class sidenavComponent implements OnInit , OnDestroy{
     }
   }
 
-
-  //#region Exclude
   exclude(e: any): void {
     const name = e.source.name;
     const checked = e.checked;
@@ -239,7 +234,6 @@ export class sidenavComponent implements OnInit , OnDestroy{
 
     this.SettingsNavigation();
   }
- 
 
   priceChange(e: any): void {
     //MAXIMUS
@@ -257,7 +251,6 @@ export class sidenavComponent implements OnInit , OnDestroy{
 
     this.SettingsNavigation();
   }
-
 
   settingQueryParams(
     params: string,
@@ -427,7 +420,7 @@ export class sidenavComponent implements OnInit , OnDestroy{
       [this.typesQuery, 'types'],
       [this.carriersQuery, 'carriers'],
       [this.excludesQuery, 'excludes'],
-      [this.shopsQuery, 'shops'],
+      [this.shopsQuery, 'shops']
     ];
 
     for (let i = 0; i < listParams.length; i++) {

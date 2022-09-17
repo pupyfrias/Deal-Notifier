@@ -10,10 +10,17 @@
 namespace DataBase
 {
     using System;
+    using System.Collections.Generic;
     
-    public partial class SP_GetAllLinks_Result
+    public partial class Supported
     {
-        public int id { get; set; }
-        public string link { get; set; }
+        public int ID { get; set; }
+        public string NUMBER_MODEL { get; set; }
+        public string NAME_MODEL { get; set; }
+        public string TOOL { get; set; }
+        public string SUPPORT_VERSION { get; set; }
+        public string SUPPORT_BIT { get; set; }
+        public string CARRIERS { get; set; }
+        public string COMMENT { get; set; }
     }
 }

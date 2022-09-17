@@ -71,7 +71,7 @@ import { ContainerComponent } from './components/container/container.component';
     MatExpansionModule,
     MatRadioModule,
     MatInputModule,
-    MatCardModule,
+    MatCardModule
   ],
   exports: [sidenavComponent],
   providers: [

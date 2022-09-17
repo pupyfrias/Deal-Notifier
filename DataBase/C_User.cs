@@ -10,10 +10,13 @@
 namespace DataBase
 {
     using System;
+    using System.Collections.Generic;
     
-    public partial class SP_GetAllLinks_Result
+    public partial class C_User
     {
-        public int id { get; set; }
-        public string link { get; set; }
+        public int Id { get; set; }
+        public string NAME { get; set; }
+        public string USER_NAME { get; set; }
+        public string PASSWORD { get; set; }
     }
 }
