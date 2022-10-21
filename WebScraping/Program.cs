@@ -5,48 +5,49 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Media;
 using System.Threading.Tasks;
-using WebScraping.Classes;
-
+using WebScraping.Heplers;
+using WebScraping.Models;
+using WebScraping.Services;
+using WebScraping.Utils;
 
 namespace WebScraping
 {
-    class Program : Method
+    class Program : ItemService
     {
-        private static new ILogger _logger;
+        private static ILogger _logger;
         static async Task Main(string[] args)
         {
-            _logger = CreateLogger<Program>();
+            _logger = LogConsole.CreateLogger<Program>();
 
             LoadBlackList();
             try
             {
-                var task1 = Task.Run(() =>
+                var amazonTask = Task.Run(() =>
                 {
-                    var amazon = new Amazon();
-                    amazon.Run();
+                    Amazon.Run();
                 });
 
-                var task2 = Task.Run(() =>
+                var theStoreTask = Task.Run(() =>
                 {
-                    var theStore = new TheStore();
-                    theStore.Run();
+                    TheStore.Run();
                 });
 
-                var task3 = Task.Run(() =>
+                var eBayTask = Task.Run(() =>
                 {
-                    var ebay = new Ebay();
-                    ebay.Run();
-
+                   Ebay.Run();
                 });
 
-                await Task.WhenAll(task1, task2, task3);
-                UpdateItems();
-                _logger.LogInformation("Done");
+                await Task.WhenAll(amazonTask, theStoreTask, eBayTask);
             }
             catch (Exception e)
             {
-                UpdateItems();
                 _logger.LogError(e.ToString());
+                LogFile.Write<Program>(e.ToString());
+            }
+            finally
+            {
+                UpdateItems();
+                _logger.LogInformation("Done");
             }
 
         }
@@ -67,7 +68,7 @@ namespace WebScraping
                 {
                     context.Configuration.EnsureTransactionsForFunctionsAndCommands = false;
 
-                    if (checkList.Contains(i.link))
+                    if (Helper.checkList.Contains(i.link))
                     {
                         context.SP_UPDATE_STATUS(i.id, (int) Emuns.Status.InStock);
                     }
@@ -79,7 +80,7 @@ namespace WebScraping
             });
 
 
-            _logger.LogInformation($"{checkList.Count} Items In Stock");
+            _logger.LogInformation($"{Helper.checkList.Count} Items In Stock");
             SystemSounds.Asterisk.Play();
         }
 
@@ -88,9 +89,8 @@ namespace WebScraping
             using (WebScrapingEntities context = new WebScrapingEntities())
             {
                 context.Configuration.EnsureTransactionsForFunctionsAndCommands = false;
-                blackList = context.SP_GET_BLACK_LIST().ToList();
+                Helper.linkBlackList = context.SP_GET_BLACK_LIST().ToList();
                 _logger.LogInformation("Blacklist loaded");
-                CreateLogDir();
             }
         }
 

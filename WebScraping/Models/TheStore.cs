@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
 using System;
@@ -8,28 +7,30 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
-using WebScraping.Classes;
 using WebScraping.Emuns;
-using WebScraping.Models;
+using WebScraping.Entities;
+using WebScraping.Extensions;
+using WebScraping.Services;
+using WebScraping.Utils;
 
-namespace WebScraping
+namespace WebScraping.Models
 {
-    public class TheStore : Method, IRun
+    public class TheStore : ItemService
     {
         private static ILogger _logger;
-        private object[,] links = { { "https://thestore.com/c/refurbished-cell-phones-58?condition=Brand%20New&showMore=0", Emuns.Type.Phone } };
+        private static object[,] links = { { "https://thestore.com/c/refurbished-cell-phones-58?condition=Brand%20New&showMore=0", Emuns.Type.Phone } };
 
-        public void Run()
+        public static void Run()
         {
-            _logger = CreateLogger<TheStore>();
+            _logger = LogConsole.CreateLogger<TheStore>();
             string option = $@"--user-data-dir={AppDomain.CurrentDomain.BaseDirectory}User Data\The Store";
 
-            using (IWebDriver driver = CreateChromeDriver(option))
+            using (IWebDriver driver = Selenium.CreateChromeDriver(option))
             {
                 driver.Navigate().GoToUrl((string)links[0, 0]);
                 int counter = 1;
                 WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(15));
-                List<Item> itemsList = new List<Item>();
+                HashSet<Item> itemList = new HashSet<Item>();
 
                 while (true)
                 {
@@ -57,7 +58,7 @@ namespace WebScraping
                                 IWebElement conditionName = element.FindElement(By.ClassName("product-tile__condition"));
 
                                 var item = new Item();
-                                item.Name = RemoveSpecialCharacters($"{eName.Text} {conditionName.Text}");
+                                item.Name = $"{eName.Text.RemoveSpecialCharacters()} {conditionName.Text.RemoveSpecialCharacters()}";
                                 item.Link = Uri.UnescapeDataString(eLink.GetAttribute("href"));
                                 item.Image = "https://thestore.com" + eImage.GetAttribute("data-src").Replace("height=300", "height=400");
                                 item.Price = decimal.Parse(ePriceWhole.Text.Replace("$", ""));
@@ -66,46 +67,16 @@ namespace WebScraping
                                 item.Condition = (int)Condition.New;
                                 item.Save = true;
 
-                                if (blackList.Contains(item.Link))
+                                if (await item.CanBeSave())
                                 {
-                                    item.Save = false;
-                                }
-                                else
-                                {
-                                    var task1 = Task.Run(() =>
-                                    {
-                                        Parallel.ForEach(conditionList, (data, state) =>
-                                        {
-                                            if (item.Name.ToLower().Contains(data))
-                                            {
-                                                item.Condition = (int)Condition.Used;
-                                                state.Break();
-                                            }
-                                        });
-                                    });
-
-                                    var task2 = Task.Run(() =>
-                                    {
-                                        Parallel.ForEach(filterList, (data, state) =>
-                                        {
-                                            if (item.Name.ToLower().Contains(data))
-                                            {
-                                                item.Save = false;
-                                                state.Break();
-                                            }
-                                        });
-                                    });
-
-                                    await Task.WhenAll(task1, task2);
+                                    itemList.Add(item);
                                 }
 
-                                if(item.Save)
-                                    itemsList.Add(item);
-                                
                             }
                             catch (Exception e) when (e is NoSuchElementException | e is StaleElementReferenceException)
                             {
                                 _logger.LogWarning(e.ToString());
+                                LogFile.Write<TheStore>(e.ToString());
                             }
 
                         });
@@ -114,14 +85,16 @@ namespace WebScraping
                     {
                         string shop = "The Store";
                         int link = 0;
+
                         _logger.LogError(e.ToString());
-                        ScreensShot(driver, ref shop, ref link,ref counter);
+                        LogFile.Write<TheStore>(e.ToString());
+                        ScreenShot.Take(driver, ref shop, ref link, ref counter);
                     }
 
-                    _logger.LogInformation($"0\t| {counter}\t| {itemsList.Count}");
+                    _logger.LogInformation($"0\t| {counter}\t| {itemList.Count}");
                     counter++;
                     try
-                    { 
+                    {
                         wait.Until(ExpectedConditions.ElementToBeClickable(By.CssSelector("button[class='round-button round-button__next']"))).Click();
                     }
 
@@ -129,16 +102,16 @@ namespace WebScraping
                     {
                         string shop = "The Store";
                         string by = "getElementsByClassName('pagination is-centered')[0]";
-                        int link=0;
-                      
-                        ScreensShot(driver,ref shop, ref link,ref counter,ref by );
+                        int link = 0;
+
+                        ScreenShot.TakeAtBottom(driver, ref shop, ref link, ref counter, ref by);
                         driver.Quit();
                         break;
                     }
 
                 }
 
-                Save(ref itemsList);
+                Save(ref itemList);
             }
         }
 

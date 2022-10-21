@@ -1,33 +1,36 @@
 ﻿using Microsoft.Extensions.Logging;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
-using WebScraping.Classes;
 using WebScraping.Emuns;
-using WebScraping.Models;
+using WebScraping.Entities;
+using WebScraping.Extensions;
+using WebScraping.Services;
+using WebScraping.Utils;
 
-namespace WebScraping
+namespace WebScraping.Models
 {
-    public class Ebay : Method, IRun
+    public class Ebay : ItemService
     {
         private static ILogger _logger;
-        private object[,] links =
+        private static string error;
+        private static object[,] links =
          {
            {"https://www.ebay.com/sch/i.html?_fsrp=1&_udlo=30&_blrs=recall_filtering&_from=R40&LH_TitleDesc=0&LH_PrefLoc=98&LH_ItemCondition=1000&Brand=Samsung%7CApple%7CMotorola%7CAlcatel%7CXiaomi%7CHuawei%7CLG&_stpos=19720&_nkw=phones&_sacat=9355&LH_BIN=1&Storage%2520Capacity=32%2520GB%7C64%2520GB%7C256%2520GB%7C512%2520GB%7C128%2520GB&_sop=15&_fspt=1&_udhi=120&rt=nc&Operating%2520System=Android&_dcat=9355&_ipg=240&_pgn=1", Emuns.Type.Phone }
 
         };
-        public void Run()
+        public static void Run()
         {
-            _logger = CreateLogger<Ebay>();
+            _logger = LogConsole.CreateLogger<Ebay>();
             string option = $@"--user-data-dir={AppDomain.CurrentDomain.BaseDirectory}User Data\Ebay";
             bool run = true;
-            
-            using (IWebDriver driver = CreateChromeDriver(option))
+
+            using (IWebDriver driver = Selenium.CreateChromeDriver(option))
             {
                 for (int i = 0; i < links.Length / 2; i++)
                 {
@@ -46,7 +49,7 @@ namespace WebScraping
                     int counter = 1;
                     WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(15));
                     WebDriverWait wait2 = new WebDriverWait(driver, TimeSpan.FromSeconds(15));
-                    List<Item> itemsList = new List<Item>();
+                    HashSet<Item> itemList = new HashSet<Item>();
 
                     while (run)
                     {
@@ -76,14 +79,14 @@ namespace WebScraping
                                     link = link.Substring(0, link.IndexOf("?"));
                                     string image = eImage.GetAttribute("src").Replace("225", "425");
                                     if (image.ToLower().Contains("ebaystatic.com"))
-                                        image = eImage.GetAttribute("data-src"); 
+                                        image = eImage.GetAttribute("data-src");
                                     string priceBruto = ePriceWhole.Text.Replace("$", "");
-                                    if (priceBruto.ToLower().Contains("to")) 
-                                        priceBruto = priceBruto.Substring(0, priceBruto.IndexOf("to")); 
+                                    if (priceBruto.ToLower().Contains("to"))
+                                        priceBruto = priceBruto.Substring(0, priceBruto.IndexOf("to"));
 
 
                                     var item = new Item();
-                                    item.Name = RemoveSpecialCharacters(eName.Text.Replace("NEW LISTING", ""));
+                                    item.Name = eName.Text.Replace("NEW LISTING", "").RemoveSpecialCharacters();
                                     item.Link = link;
                                     item.Image = image;
                                     item.Price = decimal.Parse(priceBruto);
@@ -92,59 +95,35 @@ namespace WebScraping
                                     item.Type = (int)links[i, 1];
                                     item.Save = true;
 
-
-                                    if (blackList.Contains(link))
+                                    if (await item.CanBeSave())
                                     {
-                                        item.Save = false;
-                                    }
-                                    else
-                                    {
-                                        var task1 = Task.Run(() =>
-                                        {
-                                            Parallel.ForEach(conditionList, (data, state) =>
-                                            {
-                                                if (item.Name.ToLower().Contains(data))
-                                                {
-                                                    item.Condition = (int) Condition.Used;
-                                                    state.Break();
-                                                }
-                                            });
-                                        });
+                                        itemList.Add(item);
 
-                                        var task2 = Task.Run(() =>
-                                        {
-                                            Parallel.ForEach(filterList, (data, state) =>
-                                            {
-                                                if (item.Name.ToLower().Contains(data))
-                                                {
-                                                    item.Save = false;
-                                                    state.Break();
-                                                }
-                                            });
-                                        });
-
-                                        await Task.WhenAll(task1, task2);
                                     }
 
-                                    if(item.Save)
-                                        itemsList.Add(item);
-                                    
                                 }
-                                catch (Exception e) 
+                                catch (Exception e)
                                 {
-                                    if(link!= "https://ebay.com/itm/123456")
-                                    _logger.LogWarning($"URL: {link} | {e.Message}");
+                                    if (link != "https://ebay.com/itm/123456")
+                                    {
+                                        error = $"URL: {link} | {e.Message}";
+                                        _logger.LogWarning(error);
+                                        LogFile.Write<Ebay>(error);
+                                    }
+
                                 }
 
                             });
                         }
                         catch (WebDriverTimeoutException e)
                         {
-                            _logger.LogWarning($"URL: {i} | {e.Message}");
+                            error = $"URL: {i} | {e.Message}";
+                            _logger.LogWarning(error);
+                            LogFile.Write<Ebay>(error);
                         }
 
-                        
-                        _logger.LogInformation($"{i}\t| {counter}\t| {itemsList.Count}");
+
+                        _logger.LogInformation($"{i}\t| {counter}\t| {itemList.Count}");
                         counter++;
 
                         try
@@ -155,7 +134,7 @@ namespace WebScraping
                             {
                                 string shop = "Ebay";
                                 string by = "getElementsByClassName('s-pagination')[0]";
-                                ScreensShot(driver, ref shop, ref i, ref counter, ref by);
+                                ScreenShot.TakeAtBottom(driver, ref shop, ref i, ref counter, ref by);
                                 break;
                             }
                             else
@@ -168,14 +147,14 @@ namespace WebScraping
                         {
                             string shop = "Ebay";
                             string by = "getElementsByClassName('s-pagination')[0]";
-                            ScreensShot(driver, ref shop, ref i, ref counter, ref by);
+                            ScreenShot.TakeAtBottom(driver, ref shop, ref i, ref counter, ref by);
                             break;
                         }
 
                     }
-                    
-                    
-                    Save(ref itemsList);
+
+
+                    Save(ref itemList);
                 }
 
                 driver.Quit();

@@ -1,4 +1,4 @@
-﻿namespace Api.Models
+﻿namespace Api.Dtos
 {
     public class User
     {

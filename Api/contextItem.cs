@@ -1,4 +1,4 @@
-﻿using Api.Models;
+﻿using Api.Dtos;
 using Microsoft.EntityFrameworkCore;
 
 

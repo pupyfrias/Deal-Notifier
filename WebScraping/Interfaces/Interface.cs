@@ -1,6 +1,6 @@
 ﻿using OpenQA.Selenium.Chrome;
 
-namespace WebScraping
+namespace WebScraping.Interfaces
 {
     public interface IRun
     {

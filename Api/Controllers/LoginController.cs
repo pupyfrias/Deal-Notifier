@@ -1,4 +1,4 @@
-﻿using Api.Models;
+﻿using Api.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -21,8 +21,8 @@ namespace Api.Controllers
         private readonly IConfiguration _configuration;
         public LoginController(contextItem context, IConfiguration configuration)
         {
-            this._context = context;
-            this._configuration = configuration;
+            _context = context;
+            _configuration = configuration;
         }
 
         [HttpPost]

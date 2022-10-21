@@ -22,8 +22,6 @@ import { ReactiveFormsModule } from '@angular/forms';
     MatButtonModule,
     MatIconModule,
     MatToolbarModule
-    
-    
   ]
 })
 export class LoginModule { }
