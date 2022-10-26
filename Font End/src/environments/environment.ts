@@ -4,8 +4,7 @@
 
 export const environment = {
   production: false,
-  baseApi: 'http://api-stores.com:8001/api/',
-  //baseApi: 'http://localhost:59573/api/',
+  baseApi: 'http://api-stores.com:8081/api/',
   encryptKey: 'annajfnh3u@3)>?'
 };
 

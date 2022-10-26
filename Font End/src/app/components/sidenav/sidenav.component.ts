@@ -24,7 +24,7 @@ export class sidenavComponent implements OnInit, OnDestroy {
   public typesQuery: string[] = [];
   public carriersQuery: string[] = [];
   public excludesQuery: string[] = [];
-  public orderByNow: string| null;
+  public sortByNow: string| null;
   public dealQuery: string | null;
   public maxPrice: string;
   public minPrice: string;
@@ -34,7 +34,7 @@ export class sidenavComponent implements OnInit, OnDestroy {
 
   private subscription: Subscription;
 
-  public orderBy: Array<any> = [
+  public sortBy: Array<any> = [
     ['price-low-high', 'Low-High'],
     ['price-high-low', 'High-Low'],
     ['saving-high-low', 'Saving'],
@@ -128,8 +128,8 @@ export class sidenavComponent implements OnInit, OnDestroy {
           ? this.queryParams.get('search')!
           : ''
       );
-      this.orderByNow =
-        this.queryParams.get('order_by');
+      this.sortByNow =
+        this.queryParams.get('sort_by');
 
       //this.brandsExpande = this.brandsQuery.length > 0;
     });
@@ -148,7 +148,7 @@ export class sidenavComponent implements OnInit, OnDestroy {
   }
 
   cleanOrder() {
-    this.queryParams.delete('order_by');
+    this.queryParams.delete('sort_by');
     console.log(this.queryParams.toString())
     this.SettingsNavigation();
   }
@@ -204,7 +204,7 @@ export class sidenavComponent implements OnInit, OnDestroy {
   }
 
   OrderByChange(e: any): void {
-    this.queryParams.set('order_by', e.value);
+    this.queryParams.set('sort_by', e.value);
     this.SettingsNavigation();
   }
 

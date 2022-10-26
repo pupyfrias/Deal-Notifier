@@ -5,10 +5,10 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class StoresPipe implements PipeTransform {
 
-  private stores: string[] = ['Amazon', 'eBay', 'TheStore'];
+  stores: string[] = ['Amazon', 'eBay', 'TheStore'];
 
-  transform(value: string, ...args: unknown[]): string {
-    const index = parseInt(value)-1;
+  transform(value: number, ...args: unknown[]): string {
+    const index = value-1;
     return this.stores[index];
   }
 

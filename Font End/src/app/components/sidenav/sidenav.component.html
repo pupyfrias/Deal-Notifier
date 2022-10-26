@@ -43,15 +43,15 @@
       <mat-expansion-panel-header>
         <mat-panel-title>
           <mat-icon class="custom-icon">sort</mat-icon>
-          Order by
+          Sort by
         </mat-panel-title>
       </mat-expansion-panel-header>
       <mat-radio-button
-        *ngFor="let item of orderBy"
-        name="orderBy"
+        *ngFor="let item of sortBy"
+        name="sortBy"
         [value]="item[0]"
         [id]="item[0]"
-        [checked]="item[0] == orderByNow"
+        [checked]="item[0] == sortByNow"
         (change)="OrderByChange($event.source)"
         color="primary"
         class="d-block m-2"
@@ -62,7 +62,7 @@
         class="mt-2"
         mat-raised-button
         color="primary"
-        *ngIf="orderByNow"
+        *ngIf="sortByNow"
         (click)="cleanOrder()"
       >
         clean

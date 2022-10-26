@@ -1,24 +1,24 @@
-﻿using Api.Dtos;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebScraping.Core.Domain.Entities;
+using WebScraping.Intrastructure.Persistence.DbContexts;
 
 namespace Api.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    
+
     public class ItemsController : ControllerBase
     {
-        private readonly contextItem _context;
+        private readonly ApplicationDbContext _context;
 
-        public ItemsController(contextItem context)
+        public ItemsController(ApplicationDbContext context)
         {
             _context = context;
         }
@@ -26,98 +26,95 @@ namespace Api.Controllers
         // GET: api/Items
         [HttpGet]
         public async Task<List<Item>> GetItem(string brands, string storages, string search, string max, string min,
-            string order_by, string offer, string types, string condition, string carriers, string excludes, string shops)
+            string sort_by, string offer, string types, string condition, string carriers, string excludes, string shops)
         {
-            string listBrands = brands?.Replace("%2C", @"* "" or """);
-            string listStorages = storages?.Replace("%2C", @"* "" or """).Replace("%2B", " ").Replace("+", @"* "" and """);
-            string listCarriers = carriers?.Replace("%2C", @"* "" or """).Replace("%2B", " ").Replace("+", @"* "" and """);
-            string listTypes = types != null ? " and (type= ''" + types.Replace("%2C", "'' or type= ''") + "'')" : "";
-            string listShops = shops != null ? " and (shop= ''" + shops.Replace("%2C", "'' or shop= ''") + "'')" : "";
-            string listCondition = condition != null ? " and (condition= " + condition.Replace("%2C", " or condition= ") + ")" : "";
-            string[] listExcludes = { };
-            listExcludes = excludes != null ? excludes.Split("%2C") : listExcludes;
+            #region Definitions
+            string brandList = brands?.Replace("%2C", @"* "" or """);
+            string storageList = storages?.Replace("%2C", @"* "" or """).Replace("%2B", " ").Replace("+", @"* "" and """);
+            string carrierList = carriers?.Replace("%2C", @"* "" or """).Replace("%2B", " ").Replace("+", @"* "" and """);
+            string typeList = types != null ? " and (typeId= ''" + types.Replace("%2C", "'' or typeId= ''") + "'')" : "";
+            string shopList = shops != null ? " and (shopId= ''" + shops.Replace("%2C", "'' or shopId= ''") + "'')" : "";
+            string conditionList = condition != null ? " and (conditionId= " + condition.Replace("%2C", " or conditionId= ") + ")" : "";
+            string query = default;
+            string[] excludeList = excludes != null ? excludes.Split("%2C") : new string[] {};
+            List<string> parameterList = new List<string>();
+            search = search?.Replace(" ", @"* "" and """);
+            #endregion Definitions
 
-            List<string> parameters = new List<string>();
-            string query;
-            search = search != null ? search.Replace(" ", @"* "" and """) : null;
-
-            //OFFER
+            #region  Offer
             if (offer != null)
             {
-                return await _context.Item.FromSqlRaw($"EXEC Offer @TYPE ='{offer}'").ToListAsync();
+                return await _context.Items.FromSqlRaw($"EXEC Offer @TYPE ='{offer}'").ToListAsync();
             }
+            #endregion Offer
 
-
-            //BRANDS
-            if (listBrands != null)
+            #region Brands
+            if (brandList != null)
             {
-                if (listExcludes.Contains("brands"))
+                if (excludeList.Contains("brands"))
                 {
-                    parameters.Add(@$" not (""{listBrands}*"") ");
+                    parameterList.Add(@$" not (""{brandList}*"") ");
                 }
                 else
                 {
-                    parameters.Add(@$" (""{listBrands}*"") ");
+                    parameterList.Add(@$" (""{brandList}*"") ");
                 }
 
             }
+            #endregion Brands
 
-            //STORAGES
-            if (listStorages != null)
+            #region Storage
+            if (storageList != null)
             {
-                if (listExcludes.Contains("storages"))
+                if (excludeList.Contains("storages"))
                 {
-                    parameters.Add(@$" not (""{listStorages}*"") ");
+                    parameterList.Add(@$" not (""{storageList}*"") ");
                 }
                 else
                 {
-                    parameters.Add(@$"(""{listStorages}*"") ");
+                    parameterList.Add(@$"(""{storageList}*"") ");
                 }
             }
+            #endregion Storage
 
-            //CARRIERS
-            if (listCarriers != null)
+            #region Carrier
+            if (carrierList != null)
             {
-                if (listExcludes.Contains("carriers"))
+                if (excludeList.Contains("carriers"))
                 {
-                    parameters.Add(@$" not (""{listCarriers.Replace("%26", "&")}*"") ");
+                    parameterList.Add(@$" not (""{carrierList.Replace("%26", "&")}*"") ");
                 }
                 else
                 {
-                    parameters.Add(@$"(""{listCarriers.Replace("%26", "&")}*"") ");
+                    parameterList.Add(@$"(""{carrierList.Replace("%26", "&")}*"") ");
                 }
             }
+            #endregion Carrier
 
-            //SEARCH
+            #region Search
             if (search != null)
             {
-                parameters.Add(@$"(""{search}*"") ");
+                parameterList.Add(@$"(""{search}*"") ");
             }
 
-            int parametersCount = parameters.Count;
+            int parametersCount = parameterList.Count;
 
             for (int i = 0; i < parametersCount; i++)
             {
-                if (parameters[i].Contains("not"))
+                if (parameterList[i].Contains("not"))
                 {
-                    var data = parameters[i];
-                    parameters.RemoveAt(i);
-                    parameters.Add(data);
+                    var data = parameterList[i];
+                    parameterList.RemoveAt(i);
+                    parameterList.Add(data);
                 }
             }
+            #endregion Search
 
-            //order by
-            if (order_by != null)
-            {
-                if (order_by == "price-low-high") { order_by = " price asc"; }
-                else if (order_by == "price-high-low") { order_by = "price desc"; }
-                else if (order_by == "saving-high-low") { order_by = " saving desc"; }
-                else if (order_by == "saving-percent-high-low") { order_by = "saving_percent desc"; }
-            }
-            else { order_by = "id desc"; }
+            #region Sort By
+            sort_by = SortBy(sort_by);
+            #endregion Sort By
 
-
-            //price
+            #region Price
             if (min != null)
             {
                 min = $" and price > {min} ";
@@ -129,29 +126,27 @@ namespace Api.Controllers
                 max = $" and price < {max} ";
             }
             else { max = ""; }
-
-
-
-            // EXEC Filter @Data = 'AND CONTAINS (NAME,''SAMSUNG OR IPHONE'')', @Page = 1, @Order = 'PRICE ASC', @Min = '', @Max = ''
-            if (parameters.Count > 0)
+            #endregion Price
+            
+            if (parameterList.Count > 0)
             {
-                if (parameters[0].Contains("not"))
+                if (parameterList[0].Contains("not"))
                 {
-                    parameters[0] = parameters[0].Replace("not", "");
-                    query = $"EXEC Filter @Data = 'and not contains (NAME, ''{String.Join(" and ", parameters) }'') ', @Order = '{order_by}', @Min ='{min}', @Max ='{max}' ,@Types ='{listTypes}',@Shops ='{listShops}', @Condition='{listCondition}'";
+                    parameterList[0] = parameterList[0].Replace("not", "");
+                    query = $"EXEC Filter @Data = 'and not contains (NAME, ''{String.Join(" and ", parameterList)}'') ', @Order = '{sort_by}', @Min ='{min}', @Max ='{max}' ,@Types ='{typeList}',@Shops ='{shopList}', @Condition='{conditionList}'";
                 }
                 else
                 {
-                    query = $"EXEC Filter @Data = 'and contains (NAME, ''{ String.Join(" and ", parameters) }'') ', @Order = '{order_by}', @Min ='{min}', @Max ='{max}' ,@Types ='{listTypes}',@Shops ='{listShops}', @Condition='{listCondition}'";
+                    query = $"EXEC Filter @Data = 'and contains (NAME, ''{String.Join(" and ", parameterList)}'') ', @Order = '{sort_by}', @Min ='{min}', @Max ='{max}' ,@Types ='{typeList}',@Shops ='{shopList}', @Condition='{conditionList}'";
                 }
 
             }
             else
             {
-                query = $"EXEC Filter @Data = '', @Order = '{order_by}', @Min ='{min}', @Max ='{max}',@types='{listTypes}',@Shops ='{listShops}', @Condition='{listCondition}'";
+                query = $"EXEC Filter @Data = '', @Order = '{sort_by}', @Min ='{min}', @Max ='{max}',@types='{typeList}',@Shops ='{shopList}', @Condition='{conditionList}'";
             }
 
-            return await _context.Item.FromSqlRaw(query).ToListAsync();
+            return await _context.Items.FromSqlRaw(query).ToListAsync();
 
         }
 
@@ -159,7 +154,7 @@ namespace Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<object>> GetItem(int id)
         {
-            var item = await Task.Run(() => _context.Item.FromSqlRaw($"EXEC SP_GET_ONE @ID={id}").AsEnumerable().FirstOrDefault());
+            var item = await Task.Run(() => _context.Items.FromSqlRaw($"EXEC SP_GET_ONE @ID={id}").AsEnumerable().FirstOrDefault());
 
             if (item == null)
             {
@@ -175,7 +170,7 @@ namespace Api.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutItem(int id, Item item)
         {
-            if (id != item.id)
+            if (id != item.Id)
             {
                 return BadRequest();
             }
@@ -207,10 +202,10 @@ namespace Api.Controllers
         [HttpPost]
         public async Task<ActionResult<Item>> PostItem(Item item)
         {
-            _context.Item.Add(item);
+            _context.Items.Add(item);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetItem", new { id = item.id }, item);
+            return CreatedAtAction("GetItem", new { id = item.Id }, item);
         }
 
         // DELETE: api/Items/5
@@ -219,32 +214,50 @@ namespace Api.Controllers
         {
             try
             {
-               await Task.Run(() =>
-                {
-                    string query = $"EXEC SP_DELETE @IDS= '{delete}'" ;
-                    _context.Database.ExecuteSqlRaw(query);
+                await Task.Run(() =>
+                 {
+                     string query = $"EXEC SP_DELETE @IDS= '{delete}'";
+                     _context.Database.ExecuteSqlRaw(query);
 
-                });
-                
+                 });
+
                 return NoContent();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex);
             }
-            
-
-
-            
 
         }
 
         private bool ItemExists(int id)
         {
-            return _context.Item.Any(e => e.id == id);
+            return _context.Items.Any(e => e.Id == id);
+        }
+
+
+        private string SortBy(string str)
+        {
+            Dictionary<string, string> dictionary = new Dictionary<string, string>
+            {
+                { "price-low-high", " price asc"},
+                { "price-high-low", "price desc"},
+                { "saving-high-low", "saving desc"},
+                { "saving-percent-high-low", "SavingsPercentage desc"},
+                { "default", "id desc"}
+            };
+
+            if (str == null)
+            {
+                return dictionary["default"];
+            }
+            else
+            {
+                return dictionary.ContainsKey(str) ? dictionary[str] : dictionary["default"];
+            }
         }
     }
 
 
-    
+
 }

@@ -9,6 +9,7 @@ import {
 } from '@angular/router';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { CryptService } from '../services/crypt.service';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +17,7 @@ import { environment } from 'src/environments/environment';
 export class AuthGuard implements CanActivate {
   
   constructor(
-    private service: ItemService,
+    private cryptService: CryptService,
     private router: Router
     ){
 
@@ -33,7 +34,7 @@ export class AuthGuard implements CanActivate {
 
       const encryptToken = sessionStorage.getItem('token');
       if(encryptToken){
-        const decryptToken = this.service.Decrypt(encryptToken);
+        const decryptToken = this.cryptService.Decrypt(encryptToken);
         if(decryptToken.length> 0)
         {
           return true;

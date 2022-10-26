@@ -1,14 +1,16 @@
-﻿using DataBase;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Media;
 using System.Threading.Tasks;
-using WebScraping.Heplers;
-using WebScraping.Models;
-using WebScraping.Services;
-using WebScraping.Utils;
+using WebScraping.Core.Application.Heplers;
+using WebScraping.Core.Application.Utils;
+using WebScraping.Core.Domain.Entities;
+using WebScraping.Intrastructure.Persistence.DbContexts;
+using WebScraping.Intrastructure.Persistence.Models;
+using WebScraping.Intrastructure.Persistence.Services;
+using Emuns = WebScraping.Core.Application.Emuns;
 
 namespace WebScraping
 {
@@ -18,8 +20,7 @@ namespace WebScraping
         static async Task Main(string[] args)
         {
             _logger = LogConsole.CreateLogger<Program>();
-
-            LoadBlackList();
+            await LoadBlackList();
             try
             {
                 var amazonTask = Task.Run(() =>
@@ -34,7 +35,7 @@ namespace WebScraping
 
                 var eBayTask = Task.Run(() =>
                 {
-                   Ebay.Run();
+                    Ebay.Run();
                 });
 
                 await Task.WhenAll(amazonTask, theStoreTask, eBayTask);
@@ -46,50 +47,60 @@ namespace WebScraping
             }
             finally
             {
-                UpdateItems();
+                await UpdateItems();
                 _logger.LogInformation("Done");
             }
 
         }
 
-        static void UpdateItems()
+        static async Task UpdateItems()
         {
-            var listItems = new List<SP_GetAllLinks_Result>();
-
-            using (WebScrapingEntities context = new WebScrapingEntities())
+            Task markingToInStock = Task.Run(async () =>
             {
-                context.Configuration.EnsureTransactionsForFunctionsAndCommands = false;
-                listItems = context.SP_GetAllLinks().ToList();
-            }
-
-            Parallel.ForEach(listItems, (i) =>
-            {
-                using (WebScrapingEntities context = new WebScrapingEntities())
+                using (var context = new ApplicationDbContext())
                 {
-                    context.Configuration.EnsureTransactionsForFunctionsAndCommands = false;
+                    var ItemListToMarkInStock = await context.Items
+                                            .Where(x => x.StatusId != (int)Emuns.Status.InStock &&
+                                                   Helper.checkedItemList.Contains(x.Link))
+                                            .ToListAsync();
 
-                    if (Helper.checkList.Contains(i.link))
+                    Parallel.ForEach(ItemListToMarkInStock, (item) =>
                     {
-                        context.SP_UPDATE_STATUS(i.id, (int) Emuns.Status.InStock);
-                    }
-                    else
-                    {
-                        context.SP_UPDATE_STATUS(i.id, (int)Emuns.Status.OutStock);
-                    }
+                        item.StatusId = (int)Emuns.Status.InStock;
+                    });
+                    await context.SaveChangesAsync();
                 }
             });
 
+            Task markingToOutStock = Task.Run(async () =>
+            {
+                using (var context = new ApplicationDbContext())
+                {
+                    var ItemListToMarkOutStock = await context.Items
+                                            .Where(x => x.StatusId == (int)Emuns.Status.InStock &&
+                                                   !Helper.checkedItemList.Contains(x.Link))
+                                            .ToListAsync();
 
-            _logger.LogInformation($"{Helper.checkList.Count} Items In Stock");
+                    Parallel.ForEach(ItemListToMarkOutStock, (item) =>
+                    {
+                        item.StatusId = (int)Emuns.Status.OutStock;
+                    });
+                    await context.SaveChangesAsync();
+                }
+            });
+
+            await Task.WhenAll(markingToInStock, markingToOutStock);
+            _logger.LogInformation($"{Helper.checkedItemList.Count} Items In Stock");
             SystemSounds.Asterisk.Play();
         }
 
-        static void LoadBlackList()
+
+        static async Task LoadBlackList()
         {
-            using (WebScrapingEntities context = new WebScrapingEntities())
+            using (var context = new ApplicationDbContext())
             {
-                context.Configuration.EnsureTransactionsForFunctionsAndCommands = false;
-                Helper.linkBlackList = context.SP_GET_BLACK_LIST().ToList();
+                string query = "Exec SP_GET_BLACK_LIST";
+                Helper.linkBlackList = await context.SpBlackList.FromSqlRaw(query).ToListAsync();
                 _logger.LogInformation("Blacklist loaded");
             }
         }

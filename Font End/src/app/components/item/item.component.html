@@ -12,26 +12,26 @@
           <p class="card-title">{{item?.name}}</p>
         </a>
         <p class="card-text mb-0"> US$ {{item?.price}}&nbsp;
-          <span class="line-t old-price" *ngIf="item.saving > 0"> {{item?.old_price}}</span>
+          <span class="line-t old-price" *ngIf="item.saving > 0"> {{item?.oldPrice}}</span>
         </p>
         <div *ngIf="item.saving > 0">
           <h2 class="saving mb-0">
             Ahorro US$ {{item?.saving}} &nbsp;|
-            %{{item?.saving_percent}}
+            %{{item?.savingsPercentage}}
           </h2>
           <br>
           <p class="card-text mb-0">
-            {{item?.date_price_change | date}}
+            {{item?.lastModified | date}}
           </p>
         </div>
-        <p class="card-text mb-0" >{{item.condition|Condition}}</p>
-        <p class="card-text"><small class="text-muted">{{item.shop | Stores}}</small></p>
+        <p class="card-text mb-0" >{{item.conditionId|Condition}}</p>
+        <p class="card-text"><small class="text-muted">{{item.shopId | Stores}}</small></p>
 
       </mat-grid-tile-header>
     </mat-grid-tile>
     <mat-grid-tile colspan="1" id="p">
       <mat-checkbox [value]="item.id.toString()" class="check_box" (change)="ListDelete($event)" color="primary"
-        name="item" [checked]="listIds?.includes(item?.id?.toString())" [id]="item.id.toString()">
+        name="item" [checked]="listIds.includes(item?.id?.toString())" [id]="item.id.toString()">
       </mat-checkbox>
     </mat-grid-tile>
   </mat-grid-list>

@@ -34,6 +34,7 @@ import { DialogComponent } from './components/dialog/dialog.component';
 import { StoresPipe } from './pipes/stores.pipe';
 import { ConditionPipe } from './pipes/condition.pipe';
 import { ContainerComponent } from './components/container/container.component';
+import { ErrorHandlerInterceptor } from './interceptors/error-handler.interceptor';
 
 @NgModule({
   declarations: [
@@ -77,6 +78,7 @@ import { ContainerComponent } from './components/container/container.component';
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: SpinerInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorHandlerInterceptor, multi: true },
   ],
   bootstrap: [AppComponent],
 })

@@ -14,7 +14,7 @@ import {
 import { ItemService } from '../../services/item.service';
 import { ActivatedRoute, Router, NavigationStart } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogComponent } from '../dialog/dialog.component';
@@ -57,6 +57,8 @@ export class ItemComponent implements OnInit, OnDestroy, AfterViewChecked {
     //   this.page = 1;
     //   this.CleanAllCheckboxes();
     // });
+
+
     this.route.queryParams.subscribe(() => {
       const subscription = this.itemService.GetRequest().subscribe({
         next: (data) => {
@@ -135,7 +137,6 @@ export class ItemComponent implements OnInit, OnDestroy, AfterViewChecked {
             .delete(`${api}items/?delete=${this.listIds}`)
             .subscribe({
               error: (error) => {
-                this.itemService.ShowError(catchError(error));
                 this.NgxSpinnerService.hide();
               },
               complete: () => {

@@ -2,7 +2,8 @@ import { Router } from '@angular/router';
 import { ItemService } from 'src/app/services/item.service';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ToastrService } from 'ngx-toastr';
+
+import { CryptService } from 'src/app/services/crypt.service';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -13,13 +14,13 @@ export class LoginComponent implements OnInit {
   public hide = true;
   constructor(
     private fb: FormBuilder,
-    private service: ItemService,
-    private toastService: ToastrService,
+    private cryptService: CryptService,
+    private itemService: ItemService,
     private router: Router
   ) {}
 
   get user_name() {
-    return this.formGroup.get('user_name');
+    return this.formGroup.get('username');
   }
   get password() {
     return this.formGroup.get('password');
@@ -27,11 +28,8 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
 
-   const enc = this.service.Encrypt('pupy frias');
-   const dec = this.service.Decrypt('U2FsdGVkX18INfZ7TRB+YcGTy+84mea6Emy48nEC4lr4=');
-
     this.formGroup = this.fb.group({
-      user_name: ['', [Validators.required]],
+      username: ['', [Validators.required]],
       password: ['', [Validators.minLength(8), Validators.required]],
     });
   }
@@ -39,9 +37,9 @@ export class LoginComponent implements OnInit {
   Submit() {
     if (this.formGroup.valid) {
       const data = this.formGroup.value;
-      this.service.Login(data).subscribe({
+      this.itemService.Login(data).subscribe({
         next: (respon) => {
-          const encryptToken = this.service.Encrypt(respon);
+          const encryptToken = this.cryptService.Encrypt(respon);
           sessionStorage.setItem('token', encryptToken);
           this.router.navigateByUrl('/');
         }

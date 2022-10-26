@@ -9,10 +9,11 @@ import {
   HttpResponse,
 } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
+import { CryptService } from '../services/crypt.service';
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
-  constructor(private service: ItemService, private router: Router) {}
+  constructor(private cryptService: CryptService, private router: Router) {}
 
   intercept(
     request: HttpRequest<unknown>,
@@ -21,35 +22,17 @@ export class TokenInterceptor implements HttpInterceptor {
     const encryptToken = sessionStorage.getItem('token');
 
     if (encryptToken) {
-      const decryptToken = this.service.Decrypt(encryptToken);
+      const decryptToken = this.cryptService.Decrypt(encryptToken);
       if (decryptToken.length > 0) {
         let pushToke = request.clone({
           setHeaders: {
             Authorization: `Bearer ${decryptToken}`,
           },
         });
-        return next.handle(pushToke).pipe(
-          tap({
-            error: (error) => {
-              if (error?.status === 401) {
-                sessionStorage.clear();
-                this.router.navigateByUrl('/login');
-              }
-            },
-          })
-        );
+        return next.handle(pushToke);
       }
     }
 
-    return next.handle(request).pipe(
-      tap({
-        error: (error) => {
-          if (error?.status === 401) {
-            sessionStorage.clear();
-            this.router.navigateByUrl('/login');
-          }
-        },
-      })
-    );
+    return next.handle(request);
   }
 }

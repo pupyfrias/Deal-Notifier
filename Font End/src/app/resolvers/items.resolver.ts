@@ -20,7 +20,6 @@ export class ItemsResolver implements Resolve<Observable<boolean>> {
     return this.service.GetRequest()
     .pipe(
       catchError((error) => {
-        this.service.ShowError(error);
         return of(false);
       })
     );

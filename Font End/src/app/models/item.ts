@@ -3,15 +3,15 @@ export class item
     id: number;
     name: string;
     price: number;
-    old_price: number;
+    oldPrice: number;
     saving: number;
     link: string;
-    condition: number;
+    conditionId: number;
     status:boolean;
-    shop: string;
+    shopId: number;
     image: string;
-    date_price_change: Date;
-    saving_percent: number;
-    type: number;
+    lastModified: Date;
+    savingsPercentage: number;
+    typeId: number;
 
 }

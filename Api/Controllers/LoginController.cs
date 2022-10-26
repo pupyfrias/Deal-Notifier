@@ -9,7 +9,8 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-
+using WebScraping.Core.Domain.Entities;
+using WebScraping.Intrastructure.Persistence.DbContexts;
 
 namespace Api.Controllers
 {
@@ -17,23 +18,23 @@ namespace Api.Controllers
     [ApiController]
     public class LoginController : ControllerBase
     {
-        private readonly contextItem _context;
+        private readonly ApplicationDbContext _context;
         private readonly IConfiguration _configuration;
-        public LoginController(contextItem context, IConfiguration configuration)
+        public LoginController(ApplicationDbContext context, IConfiguration configuration)
         {
             _context = context;
             _configuration = configuration;
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post(UserLogin data)
+        public async Task<IActionResult> Index(UserLogin data)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            User user = await _context._User.Where(i => i.User_Name == data.User_name).FirstOrDefaultAsync();
+            User user = await _context.Users.Where(i => i.UserName == data.UserName).FirstOrDefaultAsync();
 
             if (user == null)
             {
