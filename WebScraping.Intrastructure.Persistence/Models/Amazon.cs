@@ -1,21 +1,22 @@
-﻿using Microsoft.Extensions.Logging;
+﻿
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
+using Serilog;
 using System.Collections.ObjectModel;
 using WebScraping.Core.Application.Emuns;
 using WebScraping.Core.Application.Extensions;
 using WebScraping.Core.Application.Heplers;
 using WebScraping.Core.Application.Utils;
 using WebScraping.Core.Domain.Entities;
-using WebScraping.Intrastructure.Persistence.Services;
+using WebScraping.Infrastructure.Persistence.Services;
 using Shop = WebScraping.Core.Application.Emuns.Shop;
 using Status = WebScraping.Core.Application.Emuns.Status;
 using Type = WebScraping.Core.Application.Emuns.Type;
 
-namespace WebScraping.Intrastructure.Persistence.Models
+namespace WebScraping.Infrastructure.Persistence.Models
 {
-    public class Amazon : ItemService
+    public class Amazon
     {
         private static ILogger _logger;
         private static string error;
@@ -46,9 +47,9 @@ namespace WebScraping.Intrastructure.Persistence.Models
 
         public static void Run()
         {
-            _logger = LogConsole.CreateLogger<Amazon>();
+            _logger = Logger.CreateLogger().ForContext<Amazon>();
             string option = $@"--user-data-dir={AppDomain.CurrentDomain.BaseDirectory}User Data\Amazon";
-            using (IWebDriver driver = Selenium.CreateChromeDriver(option))
+            using (IWebDriver driver = SeleniumTools.CreateChromeDriver(option))
             {
                 for (int i = 0; i < links.Length / 2; i++)
                 {
@@ -76,21 +77,19 @@ namespace WebScraping.Intrastructure.Persistence.Models
                                     IWebElement eImage = element.FindElement(By.ClassName("s-image"));
                                     IWebElement ePriceWhole = element.FindElement(By.CssSelector("span[class='a-price-whole']"));
                                     IWebElement ePriceFraction = element.FindElement(By.ClassName("a-price-fraction"));
-                               
+
                                     Item item = new Item();
                                     item.Name = eName.Text.RemoveSpecialCharacters();
                                     item.Link = Helper.GetLocalPath(eLink.GetAttribute("href"));
                                     item.Image = eImage.GetAttribute("src").Replace("218", "320");
                                     item.Price = decimal.Parse(ePriceWhole.Text.Replace(",", "") + "." + ePriceFraction.Text);
-                                    item.ShopId = (int) Shop.Amazon;
+                                    item.ShopId = (int)Shop.Amazon;
                                     item.TypeId = (int)links[i, 1];
                                     item.StatusId = (int)Status.InStock;
-                                    
-                                     
 
-                                    if (await CanBeSave(item))
+                                    if (await item.CanBeSave())
                                     {
-                                        SetCondition(ref item);
+                                        item.SetCondition();
                                         itemList.Add(item);
                                     }
 
@@ -101,8 +100,7 @@ namespace WebScraping.Intrastructure.Persistence.Models
                                     if (!e.Message.Contains("a-price-whole"))
                                     {
                                         error = $"URL: {i} | {e.Message}";
-                                        _logger.LogWarning(error);
-                                        LogFile.Write<Amazon>(error);
+                                        _logger.Warning(error);
                                     }
                                 }
                             });
@@ -111,9 +109,8 @@ namespace WebScraping.Intrastructure.Persistence.Models
                         {
                             string message = "Error";
                             error = $"URL: {i} | {e.Message}";
-                            ScreenShot.Take(driver, ref message, ref i, ref counter);
-                            _logger.LogWarning(error);
-                            LogFile.Write<Amazon>(error);
+                            driver.TakeScreenShot(ref message, ref i, ref counter);
+                            _logger.Warning(error);
                         }
 
                         try
@@ -126,16 +123,16 @@ namespace WebScraping.Intrastructure.Persistence.Models
 
                             var by = "getElementsByClassName('s-pagination-item s-pagination-next s-pagination-button s-pagination-separator')[0]";
                             string shop = "Amazon";
-                            ScreenShot.TakeAtBottom(driver, ref shop, ref i, ref counter, ref by);
+                            driver.TakeScreemShotAtBottom( ref shop, ref i, ref counter, ref by);
                             break;
                         }
 
-                        _logger.LogInformation($"{i}\t| {counter}\t| {itemList.Count}");
+                        _logger.Information($"{i}\t| {counter}\t| {itemList.Count}");
                         counter++;
 
                     }
 
-                    Save(ref itemList);
+                    itemList.Save();
                 }
                 driver.Quit();
 

@@ -2,13 +2,13 @@
 {
     public enum Type
     {
-        Phone = 1,
-        TV,
-        Memory,
+        Accessory = 1,
         Headphone,
-        Speaker,
+        Memory,
         Microphone,
+        Phone,
+        Speaker,
         Streaming,
-        Accessory
+        TV,
     }
 }

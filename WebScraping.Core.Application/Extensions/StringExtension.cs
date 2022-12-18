@@ -12,7 +12,7 @@ namespace WebScraping.Core.Application.Extensions
         public static string RemoveSpecialCharacters(this string str)
         {
             string newString = Regex.Replace(str, "[,.+'\":;]", "", RegexOptions.Compiled);
-            return newString.Replace("*BRAND NEW*", "");
+            return newString.Replace("BRAND NEW", "").Replace("NEW LISTING", "");
         }
     }
 }

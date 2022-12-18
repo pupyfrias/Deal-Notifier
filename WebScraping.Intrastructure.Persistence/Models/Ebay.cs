@@ -1,21 +1,20 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Serilog;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
 using System.Collections.ObjectModel;
-using WebScraping.Core.Application.Emuns;
 using WebScraping.Core.Application.Extensions;
 using WebScraping.Core.Application.Utils;
 using WebScraping.Core.Domain.Entities;
-using WebScraping.Intrastructure.Persistence.Services;
-using Type = WebScraping.Core.Application.Emuns.Type;
+using WebScraping.Infrastructure.Persistence.Services;
 using Condition = WebScraping.Core.Application.Emuns.Condition;
 using Shop = WebScraping.Core.Application.Emuns.Shop;
 using Status = WebScraping.Core.Application.Emuns.Status;
+using Type = WebScraping.Core.Application.Emuns.Type;
 
-namespace WebScraping.Intrastructure.Persistence.Models
+namespace WebScraping.Infrastructure.Persistence.Models
 {
-    public class Ebay : ItemService
+    public class Ebay
     {
         private static ILogger _logger;
         private static string error;
@@ -26,11 +25,11 @@ namespace WebScraping.Intrastructure.Persistence.Models
         };
         public static void Run()
         {
-            _logger = LogConsole.CreateLogger<Ebay>();
+            _logger = Logger.CreateLogger().ForContext<Ebay>();
             string option = $@"--user-data-dir={AppDomain.CurrentDomain.BaseDirectory}User Data\Ebay";
             bool run = true;
 
-            using (IWebDriver driver = Selenium.CreateChromeDriver(option))
+            using (IWebDriver driver = SeleniumTools.CreateChromeDriver(option))
             {
                 for (int i = 0; i < links.Length / 2; i++)
                 {
@@ -40,7 +39,7 @@ namespace WebScraping.Intrastructure.Persistence.Models
                     }
                     catch (WebDriverException e)
                     {
-                        _logger.LogError($"{e} | URL:{(string)links[i, 0]}");
+                        _logger.Error($"{e} | URL:{(string)links[i, 0]}");
                         driver.Close();
                         run = false;
 
@@ -66,7 +65,7 @@ namespace WebScraping.Intrastructure.Persistence.Models
                             ReadOnlyCollection<IWebElement> elements = driver.FindElements(selector);
                             Parallel.ForEach(elements, async (element, stateMain) =>
                             {
-                                string link = null;
+                                string link = default;
 
                                 try
                                 {
@@ -86,7 +85,7 @@ namespace WebScraping.Intrastructure.Persistence.Models
 
 
                                     Item item = new Item();
-                                    item.Name = eName.Text.Replace("NEW LISTING", "").RemoveSpecialCharacters();
+                                    item.Name = eName.Text.RemoveSpecialCharacters();
                                     item.Link = link;
                                     item.Image = image;
                                     item.Price = decimal.Parse(priceBruto);
@@ -95,9 +94,9 @@ namespace WebScraping.Intrastructure.Persistence.Models
                                     item.TypeId = (int)links[i, 1];
                                     item.StatusId = (int)Status.InStock;
 
-                                    if (await CanBeSave(item))
+                                    if (await item.CanBeSave())
                                     {
-                                        SetCondition(ref item);
+                                        item.SetCondition();
                                         itemList.Add(item);
                                     }
 
@@ -107,8 +106,7 @@ namespace WebScraping.Intrastructure.Persistence.Models
                                     if (link != "https://ebay.com/itm/123456")
                                     {
                                         error = $"URL: {link} | {e.Message}";
-                                        _logger.LogWarning(error);
-                                        LogFile.Write<Ebay>(error);
+                                        _logger.Warning(error);
                                     }
 
                                 }
@@ -118,12 +116,11 @@ namespace WebScraping.Intrastructure.Persistence.Models
                         catch (WebDriverTimeoutException e)
                         {
                             error = $"URL: {i} | {e.Message}";
-                            _logger.LogWarning(error);
-                            LogFile.Write<Ebay>(error);
+                            _logger.Warning(error);
                         }
 
 
-                        _logger.LogInformation($"{i}\t| {counter}\t| {itemList.Count}");
+                        _logger.Information($"{i}\t| {counter}\t| {itemList.Count}");
                         counter++;
 
                         try
@@ -134,7 +131,7 @@ namespace WebScraping.Intrastructure.Persistence.Models
                             {
                                 string shop = "Ebay";
                                 string by = "getElementsByClassName('s-pagination')[0]";
-                                ScreenShot.TakeAtBottom(driver, ref shop, ref i, ref counter, ref by);
+                                driver.TakeScreemShotAtBottom(ref shop, ref i, ref counter, ref by);
                                 break;
                             }
                             else
@@ -147,14 +144,14 @@ namespace WebScraping.Intrastructure.Persistence.Models
                         {
                             string shop = "Ebay";
                             string by = "getElementsByClassName('s-pagination')[0]";
-                            ScreenShot.TakeAtBottom(driver, ref shop, ref i, ref counter, ref by);
+                            driver.TakeScreemShotAtBottom(ref shop, ref i, ref counter, ref by);
                             break;
                         }
 
                     }
 
 
-                    Save(ref itemList);
+                    itemList.Save();
                 }
 
                 driver.Quit();

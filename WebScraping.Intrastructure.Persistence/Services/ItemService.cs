@@ -1,28 +1,30 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Serilog;
 using WebScraping.Core.Application.Heplers;
 using WebScraping.Core.Application.Utils;
 using WebScraping.Core.Domain.Entities;
-using WebScraping.Intrastructure.Persistence.DbContexts;
+using WebScraping.Infrastructure.Persistence.DbContexts;
 using Condition = WebScraping.Core.Application.Emuns.Condition;
 
 
-namespace WebScraping.Intrastructure.Persistence.Services
+namespace WebScraping.Infrastructure.Persistence.Services
 {
-    public class ItemService
+    public static class ItemService
     {
         #region Fields
         private static readonly string[] conditionList = { "renovado", "renewed", "reacondicionado", "refurbished", "restaurado", "restored" };
         private static readonly string[] bannedWordList = { "tracfone", "total wireless", "net10", "simple mobile", "straight talk", "family mobile" };
         private static readonly string[] includeList = { };//{ "huawei", "lg ", "moto", "xiaomi", "iphone", "samsung" };
-        #endregion Fields
 
+        #endregion Fields
         #region Methods
-        
+
         /// <summary>
         /// Validate if the Item can be save.
         /// </summary>
         /// <returns>true if the Iten is not in BlackList; otherwise, false.</returns>
-        public static async Task<bool> CanBeSave(Item item)
+        public static async Task<bool> CanBeSave(this Item item)
         {
             bool isBanned = false;
             bool isInBlackList = false;
@@ -62,7 +64,7 @@ namespace WebScraping.Intrastructure.Persistence.Services
         /// <summary>
         /// Set Item Condition
         /// </summary>
-        public static void SetCondition(ref Item item)
+        public static void SetCondition(this Item item)
         {
             foreach (string condition in conditionList)
             {
@@ -82,15 +84,16 @@ namespace WebScraping.Intrastructure.Persistence.Services
         /// Save item's data
         /// </summary>
         /// <param name="items">Items List</param>
-        public static void Save(ref HashSet<Item> items)
+        public static void Save(this HashSet<Item> items)
         {
             Parallel.ForEach(items, newItem =>
             {
                 using (var context = new ApplicationDbContext())
                 {
+                    var oldItem = default(Item);
                     try
                     {
-                        var oldItem = context.Items.FirstOrDefault(i => i.Link == newItem.Link);
+                        oldItem = context.Items.FirstOrDefault(i => i.Link == newItem.Link);
                         Helper.checkedItemList.Add(newItem.Link);
 
                         if (oldItem == null)
@@ -100,19 +103,25 @@ namespace WebScraping.Intrastructure.Persistence.Services
                         else
                         {
                             decimal oldPrice = oldItem.Price;
-                            decimal saving = 0;
+                            decimal saving = oldPrice - newItem.Price;
                             bool validate = false;
 
 
                             if (oldPrice > newItem.Price)
                             {
-                                oldItem.Saving = oldPrice - newItem.Price;
-                                oldItem.SavingsPercentage = saving / oldPrice * 100;
+                                
+                                oldItem.Saving = saving;
+                                oldItem.SavingsPercentage = (saving / oldPrice) * 100;
+                                oldItem.Price= newItem.Price;
+                                oldItem.OldPrice= oldPrice;
                                 validate = true;
                             }
                             else if (oldPrice < newItem.Price)
                             {
+                                oldItem.Price = newItem.Price;
                                 oldItem.OldPrice = 0;
+                                oldItem.Saving = 0;
+                                oldItem.SavingsPercentage = 0;
                                 validate = true;
                             }
 
@@ -126,7 +135,7 @@ namespace WebScraping.Intrastructure.Persistence.Services
 
                             if (validate)
                             {
-                                newItem.LastModified = DateTime.Now;
+                                context.Update(oldItem);
                             }
                         }
 
@@ -134,9 +143,9 @@ namespace WebScraping.Intrastructure.Persistence.Services
                     }
                     catch (Exception ex)
                     {
-                        LogConsole.CreateLogger<ItemService>().LogWarning(ex.Message);
+                        Logger.CreateLogger().ForContext<ApplicationDbContext>().Warning($"URL --> {oldItem?.Link ?? newItem.Link}\n{ex.Message} \n");
                     }
-                    
+
                 }
             });
 

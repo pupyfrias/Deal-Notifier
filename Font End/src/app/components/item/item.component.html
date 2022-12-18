@@ -1,16 +1,15 @@
-<mat-card class="mt-2" *ngFor="let item of list | paginate:
+<mat-card class="mt-2" *ngFor="let item of itemList | paginate:
 { itemsPerPage: 40, currentPage: page} ">
+<a [href]="item.link"  target="_blank" class="text-decaration">
   <mat-grid-list cols="12" rowHeight="fit">
     <mat-grid-tile colspan="4">
-      <a [href]="item?.link" target="blank" class="text-decaration">
+      
         <img [src]="item?.image" class="img-limit">
-      </a>
+      
     </mat-grid-tile>
     <mat-grid-tile colspan="7" id="p">
       <mat-grid-tile-header>
-        <a [href]="item?.link" target="blank" class="text-decaration">
           <p class="card-title">{{item?.name}}</p>
-        </a>
         <p class="card-text mb-0"> US$ {{item?.price}}&nbsp;
           <span class="line-t old-price" *ngIf="item.saving > 0"> {{item?.oldPrice}}</span>
         </p>
@@ -35,7 +34,7 @@
       </mat-checkbox>
     </mat-grid-tile>
   </mat-grid-list>
-
+</a>
 </mat-card>
 
 <!-- BEGIN FLOAT ELEMENT -->

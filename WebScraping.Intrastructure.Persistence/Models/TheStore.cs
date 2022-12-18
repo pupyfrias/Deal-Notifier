@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Serilog;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
@@ -6,26 +6,26 @@ using System.Collections.ObjectModel;
 using WebScraping.Core.Application.Extensions;
 using WebScraping.Core.Application.Utils;
 using WebScraping.Core.Domain.Entities;
-using WebScraping.Intrastructure.Persistence.Services;
 using Condition = WebScraping.Core.Application.Emuns.Condition;
 using Shop = WebScraping.Core.Application.Emuns.Shop;
 using Type = WebScraping.Core.Application.Emuns.Type;
 using Status = WebScraping.Core.Application.Emuns.Status;
 using WebScraping.Core.Application.Heplers;
+using WebScraping.Infrastructure.Persistence.Services;
 
-namespace WebScraping.Intrastructure.Persistence.Models
+namespace WebScraping.Infrastructure.Persistence.Models
 {
-    public class TheStore : ItemService
+    public class TheStore
     {
         private static ILogger _logger;
         private static object[,] links = { { "https://thestore.com/c/refurbished-cell-phones-58?condition=Brand%20New&showMore=0", Type.Phone } };
 
         public static void Run()
         {
-            _logger = LogConsole.CreateLogger<TheStore>();
+            _logger = Logger.CreateLogger().ForContext<TheStore>();
             string option = $@"--user-data-dir={AppDomain.CurrentDomain.BaseDirectory}User Data\The Store";
 
-            using (IWebDriver driver = Selenium.CreateChromeDriver(option))
+            using (IWebDriver driver = SeleniumTools.CreateChromeDriver(option))
             {
                 driver.Navigate().GoToUrl((string)links[0, 0]);
                 int counter = 1;
@@ -68,17 +68,16 @@ namespace WebScraping.Intrastructure.Persistence.Models
                                 item.StatusId = (int)Status.InStock;
 
 
-                                if (await CanBeSave(item))
+                                if (await item.CanBeSave())
                                 {
-                                    SetCondition(ref item);
+                                    item.SetCondition();
                                     itemList.Add(item);
                                 }
 
                             }
                             catch (Exception e) when (e is NoSuchElementException | e is StaleElementReferenceException)
                             {
-                                _logger.LogWarning(e.ToString());
-                                LogFile.Write<TheStore>(e.ToString());
+                                _logger.Warning(e.ToString());
                             }
 
                         });
@@ -88,12 +87,11 @@ namespace WebScraping.Intrastructure.Persistence.Models
                         string shop = "The Store";
                         int link = 0;
 
-                        _logger.LogError(e.ToString());
-                        LogFile.Write<TheStore>(e.ToString());
-                        ScreenShot.Take(driver, ref shop, ref link, ref counter);
+                        _logger.Error(e.ToString());
+                        driver.TakeScreenShot(ref shop, ref link, ref counter);
                     }
 
-                    _logger.LogInformation($"0\t| {counter}\t| {itemList.Count}");
+                    _logger.Information($"0\t| {counter}\t| {itemList.Count}");
                     counter++;
                     try
                     {
@@ -106,14 +104,14 @@ namespace WebScraping.Intrastructure.Persistence.Models
                         string by = "getElementsByClassName('pagination is-centered')[0]";
                         int link = 0;
 
-                        ScreenShot.TakeAtBottom(driver, ref shop, ref link, ref counter, ref by);
+                        driver.TakeScreemShotAtBottom(ref shop, ref link, ref counter, ref by);
                         driver.Quit();
                         break;
                     }
 
                 }
 
-                Save(ref itemList);
+                itemList.Save();
             }
         }
 

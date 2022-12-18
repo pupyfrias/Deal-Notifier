@@ -10,9 +10,6 @@ const routes: Routes = [
     path: '',
     pathMatch: 'full',
     runGuardsAndResolvers: 'always',
-    // resolve: {
-    //   items: ItemsResolver,
-    // },
     component: ContainerComponent,
     canActivate: [AuthGuard],
     children: [

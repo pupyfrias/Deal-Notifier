@@ -1,6 +1,5 @@
 import { NgxSpinnerService } from 'ngx-spinner';
-import { catchError } from 'rxjs/operators';
-import { item } from './../../models/item';
+import { Item } from './../../models/item';
 import {
   Component,
   OnInit,
@@ -31,7 +30,7 @@ export class ItemComponent implements OnInit, OnDestroy, AfterViewChecked {
   @ViewChildren(MatCheckbox) checkBoxes: QueryList<MatCheckbox>;
   @ViewChild('SideNav') sideNav: any;
 
-  list: item[];
+  itemList: Item[];
   date: Date = new Date();
   listIds: any[] = [];
   selected: number = 0;
@@ -61,9 +60,10 @@ export class ItemComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     this.route.queryParams.subscribe(() => {
       const subscription = this.itemService.GetRequest().subscribe({
-        next: (data) => {
-          this.list = data;
-          this.itemService.total$.next(this.list.length);
+        next: (data: Item[]) => {
+          this.itemList = data;
+          console.log(data);
+          this.itemService.total$.next(this.itemList.length);
           this.page = 1;
           this.CleanAllCheckboxes();
         },
