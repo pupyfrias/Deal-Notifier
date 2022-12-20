@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -12,8 +11,11 @@ using WebScraping.Core.Application.Wrappers;
 using WebScraping.Core.Domain.Settings;
 using WebScraping.Infrastructure.Identity.DbContext;
 using WebScraping.Infrastructure.Identity.Models;
-using WebScraping.Infrastructure.Identity.Seeds;
 using WebScraping.Infrastructure.Identity.Services;
+using WebScraping.Core.Application.Extensions;
+using ILogger = Serilog.ILogger;
+using Serilog;
+using Microsoft.AspNetCore.Routing;
 
 namespace WebScraping.Infrastructure.Identity
 {
@@ -87,14 +89,18 @@ namespace WebScraping.Infrastructure.Identity
                         context.HandleResponse();
                         context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                         Response<string> response;
+                        string userName = context.HttpContext.GetUserName();
 
                         if (context.AuthenticateFailure == null)
                         {
-                            response = new Response<string>("You Are not Authenticated");
+                            string message = "You Are not Authenticated";
+                            response = new Response<string>(message);
+                            Log.Warning(message);
                         }
                         else
                         {
                             response = new Response<string>($"{context?.Error}");
+                            Log.Warning(context?.Error);
                         }
 
                         await context.Response.WriteAsJsonAsync(response);
@@ -105,6 +111,10 @@ namespace WebScraping.Infrastructure.Identity
                         context.Response.ContentType = "application/json";
                         var response = new Response<string>("You are not authorized to access this resource");
                         await context.Response.WriteAsJsonAsync(response);
+                        string pathRequest= context.HttpContext.Request.Path;
+                        string userName = context.HttpContext.GetUserName();
+
+                        Log.Warning($"User {userName} are not authorized to access to {pathRequest}" );
                     }
 
                 };

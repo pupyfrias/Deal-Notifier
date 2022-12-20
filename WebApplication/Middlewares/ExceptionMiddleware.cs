@@ -1,5 +1,9 @@
-﻿using WebScraping.Core.Application.Exceptions;
+﻿using Serilog.Context;
+using System.Security.Claims;
+using WebScraping.Core.Application.Exceptions;
+using WebScraping.Core.Application.Extensions;
 using WebScraping.Core.Application.Wrappers;
+using ILogger = Serilog.ILogger;
 
 namespace WebApi.Middlewares
 {
@@ -7,9 +11,10 @@ namespace WebApi.Middlewares
     {
         private readonly ILogger _logger;
         private readonly RequestDelegate _next;
-        public ExceptionMiddleware(RequestDelegate next)
+        public ExceptionMiddleware(RequestDelegate next, ILogger logger)
         {
             _next = next;  
+            _logger = logger;
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -34,6 +39,10 @@ namespace WebApi.Middlewares
                         break;
                 }
                 #endregion StatusCode
+
+                var userName = context.GetUserName();
+                LogContext.PushProperty("UserName", userName);
+                _logger.Error(e,e.Message);
 
                 var response = new Response<string>(e.Message);
                 context.Response.ContentType = "application/json";

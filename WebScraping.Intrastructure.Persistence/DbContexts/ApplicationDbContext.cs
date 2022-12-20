@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Security.Claims;
+using WebScraping.Core.Application.Extensions;
 using WebScraping.Core.Application.Models;
 using WebScraping.Core.Domain.Common;
 using WebScraping.Core.Domain.Entities;
@@ -13,11 +14,11 @@ namespace WebScraping.Infrastructure.Persistence.DbContexts
 {
     public class ApplicationDbContext : Microsoft.EntityFrameworkCore.DbContext
     {
-        private readonly string? _user;
+        private readonly string _user;
         public ApplicationDbContext( DbContextOptions<ApplicationDbContext> options,
             IHttpContextAccessor httpContext):base(options)
         {
-            _user = httpContext.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier).Value ?? "default";
+            _user = httpContext.HttpContext.GetUserName();
         }
 
         public ApplicationDbContext()

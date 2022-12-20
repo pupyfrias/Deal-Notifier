@@ -178,10 +178,10 @@ namespace WebScraping.Infrastructure.Identity.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "42bc7f91-173d-41f2-bd84-8994b15c5487", "34ce1f5a-d3fd-476b-9b4c-3c7a4b7d3025", "SuperAdmin", "SUPERADMIN" },
-                    { "496d8677-46a0-4386-8e5b-7135fe235745", "b6459c1b-643a-4ec7-be7f-51d120185771", "Admin", "ADMIN" },
-                    { "97b34ef5-3187-4f84-813e-837957f5d2b5", "2b23e900-e7b4-45bc-82f0-96b72d0dfc6f", "Basic", "BASIC" },
-                    { "ed22f85b-8828-4403-8f14-9e59b9e5f36b", "c17c1029-c75c-48c1-8785-d145102ccae7", "Moderator", "MODERATOR" }
+                    { "314c97bd-ac78-41a0-bfa9-1b009dd0ab8b", "bcecb6d0-2a79-459d-881b-a5e49e3ca03c", "Moderator", "MODERATOR" },
+                    { "9a81b7c1-fa60-4458-b926-4527b7278a31", "5247e69e-f937-4610-baf4-b110ab238691", "SuperAdmin", "SUPERADMIN" },
+                    { "cdc4719e-3ab5-4e15-b2ed-0a10e0892b2a", "5fb623d5-cbe2-478a-8232-a5bc147b73e5", "Admin", "ADMIN" },
+                    { "dce9c204-9bde-4c1e-8acc-034d1299eead", "ee40ff92-7122-4d90-bbd6-12127125607d", "Basic", "BASIC" }
                 });
 
             migrationBuilder.InsertData(
@@ -190,27 +190,27 @@ namespace WebScraping.Infrastructure.Identity.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { "4c181d29-6fda-49e4-b156-abcec383eef1", 0, "c377c708-7d22-4196-a531-6042f3f4d286", "basicuser@gmail.com", true, "John", "Smith", false, null, "BASICUSER@GMAIL.COM", "BASICUSER", "AQAAAAEAACcQAAAAECRQu+MBcgPSKQb15mCbHAONrfwSB+AVmTDHRvp50swleNqIwiS2YMoRgCwSXLm+PQ==", null, false, "a7b19099-22b9-4c13-a583-20ddd9f5c818", false, "basicuser" },
-                    { "ee1214e1-5a79-45c0-9360-820ce61f7905", 0, "65e573b0-6b37-46a0-a4dd-4dafd2e78e5c", "superuser@gmail.com", true, "John", "Doe", false, null, "SUPERUSER@GMAIL.COM", "SUPERUSER", "AQAAAAEAACcQAAAAEAG3YE4PEKK+hkvQEi922KjvhKZqZZNfJzxbHAwJFkDcHn9a52wYOqTIaM6k4R9tfg==", null, false, "1181eb05-6bd3-4762-b28e-c77c5134e204", false, "superuser" }
+                    { "2103fbf1-85e5-4088-93b0-d2bcbcf5bbba", 0, "73df4070-eee8-47ae-84db-325253a765f5", "superuser@gmail.com", true, "John", "Doe", false, null, "SUPERUSER@GMAIL.COM", "SUPERUSER", "AQAAAAEAACcQAAAAEE5V7GLrrGMeQ8Plni5NW6f4hTSFta9d+OIoavUhEq4N0OLUotwhmQoq+QzX6c5Xcw==", null, false, "12787eb2-157f-421f-8e34-915717ae0102", false, "superuser" },
+                    { "34743d58-5503-4ed8-86a8-aa786201e4c5", 0, "e7c43df2-8644-4842-a99f-531959d744f6", "basicuser@gmail.com", true, "John", "Smith", false, null, "BASICUSER@GMAIL.COM", "BASICUSER", "AQAAAAEAACcQAAAAEGXlMwbeVDnuA/7Tgxgkzx1VExy+pQA6KUYeawcAF3l9jaRgONHzbGixDKiyYwNtlw==", null, false, "fedcfd17-3785-49a0-b17e-40a2a86ec030", false, "basicuser" }
                 });
 
             migrationBuilder.InsertData(
                 schema: "Identity",
                 table: "UserRoles",
                 columns: new[] { "RoleId", "UserId" },
-                values: new object[] { "97b34ef5-3187-4f84-813e-837957f5d2b5", "4c181d29-6fda-49e4-b156-abcec383eef1" });
+                values: new object[] { "9a81b7c1-fa60-4458-b926-4527b7278a31", "2103fbf1-85e5-4088-93b0-d2bcbcf5bbba" });
 
             migrationBuilder.InsertData(
                 schema: "Identity",
                 table: "UserRoles",
                 columns: new[] { "RoleId", "UserId" },
-                values: new object[] { "42bc7f91-173d-41f2-bd84-8994b15c5487", "ee1214e1-5a79-45c0-9360-820ce61f7905" });
+                values: new object[] { "dce9c204-9bde-4c1e-8acc-034d1299eead", "2103fbf1-85e5-4088-93b0-d2bcbcf5bbba" });
 
             migrationBuilder.InsertData(
                 schema: "Identity",
                 table: "UserRoles",
                 columns: new[] { "RoleId", "UserId" },
-                values: new object[] { "97b34ef5-3187-4f84-813e-837957f5d2b5", "ee1214e1-5a79-45c0-9360-820ce61f7905" });
+                values: new object[] { "dce9c204-9bde-4c1e-8acc-034d1299eead", "34743d58-5503-4ed8-86a8-aa786201e4c5" });
 
             migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",

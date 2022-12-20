@@ -1,7 +1,7 @@
 using Serilog;
 using WebApi.Extensions;
-using WebScraping.Core.Application.SetupOptions;
 using WebScraping.Core.Application;
+using WebScraping.Core.Application.SetupOptions;
 using WebScraping.Infrastructure.Identity;
 using WebScraping.Infrastructure.Persistence;
 {
@@ -30,10 +30,6 @@ using WebScraping.Infrastructure.Persistence;
     }
 
     app.AddMiddlewares();
-    app.UseHttpsRedirection();
-    app.UseAuthentication();
-    app.UseAuthorization();
     app.MapControllers();
-
     app.Run();
 }

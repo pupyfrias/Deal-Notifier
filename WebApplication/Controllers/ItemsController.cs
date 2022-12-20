@@ -8,40 +8,47 @@ using WebScraping.Core.Application.DTOs.Item;
 using WebScraping.Core.Application.Wrappers;
 using WebScraping.Core.Domain.Entities;
 using WebScraping.Infrastructure.Persistence.DbContexts;
+using ILogger = Serilog.ILogger;
 using Type = WebScraping.Core.Application.Emuns.Type;
-using Condition = WebScraping.Core.Domain.Entities.Condition;
-using WebScraping.Core.Application.DTOs.Condition;
 
 namespace WebApi.Controllers
 {
-    [Authorize(Roles = Role.SuperAdmin)]
+    [Authorize(Roles = $"{Role.SuperAdmin}")]
     [Route("api/[controller]")]
     [ApiController]
 
     public class ItemsController : ControllerBase
     {
-        public ApplicationDbContext _context;
-        public IMapper _mapper;
+        private ApplicationDbContext _context;
+        private IMapper _mapper;
+        private readonly string? _userName;
+        private readonly IHttpContextAccessor _httpContext;
+        private readonly ILogger _logger;
 
-        public ItemsController(ApplicationDbContext context, IMapper mapper)
+
+        public ItemsController(ApplicationDbContext context,
+            IMapper mapper,
+            IHttpContextAccessor httpContext,
+            ILogger logger)
         {
             _context = context;
             _mapper = mapper;
+            _httpContext = httpContext;
+            _logger = logger;
         }
 
         // GET: api/Items
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery]ItemRequestDTO request) 
         {
-            var condti = _context.Conditions.ProjectTo<ConditionDTO>(_mapper.ConfigurationProvider).ToList();
-
+            _logger.Information("Getting all Item");
             var Items = _context.Items
                 .ProjectTo<ItemResponseDTO>(_mapper.ConfigurationProvider)
                 .Take(100)
                 .Where(x => x.TypeId == (int)Type.Phone)
                 .ToList();
 
-
+           
             return Ok(Items);
 
             #region Definitions

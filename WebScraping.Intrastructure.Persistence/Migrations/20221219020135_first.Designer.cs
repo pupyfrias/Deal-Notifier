@@ -12,7 +12,7 @@ using WebScraping.Infrastructure.Persistence.DbContexts;
 namespace WebScraping.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221216015317_first")]
+    [Migration("20221219020135_first")]
     partial class first
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

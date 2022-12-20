@@ -2,6 +2,8 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
+using Serilog.Context;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -20,23 +22,24 @@ namespace WebScraping.Infrastructure.Identity.Services
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly IConfiguration _configuration;
         private readonly JWTSettings _jwtSettings;
+        private readonly ILogger _logger;
         public AccountService(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IConfiguration configuration,
-            IOptions<JWTSettings> jwtSettings)
+            IOptions<JWTSettings> jwtSettings,
+            ILogger logger
+            )
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _configuration = configuration;
             _jwtSettings = jwtSettings.Value;
+            _logger = logger;
         }
 
         public async Task<Response<AuthenticationResponse>> AuthenticateAsync(AuthenticationRequest request, string ipAddress)
         {
-            
             var user = await _userManager.FindByNameAsync(request.UserName);
 
             if (user == null)
@@ -71,6 +74,8 @@ namespace WebScraping.Infrastructure.Identity.Services
 
             //user.RefreshTokens.Add(refreshToken);
             await _userManager.UpdateAsync(user);
+
+            _logger.Information("User {UserName} logged in", user.UserName);
 
             var response = new Response<AuthenticationResponse>(authentication);
             response.Message = "Successs Authentication.";

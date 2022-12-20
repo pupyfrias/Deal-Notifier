@@ -1,5 +1,7 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Serilog;
+using Serilog.Sinks.MSSqlServer;
 
 namespace WebScraping.Core.Application.SetupOptions
 {
@@ -9,7 +11,48 @@ namespace WebScraping.Core.Application.SetupOptions
         {
             loggerContiguration.ReadFrom
                 .Configuration(hostBuilderContext.Configuration)
-                .WriteTo.Console();
+                .Enrich.FromLogContext();
+
+
+            /* var sinkOptions = new MSSqlServerSinkOptions()
+             {
+                 TableName = "Your table name",
+                 AutoCreateSqlTable = true
+
+             };
+
+
+             var columnUserName = new SqlColumn
+             {
+                 ColumnName = "UserName",
+                 DataType = System.Data.SqlDbType.NVarChar
+             };
+
+             var columnOptions = new ColumnOptions();
+
+             columnOptions.Store.Remove(StandardColumn.MessageTemplate);
+             //columnOptions.AdditionalColumns.Add(columnUserName);
+
+             loggerContiguration
+             .WriteTo.Console()
+             .WriteTo.File(
+                 path: "./logs/log-.txt",
+                 rollingInterval: RollingInterval.Day
+                 )
+             .WriteTo.MSSqlServer(
+                 connectionString: hostBuilderContext.Configuration.GetConnectionString("DefaultConnection"),
+                  tableName: "Logs",
+                  autoCreateSqlTable: true,
+                  columnOptions: columnOptions
+
+                 );*/
+
+
+
+
         };
+
+
+
     }
 }
