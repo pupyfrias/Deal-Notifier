@@ -10,13 +10,13 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "BlackList",
+                name: "BlackLists",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Date = table.Column<DateTime>(type: "DATETIME", nullable: false),
-                    Link = table.Column<string>(type: "VARCHAR(max)", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Link = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "default"),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -24,7 +24,7 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BlackList", x => x.Id);
+                    table.PrimaryKey("PK_BlackLists", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -246,7 +246,7 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "BlackList");
+                name: "BlackLists");
 
             migrationBuilder.DropTable(
                 name: "Item");

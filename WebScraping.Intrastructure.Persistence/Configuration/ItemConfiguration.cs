@@ -1,13 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using WebScraping.Core.Domain.Entities;
-using WebScraping.Infrastructure.Persistence.Extensions;
 
 namespace WebScraping.Infrastructure.Persistence.Configuration
 {
-    public class ItemConfiguration : IEntityTypeConfiguration<Item>
+    public class ItemConfiguration : AuditableBaseEntityConfiguration<Item>
     {
-        public void Configure(EntityTypeBuilder<Item> builder)
+        public override void Configure(EntityTypeBuilder<Item> builder)
         {
             #region Table
             builder.ToTable("Item");
@@ -55,10 +54,6 @@ namespace WebScraping.Infrastructure.Persistence.Configuration
                 .IsRequired();
             #endregion Properties
 
-            #region AuditableBaseEntity Properties
-            builder.AddAutableBaseEntityProperties();
-            #endregion AuditableBaseEntity Properties
-
             #region Keys
             builder.HasKey(x => x.Id);
 
@@ -82,6 +77,8 @@ namespace WebScraping.Infrastructure.Persistence.Configuration
             .HasForeignKey(x => x.ShopId)
             .HasConstraintName("FK_Item_Shop");
             #endregion Keys
+
+            base.Configure(builder);
         }
     }
 }

@@ -1,13 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using WebScraping.Infrastructure.Persistence.Extensions;
 using WebScraping.Infrastructure.Persistence.Seeds;
 using Type = WebScraping.Core.Domain.Entities.Type;
 namespace WebScraping.Infrastructure.Persistence.Configuration
 {
-    public class TypeConfiguration : IEntityTypeConfiguration<Type>
+    public class TypeConfiguration : AuditableBaseEntityConfiguration<Type>
     {
-        public void Configure(EntityTypeBuilder<Type> builder)
+        public override void Configure(EntityTypeBuilder<Type> builder)
         {
             #region Table
             builder.ToTable("Type");
@@ -19,10 +18,6 @@ namespace WebScraping.Infrastructure.Persistence.Configuration
                     .IsRequired();
             #endregion Properties
 
-            #region AuditableBaseEntity Properties
-            builder.AddAutableBaseEntityProperties();
-            #endregion AuditableBaseEntity Properties
-
             #region Keys
             builder.HasKey(x => x.Id);
             #endregion Keys
@@ -30,6 +25,8 @@ namespace WebScraping.Infrastructure.Persistence.Configuration
             #region Data Seeding
             builder.HasData(TypeSeed.data);
             #endregion Data Seeding
+
+            base.Configure(builder);
         }
     }
 }

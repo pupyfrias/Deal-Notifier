@@ -7,13 +7,18 @@ namespace WebScraping.Core.Application.SetupOptions
 {
     public static class SeriLog
     {
+        [Obsolete]
         public static Action<HostBuilderContext, LoggerConfiguration> Options = (hostBuilderContext, loggerContiguration) =>
         {
-            loggerContiguration.ReadFrom
+            /*loggerContiguration.ReadFrom
                 .Configuration(hostBuilderContext.Configuration)
-                .Enrich.FromLogContext();
+                .Enrich.FromLogContext();*/
 
-
+            loggerContiguration.AuditTo.MSSqlServer(
+                    connectionString: hostBuilderContext.Configuration.GetConnectionString("DefaultConnection"),
+                    tableName: "AudiLogs",
+                    autoCreateSqlTable: true
+                ).WriteTo.Console();
             /* var sinkOptions = new MSSqlServerSinkOptions()
              {
                  TableName = "Your table name",

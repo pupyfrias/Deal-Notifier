@@ -12,7 +12,7 @@ using WebScraping.Infrastructure.Persistence.DbContexts;
 namespace WebScraping.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221219020135_first")]
+    [Migration("20221220152600_first")]
     partial class first
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -53,7 +53,7 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                         .HasDefaultValue("default");
 
                     b.Property<DateTime>("Date")
-                        .HasColumnType("DATETIME");
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("LastModified")
                         .HasColumnType("datetime2");
@@ -63,11 +63,11 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Link")
                         .IsRequired()
-                        .HasColumnType("VARCHAR(max)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("BlackList", (string)null);
+                    b.ToTable("BlackLists");
                 });
 
             modelBuilder.Entity("WebScraping.Core.Domain.Entities.Condition", b =>

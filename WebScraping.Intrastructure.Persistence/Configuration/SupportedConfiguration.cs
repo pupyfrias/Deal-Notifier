@@ -1,13 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using WebScraping.Core.Domain.Entities;
-using WebScraping.Infrastructure.Persistence.Extensions;
 
 namespace WebScraping.Infrastructure.Persistence.Configuration
 {
-    public class SupportedConfiguration : IEntityTypeConfiguration<Supported>
+    public class SupportedConfiguration : AuditableBaseEntityConfiguration<Supported>
     {
-        public void Configure(EntityTypeBuilder<Supported> builder)
+        public override void Configure(EntityTypeBuilder<Supported> builder)
         {
             #region Table
             builder.ToTable("Supported");
@@ -40,13 +39,11 @@ namespace WebScraping.Infrastructure.Persistence.Configuration
                 .HasColumnType("VARCHAR(10)");
             #endregion Properties
 
-            #region AuditableBaseEntity Properties
-            builder.AddAutableBaseEntityProperties();
-            #endregion AuditableBaseEntity Properties
-
             #region Keys
             builder.HasKey(x => x.Id);
             #endregion Keys
+
+            base.Configure(builder);
         }
     }
 }

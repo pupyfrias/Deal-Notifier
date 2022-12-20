@@ -1,11 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using WebScraping.Core.Domain.Entities;
-using WebScraping.Infrastructure.Persistence.Extensions;
 
 namespace WebScraping.Infrastructure.Persistence.Configuration
 {
-    public class BlackListConfiguration : IEntityTypeConfiguration<BlackList>
+    public class BlackListConfiguration : AuditableBaseEntityConfiguration<BlackList>
     {
         public void Configure(EntityTypeBuilder<BlackList> builder)
         {
@@ -22,10 +21,6 @@ namespace WebScraping.Infrastructure.Persistence.Configuration
                 .HasColumnType("VARCHAR(max)")
                 .IsRequired();
             #endregion Properties
-
-            #region AuditableBaseEntity Properties
-            builder.AddAutableBaseEntityProperties();
-            #endregion AuditableBaseEntity Properties
 
             #region Keys
             builder.HasKey(x => x.Id);

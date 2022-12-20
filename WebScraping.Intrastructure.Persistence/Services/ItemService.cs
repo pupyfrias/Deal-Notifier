@@ -84,9 +84,10 @@ namespace WebScraping.Infrastructure.Persistence.Services
         /// Save item's data
         /// </summary>
         /// <param name="items">Items List</param>
-        public static void Save(this HashSet<Item> items)
+        public static async Task Save(this HashSet<Item> items)
         {
-            Parallel.ForEach(items, newItem =>
+            foreach (Item newItem in items)
+            //Parallel.ForEach(items, newItem =>
             {
                 using (var context = new ApplicationDbContext())
                 {
@@ -109,11 +110,10 @@ namespace WebScraping.Infrastructure.Persistence.Services
 
                             if (oldPrice > newItem.Price)
                             {
-                                
                                 oldItem.Saving = saving;
                                 oldItem.SavingsPercentage = (saving / oldPrice) * 100;
-                                oldItem.Price= newItem.Price;
-                                oldItem.OldPrice= oldPrice;
+                                oldItem.Price = newItem.Price;
+                                oldItem.OldPrice = oldPrice;
                                 validate = true;
                             }
                             else if (oldPrice < newItem.Price)
@@ -147,7 +147,7 @@ namespace WebScraping.Infrastructure.Persistence.Services
                     }
 
                 }
-            });
+            }
 
 
         }

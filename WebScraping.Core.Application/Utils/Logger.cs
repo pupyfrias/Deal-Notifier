@@ -27,7 +27,7 @@ namespace WebScraping.Core.Application.Utils
                 .Enrich.FromLogContext()
                 .WriteTo.Console(
                     formatter: consoleFormatter)
-                .WriteTo.File(path: $"{Helper.basePath}/logs/log-.txt",
+                .WriteTo.File(path: $"{Helper.basePath}/logs/log-.json",
                     rollingInterval: RollingInterval.Day,
                     restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Warning,
                     formatter: fileFormatter)            

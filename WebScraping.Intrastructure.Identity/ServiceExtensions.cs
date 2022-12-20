@@ -89,7 +89,7 @@ namespace WebScraping.Infrastructure.Identity
                         context.HandleResponse();
                         context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                         Response<string> response;
-                        string userName = context.HttpContext.GetUserName();
+                        //string userName = context.HttpContext.GetUserName();
 
                         if (context.AuthenticateFailure == null)
                         {
