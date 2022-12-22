@@ -30,7 +30,7 @@ namespace WebScraping.Infrastructure.Persistence.Models
                 driver.Navigate().GoToUrl((string)links[0, 0]);
                 int counter = 1;
                 WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(15));
-                HashSet<Item> itemList = new HashSet<Item>();
+                List<Item> itemList = new List<Item>();
 
                 while (true)
                 {

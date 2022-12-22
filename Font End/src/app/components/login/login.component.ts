@@ -38,8 +38,12 @@ export class LoginComponent implements OnInit {
     if (this.formGroup.valid) {
       const data = this.formGroup.value;
       this.itemService.Login(data).subscribe({
-        next: (respon) => {
-          const encryptToken = this.cryptService.Encrypt(respon);
+        next: (response) => {
+
+          var parsedResponse = JSON.parse(response);
+          var accessToken = parsedResponse.data.accessToken;
+
+          const encryptToken = this.cryptService.Encrypt("mkjkjj");
           sessionStorage.setItem('token', encryptToken);
           this.router.navigateByUrl('/');
         }

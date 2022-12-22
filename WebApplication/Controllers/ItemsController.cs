@@ -44,7 +44,6 @@ namespace WebApi.Controllers
             _logger.Information("Getting all Item");
             var Items = _context.Items
                 .ProjectTo<ItemResponseDTO>(_mapper.ConfigurationProvider)
-                .Take(100)
                 .Where(x => x.TypeId == (int)Type.Phone)
                 .ToList();
 
@@ -198,7 +197,7 @@ namespace WebApi.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutItem(int id, Item item)
+        public async Task<IActionResult> PutItem(Guid id, Item item)
         {
             if (id != item.Id)
             {
@@ -239,15 +238,22 @@ namespace WebApi.Controllers
         }
 
         // DELETE: api/Items/5
-        [HttpDelete]
-        public async Task<ActionResult> DeleteItem(string delete)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteItem(Guid Id)
         {
             try
             {
                 await Task.Run(() =>
                  {
-                     string query = $"EXEC SP_DELETE @IDS= '{delete}'";
-                     _context.Database.ExecuteSqlRaw(query);
+                     /*string query = $"EXEC SP_DELETE @IDS= '{delete}'";
+                     _context.Database.ExecuteSqlRaw(query);*/
+                     var item = _context.Items.FirstOrDefault(x => x.Id == Id);
+                     if (item is null)
+                     {
+                         NotFound();
+                     }
+                     _context.Items.Remove(item);
+                     _context.SaveChanges();
 
                  });
 
@@ -260,7 +266,7 @@ namespace WebApi.Controllers
 
         }
 
-        private bool ItemExists(int id)
+        private bool ItemExists(Guid id)
         {
             return _context.Items.Any(e => e.Id == id);
         }

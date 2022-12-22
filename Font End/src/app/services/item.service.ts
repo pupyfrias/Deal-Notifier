@@ -16,13 +16,13 @@ export class ItemService {
   constructor(private httpClient: HttpClient) { }
 
   GetRequest(): Observable<Item[]> {
-    //const api = environment.baseApi +;
-    return this.httpClient.get<Item[]>( '/api/items/' + location.search);
+    const api = environment.baseApi + 'items/';
+    return this.httpClient.get<Item[]>( api + location.search);
   }
 
   Login(data: JSON): Observable<any> {
-    const api = environment.baseApi + 'login';
-    return this.httpClient.post('/api/login', data, { responseType: 'text' });
+    const api = environment.baseApi + 'account/authenticate';
+    return this.httpClient.post(api, data, { responseType: 'text' });
 
   }
 

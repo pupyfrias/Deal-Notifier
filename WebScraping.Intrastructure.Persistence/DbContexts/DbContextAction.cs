@@ -1,12 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using WebScraping.Infrastructure.Persistence.DbContexts;
 
-namespace WebScraping.Infrastructure.Persistence
+namespace WebScraping.Infrastructure.Persistence.DbContexts
 {
-    public static class DbContext
+    public static class DbContextAction
     {
-        public static Func<IConfiguration, Action<DbContextOptionsBuilder>> Options = configuration =>
+        public static Func<IConfiguration, Action<DbContextOptionsBuilder>> DbOptions = configuration =>
         {
             Action<DbContextOptionsBuilder> Options = (options) =>
             {
@@ -20,6 +19,6 @@ namespace WebScraping.Infrastructure.Persistence
         public static Action<DbContextOptionsBuilder> InMemoryOptions = (options) =>
         {
             options.UseInMemoryDatabase("ApplicationDb");
-        };   
+        };
     }
 }

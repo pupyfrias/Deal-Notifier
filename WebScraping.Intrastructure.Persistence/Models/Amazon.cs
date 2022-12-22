@@ -58,7 +58,7 @@ namespace WebScraping.Infrastructure.Persistence.Models
 
                     WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
                     WebDriverWait wait2 = new WebDriverWait(driver, TimeSpan.FromSeconds(2));
-                    HashSet<Item> itemList = new HashSet<Item>();
+                    List<Item> itemList = new List<Item>();
 
                     while (true)
                     {

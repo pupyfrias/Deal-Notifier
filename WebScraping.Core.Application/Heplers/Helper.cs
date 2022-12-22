@@ -1,11 +1,11 @@
-﻿using WebScraping.Core.Application.Models;
+﻿using WebScraping.Core.Application.DTOs;
 
 namespace WebScraping.Core.Application.Heplers
 {
     public class Helper
     {
-        public static HashSet<string> checkedItemList = new HashSet<string>();
-        public static List<SpBlackListResponse> linkBlackList = new List<SpBlackListResponse>();
+        public static List<string> checkedItemList = new List<string>();
+        public static List<BlackListDTO> linkBlackList = new List<BlackListDTO>();
         public static string basePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
         public static string appsettingsPath = Path.GetFullPath("..\\WebScraping.Core.Application\\appsettings.json");
         

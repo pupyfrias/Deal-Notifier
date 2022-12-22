@@ -1,7 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Serilog;
-using WebScraping.Core.Application.Heplers;
+﻿using WebScraping.Core.Application.Heplers;
 using WebScraping.Core.Application.Utils;
 using WebScraping.Core.Domain.Entities;
 using WebScraping.Infrastructure.Persistence.DbContexts;
@@ -50,6 +47,7 @@ namespace WebScraping.Infrastructure.Persistence.Services
             await Task.WhenAll(bannedTask, blackListTask);
 
 
+
             if (isBanned || isInBlackList)
             {
                 return false;
@@ -84,72 +82,91 @@ namespace WebScraping.Infrastructure.Persistence.Services
         /// Save item's data
         /// </summary>
         /// <param name="items">Items List</param>
-        public static async Task Save(this HashSet<Item> items)
+        public static void Save(this List<Item> items)
         {
-            foreach (Item newItem in items)
-            //Parallel.ForEach(items, newItem =>
+            var linkList = items.Select(x => x.Link);
+            var itemListToSave = new List<Item>();
+            var itemListToUpdate = new List<Item>();
+            Helper.checkedItemList.AddRange(linkList);
+
+            Parallel.ForEach(items, newItem =>
             {
                 using (var context = new ApplicationDbContext())
                 {
-                    var oldItem = default(Item);
-                    try
+                    var oldItem = context.Items.FirstOrDefault(i => i.Link == newItem.Link);
+                       
+                    if (oldItem == null)
                     {
-                        oldItem = context.Items.FirstOrDefault(i => i.Link == newItem.Link);
-                        Helper.checkedItemList.Add(newItem.Link);
+                        itemListToSave.Add(newItem);
+                    }
+                    else
+                    {
+                        decimal oldPrice = oldItem.Price;
+                        decimal saving = oldPrice - newItem.Price;
+                        bool validate = false;
 
-                        if (oldItem == null)
+                        if (oldPrice > newItem.Price)
                         {
-                            context.Add(newItem);
+                            oldItem.Saving = saving;
+                            oldItem.SavingsPercentage = (saving / oldPrice) * 100;
+                            oldItem.Price = newItem.Price;
+                            oldItem.OldPrice = oldPrice;
+                            validate = true;
                         }
-                        else
+                        else if (oldPrice < newItem.Price)
                         {
-                            decimal oldPrice = oldItem.Price;
-                            decimal saving = oldPrice - newItem.Price;
-                            bool validate = false;
-
-
-                            if (oldPrice > newItem.Price)
-                            {
-                                oldItem.Saving = saving;
-                                oldItem.SavingsPercentage = (saving / oldPrice) * 100;
-                                oldItem.Price = newItem.Price;
-                                oldItem.OldPrice = oldPrice;
-                                validate = true;
-                            }
-                            else if (oldPrice < newItem.Price)
-                            {
-                                oldItem.Price = newItem.Price;
-                                oldItem.OldPrice = 0;
-                                oldItem.Saving = 0;
-                                oldItem.SavingsPercentage = 0;
-                                validate = true;
-                            }
-
-                            if (newItem.Name != oldItem.Name || newItem.Image != oldItem.Image)
-                            {
-                                oldItem.Name = oldItem.Name;
-                                oldItem.Image = oldItem.Image;
-                                validate = true;
-                            }
-
-
-                            if (validate)
-                            {
-                                context.Update(oldItem);
-                            }
+                            oldItem.Price = newItem.Price;
+                            oldItem.OldPrice = 0;
+                            oldItem.Saving = 0;
+                            oldItem.SavingsPercentage = 0;
+                            validate = true;
                         }
 
+                        if (newItem.Name != oldItem.Name || newItem.Image != oldItem.Image)
+                        {
+                            oldItem.Name = oldItem.Name;
+                            oldItem.Image = oldItem.Image;
+                            validate = true;
+                        }
+
+                        if (validate)
+                        {
+                            itemListToUpdate.Add(oldItem);
+                        }
+                    }
+                }
+
+            });
+
+            try
+            {
+                var savingTask = Task.Run(() => 
+                {
+                    using (var context = new ApplicationDbContext())
+                    {
+                        context.Items.AddRange(itemListToSave);
                         context.SaveChanges();
                     }
-                    catch (Exception ex)
+                });
+
+                var updatingTask = Task.Run(() =>
+                {
+                    using (var context = new ApplicationDbContext())
                     {
-                        Logger.CreateLogger().ForContext<ApplicationDbContext>().Warning($"URL --> {oldItem?.Link ?? newItem.Link}\n{ex.Message} \n");
+                        context.Items.UpdateRange(itemListToUpdate);
+                        context.SaveChanges();
                     }
+                });
 
-                }
+                Task.WhenAll(updatingTask, savingTask);
+
             }
-
-
+            catch (Exception ex)
+            {
+                Logger.CreateLogger().ForContext<ApplicationDbContext>().Error(ex.Message, ex);
+            }
+               
+            
         }
         #endregion Methods
     }

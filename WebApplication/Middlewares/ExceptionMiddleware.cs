@@ -1,4 +1,5 @@
-﻿using Serilog.Context;
+﻿using Microsoft.AspNetCore.Mvc;
+using Serilog.Context;
 using System.Security.Claims;
 using WebScraping.Core.Application.Exceptions;
 using WebScraping.Core.Application.Extensions;
@@ -16,7 +17,6 @@ namespace WebApi.Middlewares
             _next = next;  
             _logger = logger;
         }
-
         public async Task InvokeAsync(HttpContext context)
         {
             try

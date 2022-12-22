@@ -15,10 +15,15 @@ export class ErrorHandlerInterceptor implements HttpInterceptor {
 
   constructor(private errorHandlerService: ErrorHandlerService) { }
 
-  intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
+  intercept(request: HttpRequest<JSON>, next: HttpHandler): Observable<HttpEvent<JSON>> {
     return next.handle(request).pipe(
       tap({
         error: (error => {
+          if (error.status == 401)
+          {
+
+          }
+
           this.errorHandlerService.ShowError(error);
         })
       })

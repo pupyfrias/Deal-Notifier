@@ -4,7 +4,7 @@ namespace WebScraping.Core.Domain.Entities
 {
     public class BlackList: AuditableBaseEntity
     {
-        public DateTime Date { get; set; }
+        public int Id { get; set; }
         public string Link { get; set; }
 
     }

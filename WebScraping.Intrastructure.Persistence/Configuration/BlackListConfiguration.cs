@@ -6,16 +6,13 @@ namespace WebScraping.Infrastructure.Persistence.Configuration
 {
     public class BlackListConfiguration : AuditableBaseEntityConfiguration<BlackList>
     {
-        public void Configure(EntityTypeBuilder<BlackList> builder)
+        public override void Configure(EntityTypeBuilder<BlackList> builder)
         {
             #region Table
             builder.ToTable("BlackList");
             #endregion Table
 
             #region Properties
-            builder.Property(x => x.Date)
-                   .HasColumnType("DATETIME")
-                   .IsRequired();
 
             builder.Property(x => x.Link)
                 .HasColumnType("VARCHAR(max)")

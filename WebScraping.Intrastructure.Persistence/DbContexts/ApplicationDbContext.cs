@@ -1,15 +1,14 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System.Security.AccessControl;
-using System.Security.Claims;
+using WebScraping.Core.Application.DTOs;
 using WebScraping.Core.Application.Extensions;
 using WebScraping.Core.Application.Models;
 using WebScraping.Core.Domain.Common;
 using WebScraping.Core.Domain.Entities;
 using WebScraping.Infrastructure.Persistence.Configuration;
-using Type = WebScraping.Core.Domain.Entities.Type;
 using Action = WebScraping.Core.Application.Emuns.Action;
+using Type = WebScraping.Core.Domain.Entities.Type;
 
 
 namespace WebScraping.Infrastructure.Persistence.DbContexts
@@ -35,7 +34,7 @@ namespace WebScraping.Infrastructure.Persistence.DbContexts
         public DbSet<Status> Statuses { get; set; }
         public DbSet<Supported> Supporteds { get; set; }
         public DbSet<Type> Types { get; set; }
-        public DbSet<SpBlackListResponse> SpBlackList { get; set; }
+        public DbSet<BlackListDTO> SpBlackList { get; set; }
         public DbSet<Audit> AuditLogs { get; set; }
 
         #endregion DbSets
@@ -86,7 +85,6 @@ namespace WebScraping.Infrastructure.Persistence.DbContexts
                     continue;
 
                 var auditEntry = new AuditEntry();
-
                 auditEntry.TableName = entry.Entity.GetType().Name;
                 auditEntry.UserName = _userName;
                 auditEntryList.Add(auditEntry);
@@ -96,11 +94,11 @@ namespace WebScraping.Infrastructure.Persistence.DbContexts
                 {
                     case EntityState.Added:
                         entry.Entity.CreatedBy = _userName;
-                        entry.Entity.Created = DateTime.UtcNow;
+                        entry.Entity.Created = DateTime.Now;
                         break;
                     case EntityState.Modified:
                         entry.Entity.LastModifiedBy = _userName;
-                        entry.Entity.LastModified = DateTime.UtcNow;
+                        entry.Entity.LastModified = DateTime.Now;
                         break;
                     default:
                         break;

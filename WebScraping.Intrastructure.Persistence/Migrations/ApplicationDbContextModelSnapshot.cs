@@ -22,7 +22,7 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("WebScraping.Core.Application.Models.SpBlackListResponse", b =>
+            modelBuilder.Entity("WebScraping.Core.Application.DTOs.BlackListDTO", b =>
                 {
                     b.Property<string>("Link")
                         .IsRequired()
@@ -50,7 +50,6 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("NewValues")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("OldValues")
@@ -82,18 +81,11 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("Created")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(max)")
-                        .HasDefaultValue("default");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("LastModified")
                         .HasColumnType("datetime2");
@@ -103,11 +95,11 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Link")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("VARCHAR(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("BlackLists");
+                    b.ToTable("BlackList", (string)null);
                 });
 
             modelBuilder.Entity("WebScraping.Core.Domain.Entities.Condition", b =>
@@ -160,11 +152,10 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("WebScraping.Core.Domain.Entities.Item", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<int>("ConditionId")
                         .HasColumnType("int");

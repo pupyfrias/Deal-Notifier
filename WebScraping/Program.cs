@@ -1,6 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
+using WebScraping.Core.Application.DTOs;
 using WebScraping.Core.Application.Heplers;
+using WebScraping.Core.Application.Mappings;
 using WebScraping.Core.Application.Utils;
 using WebScraping.Infrastructure.Persistence.DbContexts;
 using WebScraping.Infrastructure.Persistence.Models;
@@ -14,7 +18,7 @@ namespace WebScraping
         static async Task Main(string[] args)
         {
             _logger = Logger.CreateLogger().ForContext<Program>();
-            
+
             await LoadBlackList();
             try
             {
@@ -46,6 +50,10 @@ namespace WebScraping
             }
 
         }
+
+
+
+
 
         static async Task UpdateItems()
         {
@@ -87,14 +95,21 @@ namespace WebScraping
             _logger.Information($"{Helper.checkedItemList.Count} Items In Stock");
             Console.Beep(500, 800);
         }
-        
+
 
         static async Task LoadBlackList()
         {
             using (var context = new ApplicationDbContext())
             {
-                string query = "Exec SP_GET_BLACK_LIST";
-               // Helper.linkBlackList = await context.SpBlackList.FromSqlRaw(query).ToListAsync();
+
+                var mapperConfiguration = new MapperConfiguration(x => x.AddProfile(new AutomapperConfig())).CreateMapper();
+
+                var backList = await context.BlackLists
+                    .ProjectTo<BlackListDTO>(mapperConfiguration.ConfigurationProvider)
+                    .ToListAsync();
+
+                Helper.linkBlackList = backList;
+
                 _logger.Information("Blacklist loaded");
             }
         }

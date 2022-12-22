@@ -1,19 +1,19 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
-using Serilog.Context;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
-using WebScraping.Core.Application.DTOs.Account;
+using WebScraping.Core.Application.Constants;
+using WebScraping.Core.Application.DTOs.Auth;
+using WebScraping.Core.Application.DTOs.Token;
+using WebScraping.Core.Application.DTOs.User;
 using WebScraping.Core.Application.Exceptions;
 using WebScraping.Core.Application.Interfaces.Services;
 using WebScraping.Core.Application.Wrappers;
 using WebScraping.Core.Domain.Settings;
-using WebScraping.Infrastructure.Identity.Helpers;
 using WebScraping.Infrastructure.Identity.Models;
 
 namespace WebScraping.Infrastructure.Identity.Services
@@ -24,58 +24,61 @@ namespace WebScraping.Infrastructure.Identity.Services
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly JWTSettings _jwtSettings;
         private readonly ILogger _logger;
+        private readonly IMapper _mapper;
+        private ApplicationUser _user;
         public AccountService(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            IConfiguration configuration,
             IOptions<JWTSettings> jwtSettings,
-            ILogger logger
+            ILogger logger,
+            IMapper mapper
             )
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _jwtSettings = jwtSettings.Value;
             _logger = logger;
+            _mapper = mapper;
         }
 
-        public async Task<Response<AuthenticationResponse>> AuthenticateAsync(AuthenticationRequest request, string ipAddress)
+        public async Task<Response<AuthenticationResponse>> LoginAsync(AuthenticationRequest request)
         {
-            var user = await _userManager.FindByNameAsync(request.UserName);
+            _user = await _userManager.FindByNameAsync(request.UserName);
 
-            if (user == null)
+            if (_user == null)
             {
                 throw new ApiException($"No Accounts Registered with {request.UserName}.");
             }
 
-            var result = await _signInManager.PasswordSignInAsync(user.UserName, request.Password, false, lockoutOnFailure: false);
+
+            var result = await _signInManager.PasswordSignInAsync(_user.UserName, request.Password, false, lockoutOnFailure: false);
 
             if (!result.Succeeded)
             {
                 throw new ApiException($"Invalid Password for {request.UserName}");
             }
 
-            if (!user.EmailConfirmed)
+            if (!_user.EmailConfirmed)
             {
-                throw new ApiException($"Account Not Comfirmed for {user.Email}");
+                throw new ApiException($"Account Not Comfirmed for {_user.Email}");
             }
 
-            var jwtSecurityToken = await GenerateJWToken(user);
-            var authentication = new AuthenticationResponse();
-            var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
-            string Accesstoken = jwtSecurityTokenHandler.WriteToken(jwtSecurityToken);
-            var roles = (List<string>)await _userManager.GetRolesAsync(user);
-            //var refreshToken = GenerateRefreshToken(ipAddress);
-            
-            authentication.UserName = user.UserName;
-            authentication.Email = user.Email;
-            authentication.IsVerified = user.EmailConfirmed;
-            authentication.Roles = roles;
-            authentication.AccessToken = Accesstoken;
+            var accessToken = await GenerateAccessTokenAsync();
+            var refreshToken = await CreateRefreshTokenAsync();
+            var roleList = (List<string>) await _userManager.GetRolesAsync(_user);
 
-            //user.RefreshTokens.Add(refreshToken);
-            await _userManager.UpdateAsync(user);
-
-            _logger.Information("User {UserName} logged in", user.UserName);
+            var authentication = new AuthenticationResponse
+            {
+                Id = _user.Id,
+                AccessToken = accessToken,
+                RefreshToken = refreshToken,
+                Email = _user.Email,
+                UserName = _user.UserName,
+                IsVerified = _user.EmailConfirmed,
+                Roles = roleList
+            };
+           
+            _logger.Information("User {UserName} logged in", _user.UserName);
 
             var response = new Response<AuthenticationResponse>(authentication);
             response.Message = "Successs Authentication.";
@@ -86,51 +89,99 @@ namespace WebScraping.Infrastructure.Identity.Services
 
 
 
-        public async Task<JwtSecurityToken> GenerateJWToken(ApplicationUser user)
+        private async Task<string> CreateRefreshTokenAsync()
         {
-            var userClaims = await _userManager.GetClaimsAsync(user);
-            var userRoles = await _userManager.GetRolesAsync(user);
-            var roleClaims = new List<Claim>();
-            string ipAddress = IpHelper.GetIpAddress();
+            await _userManager.RemoveAuthenticationTokenAsync(_user, Token.Provider, Token.Name);
+            var refreshToken = await _userManager.GenerateUserTokenAsync(_user, Token.Provider, Token.Name);
+            var result = await _userManager.SetAuthenticationTokenAsync(_user, Token.Provider, Token.Name, refreshToken);
+            return refreshToken;
+        }
 
-            foreach (var role in userRoles)
+        public Task<RefreshTokenResponseDTO> Logout()
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<IEnumerable<IdentityError>> Register(ApiUserDTO apilUserDTO)
+        {
+            _user = _mapper.Map<ApplicationUser>(apilUserDTO);
+            _user.UserName = apilUserDTO.UserName;
+
+            var reuslt = await _userManager.CreateAsync(_user, apilUserDTO.Password);
+            if (reuslt.Succeeded)
             {
-                roleClaims.Add(new Claim("roles", role));
+                await _userManager.AddToRoleAsync(_user, Role.Basic);
             }
 
-            var claims = new[]
+            return reuslt.Errors;
+        }
+
+        private async Task<string> GenerateAccessTokenAsync()
+        {
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+            var roleList = await _userManager.GetRolesAsync(_user);
+
+            var userClaims = await _userManager.GetClaimsAsync(_user);
+            var rolesClaims = roleList.Select(x => new Claim(ClaimTypes.Role, x)).ToList();
+
+            var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
+                new Claim(JwtRegisteredClaimNames.Sub, _user.UserName),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim("uid", user.Id),
-                new Claim("ip", ipAddress)
+                new Claim(JwtRegisteredClaimNames.Email, _user.Email),
+                new Claim("uid", _user.Id)
             }
             .Union(userClaims)
-            .Union(roleClaims);
+            .Union(rolesClaims);
 
-            var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));
-            var SigningCredentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
-            var jwtSecurityToken = new JwtSecurityToken(
+            var securityToken = new JwtSecurityToken(
+                issuer:_jwtSettings.Issuer,
                 audience: _jwtSettings.Audience,
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(_jwtSettings.DurationInMinutes),
-                issuer: _jwtSettings.Issuer,
-                signingCredentials: SigningCredentials
-                );
+                expires: DateTime.Now.AddMinutes(_jwtSettings.DurationInMinutes),
+                signingCredentials: credentials);
 
-            return jwtSecurityToken;
+            var token = new JwtSecurityTokenHandler().WriteToken(securityToken);
+            return token;
 
         }
 
-        
-
-        public string RandomTokenString()
+        public async Task<Response<RefreshTokenResponseDTO?>> VerifyRefreshToken(RefreshTokenRequestDTO request)
         {
-            var randomNuber = new byte[64];
-            var randomNumberGenerator = RandomNumberGenerator.Create();
-            randomNumberGenerator.GetBytes(randomNuber);
-            return Convert.ToBase64String(randomNuber);
+            var jwtTokenHandler = new JwtSecurityTokenHandler();
+            var tokenContent = jwtTokenHandler.ReadJwtToken(request.Token);
+            var userName = tokenContent.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Email).Value;
+            _user = await _userManager.FindByEmailAsync(userName);
+
+            if (_user == null )
+            {
+               return default;
+            }
+
+            var isValidRefreshToken = await _userManager.VerifyUserTokenAsync(_user, Token.Provider, Token.Name, request.RefreshToken);
+            if (isValidRefreshToken)
+            {
+                var accessToken = await GenerateAccessTokenAsync();
+
+      
+                var tokenResponse = new RefreshTokenResponseDTO
+                {
+                    AccessToken = accessToken,
+                    RefreshToken = await CreateRefreshTokenAsync()
+                };
+
+                var response = new Response<RefreshTokenResponseDTO>(tokenResponse);
+                response.Message = "Successs Refresh Token.";
+                return response;
+            }
+
+            await _userManager.UpdateSecurityStampAsync(_user);
+            return default;
         }
+
+
+
+
     }
 }

@@ -13,7 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{B50251AC-C
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{AB9C9CC0-DF62-4265-BE9C-94555960ADA4}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{BFDA4940-5399-4634-9FF8-52A3732EDDB2}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apps", "Apps", "{BFDA4940-5399-4634-9FF8-52A3732EDDB2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebScraping.Core.Domain", "WebScraping.Core.Domain\WebScraping.Core.Domain.csproj", "{9318593C-223B-415A-9C76-254F082813B0}"
 EndProject
@@ -27,7 +27,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi", "WebApplication\We
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "FrontEnd", "Font End\FrontEnd.esproj", "{4E8AB922-7AAD-494A-8823-F5FCCEF90DAE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebScraping.Infrastructure.Shared", "WebScraping.Intrastructure.Shared\WebScraping.Infrastructure.Shared.csproj", "{53E8798B-6DAA-4997-A02D-376C9ED5CD05}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebScraping.Infrastructure.Shared", "WebScraping.Intrastructure.Shared\WebScraping.Infrastructure.Shared.csproj", "{53E8798B-6DAA-4997-A02D-376C9ED5CD05}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

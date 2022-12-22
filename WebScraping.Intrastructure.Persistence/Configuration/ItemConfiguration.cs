@@ -14,6 +14,9 @@ namespace WebScraping.Infrastructure.Persistence.Configuration
 
             #region Properties
 
+            builder.Property(x => x.Id)
+                   .HasDefaultValueSql("NEWID()");
+
             builder.Property(x => x.Name)
                     .HasColumnType("VARCHAR(max)")
                     .IsRequired();

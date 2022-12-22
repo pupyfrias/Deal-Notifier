@@ -1,8 +1,8 @@
 ﻿using WebScraping.Core.Domain.Common;
 
-namespace WebScraping.Core.Domain.Entities
+namespace WebScraping.Core.Application.DTOs.Item
 {
-    public class Item: AuditableBaseEntity
+    public class ItemClean: AuditableBaseEntity
     {
         public Guid Id { get; set; }
         public decimal OldPrice { get; set; }
@@ -16,11 +16,5 @@ namespace WebScraping.Core.Domain.Entities
         public string Image { get; set; }
         public string Link { get; set; }
         public string Name { get; set; }
-        public Condition Condition { get; set; }
-        public Shop Shop { get; set; }
-        public Status Status { get; set; }
-        public Type Type { get; set; }
-
-
     }
 }

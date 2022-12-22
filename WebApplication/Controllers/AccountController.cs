@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WebScraping.Core.Application.DTOs.Account;
+using WebScraping.Core.Application.DTOs.Auth;
+using WebScraping.Core.Application.DTOs.Token;
 using WebScraping.Core.Application.Interfaces.Services;
 
 namespace WebApi.Controllers
@@ -16,16 +17,46 @@ namespace WebApi.Controllers
             _accountService = accountService;
         }
 
-        [HttpPost("authenticate")]
-        public async Task<IActionResult> AuthenticateAsync(AuthenticationRequest request)
+        [HttpPost("login")]
+        public async Task<IActionResult> LoginAsync(AuthenticationRequest request)
         {
-            string ipAddress = GenerateIpAdrress();
-            var response = await _accountService.AuthenticateAsync(request, ipAddress);
-
+            var response = await _accountService.LoginAsync(request);
+            SetRefreshTokenInCookie(response.Data.RefreshToken);
             return Ok(response);
 
         }
 
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshTokenAsync(RefreshTokenRequestDTO request) 
+        {
+            var refreshToken = Request.Cookies["refreshToken"];
+            if (string.IsNullOrWhiteSpace(refreshToken))
+            {
+                return BadRequest();
+            }
+
+            request.RefreshToken = refreshToken;
+            var response = await _accountService.VerifyRefreshToken(request);
+            if(response == null)
+            {
+                return BadRequest();
+            }
+            SetRefreshTokenInCookie(response.Data.RefreshToken);
+            return Ok(response);
+        }
+
+
+        private void SetRefreshTokenInCookie(string refreshToken)
+        {
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = DateTime.UtcNow.AddDays(10),
+                Secure= true
+                
+            };
+            Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
+        }
 
 
         private string GenerateIpAdrress()

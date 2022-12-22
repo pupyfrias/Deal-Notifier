@@ -16,6 +16,7 @@ using WebScraping.Core.Application.Extensions;
 using ILogger = Serilog.ILogger;
 using Serilog;
 using Microsoft.AspNetCore.Routing;
+using WebScraping.Core.Application.Constants;
 
 namespace WebScraping.Infrastructure.Identity
 {
@@ -51,7 +52,8 @@ namespace WebScraping.Infrastructure.Identity
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<IdentityContext>()
                 .AddDefaultTokenProviders()
-                ;
+                .AddTokenProvider<DataProtectorTokenProvider<ApplicationUser>>(Token.Provider);
+            
             #endregion Identity
 
             #region Dependency injection
@@ -59,8 +61,6 @@ namespace WebScraping.Infrastructure.Identity
             #endregion Dependency injection
 
             #region Authentication
-
-
             var key = Encoding.UTF8.GetBytes(configuration["JWTSettings:key"]);
             services.AddAuthentication(auth =>
             {
