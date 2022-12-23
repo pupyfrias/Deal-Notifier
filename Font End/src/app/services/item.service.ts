@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { Item} from '../models/item';
 import { environment } from 'src/environments/environment';
+import { Item } from '../models/item';
+import { ResponseDTO } from '../models/ResponseDTO';
 
 @Injectable({
   providedIn: 'root',
@@ -20,9 +21,10 @@ export class ItemService {
     return this.httpClient.get<Item[]>( api + location.search);
   }
 
-  Login(data: JSON): Observable<any> {
-    const api = environment.baseApi + 'account/authenticate';
-    return this.httpClient.post(api, data, { responseType: 'text' });
+  Login(body: JSON): Observable<ResponseDTO> {
+    const api = environment.baseApi + 'account/login';
+
+    return this.httpClient.post<ResponseDTO>(api, body, { withCredentials : true} );
 
   }
 

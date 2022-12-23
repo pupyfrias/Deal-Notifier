@@ -87,8 +87,6 @@ namespace WebScraping.Infrastructure.Identity.Services
         }
 
 
-
-
         private async Task<string> CreateRefreshTokenAsync()
         {
             await _userManager.RemoveAuthenticationTokenAsync(_user, Token.Provider, Token.Name);
@@ -150,7 +148,7 @@ namespace WebScraping.Infrastructure.Identity.Services
         public async Task<Response<RefreshTokenResponseDTO?>> VerifyRefreshToken(RefreshTokenRequestDTO request)
         {
             var jwtTokenHandler = new JwtSecurityTokenHandler();
-            var tokenContent = jwtTokenHandler.ReadJwtToken(request.Token);
+            var tokenContent = jwtTokenHandler.ReadJwtToken(request.AccessToken);
             var userName = tokenContent.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Email).Value;
             _user = await _userManager.FindByEmailAsync(userName);
 
@@ -163,8 +161,6 @@ namespace WebScraping.Infrastructure.Identity.Services
             if (isValidRefreshToken)
             {
                 var accessToken = await GenerateAccessTokenAsync();
-
-      
                 var tokenResponse = new RefreshTokenResponseDTO
                 {
                     AccessToken = accessToken,
@@ -172,7 +168,8 @@ namespace WebScraping.Infrastructure.Identity.Services
                 };
 
                 var response = new Response<RefreshTokenResponseDTO>(tokenResponse);
-                response.Message = "Successs Refresh Token.";
+                response.Message = "Successs Refresh AccessToken.";
+                _logger.Information("Access Token refreshed to user {UseName}", _user.UserName);
                 return response;
             }
 

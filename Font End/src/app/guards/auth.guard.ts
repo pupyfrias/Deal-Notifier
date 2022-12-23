@@ -1,47 +1,48 @@
-import { ItemService } from 'src/app/services/item.service';
 import { Injectable } from '@angular/core';
 import {
-  ActivatedRouteSnapshot,
-  CanActivate,
-  Router,
-  RouterStateSnapshot,
-  UrlTree,
+    ActivatedRouteSnapshot,
+    CanActivate,
+    Router,
+    RouterStateSnapshot
 } from '@angular/router';
-import { Observable } from 'rxjs';
-import { environment } from 'src/environments/environment';
+import { JwtHelperService } from '@auth0/angular-jwt';
 import { CryptService } from '../services/crypt.service';
+import { TokenService } from '../services/token.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthGuard implements CanActivate {
-  
+
+  jwtHelper = new JwtHelperService();
+
   constructor(
     private cryptService: CryptService,
-    private router: Router
-    ){
+    private router: Router,
+    private tokenService: TokenService
+    )
+    {
 
-  }
-  
-  canActivate(
+    }
+
+  async canActivate(
     route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ):
-    | Observable<boolean | UrlTree>
-    | Promise<boolean | UrlTree>
-    | boolean
-    | UrlTree {
+    state: RouterStateSnapshot): Promise<boolean> {
 
-      const encryptToken = sessionStorage.getItem('token');
-      if(encryptToken){
-        const decryptToken = this.cryptService.Decrypt(encryptToken);
-        if(decryptToken.length> 0)
-        {
-          return true;
-        }
-      }
-    
-    this.router.navigateByUrl('/login');
-    return false;
+    const accessToken = sessionStorage.getItem('accesstoken');
+    const isTokenExpired = this.jwtHelper.isTokenExpired(accessToken);
+    let isRefreshSuccess = true;
+    if (accessToken && !isTokenExpired) {
+      console.log(this.jwtHelper.decodeToken(accessToken))
+      return true;
+    }
+
+    isRefreshSuccess =  await this.tokenService.tryRefreshingTokens(accessToken);
+    if (!isRefreshSuccess) {
+      this.router.navigate(["login"]);
+    }
+
+    return isRefreshSuccess;
   }
-}
+
+}   

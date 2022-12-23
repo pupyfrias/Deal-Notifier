@@ -7,9 +7,12 @@ namespace WebScraping.Core.Application.SetupOptions
         public static Action<CorsOptions> Options = options =>
         {
             options.AddPolicy("AllowAll", policy =>
-               policy.AllowAnyOrigin()
+               policy.WithOrigins("http://localhost:4200")
                      .AllowAnyMethod()
-                     .AllowAnyHeader());
+                     .AllowAnyHeader()
+                     .AllowCredentials()
+                     );
+            
         };
     }
 }

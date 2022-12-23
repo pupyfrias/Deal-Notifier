@@ -11,8 +11,7 @@ export class ErrorHandlerService {
 
 
   ShowError(error: HttpErrorResponse): void {
-    var data = JSON.parse(error.error) ;
-    this.toastr.error(error.status.toString(), data?.message)
+    this.toastr.error(error.status.toString(), error.error.message)
   }
 
 }

@@ -19,11 +19,6 @@ export class ErrorHandlerInterceptor implements HttpInterceptor {
     return next.handle(request).pipe(
       tap({
         error: (error => {
-          if (error.status == 401)
-          {
-
-          }
-
           this.errorHandlerService.ShowError(error);
         })
       })

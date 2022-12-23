@@ -1,9 +1,10 @@
-import { Router } from '@angular/router';
-import { ItemService } from 'src/app/services/item.service';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { ItemService } from 'src/app/services/item.service';
 
 import { CryptService } from 'src/app/services/crypt.service';
+import { ResponseDTO } from '../../models/ResponseDTO';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -38,13 +39,11 @@ export class LoginComponent implements OnInit {
     if (this.formGroup.valid) {
       const data = this.formGroup.value;
       this.itemService.Login(data).subscribe({
-        next: (response) => {
+        next: (response: ResponseDTO) => {
 
-          var parsedResponse = JSON.parse(response);
-          var accessToken = parsedResponse.data.accessToken;
+          var accessToken = response.data.accessToken;
 
-          const encryptToken = this.cryptService.Encrypt("mkjkjj");
-          sessionStorage.setItem('token', encryptToken);
+          sessionStorage.setItem('accesstoken', accessToken);
           this.router.navigateByUrl('/');
         }
       });

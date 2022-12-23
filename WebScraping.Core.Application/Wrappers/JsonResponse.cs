@@ -2,22 +2,22 @@
 {
     public class Response<T>
     {
-        public Response(T data, string message = "Success Request")
+        public Response(T data, string message = "Successed Request")
         {
             Data = data;
             Message = message;
-            Success = true;
+            Successed = true;
 
         }
 
         public Response(string message)
         {
             Message = message;
-            Success=false;
+            Successed=false;
         }
 
         public T Data { get; set; }
-        public bool Success { get; set; }
+        public bool Successed { get; set; }
         public string Message  { get; set; }
         public List<string> Errors { get; set; }
 

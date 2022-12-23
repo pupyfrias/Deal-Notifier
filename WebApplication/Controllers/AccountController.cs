@@ -2,6 +2,7 @@
 using WebScraping.Core.Application.DTOs.Auth;
 using WebScraping.Core.Application.DTOs.Token;
 using WebScraping.Core.Application.Interfaces.Services;
+using ILogger = Serilog.ILogger;
 
 namespace WebApi.Controllers
 {
@@ -10,11 +11,14 @@ namespace WebApi.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IAccountService _accountService;
+        private readonly ILogger _logger;
 
 
-        public AccountController(IAccountService accountService, ILogger<AccountController> logger)
+
+        public AccountController(IAccountService accountService, ILogger logger)
         {
             _accountService = accountService;
+            _logger = logger;
         }
 
         [HttpPost("login")]
@@ -27,15 +31,11 @@ namespace WebApi.Controllers
         }
 
         [HttpPost("refresh-token")]
-        public async Task<IActionResult> RefreshTokenAsync(RefreshTokenRequestDTO request) 
+        public async Task<IActionResult> RefreshTokenAsync([FromBody] RefreshTokenRequestDTO request) 
         {
             var refreshToken = Request.Cookies["refreshToken"];
-            if (string.IsNullOrWhiteSpace(refreshToken))
-            {
-                return BadRequest();
-            }
-
             request.RefreshToken = refreshToken;
+
             var response = await _accountService.VerifyRefreshToken(request);
             if(response == null)
             {
@@ -52,10 +52,11 @@ namespace WebApi.Controllers
             {
                 HttpOnly = true,
                 Expires = DateTime.UtcNow.AddDays(10),
-                Secure= true
-                
+                SameSite = SameSiteMode.None,
+                Secure = true
             };
             Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
+            Response.Headers.AccessControlAllowCredentials = "true";
         }
 
 
