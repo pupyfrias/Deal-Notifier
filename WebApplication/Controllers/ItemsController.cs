@@ -2,7 +2,10 @@
 using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
 using WebScraping.Core.Application.Constants;
 using WebScraping.Core.Application.DTOs.Item;
 using WebScraping.Core.Application.Wrappers;
@@ -11,12 +14,12 @@ using WebScraping.Infrastructure.Persistence.DbContexts;
 using ILogger = Serilog.ILogger;
 using Type = WebScraping.Core.Application.Emuns.Type;
 
+
 namespace WebApi.Controllers
 {
     [Authorize(Roles = $"{Role.SuperAdmin}")]
     [Route("api/[controller]")]
     [ApiController]
-
     public class ItemsController : ControllerBase
     {
         private ApplicationDbContext _context;
@@ -24,7 +27,6 @@ namespace WebApi.Controllers
         private readonly string? _userName;
         private readonly IHttpContextAccessor _httpContext;
         private readonly ILogger _logger;
-
 
         public ItemsController(ApplicationDbContext context,
             IMapper mapper,
@@ -39,18 +41,19 @@ namespace WebApi.Controllers
 
         // GET: api/Items
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery]ItemRequestDTO request) 
+        [EnableQuery]
+        public async Task<IActionResult> Get([FromQuery] ItemRequestDTO request)
         {
             _logger.Information("Getting all Item");
-            var Items = _context.Items
+      /*      var Items = _context.Items
                 .ProjectTo<ItemResponseDTO>(_mapper.ConfigurationProvider)
                 .Where(x => x.TypeId == (int)Type.Phone)
                 .ToList();
 
-           
-            return Ok(Items);
+            return Ok(Items);*/
 
             #region Definitions
+
             string? brandList = request.brands?.Replace("%2C", @"* "" or """);
             string? storageList = request.storages?.Replace("%2C", @"* "" or """).Replace("%2B", " ").Replace("+", @"* "" and """);
             string? carrierList = request.carriers?.Replace("%2C", @"* "" or """).Replace("%2B", " ").Replace("+", @"* "" and """);
@@ -60,22 +63,28 @@ namespace WebApi.Controllers
             string? query = default;
             string[] excludeList = request.excludes != null ? request.excludes.Split("%2C") : new string[] { };
             List<string> parameterList = new List<string>();
+            List<ItemResponseDTO> mappedItems = new List<ItemResponseDTO>();
             request.search = request.search?.Replace(" ", @"* "" and """);
 
-            Response<List<Item>>? response = default;
+            Response<List<ItemResponseDTO>>? response = default;
             List<Item>? items = default;
+
             #endregion Definitions
 
-            #region  Offer
+            #region Offer
+
             if (request.offer != null)
             {
                 items = await _context.Items.FromSqlRaw($"EXEC Offer @TYPE ='{request.offer}'").ToListAsync();
-                response = new Response<List<Item>>(items);
+                mappedItems = _mapper.Map<List<ItemResponseDTO>>(items);
+                response = new Response<List<ItemResponseDTO>>(mappedItems);
                 return Ok(response);
             }
+
             #endregion Offer
 
             #region Brands
+
             if (brandList != null)
             {
                 if (excludeList.Contains("brands"))
@@ -86,11 +95,12 @@ namespace WebApi.Controllers
                 {
                     parameterList.Add(@$" (""{brandList}*"") ");
                 }
-
             }
+
             #endregion Brands
 
             #region Storage
+
             if (storageList != null)
             {
                 if (excludeList.Contains("storages"))
@@ -102,9 +112,11 @@ namespace WebApi.Controllers
                     parameterList.Add(@$"(""{storageList}*"") ");
                 }
             }
+
             #endregion Storage
 
             #region Carrier
+
             if (carrierList != null)
             {
                 if (excludeList.Contains("carriers"))
@@ -116,9 +128,11 @@ namespace WebApi.Controllers
                     parameterList.Add(@$"(""{carrierList.Replace("%26", "&")}*"") ");
                 }
             }
+
             #endregion Carrier
 
             #region Search
+
             if (request.search != null)
             {
                 parameterList.Add(@$"(""{request.search}*"") ");
@@ -135,13 +149,17 @@ namespace WebApi.Controllers
                     parameterList.Add(data);
                 }
             }
+
             #endregion Search
 
             #region Sort By
+
             request.sort_by = SortBy(request.sort_by);
+
             #endregion Sort By
 
             #region Price
+
             if (request.min != null)
             {
                 request.min = $" and price > {request.min} ";
@@ -150,9 +168,10 @@ namespace WebApi.Controllers
 
             if (request.max != null)
             {
-                request.max = $" and price < { request.max} ";
+                request.max = $" and price < {request.max} ";
             }
             else { request.max = ""; }
+
             #endregion Price
 
             if (parameterList.Count > 0)
@@ -166,7 +185,6 @@ namespace WebApi.Controllers
                 {
                     query = $"EXEC Filter @Data = 'and contains (NAME, ''{string.Join(" and ", parameterList)}'') ', @Order = '{request.sort_by}', @Min ='{request.min}', @Max ='{request.max}' ,@Types ='{typeList}',@Shops ='{shopList}', @Condition='{conditionList}'";
                 }
-
             }
             else
             {
@@ -174,9 +192,9 @@ namespace WebApi.Controllers
             }
 
             items = await _context.Items.FromSqlRaw(query).ToListAsync();
-            response = new Response<List<Item>>(items);
+            mappedItems = _mapper.Map<List<ItemResponseDTO>> (items);
+            response = new Response<List<ItemResponseDTO>>(mappedItems);
             return Ok(response);
-
         }
 
         // GET: api/Items/5
@@ -238,39 +256,35 @@ namespace WebApi.Controllers
         }
 
         // DELETE: api/Items/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteItem(Guid Id)
+        [HttpDelete]
+        public async Task<ActionResult> DeleteItem([FromQuery]string delete)
         {
             try
             {
-                await Task.Run(() =>
-                 {
-                     /*string query = $"EXEC SP_DELETE @IDS= '{delete}'";
-                     _context.Database.ExecuteSqlRaw(query);*/
-                     var item = _context.Items.FirstOrDefault(x => x.Id == Id);
-                     if (item is null)
-                     {
-                         NotFound();
-                     }
-                     _context.Items.Remove(item);
-                     _context.SaveChanges();
-
-                 });
-
-                return NoContent();
+                List<string> idList = delete.Split(',').ToList();
+                
+                var itemList = await _context.Items.Where(x=> idList.Contains(x.Id.ToString()))
+                    .ToListAsync();
+                
+                if (itemList.Count == 0)
+                {
+                    NotFound();
+                }
+                _context.Items.RemoveRange(itemList);
+                await _context.SaveChangesAsync();
+                
+                return NoContent() ;
             }
             catch (Exception ex)
             {
                 return BadRequest(ex);
             }
-
         }
 
         private bool ItemExists(Guid id)
         {
             return _context.Items.Any(e => e.Id == id);
         }
-
 
         private string SortBy(string str)
         {
@@ -293,7 +307,4 @@ namespace WebApi.Controllers
             }
         }
     }
-
-
-
 }

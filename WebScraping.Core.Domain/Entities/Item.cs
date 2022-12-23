@@ -2,7 +2,7 @@
 
 namespace WebScraping.Core.Domain.Entities
 {
-    public class Item: AuditableBaseEntity
+    public class Item : AuditableBaseEntity
     {
         public Guid Id { get; set; }
         public decimal OldPrice { get; set; }
@@ -20,7 +20,5 @@ namespace WebScraping.Core.Domain.Entities
         public Shop Shop { get; set; }
         public Status Status { get; set; }
         public Type Type { get; set; }
-
-
     }
 }

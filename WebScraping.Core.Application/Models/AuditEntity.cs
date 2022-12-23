@@ -1,4 +1,4 @@
-﻿using  Action = WebScraping.Core.Application.Emuns.Action;
+﻿using Action = WebScraping.Core.Application.Emuns.Action;
 
 namespace WebScraping.Core.Application.Models
 {
@@ -11,7 +11,5 @@ namespace WebScraping.Core.Application.Models
         public Dictionary<string, object?> NewValues { get; } = new Dictionary<string, object?>();
         public Action Action { get; set; }
         public List<string> ChangedColumns { get; } = new List<string>();
-
-
     }
 }

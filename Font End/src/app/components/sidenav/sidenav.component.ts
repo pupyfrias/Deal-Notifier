@@ -24,7 +24,7 @@ export class sidenavComponent implements OnInit, OnDestroy {
   public typesQuery: string[] = [];
   public carriersQuery: string[] = [];
   public excludesQuery: string[] = [];
-  public sortByNow: string| null;
+  public sortByNow: string | null;
   public dealQuery: string | null;
   public maxPrice: string;
   public minPrice: string;
@@ -52,14 +52,14 @@ export class sidenavComponent implements OnInit, OnDestroy {
   ];
   public storagesList: string[] = ['32', '64', '128', '256', '512'];
   public typesList: Array<any> = [
-    ['phone', '1'],
+    ['accessory','1'],
+    ['headphone', '2'],
     ['memory', '3'],
-    ['tv', '2'],
+    ['microphone', '4'],
+    ['phone', '5'],
+    ['speaker', '6'],
     ['streaming', '7'],
-    ['headphone', '4'],
-    ['speaker', '5'],
-    ['microphone', '6'],
-    ['accesory', '8'],
+    ['tV', '8']
   ];
   public carriersList: string[] = [
     'unlocked',
@@ -81,7 +81,7 @@ export class sidenavComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private service: ItemService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.subscription = this.route.queryParams.subscribe((query) => {
@@ -333,30 +333,40 @@ export class sidenavComponent implements OnInit, OnDestroy {
       this.settingQueryParams('512 gb', e.checked, this.storagesQuery);
     }
 
+
+/*    ['Accessory', '1'],
+      ['Headphone', '2'],
+      ['Memory', '3'],
+      ['Microphone', '4'],
+      ['Phone', '5'],
+      ['Speaker', '6'],
+      ['Streaming', '7'],
+      ['TV', '8']*/
+
     //TYPE
     if (e.id === 'phone') {
-      this.settingQueryParams('1', e.checked, this.typesQuery);
+      this.settingQueryParams('5', e.checked, this.typesQuery);
     }
     if (e.id === 'tv') {
-      this.settingQueryParams('2', e.checked, this.typesQuery);
+      this.settingQueryParams('8', e.checked, this.typesQuery);
     }
     if (e.id === 'memory') {
       this.settingQueryParams('3', e.checked, this.typesQuery);
     }
     if (e.id === 'headphone') {
-      this.settingQueryParams('4', e.checked, this.typesQuery);
+      this.settingQueryParams('2', e.checked, this.typesQuery);
     }
     if (e.id === 'speaker') {
-      this.settingQueryParams('5', e.checked, this.typesQuery);
+      this.settingQueryParams('6', e.checked, this.typesQuery);
     }
     if (e.id === 'microphone') {
-      this.settingQueryParams('6', e.checked, this.typesQuery);
+      this.settingQueryParams('4', e.checked, this.typesQuery);
     }
     if (e.id === 'streaming') {
       this.settingQueryParams('7', e.checked, this.typesQuery);
     }
     if (e.id === 'accesory') {
-      this.settingQueryParams('8', e.checked, this.typesQuery);
+      this.settingQueryParams('1', e.checked, this.typesQuery);
     }
 
     //CARRIER
@@ -438,13 +448,13 @@ export class sidenavComponent implements OnInit, OnDestroy {
     if (this.queryParams.toString() !== '') {
       queryJson = JSON.parse(
         '{"' +
-          decodeURI(
-            this.queryParams
-              .toString()
-              .replace(/&/g, '","')
-              .replace(/=/g, '":"')
-          ) +
-          '"}'
+        decodeURI(
+          this.queryParams
+            .toString()
+            .replace(/&/g, '","')
+            .replace(/=/g, '":"')
+        ) +
+        '"}'
       );
     } else {
       queryJson = {};

@@ -8,11 +8,8 @@ import {
 } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 
-
-
 @Injectable()
 export class ErrorHandlerInterceptor implements HttpInterceptor {
-
   constructor(private errorHandlerService: ErrorHandlerService) { }
 
   intercept(request: HttpRequest<JSON>, next: HttpHandler): Observable<HttpEvent<JSON>> {

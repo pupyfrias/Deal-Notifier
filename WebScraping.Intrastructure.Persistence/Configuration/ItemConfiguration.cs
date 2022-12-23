@@ -9,7 +9,9 @@ namespace WebScraping.Infrastructure.Persistence.Configuration
         public override void Configure(EntityTypeBuilder<Item> builder)
         {
             #region Table
+
             builder.ToTable("Item");
+
             #endregion Table
 
             #region Properties
@@ -55,9 +57,11 @@ namespace WebScraping.Infrastructure.Persistence.Configuration
                 .HasColumnType("DECIMAL(13,2)")
                 .HasDefaultValueSql("0")
                 .IsRequired();
+
             #endregion Properties
 
             #region Keys
+
             builder.HasKey(x => x.Id);
 
             builder.HasOne(x => x.Status)
@@ -79,6 +83,7 @@ namespace WebScraping.Infrastructure.Persistence.Configuration
             .WithMany(x => x.Items)
             .HasForeignKey(x => x.ShopId)
             .HasConstraintName("FK_Item_Shop");
+
             #endregion Keys
 
             base.Configure(builder);

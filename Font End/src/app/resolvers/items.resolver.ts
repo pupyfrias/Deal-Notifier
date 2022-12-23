@@ -9,20 +9,21 @@ import {
   RouterStateSnapshot,
 } from '@angular/router';
 import { Observable, of } from 'rxjs';
+import { ResponseDTO } from '../models/ResponseDTO';
 
 @Injectable({
   providedIn: 'root',
 })
-export class ItemsResolver implements Resolve<Observable<boolean | Item[]>> {
-  constructor(private service: ItemService, private router:Router) {}
+export class ItemsResolver implements Resolve<Observable<boolean | ResponseDTO>> {
+  constructor(private service: ItemService, private router: Router) { }
 
-  resolve(): Observable<boolean | Item[]> {
-    console.log('resolve',window.location.href)
+  resolve(): Observable<boolean | ResponseDTO> {
+    console.log('resolve', window.location.href)
     return this.service.GetRequest()
-    .pipe(
-      catchError((error) => {
-        return of(false);
-      })
-    );
+      .pipe(
+        catchError((error) => {
+          return of(false);
+        })
+      );
   }
 }

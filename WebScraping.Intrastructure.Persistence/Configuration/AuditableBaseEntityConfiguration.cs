@@ -8,10 +8,10 @@ namespace WebScraping.Infrastructure.Persistence.Configuration
     {
         public virtual void Configure(EntityTypeBuilder<Entity> builder)
         {
-            builder.Property(x=> x.CreatedBy)
+            builder.Property(x => x.CreatedBy)
                   .HasDefaultValue("default");
 
-            builder.Property(x=> x.Created)
+            builder.Property(x => x.Created)
                    .HasDefaultValueSql("GETDATE()");
 
             builder.Property(x => x.LastModifiedBy);

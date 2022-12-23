@@ -19,7 +19,6 @@ namespace WebScraping.Core.Application.Extensions
                 NewValues = entry.NewValues.Count == 0 ? null : JsonConvert.SerializeObject(entry.NewValues),
                 AffectedColumns = entry.ChangedColumns.Count == 0 ? null : JsonConvert.SerializeObject(entry.ChangedColumns)
             };
-
         }
     }
 }

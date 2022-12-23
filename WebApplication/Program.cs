@@ -4,6 +4,7 @@ using WebScraping.Core.Application;
 using WebScraping.Core.Application.SetupOptions;
 using WebScraping.Infrastructure.Identity;
 using WebScraping.Infrastructure.Persistence;
+
 {
     var builder = WebApplication.CreateBuilder(args);
     ConfigurationManager configuration = builder.Configuration;
@@ -13,14 +14,11 @@ using WebScraping.Infrastructure.Persistence;
     builder.Services.AddApplicationLayer(configuration);
     builder.Services.AddPersistenceInfrastructure(configuration);
     builder.Services.AddIdentityInfrastructure(configuration);
-    #endregion Add services to the container
 
+    #endregion Add services to the container
 
     builder.Host.UseSerilog(SeriLog.Options);
     var app = builder.Build();
- 
-  
-
 
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())

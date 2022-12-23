@@ -12,7 +12,6 @@ namespace WebScraping.Core.Application.SetupOptions
                      .AllowAnyHeader()
                      .AllowCredentials()
                      );
-            
         };
     }
 }

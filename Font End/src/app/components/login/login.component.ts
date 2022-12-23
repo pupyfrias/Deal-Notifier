@@ -18,7 +18,7 @@ export class LoginComponent implements OnInit {
     private cryptService: CryptService,
     private itemService: ItemService,
     private router: Router
-  ) {}
+  ) { }
 
   get user_name() {
     return this.formGroup.get('username');
@@ -28,7 +28,6 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
     this.formGroup = this.fb.group({
       username: ['', [Validators.required]],
       password: ['', [Validators.minLength(8), Validators.required]],
@@ -40,7 +39,6 @@ export class LoginComponent implements OnInit {
       const data = this.formGroup.value;
       this.itemService.Login(data).subscribe({
         next: (response: ResponseDTO) => {
-
           var accessToken = response.data.accessToken;
 
           sessionStorage.setItem('accesstoken', accessToken);

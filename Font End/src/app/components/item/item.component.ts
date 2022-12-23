@@ -20,6 +20,7 @@ import { DialogComponent } from '../dialog/dialog.component';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { environment } from 'src/environments/environment';
 import { MatSidenavContent } from '@angular/material/sidenav';
+import { ResponseDTO } from '../../models/ResponseDTO';
 
 @Component({
   selector: 'app-item',
@@ -47,22 +48,21 @@ export class ItemComponent implements OnInit, OnDestroy, AfterViewChecked {
     private dialog: MatDialog,
     private changeDetectorRef: ChangeDetectorRef,
     private NgxSpinnerService: NgxSpinnerService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
-    // const subscription  = this.route.parent?.data.subscribe((data) => {
-    //   this.list = data['items'];
+    // const subscription  = this.route.parent?.response.subscribe((response) => {
+    //   this.list = response['items'];
     //   this.itemService.total$.next(this.list.length);
     //   this.page = 1;
     //   this.CleanAllCheckboxes();
     // });
 
-
     this.route.queryParams.subscribe(() => {
       const subscription = this.itemService.GetRequest().subscribe({
-        next: (data: Item[]) => {
-          this.itemList = data;
-          console.log(data);
+        next: (response: ResponseDTO) => {
+          this.itemList = response.data;
+          console.log(response.data);
           this.itemService.total$.next(this.itemList.length);
           this.page = 1;
           this.CleanAllCheckboxes();

@@ -10,18 +10,17 @@ import { NgxSpinnerService } from 'ngx-spinner';
 
 @Injectable()
 export class SpinerInterceptor implements HttpInterceptor {
-
-  constructor(private spinner: NgxSpinnerService) {}
+  constructor(private spinner: NgxSpinnerService) { }
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     this.spinner.show();
-    const {method} = request;
-  
+    const { method } = request;
+
     return next.handle(request)
-    .pipe(finalize(()=> {
-      if(method != "DELETE"){
-        this.spinner.hide()
-      }
-    }));
+      .pipe(finalize(() => {
+        if (method != "DELETE") {
+          this.spinner.hide()
+        }
+      }));
   }
 }

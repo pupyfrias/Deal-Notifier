@@ -1,5 +1,6 @@
 ﻿using Emuns = WebScraping.Core.Application.Emuns;
 using Type = WebScraping.Core.Domain.Entities.Type;
+
 namespace WebScraping.Infrastructure.Persistence.Seeds
 {
     public class TypeSeed

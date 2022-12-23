@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Serilog.Context;
-using System.Security.Claims;
+﻿using Serilog.Context;
 using WebScraping.Core.Application.Exceptions;
 using WebScraping.Core.Application.Extensions;
 using WebScraping.Core.Application.Wrappers;
@@ -12,11 +10,13 @@ namespace WebApi.Middlewares
     {
         private readonly ILogger _logger;
         private readonly RequestDelegate _next;
+
         public ExceptionMiddleware(RequestDelegate next, ILogger logger)
         {
-            _next = next;  
+            _next = next;
             _logger = logger;
         }
+
         public async Task InvokeAsync(HttpContext context)
         {
             try
@@ -26,23 +26,27 @@ namespace WebApi.Middlewares
             catch (Exception e)
             {
                 #region StatusCode
+
                 switch (e)
                 {
                     case ApiException:
                         context.Response.StatusCode = StatusCodes.Status400BadRequest;
                         break;
+
                     case KeyNotFoundException:
                         context.Response.StatusCode = StatusCodes.Status404NotFound;
                         break;
+
                     default:
                         context.Response.StatusCode = StatusCodes.Status500InternalServerError;
                         break;
                 }
+
                 #endregion StatusCode
 
                 var userName = context.GetUserName();
                 LogContext.PushProperty("UserName", userName);
-                _logger.Error(e,e.Message);
+                _logger.Error(e, e.Message);
 
                 var response = new Response<string>(e.Message);
                 context.Response.ContentType = "application/json";

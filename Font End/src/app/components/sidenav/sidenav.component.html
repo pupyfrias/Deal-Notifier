@@ -7,33 +7,27 @@
       </mat-panel-title>
     </mat-expansion-panel-header>
 
-    <mat-radio-button
-      name="deals"
-      (change)="Deal($event.source)"
-      color="primary"
-      value="all"
-      [checked]="dealQuery === 'all'"
-      ngClass="d-block m-2"
-    >
+    <mat-radio-button name="deals"
+                      (change)="Deal($event.source)"
+                      color="primary"
+                      value="all"
+                      [checked]="dealQuery === 'all'"
+                      ngClass="d-block m-2">
       All Deals
     </mat-radio-button>
-    <mat-radio-button
-      name="deals"
-      (change)="Deal($event.source)"
-      color="primary"
-      value="today"
-      [checked]="dealQuery === 'today'"
-      ngClass="d-block m-2"
-    >
+    <mat-radio-button name="deals"
+                      (change)="Deal($event.source)"
+                      color="primary"
+                      value="today"
+                      [checked]="dealQuery === 'today'"
+                      ngClass="d-block m-2">
       Today Deals
     </mat-radio-button>
-    <button
-      class="mt-2"
-      mat-raised-button
-      color="primary"
-      *ngIf="dealQuery"
-      (click)="cleanDeals()"
-    >
+    <button class="mt-2"
+            mat-raised-button
+            color="primary"
+            *ngIf="dealQuery"
+            (click)="cleanDeals()">
       clean
     </button>
   </mat-expansion-panel>
@@ -46,25 +40,21 @@
           Sort by
         </mat-panel-title>
       </mat-expansion-panel-header>
-      <mat-radio-button
-        *ngFor="let item of sortBy"
-        name="sortBy"
-        [value]="item[0]"
-        [id]="item[0]"
-        [checked]="item[0] == sortByNow"
-        (change)="OrderByChange($event.source)"
-        color="primary"
-        class="d-block m-2"
-      >
+      <mat-radio-button *ngFor="let item of sortBy"
+                        name="sortBy"
+                        [value]="item[0]"
+                        [id]="item[0]"
+                        [checked]="item[0] == sortByNow"
+                        (change)="OrderByChange($event.source)"
+                        color="primary"
+                        class="d-block m-2">
         {{ item[1] }}
       </mat-radio-button>
-      <button
-        class="mt-2"
-        mat-raised-button
-        color="primary"
-        *ngIf="sortByNow"
-        (click)="cleanOrder()"
-      >
+      <button class="mt-2"
+              mat-raised-button
+              color="primary"
+              *ngIf="sortByNow"
+              (click)="cleanOrder()">
         clean
       </button>
     </mat-expansion-panel>
@@ -77,31 +67,25 @@
           Brands
         </mat-panel-title>
       </mat-expansion-panel-header>
-      <mat-slide-toggle
-        name="brands"
-        (change)="exclude($event)"
-        [checked]="excludesQuery.includes('brands')"
-      >
+      <mat-slide-toggle name="brands"
+                        (change)="exclude($event)"
+                        [checked]="excludesQuery.includes('brands')">
         Exclude
       </mat-slide-toggle>
-      <mat-checkbox
-        type="checkbox"
-        color="primary"
-        (change)="checkboxChange($event.source)"
-        *ngFor="let brand of brandsList"
-        [checked]="brandsQuery.includes(brand)"
-        [id]="brand"
-        class="d-block"
-      >
+      <mat-checkbox type="checkbox"
+                    color="primary"
+                    (change)="checkboxChange($event.source)"
+                    *ngFor="let brand of brandsList"
+                    [checked]="brandsQuery.includes(brand)"
+                    [id]="brand"
+                    class="d-block">
         {{ brand | titlecase }}
       </mat-checkbox>
-      <button
-        class="mt-2"
-        mat-raised-button
-        color="primary"
-        *ngIf="brandsQuery.length > 0 || excludesQuery.includes('brands')"
-        (click)="cleanBrands()"
-      >
+      <button class="mt-2"
+              mat-raised-button
+              color="primary"
+              *ngIf="brandsQuery.length > 0 || excludesQuery.includes('brands')"
+              (click)="cleanBrands()">
         clean
       </button>
     </mat-expansion-panel>
@@ -114,29 +98,24 @@
           Shop
         </mat-panel-title>
       </mat-expansion-panel-header>
-      <mat-checkbox
-        type="checkbox"
-        color="primary"
-        (change)="checkboxChange($event.source)"
-        *ngFor="let item of shopsList"
-        [checked]="shopsQuery.includes(item[1])"
-        [id]="item[0]"
-        class="d-block"
-      >
+      <mat-checkbox type="checkbox"
+                    color="primary"
+                    (change)="checkboxChange($event.source)"
+                    *ngFor="let item of shopsList"
+                    [checked]="shopsQuery.includes(item[1])"
+                    [id]="item[0]"
+                    class="d-block">
         {{ item[0] }}
       </mat-checkbox>
-      <button
-        class="mt-2"
-        mat-raised-button
-        color="primary"
-        *ngIf="shopsQuery.length > 0"
-        (click)="cleanShops()"
-      >
+      <button class="mt-2"
+              mat-raised-button
+              color="primary"
+              *ngIf="shopsQuery.length > 0"
+              (click)="cleanShops()">
         clean
       </button>
     </mat-expansion-panel>
     <!-- END SHOP -->
-
     <!-- BEGIN TYPE -->
     <mat-expansion-panel>
       <mat-expansion-panel-header>
@@ -145,29 +124,24 @@
           Type
         </mat-panel-title>
       </mat-expansion-panel-header>
-      <mat-checkbox
-        type="checkbox"
-        color="primary"
-        (change)="checkboxChange($event.source)"
-        *ngFor="let item of typesList"
-        [checked]="typesQuery.includes(item[1])"
-        [id]="item[0]"
-        class="d-block"
-      >
+      <mat-checkbox type="checkbox"
+                    color="primary"
+                    (change)="checkboxChange($event.source)"
+                    *ngFor="let item of typesList"
+                    [checked]="typesQuery.includes(item[1])"
+                    [id]="item[0]"
+                    class="d-block">
         {{ item[0] | titlecase }}
       </mat-checkbox>
-      <button
-        class="mt-2"
-        mat-raised-button
-        color="primary"
-        *ngIf="typesQuery.length > 0"
-        (click)="cleanTypes()"
-      >
+      <button class="mt-2"
+              mat-raised-button
+              color="primary"
+              *ngIf="typesQuery.length > 0"
+              (click)="cleanTypes()">
         clean
       </button>
     </mat-expansion-panel>
     <!-- END TYPE -->
-
     <!-- BEGIN CARRIERS -->
     <mat-expansion-panel [hidden]="typesQuery.includes('1') === false">
       <mat-expansion-panel-header>
@@ -176,79 +150,63 @@
           Carriers
         </mat-panel-title>
       </mat-expansion-panel-header>
-      <mat-slide-toggle
-        name="carriers"
-        (change)="exclude($event)"
-        [checked]="excludesQuery.includes('carriers')"
-      >
+      <mat-slide-toggle name="carriers"
+                        (change)="exclude($event)"
+                        [checked]="excludesQuery.includes('carriers')">
         Exclude
       </mat-slide-toggle>
-      <mat-checkbox
-        type="checkbox"
-        color="primary"
-        (change)="checkboxChange($event.source)"
-        *ngFor="let item of carriersList"
-        [checked]="carriersQuery.includes(item)"
-        [id]="item"
-        class="d-block"
-      >
+      <mat-checkbox type="checkbox"
+                    color="primary"
+                    (change)="checkboxChange($event.source)"
+                    *ngFor="let item of carriersList"
+                    [checked]="carriersQuery.includes(item)"
+                    [id]="item"
+                    class="d-block">
         {{ item | titlecase }}
       </mat-checkbox>
-      <button
-        class="mt-2"
-        mat-raised-button
-        color="primary"
-        *ngIf="carriersQuery.length > 0 || excludesQuery.includes('carriers')"
-        (click)="cleanCarriers()"
-      >
+      <button class="mt-2"
+              mat-raised-button
+              color="primary"
+              *ngIf="carriersQuery.length > 0 || excludesQuery.includes('carriers')"
+              (click)="cleanCarriers()">
         clean
       </button>
     </mat-expansion-panel>
     <!-- END CARRIERS -->
-
     <!-- BEGIN STORAGE -->
-    <mat-expansion-panel
-      [hidden]="
+    <mat-expansion-panel [hidden]="
         typesQuery.includes('1') === false && typesQuery.includes('3') === false
-      "
-    >
+      ">
       <mat-expansion-panel-header>
         <mat-panel-title>
           <mat-icon class="custom-icon">sd_storage</mat-icon>
           Storage
         </mat-panel-title>
       </mat-expansion-panel-header>
-      <mat-slide-toggle
-        name="storages"
-        (change)="exclude($event)"
-        [checked]="excludesQuery.includes('storages')"
-      >
+      <mat-slide-toggle name="storages"
+                        (change)="exclude($event)"
+                        [checked]="excludesQuery.includes('storages')">
         Exclude
       </mat-slide-toggle>
-     
-      <mat-checkbox
-        type="checkbox"
-        color="primary"
-        (change)="checkboxChange($event.source)"
-        *ngFor="let item of storagesList"
-        [checked]="storagesQuery.includes(item + 'gb')"
-        [id]="item"
-        class="d-block"
-      >
+
+      <mat-checkbox type="checkbox"
+                    color="primary"
+                    (change)="checkboxChange($event.source)"
+                    *ngFor="let item of storagesList"
+                    [checked]="storagesQuery.includes(item + 'gb')"
+                    [id]="item"
+                    class="d-block">
         {{ item }} GB
       </mat-checkbox>
-      <button
-      class="mt-2"
-      mat-raised-button
-      color="primary"
-      *ngIf="storagesQuery.length > 0"
-      (click)="cleanStorages()"
-    >
-      clean
-    </button>
+      <button class="mt-2"
+              mat-raised-button
+              color="primary"
+              *ngIf="storagesQuery.length > 0"
+              (click)="cleanStorages()">
+        clean
+      </button>
     </mat-expansion-panel>
     <!-- END STORAGE -->
-
     <!-- BEGIN PRICE -->
     <mat-expansion-panel>
       <mat-expansion-panel-header>
@@ -260,48 +218,39 @@
       <form>
         <mat-form-field>
           <mat-label>Minimum</mat-label>
-          <input
-            matInput
-            class="mt-2"
-            type="number"
-            id="min"
-            [value]="minPrice"
-            #min
-          />
+          <input matInput
+                 class="mt-2"
+                 type="number"
+                 id="min"
+                 [value]="minPrice"
+                 #min />
         </mat-form-field>
 
         <mat-form-field>
           <mat-label>Maximum</mat-label>
-          <input
-            matInput
-            class="mt-2"
-            type="number"
-            id="max"
-            [value]="maxPrice"
-            #max
-          />
+          <input matInput
+                 class="mt-2"
+                 type="number"
+                 id="max"
+                 [value]="maxPrice"
+                 #max />
         </mat-form-field>
-        <button
-          mat-raised-button
-          color="primary"
-          (click)="priceChange({min,max})"
-          class="mt-2"
-        >
+        <button mat-raised-button
+                color="primary"
+                (click)="priceChange({min,max})"
+                class="mt-2">
           Go
         </button>
       </form>
-      <button
-        class="mt-2"
-        mat-raised-button
-        *ngIf="maxPrice !== '' || minPrice !== ''"
-        (click)="cleanPrices()"
-        color="primary"
-      >
+      <button class="mt-2"
+              mat-raised-button
+              *ngIf="maxPrice !== '' || minPrice !== ''"
+              (click)="cleanPrices()"
+              color="primary">
         clean
       </button>
     </mat-expansion-panel>
     <!-- END PRICE -->
-
     <!-- BEGIN CONDITION -->
     <mat-expansion-panel>
       <mat-expansion-panel-header>
@@ -311,44 +260,36 @@
         </mat-panel-title>
       </mat-expansion-panel-header>
 
-      <mat-checkbox
-        type="checkbox"
-        color="primary"
-        (change)="checkboxChange($event.source)"
-        [checked]="conditionsQuery.includes('1')"
-        id="new"
-        class="d-block"
-      >
+      <mat-checkbox type="checkbox"
+                    color="primary"
+                    (change)="checkboxChange($event.source)"
+                    [checked]="conditionsQuery.includes('1')"
+                    id="new"
+                    class="d-block">
         Brand new
       </mat-checkbox>
-      <mat-checkbox
-        type="checkbox"
-        color="primary"
-        (change)="checkboxChange($event.source)"
-        [checked]="conditionsQuery.includes('2')"
-        id="used"
-        class="d-block"
-      >
+      <mat-checkbox type="checkbox"
+                    color="primary"
+                    (change)="checkboxChange($event.source)"
+                    [checked]="conditionsQuery.includes('2')"
+                    id="used"
+                    class="d-block">
         Used
       </mat-checkbox>
-      <button
-        class="mt-2"
-        mat-raised-button
-        color="primary"
-        *ngIf="conditionsQuery.length > 0"
-        (click)="cleanConditions()"
-      >
+      <button class="mt-2"
+              mat-raised-button
+              color="primary"
+              *ngIf="conditionsQuery.length > 0"
+              (click)="cleanConditions()">
         clean
       </button>
     </mat-expansion-panel>
     <!-- END CONDITION -->
     <!-- BEGIN CLEAN ALL -->
-    <button
-      mat-raised-button
-      color="primary"
-      class="w-100"
-      (click)="CleanAll()"
-    >
+    <button mat-raised-button
+            color="primary"
+            class="w-100"
+            (click)="CleanAll()">
       Clean All
     </button>
     <!-- END CLEAN ALL -->

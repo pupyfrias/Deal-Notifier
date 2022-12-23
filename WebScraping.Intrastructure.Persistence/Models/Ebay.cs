@@ -1,7 +1,7 @@
-﻿using Serilog;
-using OpenQA.Selenium;
+﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
+using Serilog;
 using System.Collections.ObjectModel;
 using WebScraping.Core.Application.Extensions;
 using WebScraping.Core.Application.Utils;
@@ -18,11 +18,12 @@ namespace WebScraping.Infrastructure.Persistence.Models
     {
         private static ILogger _logger;
         private static string error;
+
         private static object[,] links =
          {
            {"https://www.ebay.com/sch/i.html?_fsrp=1&_udlo=30&_blrs=recall_filtering&_from=R40&LH_TitleDesc=0&LH_PrefLoc=98&LH_ItemCondition=1000&Brand=Samsung%7CApple%7CMotorola%7CAlcatel%7CXiaomi%7CHuawei%7CLG&_stpos=19720&_nkw=phones&_sacat=9355&LH_BIN=1&Storage%2520Capacity=32%2520GB%7C64%2520GB%7C256%2520GB%7C512%2520GB%7C128%2520GB&_sop=15&_fspt=1&_udhi=120&rt=nc&Operating%2520System=Android&_dcat=9355&_ipg=240&_pgn=1", Type.Phone }
-
         };
+
         public static void Run()
         {
             _logger = Logger.CreateLogger().ForContext<Ebay>();
@@ -42,7 +43,6 @@ namespace WebScraping.Infrastructure.Persistence.Models
                         _logger.Error($"{e} | URL:{(string)links[i, 0]}");
                         driver.Close();
                         run = false;
-
                     }
 
                     int counter = 1;
@@ -83,7 +83,6 @@ namespace WebScraping.Infrastructure.Persistence.Models
                                     if (priceBruto.ToLower().Contains("to"))
                                         priceBruto = priceBruto.Substring(0, priceBruto.IndexOf("to"));
 
-
                                     Item item = new Item();
                                     item.Name = eName.Text.RemoveSpecialCharacters();
                                     item.Link = link;
@@ -99,7 +98,6 @@ namespace WebScraping.Infrastructure.Persistence.Models
                                         item.SetCondition();
                                         itemList.Add(item);
                                     }
-
                                 }
                                 catch (Exception e)
                                 {
@@ -108,9 +106,7 @@ namespace WebScraping.Infrastructure.Persistence.Models
                                         error = $"URL: {link} | {e.Message}";
                                         _logger.Warning(error);
                                     }
-
                                 }
-
                             });
                         }
                         catch (WebDriverTimeoutException e)
@@ -118,7 +114,6 @@ namespace WebScraping.Infrastructure.Persistence.Models
                             error = $"URL: {i} | {e.Message}";
                             _logger.Warning(error);
                         }
-
 
                         _logger.Information($"{i}\t| {counter}\t| {itemList.Count}");
                         counter++;
@@ -138,7 +133,6 @@ namespace WebScraping.Infrastructure.Persistence.Models
                             {
                                 wait2.Until(ExpectedConditions.ElementToBeClickable(By.CssSelector("a[class=\"pagination__next icon-link\"]"))).Click();
                             }
-
                         }
                         catch (Exception e) when (e is WebDriverTimeoutException || e is WebDriverException)
                         {
@@ -147,15 +141,12 @@ namespace WebScraping.Infrastructure.Persistence.Models
                             driver.TakeScreemShotAtBottom(ref shop, ref i, ref counter, ref by);
                             break;
                         }
-
                     }
-
 
                     itemList.Save();
                 }
 
                 driver.Quit();
-
             }
         }
     }

@@ -10,23 +10,24 @@ using WebScraping.Infrastructure.Persistence.Configuration;
 using Action = WebScraping.Core.Application.Emuns.Action;
 using Type = WebScraping.Core.Domain.Entities.Type;
 
-
 namespace WebScraping.Infrastructure.Persistence.DbContexts
 {
     public class ApplicationDbContext : Microsoft.EntityFrameworkCore.DbContext
     {
         private readonly string _userName = "default";
-        public ApplicationDbContext( DbContextOptions<ApplicationDbContext> options,
-            IHttpContextAccessor httpContext):base(options)
+
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options,
+            IHttpContextAccessor httpContext) : base(options)
         {
             _userName = httpContext.HttpContext.GetUserName();
         }
 
         public ApplicationDbContext()
         {
-
         }
+
         #region DbSets
+
         public DbSet<Item> Items { get; set; }
         public DbSet<BlackList> BlackLists { get; set; }
         public DbSet<Condition> Conditions { get; set; }
@@ -50,9 +51,6 @@ namespace WebScraping.Infrastructure.Persistence.DbContexts
             modelBuilder.ApplyConfiguration(new SupportedConfiguration());
             modelBuilder.ApplyConfiguration(new SpBlackListResponseConfiguration());
         }
-
-
-        
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
@@ -90,22 +88,27 @@ namespace WebScraping.Infrastructure.Persistence.DbContexts
                 auditEntryList.Add(auditEntry);
 
                 #region AuditableBaseEntity
+
                 switch (entry.State)
                 {
                     case EntityState.Added:
                         entry.Entity.CreatedBy = _userName;
                         entry.Entity.Created = DateTime.Now;
                         break;
+
                     case EntityState.Modified:
                         entry.Entity.LastModifiedBy = _userName;
                         entry.Entity.LastModified = DateTime.Now;
                         break;
+
                     default:
                         break;
                 }
+
                 #endregion AuditableBaseEntity
 
                 #region AuditLogs
+
                 foreach (var property in entry.Properties)
                 {
                     string propertyName = property.Metadata.Name;
@@ -122,12 +125,14 @@ namespace WebScraping.Infrastructure.Persistence.DbContexts
                             auditEntry.Action = Action.Create;
                             auditEntry.NewValues[propertyName] = property.CurrentValue;
                             break;
+
                         case EntityState.Deleted:
                             auditEntry.Action = Action.Delete;
                             auditEntry.OldValues[propertyName] = property.OriginalValue;
                             break;
+
                         case EntityState.Modified:
-                            if (property.IsModified && 
+                            if (property.IsModified &&
                                 property.OriginalValue?.ToString() != property.CurrentValue?.ToString())
                             {
                                 auditEntry.ChangedColumns.Add(propertyName);
@@ -139,6 +144,7 @@ namespace WebScraping.Infrastructure.Persistence.DbContexts
                             break;
                     }
                 }
+
                 #endregion AuditLogs
             }
 
@@ -146,7 +152,6 @@ namespace WebScraping.Infrastructure.Persistence.DbContexts
             {
                 AuditLogs.Add(auditEntry.ToAudit());
             }
-
         }
     }
 }

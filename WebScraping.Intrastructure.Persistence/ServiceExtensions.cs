@@ -18,8 +18,8 @@ namespace WebScraping.Infrastructure.Persistence
             {
                 services.AddDbContext<ApplicationDbContext>(DbContextAction.DbOptions(configuration));
             }
-            #endregion DbContext
 
+            #endregion DbContext
         }
     }
 }

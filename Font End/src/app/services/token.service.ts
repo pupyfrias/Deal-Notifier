@@ -7,11 +7,9 @@ import { ResponseDTO } from '../models/ResponseDTO';
   providedIn: 'root'
 })
 export class TokenService {
-
   constructor(private httpClient: HttpClient) { }
 
   public async tryRefreshingTokens(token: string | null): Promise<boolean> {
-
     if (!token) {
       return false;
     }

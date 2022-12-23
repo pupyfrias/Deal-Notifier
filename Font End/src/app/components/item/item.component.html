@@ -1,40 +1,39 @@
 <mat-card class="mt-2" *ngFor="let item of itemList | paginate:
 { itemsPerPage: 40, currentPage: page} ">
-<a [href]="item.link"  target="_blank" class="text-decaration">
-  <mat-grid-list cols="12" rowHeight="fit">
-    <mat-grid-tile colspan="4">
-      
-        <img [src]="item?.image" class="img-limit">
-      
-    </mat-grid-tile>
-    <mat-grid-tile colspan="7" id="p">
-      <mat-grid-tile-header>
-          <p class="card-title">{{item?.name}}</p>
-        <p class="card-text mb-0"> US$ {{item?.price}}&nbsp;
-          <span class="line-t old-price" *ngIf="item.saving > 0"> {{item?.oldPrice}}</span>
-        </p>
-        <div *ngIf="item.saving > 0">
-          <h2 class="saving mb-0">
-            Ahorro US$ {{item?.saving}} &nbsp;|
-            %{{item?.savingsPercentage}}
-          </h2>
-          <br>
-          <p class="card-text mb-0">
-            {{item?.lastModified | date}}
-          </p>
-        </div>
-        <p class="card-text mb-0" >{{item.conditionId|Condition}}</p>
-        <p class="card-text"><small class="text-muted">{{item.shopId | Stores}}</small></p>
+  <a [href]="item.link" target="_blank" class="text-decaration">
+    <mat-grid-list cols="12" rowHeight="fit">
+      <mat-grid-tile colspan="4">
 
-      </mat-grid-tile-header>
-    </mat-grid-tile>
-    <mat-grid-tile colspan="1" id="p">
-      <mat-checkbox [value]="item.id.toString()" class="check_box" (change)="ListDelete($event)" color="primary"
-        name="item" [checked]="listIds.includes(item?.id?.toString())" [id]="item.id.toString()">
-      </mat-checkbox>
-    </mat-grid-tile>
-  </mat-grid-list>
-</a>
+        <img [src]="item?.image" class="img-limit">
+      </mat-grid-tile>
+      <mat-grid-tile colspan="7" id="p">
+        <mat-grid-tile-header>
+          <p class="card-title">{{item?.name}}</p>
+          <p class="card-text mb-0">
+            US$ {{item?.price}}&nbsp;
+            <span class="line-t old-price" *ngIf="item.saving > 0"> {{item?.oldPrice}}</span>
+          </p>
+          <div *ngIf="item.saving > 0">
+            <h2 class="saving mb-0">
+              Ahorro US$ {{item?.saving}} &nbsp;|
+              %{{item?.savingsPercentage}}
+            </h2>
+            <br>
+            <p class="card-text mb-0">
+              {{item?.lastModified | date}}
+            </p>
+          </div>
+          <p class="card-text mb-0">{{item.conditionId|Condition}}</p>
+          <p class="card-text"><small class="text-muted">{{item.shopId | Stores}}</small></p>
+        </mat-grid-tile-header>
+      </mat-grid-tile>
+      <mat-grid-tile colspan="1" id="p">
+        <mat-checkbox [value]="item.id.toString()" class="check_box" (change)="ListDelete($event)" color="primary"
+                      name="item" [checked]="listIds.includes(item?.id?.toString())" [id]="item.id.toString()">
+        </mat-checkbox>
+      </mat-grid-tile>
+    </mat-grid-list>
+  </a>
 </mat-card>
 
 <!-- BEGIN FLOAT ELEMENT -->
@@ -53,22 +52,18 @@
   </div>
 </div>
 <!-- END FLOAT ELEMENT -->
-
 <!-- BEGIN PAGINATION -->
 <div class="text-center mt-4" id="pagination">
   <pagination-controls (pageChange)="page = $event; onPageChange()" [autoHide]="true">
   </pagination-controls>
 </div>
 <!-- END PAGINATION -->
-
-
 <!-- BEGIN SELECT ALL -->
 <div class="select-all" style="border-radius: 50%;">
   <mat-checkbox name="selector" (change)="Select($event)" class="center-select" [(ngModel)]="checkAll">
   </mat-checkbox>
 </div>
 <!-- END SELECT ALL -->
-
 <!-- BEGIN SCROLL TOP -->
 <button mat-fab color="primary" class="scrollToUp" id="scrollToUp" hidden="true" (click)="onPageChange()">
   <mat-icon>arrow_upward</mat-icon>

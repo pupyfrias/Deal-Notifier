@@ -1,10 +1,8 @@
-﻿
-using OpenQA.Selenium;
+﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
 using Serilog;
 using System.Collections.ObjectModel;
-using WebScraping.Core.Application.Emuns;
 using WebScraping.Core.Application.Extensions;
 using WebScraping.Core.Application.Heplers;
 using WebScraping.Core.Application.Utils;
@@ -20,6 +18,7 @@ namespace WebScraping.Infrastructure.Persistence.Models
     {
         private static ILogger _logger;
         private static string error;
+
         private static object[,] links =
         {
             {"https://www.amazon.com/s?i=mobile&bbn=7072561011&rh=n%3A7072561011%2Cp_n_condition-type%3A6503240011%2Cp_36%3A-20000%2Cp_n_feature_twelve_browse-bin%3A14674909011%7C14674910011%7C14674911011%7C17352550011%2Cp_n_feature_nineteen_browse-bin%3A9521921011%2Cp_72%3A2491149011&dc&qid=1648600689&rnid=2491147011", Type.Phone},
@@ -43,7 +42,6 @@ namespace WebScraping.Infrastructure.Persistence.Models
             {"https://www.amazon.com/-/es/s?k=memory+usb+kingston&dc&__mk_es_US=%C3%85M%C3%85%C5%BD%C3%95%C3%91&qid=1652323122&ref=sr_ex_p_n_deal_type_0",  Emuns.Type.Memory},
             {"https://www.amazon.com/s?k=memory+usb+samsung&i=computers&bbn=3151491&rh=n%3A3151491&dc&language=es&__mk_es_US=%C3%85M%C3%85%C5%BD%C3%95%C3%91&qid=1652323252&rnid=2528832011&ref=sr_nr_p_89_1",  Emuns.Type.Memory}*/
         };
-
 
         public static void Run()
         {
@@ -92,8 +90,6 @@ namespace WebScraping.Infrastructure.Persistence.Models
                                         item.SetCondition();
                                         itemList.Add(item);
                                     }
-
-
                                 }
                                 catch (Exception e) when (e is NoSuchElementException | e is StaleElementReferenceException)
                                 {
@@ -116,26 +112,22 @@ namespace WebScraping.Infrastructure.Persistence.Models
                         try
                         {
                             wait2.Until(ExpectedConditions.ElementToBeClickable(By.CssSelector("a[class='s-pagination-item s-pagination-next s-pagination-button s-pagination-separator'"))).Click();
-
                         }
                         catch (WebDriverTimeoutException)
                         {
-
                             var by = "getElementsByClassName('s-pagination-item s-pagination-next s-pagination-button s-pagination-separator')[0]";
                             string shop = "Amazon";
-                            driver.TakeScreemShotAtBottom( ref shop, ref i, ref counter, ref by);
+                            driver.TakeScreemShotAtBottom(ref shop, ref i, ref counter, ref by);
                             break;
                         }
 
                         _logger.Information($"{i}\t| {counter}\t| {itemList.Count}");
                         counter++;
-
                     }
 
                     itemList.Save();
                 }
                 driver.Quit();
-
             }
         }
     }

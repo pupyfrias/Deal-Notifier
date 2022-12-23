@@ -9,10 +9,13 @@ namespace WebScraping.Infrastructure.Persistence.Configuration
         public override void Configure(EntityTypeBuilder<Supported> builder)
         {
             #region Table
+
             builder.ToTable("Supported");
+
             #endregion Table
 
             #region Properties
+
             builder.Property(x => x.ModelName)
                    .HasColumnType("VARCHAR(30)")
                    .IsRequired();
@@ -37,10 +40,13 @@ namespace WebScraping.Infrastructure.Persistence.Configuration
 
             builder.Property(x => x.Carrier)
                 .HasColumnType("VARCHAR(10)");
+
             #endregion Properties
 
             #region Keys
+
             builder.HasKey(x => x.Id);
+
             #endregion Keys
 
             base.Configure(builder);

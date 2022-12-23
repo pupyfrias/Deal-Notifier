@@ -18,7 +18,7 @@ using WebScraping.Infrastructure.Identity.Models;
 
 namespace WebScraping.Infrastructure.Identity.Services
 {
-    public class AccountService: IAccountService
+    public class AccountService : IAccountService
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
@@ -26,6 +26,7 @@ namespace WebScraping.Infrastructure.Identity.Services
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
         private ApplicationUser _user;
+
         public AccountService(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
@@ -50,7 +51,6 @@ namespace WebScraping.Infrastructure.Identity.Services
                 throw new ApiException($"No Accounts Registered with {request.UserName}.");
             }
 
-
             var result = await _signInManager.PasswordSignInAsync(_user.UserName, request.Password, false, lockoutOnFailure: false);
 
             if (!result.Succeeded)
@@ -65,7 +65,7 @@ namespace WebScraping.Infrastructure.Identity.Services
 
             var accessToken = await GenerateAccessTokenAsync();
             var refreshToken = await CreateRefreshTokenAsync();
-            var roleList = (List<string>) await _userManager.GetRolesAsync(_user);
+            var roleList = (List<string>)await _userManager.GetRolesAsync(_user);
 
             var authentication = new AuthenticationResponse
             {
@@ -77,7 +77,7 @@ namespace WebScraping.Infrastructure.Identity.Services
                 IsVerified = _user.EmailConfirmed,
                 Roles = roleList
             };
-           
+
             _logger.Information("User {UserName} logged in", _user.UserName);
 
             var response = new Response<AuthenticationResponse>(authentication);
@@ -85,7 +85,6 @@ namespace WebScraping.Infrastructure.Identity.Services
 
             return response;
         }
-
 
         private async Task<string> CreateRefreshTokenAsync()
         {
@@ -134,7 +133,7 @@ namespace WebScraping.Infrastructure.Identity.Services
             .Union(rolesClaims);
 
             var securityToken = new JwtSecurityToken(
-                issuer:_jwtSettings.Issuer,
+                issuer: _jwtSettings.Issuer,
                 audience: _jwtSettings.Audience,
                 claims: claims,
                 expires: DateTime.Now.AddMinutes(_jwtSettings.DurationInMinutes),
@@ -142,7 +141,6 @@ namespace WebScraping.Infrastructure.Identity.Services
 
             var token = new JwtSecurityTokenHandler().WriteToken(securityToken);
             return token;
-
         }
 
         public async Task<Response<RefreshTokenResponseDTO?>> VerifyRefreshToken(RefreshTokenRequestDTO request)
@@ -152,9 +150,9 @@ namespace WebScraping.Infrastructure.Identity.Services
             var userName = tokenContent.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Email).Value;
             _user = await _userManager.FindByEmailAsync(userName);
 
-            if (_user == null )
+            if (_user == null)
             {
-               return default;
+                return default;
             }
 
             var isValidRefreshToken = await _userManager.VerifyUserTokenAsync(_user, Token.Provider, Token.Name, request.RefreshToken);
@@ -176,9 +174,5 @@ namespace WebScraping.Infrastructure.Identity.Services
             await _userManager.UpdateSecurityStampAsync(_user);
             return default;
         }
-
-
-
-
     }
 }

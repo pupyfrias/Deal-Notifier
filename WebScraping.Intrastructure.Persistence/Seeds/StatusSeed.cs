@@ -1,5 +1,6 @@
 ﻿using WebScraping.Core.Domain.Entities;
 using Emuns = WebScraping.Core.Application.Emuns;
+
 namespace WebScraping.Infrastructure.Persistence.Seeds
 {
     public class StatusSeed
@@ -10,7 +11,6 @@ namespace WebScraping.Infrastructure.Persistence.Seeds
             {
                 Id= (int) Emuns.Status.InStock,
                 Name= Emuns.Status.InStock.ToString()
-                
             },
             new Status
             {

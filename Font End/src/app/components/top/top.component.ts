@@ -22,7 +22,7 @@ export class TopComponent implements OnInit, OnDestroy {
     public itemService: ItemService,
     private route: ActivatedRoute,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     const subs1 = this.itemService.total$.subscribe((data) => {

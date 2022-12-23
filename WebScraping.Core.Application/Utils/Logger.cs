@@ -1,5 +1,4 @@
-﻿
-using Serilog;
+﻿using Serilog;
 using Serilog.Formatting;
 using Serilog.Templates;
 using WebScraping.Core.Application.Constants;
@@ -13,7 +12,6 @@ namespace WebScraping.Core.Application.Utils
         private static ITextFormatter consoleFormatter = new ExpressionTemplate(OutputTemplate.Console);
         private static ITextFormatter fileFormatter = new ExpressionTemplate(OutputTemplate.File);
 
-
         /// <summary>
         /// Create a Logger
         /// </summary>
@@ -22,7 +20,7 @@ namespace WebScraping.Core.Application.Utils
         {
             if (_logger is null)
             {
-                _logger  = new LoggerConfiguration()
+                _logger = new LoggerConfiguration()
                 .MinimumLevel.Information()
                 .Enrich.FromLogContext()
                 .WriteTo.Console(
@@ -30,13 +28,11 @@ namespace WebScraping.Core.Application.Utils
                 .WriteTo.File(path: $"{Helper.basePath}/logs/log-.json",
                     rollingInterval: RollingInterval.Day,
                     restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Warning,
-                    formatter: fileFormatter)            
+                    formatter: fileFormatter)
                 .CreateLogger();
             }
 
             return _logger;
-
-     
         }
     }
 }

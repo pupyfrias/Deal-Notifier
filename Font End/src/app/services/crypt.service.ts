@@ -6,7 +6,6 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class CryptService {
-
   constructor() { }
 
   Encrypt(data: string): string {

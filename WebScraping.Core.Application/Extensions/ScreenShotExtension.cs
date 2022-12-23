@@ -43,7 +43,6 @@ namespace WebScraping.Core.Application.Extensions
         /// <param name="by"></param>
         public static void TakeScreemShotAtBottom(this IWebDriver driver, ref string shop, ref int link, ref int counter, ref string by)
         {
-
             if (!Directory.Exists($"{screenShotbasePath}/{shop}"))
             {
                 Directory.CreateDirectory($"{screenShotbasePath}/{shop}");
@@ -60,7 +59,6 @@ namespace WebScraping.Core.Application.Extensions
                 Logger.CreateLogger()
                     .Error(e.ToString());
             }
-
         }
     }
 }

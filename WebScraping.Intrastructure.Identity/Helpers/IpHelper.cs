@@ -8,9 +8,9 @@ namespace WebScraping.Infrastructure.Identity.Helpers
         public static string GetIpAddress()
         {
             var host = Dns.GetHostAddresses(Dns.GetHostName());
-            foreach(var ip in host)
+            foreach (var ip in host)
             {
-                if(ip.AddressFamily == AddressFamily.InterNetwork)
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
                 {
                     return ip.ToString();
                 }
@@ -18,6 +18,5 @@ namespace WebScraping.Infrastructure.Identity.Helpers
 
             return string.Empty;
         }
-        
     }
 }

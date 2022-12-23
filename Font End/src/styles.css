@@ -16,10 +16,10 @@ img.rounded-start.m-3.img-limit {
   color: black;
 }
 
-.card-body a:hover {
-  text-decoration: none;
-  color: #0d6efd;
-}
+  .card-body a:hover {
+    text-decoration: none;
+    color: #0d6efd;
+  }
 
 .saving {
   font-family: "Amazon Ember", Arial, sans-serif;
@@ -56,5 +56,3 @@ input.col-6.form-control {
   margin-top: 3% !important;
   padding-left: 0 !important;
 }
-
-

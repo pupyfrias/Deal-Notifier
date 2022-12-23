@@ -16,18 +16,14 @@ export class ItemService {
 
   constructor(private httpClient: HttpClient) { }
 
-  GetRequest(): Observable<Item[]> {
+  GetRequest(): Observable<ResponseDTO> {
     const api = environment.baseApi + 'items/';
-    return this.httpClient.get<Item[]>( api + location.search);
+    return this.httpClient.get<ResponseDTO>(api + location.search);
   }
 
   Login(body: JSON): Observable<ResponseDTO> {
     const api = environment.baseApi + 'account/login';
 
-    return this.httpClient.post<ResponseDTO>(api, body, { withCredentials : true} );
-
+    return this.httpClient.post<ResponseDTO>(api, body, { withCredentials: true });
   }
-
-   
-
 }

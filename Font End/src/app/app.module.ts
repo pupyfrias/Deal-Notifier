@@ -82,4 +82,4 @@ import { ErrorHandlerInterceptor } from './interceptors/error-handler.intercepto
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }

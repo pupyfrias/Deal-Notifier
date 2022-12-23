@@ -4,7 +4,6 @@ import {
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
   constructor() { }
@@ -16,21 +15,15 @@ export class TokenInterceptor implements HttpInterceptor {
     const accessToken = sessionStorage.getItem('accesstoken');
 
     if (accessToken) {
-
       let pushToke = request.clone({
         setHeaders: {
           Authorization: `Bearer ${accessToken}`,
           ContentType: 'application/json'
         }
-
       });
       return next.handle(pushToke);
     }
 
-
     return next.handle(request);
   }
-
-
-
 }

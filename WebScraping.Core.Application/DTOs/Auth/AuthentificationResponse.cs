@@ -1,5 +1,4 @@
-﻿
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace WebScraping.Core.Application.DTOs.Auth
 {
@@ -11,8 +10,8 @@ namespace WebScraping.Core.Application.DTOs.Auth
         public List<string> Roles { get; set; }
         public bool IsVerified { get; set; }
         public string AccessToken { get; set; }
+
         [JsonIgnore]
         public string RefreshToken { get; set; }
-
     }
 }

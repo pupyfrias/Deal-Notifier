@@ -9,7 +9,9 @@ namespace WebScraping.Infrastructure.Persistence.Configuration
         public override void Configure(EntityTypeBuilder<BlackList> builder)
         {
             #region Table
+
             builder.ToTable("BlackList");
+
             #endregion Table
 
             #region Properties
@@ -17,10 +19,13 @@ namespace WebScraping.Infrastructure.Persistence.Configuration
             builder.Property(x => x.Link)
                 .HasColumnType("VARCHAR(max)")
                 .IsRequired();
+
             #endregion Properties
 
             #region Keys
+
             builder.HasKey(x => x.Id);
+
             #endregion Keys
         }
     }

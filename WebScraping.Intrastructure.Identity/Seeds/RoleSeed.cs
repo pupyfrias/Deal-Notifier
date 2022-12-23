@@ -5,7 +5,7 @@ namespace WebScraping.Infrastructure.Identity.Seeds
 {
     public static class RoleSeed
     {
-        public static List<IdentityRole<string>> data= new List<IdentityRole<string>>
+        public static List<IdentityRole<string>> data = new List<IdentityRole<string>>
         {
             new IdentityRole
             {

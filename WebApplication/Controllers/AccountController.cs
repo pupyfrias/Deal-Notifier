@@ -13,8 +13,6 @@ namespace WebApi.Controllers
         private readonly IAccountService _accountService;
         private readonly ILogger _logger;
 
-
-
         public AccountController(IAccountService accountService, ILogger logger)
         {
             _accountService = accountService;
@@ -27,24 +25,22 @@ namespace WebApi.Controllers
             var response = await _accountService.LoginAsync(request);
             SetRefreshTokenInCookie(response.Data.RefreshToken);
             return Ok(response);
-
         }
 
         [HttpPost("refresh-token")]
-        public async Task<IActionResult> RefreshTokenAsync([FromBody] RefreshTokenRequestDTO request) 
+        public async Task<IActionResult> RefreshTokenAsync([FromBody] RefreshTokenRequestDTO request)
         {
             var refreshToken = Request.Cookies["refreshToken"];
             request.RefreshToken = refreshToken;
 
             var response = await _accountService.VerifyRefreshToken(request);
-            if(response == null)
+            if (response == null)
             {
                 return BadRequest();
             }
             SetRefreshTokenInCookie(response.Data.RefreshToken);
             return Ok(response);
         }
-
 
         private void SetRefreshTokenInCookie(string refreshToken)
         {
@@ -58,7 +54,6 @@ namespace WebApi.Controllers
             Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
             Response.Headers.AccessControlAllowCredentials = "true";
         }
-
 
         private string GenerateIpAdrress()
         {

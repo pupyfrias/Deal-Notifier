@@ -5,18 +5,16 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 using System.Text;
+using WebScraping.Core.Application.Constants;
+using WebScraping.Core.Application.Extensions;
 using WebScraping.Core.Application.Interfaces.Services;
 using WebScraping.Core.Application.Wrappers;
 using WebScraping.Core.Domain.Settings;
 using WebScraping.Infrastructure.Identity.DbContext;
 using WebScraping.Infrastructure.Identity.Models;
 using WebScraping.Infrastructure.Identity.Services;
-using WebScraping.Core.Application.Extensions;
-using ILogger = Serilog.ILogger;
-using Serilog;
-using Microsoft.AspNetCore.Routing;
-using WebScraping.Core.Application.Constants;
 
 namespace WebScraping.Infrastructure.Identity
 {
@@ -45,22 +43,28 @@ namespace WebScraping.Infrastructure.Identity
             #endregion DbContext
 
             #region Configure
+
             services.Configure<JWTSettings>(configuration.GetSection("JWTSettings"));
+
             #endregion Configure
 
             #region Identity
+
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<IdentityContext>()
                 .AddDefaultTokenProviders()
                 .AddTokenProvider<DataProtectorTokenProvider<ApplicationUser>>(Token.Provider);
-            
+
             #endregion Identity
 
             #region Dependency injection
+
             services.AddScoped<IAccountService, AccountService>();
+
             #endregion Dependency injection
 
             #region Authentication
+
             var key = Encoding.UTF8.GetBytes(configuration["JWTSettings:key"]);
             services.AddAuthentication(auth =>
             {
@@ -111,20 +115,15 @@ namespace WebScraping.Infrastructure.Identity
                         context.Response.ContentType = "application/json";
                         var response = new Response<string>("You are not authorized to access this resource");
                         await context.Response.WriteAsJsonAsync(response);
-                        string pathRequest= context.HttpContext.Request.Path;
+                        string pathRequest = context.HttpContext.Request.Path;
                         string userName = context.HttpContext.GetUserName();
 
-                        Log.Warning($"User {userName} are not authorized to access to {pathRequest}" );
+                        Log.Warning($"User {userName} are not authorized to access to {pathRequest}");
                     }
-
                 };
             });
+
             #endregion Authentication
-
-            
-
         }
-
-
     }
 }

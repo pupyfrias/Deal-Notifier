@@ -4,17 +4,18 @@ using WebScraping.Core.Domain.Entities;
 using WebScraping.Infrastructure.Persistence.DbContexts;
 using Condition = WebScraping.Core.Application.Emuns.Condition;
 
-
 namespace WebScraping.Infrastructure.Persistence.Services
 {
     public static class ItemService
     {
         #region Fields
+
         private static readonly string[] conditionList = { "renovado", "renewed", "reacondicionado", "refurbished", "restaurado", "restored" };
         private static readonly string[] bannedWordList = { "tracfone", "total wireless", "net10", "simple mobile", "straight talk", "family mobile" };
         private static readonly string[] includeList = { };//{ "huawei", "lg ", "moto", "xiaomi", "iphone", "samsung" };
 
         #endregion Fields
+
         #region Methods
 
         /// <summary>
@@ -36,7 +37,6 @@ namespace WebScraping.Infrastructure.Persistence.Services
                         break;
                     }
                 }
-
             });
 
             Task blackListTask = Task.Run(() =>
@@ -46,8 +46,6 @@ namespace WebScraping.Infrastructure.Persistence.Services
 
             await Task.WhenAll(bannedTask, blackListTask);
 
-
-
             if (isBanned || isInBlackList)
             {
                 return false;
@@ -56,7 +54,6 @@ namespace WebScraping.Infrastructure.Persistence.Services
             {
                 return true;
             }
-
         }
 
         /// <summary>
@@ -76,8 +73,6 @@ namespace WebScraping.Infrastructure.Persistence.Services
             item.ConditionId = (int)Condition.New;
         }
 
-
-
         /// <summary>
         /// Save item's data
         /// </summary>
@@ -94,7 +89,7 @@ namespace WebScraping.Infrastructure.Persistence.Services
                 using (var context = new ApplicationDbContext())
                 {
                     var oldItem = context.Items.FirstOrDefault(i => i.Link == newItem.Link);
-                       
+
                     if (oldItem == null)
                     {
                         itemListToSave.Add(newItem);
@@ -135,12 +130,11 @@ namespace WebScraping.Infrastructure.Persistence.Services
                         }
                     }
                 }
-
             });
 
             try
             {
-                var savingTask = Task.Run(() => 
+                var savingTask = Task.Run(() =>
                 {
                     using (var context = new ApplicationDbContext())
                     {
@@ -159,17 +153,13 @@ namespace WebScraping.Infrastructure.Persistence.Services
                 });
 
                 Task.WhenAll(updatingTask, savingTask);
-
             }
             catch (Exception ex)
             {
                 Logger.CreateLogger().ForContext<ApplicationDbContext>().Error(ex.Message, ex);
             }
-               
-            
         }
+
         #endregion Methods
     }
-
-
 }

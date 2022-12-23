@@ -1,5 +1,6 @@
 ﻿using WebScraping.Core.Domain.Entities;
 using Emuns = WebScraping.Core.Application.Emuns;
+
 namespace WebScraping.Infrastructure.Persistence.Seeds
 {
     public class ConditionSeed
@@ -14,9 +15,8 @@ namespace WebScraping.Infrastructure.Persistence.Seeds
             new Condition
             {
                 Id= (int) Emuns.Condition.Used,
-                Name= Emuns.Condition.Used.ToString() 
+                Name= Emuns.Condition.Used.ToString()
             }
-
-        };  
+        };
     }
 }

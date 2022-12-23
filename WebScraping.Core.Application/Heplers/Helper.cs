@@ -8,7 +8,6 @@ namespace WebScraping.Core.Application.Heplers
         public static List<BlackListDTO> linkBlackList = new List<BlackListDTO>();
         public static string basePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
         public static string appsettingsPath = Path.GetFullPath("..\\WebScraping.Core.Application\\appsettings.json");
-        
 
         /// <summary>
         /// Get URL local path

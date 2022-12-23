@@ -12,10 +12,11 @@ using Emuns = WebScraping.Core.Application.Emuns;
 
 namespace WebScraping
 {
-    class Program
+    internal class Program
     {
         private static ILogger _logger;
-        static async Task Main(string[] args)
+
+        private static async Task Main(string[] args)
         {
             _logger = Logger.CreateLogger().ForContext<Program>();
 
@@ -48,14 +49,9 @@ namespace WebScraping
                 await UpdateItems();
                 _logger.Information("Done");
             }
-
         }
 
-
-
-
-
-        static async Task UpdateItems()
+        private static async Task UpdateItems()
         {
             Task markingToInStock = Task.Run(async () =>
             {
@@ -96,12 +92,10 @@ namespace WebScraping
             Console.Beep(500, 800);
         }
 
-
-        static async Task LoadBlackList()
+        private static async Task LoadBlackList()
         {
             using (var context = new ApplicationDbContext())
             {
-
                 var mapperConfiguration = new MapperConfiguration(x => x.AddProfile(new AutomapperConfig())).CreateMapper();
 
                 var backList = await context.BlackLists
@@ -113,6 +107,5 @@ namespace WebScraping
                 _logger.Information("Blacklist loaded");
             }
         }
-
     }
 }

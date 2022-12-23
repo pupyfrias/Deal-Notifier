@@ -8,10 +8,8 @@ namespace WebScraping.Infrastructure.Identity.DbContext
 {
     public class IdentityContext : IdentityDbContext<ApplicationUser>
     {
-
         public IdentityContext(DbContextOptions<IdentityContext> options) : base(options)
         {
-
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -29,7 +27,6 @@ namespace WebScraping.Infrastructure.Identity.DbContext
             builder.Entity<IdentityUserToken<string>>(entity => entity.ToTable("UserTokens"));
             builder.Entity<IdentityUserClaim<string>>(entity => entity.ToTable("UserClaims"));
             builder.Entity<IdentityRoleClaim<string>>(entity => entity.ToTable("RoleClaims"));
-
         }
     }
 }

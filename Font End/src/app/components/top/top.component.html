@@ -1,13 +1,13 @@
-<mat-toolbar color="primary" >
+<mat-toolbar color="primary">
   <mat-toolbar-row>
     <span [matBadge]="total$" matBadgePosition="after" matBadgeColor="accent" matBadgeSize="large"
-      matBadgeOverlap="false" routerLink="/">
-      The Store</span>
+          matBadgeOverlap="false" routerLink="/">
+      The Store
+    </span>
 
     <span style="flex: 1 1 auto;"></span>
-    <mat-icon >search</mat-icon>
-    <input  type="search" [id]="search$" #searchInput placeholder="search"
-    (search)="searching(searchInput.value)" [value]="search$" >
-    
+    <mat-icon>search</mat-icon>
+    <input type="search" [id]="search$" #searchInput placeholder="search"
+           (search)="searching(searchInput.value)" [value]="search$">
   </mat-toolbar-row>
 </mat-toolbar>

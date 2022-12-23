@@ -1,17 +1,17 @@
-﻿using Serilog;
-using OpenQA.Selenium;
+﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
+using Serilog;
 using System.Collections.ObjectModel;
 using WebScraping.Core.Application.Extensions;
+using WebScraping.Core.Application.Heplers;
 using WebScraping.Core.Application.Utils;
 using WebScraping.Core.Domain.Entities;
+using WebScraping.Infrastructure.Persistence.Services;
 using Condition = WebScraping.Core.Application.Emuns.Condition;
 using Shop = WebScraping.Core.Application.Emuns.Shop;
-using Type = WebScraping.Core.Application.Emuns.Type;
 using Status = WebScraping.Core.Application.Emuns.Status;
-using WebScraping.Core.Application.Heplers;
-using WebScraping.Infrastructure.Persistence.Services;
+using Type = WebScraping.Core.Application.Emuns.Type;
 
 namespace WebScraping.Infrastructure.Persistence.Models
 {
@@ -67,19 +67,16 @@ namespace WebScraping.Infrastructure.Persistence.Models
                                 item.ConditionId = (int)Condition.New;
                                 item.StatusId = (int)Status.InStock;
 
-
                                 if (await item.CanBeSave())
                                 {
                                     item.SetCondition();
                                     itemList.Add(item);
                                 }
-
                             }
                             catch (Exception e) when (e is NoSuchElementException | e is StaleElementReferenceException)
                             {
                                 _logger.Warning(e.ToString());
                             }
-
                         });
                     }
                     catch (Exception e)
@@ -97,7 +94,6 @@ namespace WebScraping.Infrastructure.Persistence.Models
                     {
                         wait.Until(ExpectedConditions.ElementToBeClickable(By.CssSelector("button[class='round-button round-button__next']"))).Click();
                     }
-
                     catch (WebDriverTimeoutException)
                     {
                         string shop = "The Store";
@@ -108,12 +104,10 @@ namespace WebScraping.Infrastructure.Persistence.Models
                         driver.Quit();
                         break;
                     }
-
                 }
 
                 itemList.Save();
             }
         }
-
     }
 }

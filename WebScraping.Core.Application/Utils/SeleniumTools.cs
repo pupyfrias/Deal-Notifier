@@ -15,7 +15,6 @@ namespace WebScraping.Core.Application.Utils
             return service;
         }
 
-
         /// <summary>
         /// Create a Chrome Options
         /// </summary>
@@ -33,6 +32,7 @@ namespace WebScraping.Core.Application.Utils
             chromeOptions.AddExcludedArgument("enable-automation");
             return chromeOptions;
         }
+
         /// <summary>
         /// Create a Chrome Driver
         /// </summary>

@@ -6,12 +6,9 @@ import { ToastrService } from 'ngx-toastr';
   providedIn: 'root'
 })
 export class ErrorHandlerService {
-
   constructor(private toastr: ToastrService) { }
-
 
   ShowError(error: HttpErrorResponse): void {
     this.toastr.error(error.status.toString(), error.error.message)
   }
-
 }

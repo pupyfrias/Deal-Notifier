@@ -1,5 +1,6 @@
 ﻿using WebScraping.Core.Domain.Entities;
 using Emuns = WebScraping.Core.Application.Emuns;
+
 namespace WebScraping.Infrastructure.Persistence.Seeds
 {
     public class ShopSeed

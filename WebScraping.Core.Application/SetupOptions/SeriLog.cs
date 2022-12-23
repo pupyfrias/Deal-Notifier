@@ -11,14 +11,12 @@ namespace WebScraping.Core.Application.SetupOptions
             .MinimumLevel.Information()
             .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning)
             .WriteTo.File(
-                path: "./logs/log-.txt", 
+                path: "./logs/log-.txt",
                 rollingInterval: RollingInterval.Day,
                 rollOnFileSizeLimit: true
                 )
             .WriteTo.Console()
             .Enrich.FromLogContext();
-
         };
-
     }
 }

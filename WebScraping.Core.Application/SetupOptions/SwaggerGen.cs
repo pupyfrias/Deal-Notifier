@@ -9,7 +9,7 @@ namespace WebScraping.Core.Application.SetupOptions
     {
         public static Action<SwaggerGenOptions> Options = options =>
         {
-            options.SwaggerDoc("v1", new OpenApiInfo { Title = " Hotel Listing API", Version = "v1" });
+            options.SwaggerDoc("v1", new OpenApiInfo { Title = " THE STORE API", Version = "v1" });
             options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
             {
                 Description = @"JWT Authorization header using the Bearer scheme.
@@ -21,22 +21,23 @@ namespace WebScraping.Core.Application.SetupOptions
                 Scheme = JwtBearerDefaults.AuthenticationScheme
             });
             options.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
                 {
+                    new OpenApiSecurityScheme
                     {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference {
-                                            Type = ReferenceType.SecurityScheme,
-                                            Id = JwtBearerDefaults.AuthenticationScheme
-                                        },
-                            Scheme = "0auth2",
-                            Name = JwtBearerDefaults.AuthenticationScheme,
-                            In = ParameterLocation.Header
-                        },
-                        new List<string>()
+                        Reference = new OpenApiReference {
+                                        Type = ReferenceType.SecurityScheme,
+                                        Id = JwtBearerDefaults.AuthenticationScheme
+                                    },
+                        Scheme = "0auth2",
+                        Name = JwtBearerDefaults.AuthenticationScheme,
+                        In = ParameterLocation.Header
+                    },
+                    new List<string>()
+                }
+            });
 
-                    }
-                });
+            //options.OperationFilter<ODataQueryOptionsFilter>();
         };
     }
 }

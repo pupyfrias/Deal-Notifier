@@ -2,7 +2,7 @@
 
 namespace WebScraping.Core.Application.DTOs.Item
 {
-    public class ItemClean: AuditableBaseEntity
+    public class ItemClean : AuditableBaseEntity
     {
         public Guid Id { get; set; }
         public decimal OldPrice { get; set; }
