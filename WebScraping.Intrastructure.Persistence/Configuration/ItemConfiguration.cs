@@ -84,6 +84,8 @@ namespace WebScraping.Infrastructure.Persistence.Configuration
             .HasForeignKey(x => x.ShopId)
             .HasConstraintName("FK_Item_Shop");
 
+            builder.HasIndex(e => e.Link)
+            .IsUnique();
             #endregion Keys
 
             base.Configure(builder);

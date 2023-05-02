@@ -1,9 +1,12 @@
-﻿using OpenQA.Selenium;
-using OpenQA.Selenium.Support.UI;
-using SeleniumExtras.WaitHelpers;
+﻿using Azure.Core;
 using Serilog;
-using System.Collections.ObjectModel;
-using WebScraping.Core.Application.Extensions;
+using System.Collections.Concurrent;
+using System.Net;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using System.Text;
+using System.Text.Json;
+using WebScraping.Core.Application.Models;
 using WebScraping.Core.Application.Utils;
 using WebScraping.Core.Domain.Entities;
 using WebScraping.Infrastructure.Persistence.Services;
@@ -17,137 +20,179 @@ namespace WebScraping.Infrastructure.Persistence.Models
     public class Ebay
     {
         private static ILogger _logger;
-        private static string error;
+        private static ConcurrentBag<Item> itemList = new ConcurrentBag<Item>();
+        private static bool tokenRefreshed = false;
 
-        private static object[,] links =
-         {
-           {"https://www.ebay.com/sch/i.html?_fsrp=1&_udlo=30&_blrs=recall_filtering&_from=R40&LH_TitleDesc=0&LH_PrefLoc=98&LH_ItemCondition=1000&Brand=Samsung%7CApple%7CMotorola%7CAlcatel%7CXiaomi%7CHuawei%7CLG&_stpos=19720&_nkw=phones&_sacat=9355&LH_BIN=1&Storage%2520Capacity=32%2520GB%7C64%2520GB%7C256%2520GB%7C512%2520GB%7C128%2520GB&_sop=15&_fspt=1&_udhi=120&rt=nc&Operating%2520System=Android&_dcat=9355&_ipg=240&_pgn=1", Type.Phone }
-        };
-
-        public static void Run()
+        public static async Task RunAsync()
         {
-            _logger = Logger.CreateLogger().ForContext<Ebay>();
-            string option = $@"--user-data-dir={AppDomain.CurrentDomain.BaseDirectory}User Data\Ebay";
-            bool run = true;
 
-            using (IWebDriver driver = SeleniumTools.CreateChromeDriver(option))
+
+            _logger = Logger.CreateLogger().ForContext<Ebay>();
+
+            if (tokenRefreshed) throw new Exception("An error occurred while refreshing the token");
+
+            int counter = 1;
+            Uri baseAddress = new Uri("https://api.ebay.com/buy/browse/v1/item_summary/search");
+            string queryParameter = "?filter=price:[20..100],priceCurrency:USD,conditionIds:{1000|3000},itemLocationCountry:US&sort=price&limit=200&aspect_filter=categoryId:9355,Operating System:{Android},Storage Capacity:{512 GB|256 GB|64 GB|32 GB|128 GB},Brand :{LG|Motorola|Samsung}&q=(LG,Motorola,Samsung) (Metro,Virgin,Boost,Sprint,T-Mobile,Unlocked)&category_ids=9355";
+            string accessToken = Environment.GetEnvironmentVariable("AccessToken") ?? string.Empty;
+            HttpClient httpClient = new HttpClient();
+            httpClient.BaseAddress = baseAddress;
+
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            var response = httpClient.GetAsync(queryParameter).Result;
+            if (response.IsSuccessStatusCode)
             {
-                for (int i = 0; i < links.Length / 2; i++)
+                var content = await response.Content.ReadFromJsonAsync<eBayResponse>();
+                Mapping(content?.ItemSummaries);
+                itemList.Save();
+
+                _logger.Information($"1\t| {counter}\t| {itemList.Count}");
+                counter++;
+                itemList.Clear();
+                string? next = content?.Next;
+                
+                while(next != null){
+
+                    using (HttpResponseMessage httpResponseMessage = httpClient.GetAsync(next).Result)
+                    {
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var data = await httpResponseMessage.Content.ReadFromJsonAsync<eBayResponse>();
+                            Mapping(data?.ItemSummaries);
+                            next = data?.Next;
+                            itemList.Save();
+                            _logger.Information($"1\t| {counter}\t| {itemList.Count}");
+                            counter++;
+                            itemList.Clear();
+                        }
+                        else
+                        {
+                            _logger.Warning($"{(int)response.StatusCode} | {response.ReasonPhrase}");
+                        }
+                    }
+                    
+                }
+
+            }
+            else if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                await RefreshTokenAsync();
+                await RunAsync();
+                tokenRefreshed = true;
+            }
+            else
+            {
+                _logger.Warning($"{(int)response.StatusCode} | {response.ReasonPhrase}");
+            }
+
+           
+            httpClient.Dispose();
+        }
+
+
+        #region Private Methods
+        private static void Mapping(List<ItemSummary>? itemSummaries)
+        {
+            if( itemSummaries != null)
+            {
+                Parallel.ForEach(itemSummaries, async (element, stateMain) =>
                 {
                     try
                     {
-                        driver.Navigate().GoToUrl((string)links[i, 0]);
+                        var shippingCost = element.ShippingOptions?[0]?.ShippingCost?.Value;
+                        decimal price = decimal.Parse(element.Price.Value);
+
+                        if (shippingCost != null) { price += decimal.Parse(shippingCost); }
+
+                        Item item = new Item();
+                        item.Name = element.Title;
+                        item.Link = element.ItemWebUrl.Substring(0, element.ItemWebUrl.IndexOf("?"));
+                        item.Image = element?.ThumbnailImages?[0]?.ImageUrl ?? element?.Image?.ImageUrl ?? string.Empty;
+                        item.Price = price;
+                        item.ShopId = (int)Shop.eBay;
+                        item.TypeId = (int)Type.Phone;
+                        item.StatusId = (int)Status.InStock;
+                        item.ConditionId = element?.Condition == "New" ?  (int)Condition.New: (int)Condition.Used;
+                        bool canBeSaved = await item.CanBeSaved();
+
+                        if (canBeSaved)
+                        {
+                            itemList.Add(item);
+                        }
                     }
-                    catch (WebDriverException e)
+                    catch (Exception e)
                     {
-                        _logger.Error($"{e} | URL:{(string)links[i, 0]}");
-                        driver.Close();
-                        run = false;
+                        _logger.Warning(e.Message);
                     }
-
-                    int counter = 1;
-                    WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(15));
-                    WebDriverWait wait2 = new WebDriverWait(driver, TimeSpan.FromSeconds(15));
-                    List<Item> itemList = new List<Item>();
-
-                    while (run)
-                    {
-                        try
-                        {
-                            By selector = By.CssSelector("div[class=\"s-item__wrapper clearfix\"]");
-                            wait.Until(ExpectedConditions.ElementIsVisible(selector));
-                            IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
-                            js.ExecuteScript("document.getElementsByClassName('srp-rail__right')[0]?.remove()");
-                            js.ExecuteScript("document.getElementsByClassName('srp-rail__left')[0]?.remove()");
-                            js.ExecuteScript("document.getElementsByClassName('srp-main-below-river')[0]?.remove()");
-                            js.ExecuteScript("document.getElementsByClassName('s-answer-region s-answer-region-center-top')[0]?.remove()");
-
-                            ReadOnlyCollection<IWebElement> elements = driver.FindElements(selector);
-                            Parallel.ForEach(elements, async (element, stateMain) =>
-                            {
-                                string link = default;
-
-                                try
-                                {
-                                    IWebElement eName = element.FindElement(By.ClassName("s-item__title"));
-                                    IWebElement eLink = element.FindElement(By.ClassName("s-item__link"));
-                                    IWebElement eImage = element.FindElement(By.ClassName("s-item__image-img"));
-                                    IWebElement ePriceWhole = element.FindElement(By.ClassName("s-item__price"));
-
-                                    link = Uri.UnescapeDataString(eLink.GetAttribute("href"));
-                                    link = link.Substring(0, link.IndexOf("?"));
-                                    string image = eImage.GetAttribute("src").Replace("225", "425");
-                                    if (image.ToLower().Contains("ebaystatic.com"))
-                                        image = eImage.GetAttribute("data-src");
-                                    string priceBruto = ePriceWhole.Text.Replace("$", "");
-                                    if (priceBruto.ToLower().Contains("to"))
-                                        priceBruto = priceBruto.Substring(0, priceBruto.IndexOf("to"));
-
-                                    Item item = new Item();
-                                    item.Name = eName.Text.RemoveSpecialCharacters();
-                                    item.Link = link;
-                                    item.Image = image;
-                                    item.Price = decimal.Parse(priceBruto);
-                                    item.ConditionId = (int)Condition.New;
-                                    item.ShopId = (int)Shop.eBay;
-                                    item.TypeId = (int)links[i, 1];
-                                    item.StatusId = (int)Status.InStock;
-
-                                    if (await item.CanBeSave())
-                                    {
-                                        item.SetCondition();
-                                        itemList.Add(item);
-                                    }
-                                }
-                                catch (Exception e)
-                                {
-                                    if (link != "https://ebay.com/itm/123456")
-                                    {
-                                        error = $"URL: {link} | {e.Message}";
-                                        _logger.Warning(error);
-                                    }
-                                }
-                            });
-                        }
-                        catch (WebDriverTimeoutException e)
-                        {
-                            error = $"URL: {i} | {e.Message}";
-                            _logger.Warning(error);
-                        }
-
-                        _logger.Information($"{i}\t| {counter}\t| {itemList.Count}");
-                        counter++;
-
-                        try
-                        {
-                            var currentLink = driver.FindElement(By.CssSelector("a[class=\"pagination__next icon-link\"]")).GetAttribute("href");
-
-                            if (currentLink == driver.Url)
-                            {
-                                string shop = "Ebay";
-                                string by = "getElementsByClassName('s-pagination')[0]";
-                                driver.TakeScreemShotAtBottom(ref shop, ref i, ref counter, ref by);
-                                break;
-                            }
-                            else
-                            {
-                                wait2.Until(ExpectedConditions.ElementToBeClickable(By.CssSelector("a[class=\"pagination__next icon-link\"]"))).Click();
-                            }
-                        }
-                        catch (Exception e) when (e is WebDriverTimeoutException || e is WebDriverException)
-                        {
-                            string shop = "Ebay";
-                            string by = "getElementsByClassName('s-pagination')[0]";
-                            driver.TakeScreemShotAtBottom(ref shop, ref i, ref counter, ref by);
-                            break;
-                        }
-                    }
-
-                    itemList.Save();
-                }
-
-                driver.Quit();
+                });
             }
+            else
+            {
+                _logger.Warning("itemSummaries is null");
+            }
+
+            
         }
+
+        private async static Task RefreshTokenAsync()
+        {
+            string clientId = Environment.GetEnvironmentVariable("ClientId") ?? string.Empty;
+            string clientSecret = Environment.GetEnvironmentVariable("ClientSecret") ?? string.Empty;
+            string refreshToken = Environment.GetEnvironmentVariable("RefreshToken") ?? string.Empty;
+            string scope = "https://api.ebay.com/oauth/api_scope " +
+                            "https://api.ebay.com/oauth/api_scope/sell.marketing.readonly " +
+                            "https://api.ebay.com/oauth/api_scope/sell.marketing " +
+                            "https://api.ebay.com/oauth/api_scope/sell.inventory.readonly " +
+                            "https://api.ebay.com/oauth/api_scope/sell.inventory " +
+                            "https://api.ebay.com/oauth/api_scope/sell.account.readonly " +
+                            "https://api.ebay.com/oauth/api_scope/sell.account " +
+                            "https://api.ebay.com/oauth/api_scope/sell.fulfillment.readonly " +
+                            "https://api.ebay.com/oauth/api_scope/sell.fulfillment " +
+                            "https://api.ebay.com/oauth/api_scope/sell.analytics.readonly " +
+                            "https://api.ebay.com/oauth/api_scope/sell.finances " +
+                            "https://api.ebay.com/oauth/api_scope/sell.payment.dispute " +
+                            "https://api.ebay.com/oauth/api_scope/commerce.identity.readonly " +
+                            "https://api.ebay.com/oauth/api_scope/commerce.notification.subscription " +
+                            "https://api.ebay.com/oauth/api_scope/commerce.notification.subscription.readonly";
+
+
+
+            using HttpClient httpClient = new HttpClient();
+            string tokenUrl = "https://api.ebay.com/identity/v1/oauth2/token";
+            string credentials = $"{clientId}:{clientSecret}";
+            string base64Credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes(credentials));
+
+
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", base64Credentials);
+
+            var requestBody = new FormUrlEncodedContent(new[]
+            {
+                new KeyValuePair<string, string>("grant_type", "refresh_token"),
+                new KeyValuePair<string, string>("refresh_token", refreshToken),
+                new KeyValuePair<string, string>("scope", scope),
+            });
+
+            HttpResponseMessage response = await httpClient.PostAsync(tokenUrl, requestBody);
+
+            if (response.IsSuccessStatusCode)
+            {
+                string responseBody = await response.Content.ReadAsStringAsync();
+                var jsonResponse = JsonDocument.Parse(responseBody);
+                var newAccessToken = jsonResponse.RootElement.GetProperty("access_token").GetString() ?? string.Empty;
+                Environment.SetEnvironmentVariable("AccessToken", newAccessToken);
+
+            }
+            else
+            {
+                _logger.Error(await response.Content.ReadAsStringAsync());
+            }
+
+        }
+
+        #endregion Private Methods
+
+
     }
 }

@@ -2,6 +2,7 @@
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
 using Serilog;
+using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using WebScraping.Core.Application.Extensions;
 using WebScraping.Core.Application.Heplers;
@@ -30,7 +31,7 @@ namespace WebScraping.Infrastructure.Persistence.Models
                 driver.Navigate().GoToUrl((string)links[0, 0]);
                 int counter = 1;
                 WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(15));
-                List<Item> itemList = new List<Item>();
+                ConcurrentBag<Item> itemList = new ConcurrentBag<Item>();
 
                 while (true)
                 {
@@ -67,7 +68,7 @@ namespace WebScraping.Infrastructure.Persistence.Models
                                 item.ConditionId = (int)Condition.New;
                                 item.StatusId = (int)Status.InStock;
 
-                                if (await item.CanBeSave())
+                                if (await item.CanBeSaved())
                                 {
                                     item.SetCondition();
                                     itemList.Add(item);

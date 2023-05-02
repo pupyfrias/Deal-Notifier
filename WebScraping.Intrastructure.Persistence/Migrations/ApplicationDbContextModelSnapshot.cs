@@ -22,7 +22,7 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("WebScraping.Core.Application.DTOs.BlackListDTO", b =>
+            modelBuilder.Entity("WebScraping.Core.Application.Dtos.BlackListDto", b =>
                 {
                     b.Property<string>("Link")
                         .IsRequired()
@@ -219,6 +219,9 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ConditionId");
+
+                    b.HasIndex("Link")
+                        .IsUnique();
 
                     b.HasIndex("ShopId");
 

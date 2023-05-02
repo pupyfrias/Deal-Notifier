@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WebScraping.Core.Application.DTOs.Auth;
-using WebScraping.Core.Application.DTOs.Token;
+using WebScraping.Core.Application.Dtos.Auth;
+using WebScraping.Core.Application.Dtos.Token;
 using WebScraping.Core.Application.Interfaces.Services;
 using ILogger = Serilog.ILogger;
 
@@ -28,7 +28,7 @@ namespace WebApi.Controllers
         }
 
         [HttpPost("refresh-token")]
-        public async Task<IActionResult> RefreshTokenAsync([FromBody] RefreshTokenRequestDTO request)
+        public async Task<IActionResult> RefreshTokenAsync([FromBody] RefreshTokenRequestDto request)
         {
             var refreshToken = Request.Cookies["refreshToken"];
             request.RefreshToken = refreshToken;
@@ -36,7 +36,7 @@ namespace WebApi.Controllers
             var response = await _accountService.VerifyRefreshToken(request);
             if (response == null)
             {
-                return BadRequest();
+                return BadRequest($"RefreshToken {refreshToken}");
             }
             SetRefreshTokenInCookie(response.Data.RefreshToken);
             return Ok(response);
@@ -49,6 +49,7 @@ namespace WebApi.Controllers
                 HttpOnly = true,
                 Expires = DateTime.UtcNow.AddDays(10),
                 SameSite = SameSiteMode.None,
+               // Domain = "https://stores.com",
                 Secure = true
             };
             Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);

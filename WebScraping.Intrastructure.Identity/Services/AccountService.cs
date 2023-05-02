@@ -7,9 +7,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using WebScraping.Core.Application.Constants;
-using WebScraping.Core.Application.DTOs.Auth;
-using WebScraping.Core.Application.DTOs.Token;
-using WebScraping.Core.Application.DTOs.User;
+using WebScraping.Core.Application.Dtos.Auth;
+using WebScraping.Core.Application.Dtos.Token;
+using WebScraping.Core.Application.Dtos.User;
 using WebScraping.Core.Application.Exceptions;
 using WebScraping.Core.Application.Interfaces.Services;
 using WebScraping.Core.Application.Wrappers;
@@ -75,7 +75,8 @@ namespace WebScraping.Infrastructure.Identity.Services
                 Email = _user.Email,
                 UserName = _user.UserName,
                 IsVerified = _user.EmailConfirmed,
-                Roles = roleList
+                Roles = roleList,
+                ExpiresIn = _jwtSettings.DurationInMinutes
             };
 
             _logger.Information("User {UserName} logged in", _user.UserName);
@@ -94,17 +95,17 @@ namespace WebScraping.Infrastructure.Identity.Services
             return refreshToken;
         }
 
-        public Task<RefreshTokenResponseDTO> Logout()
+        public Task<RefreshTokenResponseDto> Logout()
         {
             throw new NotImplementedException();
         }
 
-        public async Task<IEnumerable<IdentityError>> Register(ApiUserDTO apilUserDTO)
+        public async Task<IEnumerable<IdentityError>> Register(ApiUserDto apilUserDto)
         {
-            _user = _mapper.Map<ApplicationUser>(apilUserDTO);
-            _user.UserName = apilUserDTO.UserName;
+            _user = _mapper.Map<ApplicationUser>(apilUserDto);
+            _user.UserName = apilUserDto.UserName;
 
-            var reuslt = await _userManager.CreateAsync(_user, apilUserDTO.Password);
+            var reuslt = await _userManager.CreateAsync(_user, apilUserDto.Password);
             if (reuslt.Succeeded)
             {
                 await _userManager.AddToRoleAsync(_user, Role.Basic);
@@ -143,7 +144,7 @@ namespace WebScraping.Infrastructure.Identity.Services
             return token;
         }
 
-        public async Task<Response<RefreshTokenResponseDTO?>> VerifyRefreshToken(RefreshTokenRequestDTO request)
+        public async Task<Response<RefreshTokenResponseDto?>> VerifyRefreshToken(RefreshTokenRequestDto request)
         {
             var jwtTokenHandler = new JwtSecurityTokenHandler();
             var tokenContent = jwtTokenHandler.ReadJwtToken(request.AccessToken);
@@ -159,13 +160,14 @@ namespace WebScraping.Infrastructure.Identity.Services
             if (isValidRefreshToken)
             {
                 var accessToken = await GenerateAccessTokenAsync();
-                var tokenResponse = new RefreshTokenResponseDTO
+                var tokenResponse = new RefreshTokenResponseDto
                 {
                     AccessToken = accessToken,
+                    ExpiresIn = _jwtSettings.DurationInMinutes,
                     RefreshToken = await CreateRefreshTokenAsync()
                 };
 
-                var response = new Response<RefreshTokenResponseDTO>(tokenResponse);
+                var response = new Response<RefreshTokenResponseDto>(tokenResponse);
                 response.Message = "Successs Refresh AccessToken.";
                 _logger.Information("Access Token refreshed to user {UseName}", _user.UserName);
                 return response;

@@ -1,6 +1,6 @@
-﻿namespace WebScraping.Core.Application.DTOs.Token
+﻿namespace WebScraping.Core.Application.Dtos.Token
 {
-    public class RefreshTokenRequestDTO
+    public class RefreshTokenRequestDto
     {
         public string AccessToken { get; set; }
         public string? RefreshToken { get; set; }

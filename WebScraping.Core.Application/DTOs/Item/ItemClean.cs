@@ -1,6 +1,6 @@
 ﻿using WebScraping.Core.Domain.Common;
 
-namespace WebScraping.Core.Application.DTOs.Item
+namespace WebScraping.Core.Application.Dtos.Item
 {
     public class ItemClean : AuditableBaseEntity
     {

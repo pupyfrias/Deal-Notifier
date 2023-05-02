@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WebScraping.Core.Application.DTOs.Auth
+namespace WebScraping.Core.Application.Dtos.Auth
 {
     public class AuthenticationRequest
     {

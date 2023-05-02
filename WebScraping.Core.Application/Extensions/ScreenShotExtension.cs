@@ -6,7 +6,7 @@ namespace WebScraping.Core.Application.Extensions
 {
     public static class ScreenShotExtension
     {
-        private static string screenShotbasePath = Helper.basePath + "/Logs/ScreenShots";
+        private static string screenShotbasePath = Helper.BasePath + "/Logs/ScreenShots";
 
         /// <summary>
         /// TakeScreenShot a screenshot to the window.

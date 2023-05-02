@@ -1,6 +1,6 @@
-﻿namespace WebScraping.Core.Application.DTOs
+﻿namespace WebScraping.Core.Application.Dtos
 {
-    public class BlackListDTO
+    public class BlackListDto
     {
         public string Link { get; set; }
     }

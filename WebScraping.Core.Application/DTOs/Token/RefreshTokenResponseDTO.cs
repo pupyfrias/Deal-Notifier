@@ -1,10 +1,11 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace WebScraping.Core.Application.DTOs.Token
+namespace WebScraping.Core.Application.Dtos.Token
 {
-    public class RefreshTokenResponseDTO
+    public class RefreshTokenResponseDto
     {
         public string AccessToken { get; set; }
+        public int ExpiresIn { get; set; }
 
         [JsonIgnore]
         public string RefreshToken { get; set; }

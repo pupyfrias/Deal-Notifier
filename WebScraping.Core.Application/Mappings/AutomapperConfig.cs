@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using WebScraping.Core.Application.DTOs;
-using WebScraping.Core.Application.DTOs.Condition;
-using WebScraping.Core.Application.DTOs.Item;
+using WebScraping.Core.Application.Dtos;
+using WebScraping.Core.Application.Dtos.Condition;
+using WebScraping.Core.Application.Dtos.Item;
 using WebScraping.Core.Domain.Entities;
 
 namespace WebScraping.Core.Application.Mappings
@@ -10,11 +10,13 @@ namespace WebScraping.Core.Application.Mappings
     {
         public AutomapperConfig()
         {
-            CreateMap<Item, ItemResponseDTO>().ReverseMap();
+            CreateMap<Item, ItemResponseDto>().ReverseMap();
             CreateMap<Item, ItemClean>().ReverseMap();
-            CreateMap<Condition, ConditionDTO>().ReverseMap();
-            CreateMap<BlackList, BlackListDTO>().ReverseMap();
-            //CreateMap<ApplicationUser, ApiUserDTO>().ReverseMap();
+            CreateMap<Condition, ConditionDto>().ReverseMap();
+            CreateMap<BlackList, BlackListDto>().ReverseMap();
+            CreateMap<Banned, BannedDto>().ReverseMap();
+            CreateMap<BlackList, Item>().IgnoreAllPropertiesWithAnInaccessibleSetter().ReverseMap();
+            //CreateMap<ApplicationUser, ApiUserDto>().ReverseMap();
         }
     }
 }

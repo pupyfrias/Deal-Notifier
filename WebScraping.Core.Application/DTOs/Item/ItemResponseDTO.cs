@@ -1,6 +1,6 @@
-﻿namespace WebScraping.Core.Application.DTOs.Item
+﻿namespace WebScraping.Core.Application.Dtos.Item
 {
-    public class ItemResponseDTO
+    public class ItemResponseDto
     {
         public string Id { get; set; }
         public decimal OldPrice { get; set; }

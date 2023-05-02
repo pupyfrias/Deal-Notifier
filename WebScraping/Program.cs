@@ -1,41 +1,45 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
-using WebScraping.Core.Application.DTOs;
+using System.Data;
+using System.Diagnostics;
+using WebScraping.Core.Application.Dtos;
 using WebScraping.Core.Application.Heplers;
 using WebScraping.Core.Application.Mappings;
 using WebScraping.Core.Application.Utils;
 using WebScraping.Infrastructure.Persistence.DbContexts;
 using WebScraping.Infrastructure.Persistence.Models;
-using Emuns = WebScraping.Core.Application.Emuns;
 
 namespace WebScraping
 {
-    internal class Program
+    public class Program
     {
         private static ILogger _logger;
+        private static IMapper _mapperConfiguration;
 
         private static async Task Main(string[] args)
         {
             _logger = Logger.CreateLogger().ForContext<Program>();
+            _mapperConfiguration = new MapperConfiguration(x => x.AddProfile(new AutomapperConfig())).CreateMapper();
 
-            await LoadBlackList();
+            await LoadData();
             try
             {
                 var amazonTask = Task.Run(() =>
                 {
-                    Amazon.Run();
+                    //Amazon.Run();
                 });
 
                 var theStoreTask = Task.Run(() =>
                 {
-                    TheStore.Run();
+                    //TheStore.Run();
                 });
 
-                var eBayTask = Task.Run(() =>
+                var eBayTask = Task.Run(async () =>
                 {
-                    Ebay.Run();
+                    await Timer(Ebay.RunAsync);
                 });
 
                 await Task.WhenAll(amazonTask, theStoreTask, eBayTask);
@@ -46,65 +50,94 @@ namespace WebScraping
             }
             finally
             {
-                await UpdateItems();
-                _logger.Information("Done");
+                await Timer(UpdateItems);
             }
         }
 
+
+
+
+        private static void Timer(Action action)
+        {
+            var timer = new Stopwatch();
+            timer.Start();
+            action();
+            timer.Stop();
+            TimeSpan timeTaken = timer.Elapsed;
+            string time = "Time taken: " + timeTaken.ToString(@"m\:ss\.fff");
+            _logger.Information(time);
+
+        }
+
+        private static async Task Timer(Func<Task> action)
+        {
+            var timer = new Stopwatch();
+            timer.Start();
+            await action();
+            timer.Stop();
+            TimeSpan timeTaken = timer.Elapsed;
+            string time = "Time taken: " + timeTaken.ToString(@"m\:ss\.fff");
+            _logger.Information(time);
+
+        }
+
+
         private static async Task UpdateItems()
         {
-            Task markingToInStock = Task.Run(async () =>
+            using (var context = new ApplicationDbContext())
             {
-                using (var context = new ApplicationDbContext())
-                {
-                    var ItemListToMarkInStock = await context.Items
-                                            .Where(x => x.StatusId != (int)Emuns.Status.InStock &&
-                                                   Helper.checkedItemList.Contains(x.Link))
-                                            .ToListAsync();
+                var listId = Helper.CheckedList.Select(x => x.Replace("https://www.ebay.com/itm/", ""));
+                string query = "EXEC UPDATE_STATUS_EBAY @ListId, @OutputResult OUTPUT";
+                var listIdParameter = new SqlParameter("@ListId", string.Join(',', listId));
+                var outputResult = new SqlParameter("@OutputResult", SqlDbType.Bit) { Direction = ParameterDirection.Output };
 
-                    Parallel.ForEach(ItemListToMarkInStock, (item) =>
-                    {
-                        item.StatusId = (int)Emuns.Status.InStock;
-                    });
-                    await context.SaveChangesAsync();
-                }
-            });
+                await context.Database.ExecuteSqlRawAsync(query, listIdParameter, outputResult);
+                bool result = (bool)outputResult.Value;
+                _logger.Information($"El resultado es: {result}");
+            }
 
-            Task markingToOutStock = Task.Run(async () =>
-            {
-                using (var context = new ApplicationDbContext())
-                {
-                    var ItemListToMarkOutStock = await context.Items
-                                            .Where(x => x.StatusId == (int)Emuns.Status.InStock &&
-                                                   !Helper.checkedItemList.Contains(x.Link))
-                                            .ToListAsync();
-
-                    Parallel.ForEach(ItemListToMarkOutStock, (item) =>
-                    {
-                        item.StatusId = (int)Emuns.Status.OutStock;
-                    });
-                    await context.SaveChangesAsync();
-                }
-            });
-
-            await Task.WhenAll(markingToInStock, markingToOutStock);
-            _logger.Information($"{Helper.checkedItemList.Count} Items In Stock");
-            Console.Beep(500, 800);
+            _logger.Information($"{Helper.CheckedList.Count} Items In Stock");
         }
+
+
+        private static async Task LoadData()
+        {
+            Task blackList = Task.Run(async () =>
+            {
+                await LoadBlackList();
+            });
+
+            Task bannedKeywordList = Task.Run(async () =>
+            {
+                await LoadBannedKeyword();
+            });
+
+            await Task.WhenAll(blackList, bannedKeywordList);
+            _logger.Information("All needed data Loaded");
+        }
+
 
         private static async Task LoadBlackList()
         {
             using (var context = new ApplicationDbContext())
             {
-                var mapperConfiguration = new MapperConfiguration(x => x.AddProfile(new AutomapperConfig())).CreateMapper();
-
                 var backList = await context.BlackLists
-                    .ProjectTo<BlackListDTO>(mapperConfiguration.ConfigurationProvider)
+                    .ProjectTo<BlackListDto>(_mapperConfiguration.ConfigurationProvider)
                     .ToListAsync();
 
-                Helper.linkBlackList = backList;
+                Helper.BlacklistedLinks = backList.ToHashSet<BlackListDto>();
+            }
+        }
 
-                _logger.Information("Blacklist loaded");
+        private static async Task LoadBannedKeyword()
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                var banedList = await context.Banned
+                    .ProjectTo<BannedDto>(_mapperConfiguration.ConfigurationProvider)
+                    .ToListAsync();
+
+                Helper.BannedKeywordList = banedList.ToHashSet<BannedDto>();
             }
         }
     }

@@ -24,7 +24,7 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("WebScraping.Core.Application.DTOs.BlackListDTO", b =>
+            modelBuilder.Entity("WebScraping.Core.Application.Dtos.BlackListDto", b =>
                 {
                     b.Property<string>("Link")
                         .IsRequired()

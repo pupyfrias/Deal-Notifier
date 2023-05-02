@@ -1,0 +1,88 @@
+.viewport {
+  height: 100%;
+  min-height: 490px;
+  width: 100%;
+}
+
+::ng-deep .cdk-virtual-scroll-content-wrapper {
+  width: 100%;
+}
+
+.f-rigth {
+  float: right;
+}
+
+mat-grid-list {
+  height: 300px;
+}
+
+.img-limit {
+  max-width: 281px;
+  max-height: 300px;
+  object-fit: contain;
+}
+
+.mat-grid-tile .mat-grid-tile-header {
+  background: inherit !important;
+  color: inherit !important;
+  height: auto !important;
+  display: block !important;
+}
+
+.text-decaration {
+  text-decoration: none !important;
+  color: initial;
+}
+
+.scrollToUp {
+  position: fixed;
+  bottom: 3%;
+  right: 3%;
+  z-index: 6;
+}
+
+.select-all {
+  background-color: #673ab7;
+  position: fixed;
+  bottom: 15%;
+  right: 3%;
+  z-index: 7;
+  width: 60px;
+  height: 60px;
+}
+
+.center-select {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.float-element {
+  width: 50%;
+  height: 60px;
+  border-radius: 12px;
+  position: sticky;
+  margin: 10px auto;
+  padding-right: 10px;
+  background-color: var(--bs-purple);
+}
+
+.float-element> span{
+  margin: 20px;
+  display: inline-block;
+}
+
+.center-element {
+  position: absolute;
+  top: 50%;
+  transform: translate(0, -50%);
+}
+
+.button{
+  width: 100px;
+  display: inline-block;
+  float: right;
+  margin: 12px 5px;
+}
+

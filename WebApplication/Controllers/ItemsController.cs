@@ -3,17 +3,20 @@ using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using System.Linq;
+using System.Data;
+using System.Linq.Expressions;
 using WebScraping.Core.Application.Constants;
-using WebScraping.Core.Application.DTOs.Item;
+using WebScraping.Core.Application.Dtos;
+using WebScraping.Core.Application.Dtos.Item;
+using WebScraping.Core.Application.Extensions;
 using WebScraping.Core.Application.Wrappers;
 using WebScraping.Core.Domain.Entities;
 using WebScraping.Infrastructure.Persistence.DbContexts;
 using ILogger = Serilog.ILogger;
-using Type = WebScraping.Core.Application.Emuns.Type;
-
+using Status = WebScraping.Core.Application.Emuns.Status;
 
 namespace WebApi.Controllers
 {
@@ -22,10 +25,8 @@ namespace WebApi.Controllers
     [ApiController]
     public class ItemsController : ControllerBase
     {
-        private ApplicationDbContext _context;
-        private IMapper _mapper;
-        private readonly string? _userName;
-        private readonly IHttpContextAccessor _httpContext;
+        private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
         public ItemsController(ApplicationDbContext context,
@@ -35,165 +36,92 @@ namespace WebApi.Controllers
         {
             _context = context;
             _mapper = mapper;
-            _httpContext = httpContext;
             _logger = logger;
         }
 
         // GET: api/Items
         [HttpGet]
-        [EnableQuery]
-        public async Task<IActionResult> Get([FromQuery] ItemRequestDTO request)
+        public async Task<IActionResult> Get([FromQuery] queryParameters request)
         {
             _logger.Information("Getting all Item");
-      /*      var Items = _context.Items
-                .ProjectTo<ItemResponseDTO>(_mapper.ConfigurationProvider)
-                .Where(x => x.TypeId == (int)Type.Phone)
-                .ToList();
+            IQueryable<Item> query = _context.Items.AsQueryable();
 
-            return Ok(Items);*/
-
-            #region Definitions
-
-            string? brandList = request.brands?.Replace("%2C", @"* "" or """);
-            string? storageList = request.storages?.Replace("%2C", @"* "" or """).Replace("%2B", " ").Replace("+", @"* "" and """);
-            string? carrierList = request.carriers?.Replace("%2C", @"* "" or """).Replace("%2B", " ").Replace("+", @"* "" and """);
-            string? typeList = request.types != null ? " and (typeId= ''" + request.types.Replace("%2C", "'' or typeId= ''") + "'')" : "";
-            string? shopList = request.shops != null ? " and (shopId= ''" + request.shops.Replace("%2C", "'' or shopId= ''") + "'')" : "";
-            string? conditionList = request.condition != null ? " and (conditionId= " + request.condition.Replace("%2C", " or conditionId= ") + ")" : "";
-            string? query = default;
-            string[] excludeList = request.excludes != null ? request.excludes.Split("%2C") : new string[] { };
-            List<string> parameterList = new List<string>();
-            List<ItemResponseDTO> mappedItems = new List<ItemResponseDTO>();
-            request.search = request.search?.Replace(" ", @"* "" and """);
-
-            Response<List<ItemResponseDTO>>? response = default;
-            List<Item>? items = default;
-
-            #endregion Definitions
-
-            #region Offer
-
-            if (request.offer != null)
+            if (request.offer is not null)
             {
-                items = await _context.Items.FromSqlRaw($"EXEC Offer @TYPE ='{request.offer}'").ToListAsync();
-                mappedItems = _mapper.Map<List<ItemResponseDTO>>(items);
-                response = new Response<List<ItemResponseDTO>>(mappedItems);
-                return Ok(response);
-            }
-
-            #endregion Offer
-
-            #region Brands
-
-            if (brandList != null)
-            {
-                if (excludeList.Contains("brands"))
+                if (request.offer.Contains("all"))
                 {
-                    parameterList.Add(@$" not (""{brandList}*"") ");
+                    query = query.Where(x => x.Saving > 0)
+                        .OrderByDescending(x => x.Saving)
+                        .AsQueryable();
                 }
                 else
                 {
-                    parameterList.Add(@$" (""{brandList}*"") ");
-                }
-            }
-
-            #endregion Brands
-
-            #region Storage
-
-            if (storageList != null)
-            {
-                if (excludeList.Contains("storages"))
-                {
-                    parameterList.Add(@$" not (""{storageList}*"") ");
-                }
-                else
-                {
-                    parameterList.Add(@$"(""{storageList}*"") ");
-                }
-            }
-
-            #endregion Storage
-
-            #region Carrier
-
-            if (carrierList != null)
-            {
-                if (excludeList.Contains("carriers"))
-                {
-                    parameterList.Add(@$" not (""{carrierList.Replace("%26", "&")}*"") ");
-                }
-                else
-                {
-                    parameterList.Add(@$"(""{carrierList.Replace("%26", "&")}*"") ");
-                }
-            }
-
-            #endregion Carrier
-
-            #region Search
-
-            if (request.search != null)
-            {
-                parameterList.Add(@$"(""{request.search}*"") ");
-            }
-
-            int parametersCount = parameterList.Count;
-
-            for (int i = 0; i < parametersCount; i++)
-            {
-                if (parameterList[i].Contains("not"))
-                {
-                    var data = parameterList[i];
-                    parameterList.RemoveAt(i);
-                    parameterList.Add(data);
-                }
-            }
-
-            #endregion Search
-
-            #region Sort By
-
-            request.sort_by = SortBy(request.sort_by);
-
-            #endregion Sort By
-
-            #region Price
-
-            if (request.min != null)
-            {
-                request.min = $" and price > {request.min} ";
-            }
-            else { request.min = ""; }
-
-            if (request.max != null)
-            {
-                request.max = $" and price < {request.max} ";
-            }
-            else { request.max = ""; }
-
-            #endregion Price
-
-            if (parameterList.Count > 0)
-            {
-                if (parameterList[0].Contains("not"))
-                {
-                    parameterList[0] = parameterList[0].Replace("not", "");
-                    query = $"EXEC Filter @Data = 'and not contains (NAME, ''{string.Join(" and ", parameterList)}'') ', @Order = '{request.sort_by}', @Min ='{request.min}', @Max ='{request.max}' ,@Types ='{typeList}',@Shops ='{shopList}', @Condition='{conditionList}'";
-                }
-                else
-                {
-                    query = $"EXEC Filter @Data = 'and contains (NAME, ''{string.Join(" and ", parameterList)}'') ', @Order = '{request.sort_by}', @Min ='{request.min}', @Max ='{request.max}' ,@Types ='{typeList}',@Shops ='{shopList}', @Condition='{conditionList}'";
+                    query = query.Where(x => x.Saving > 0 && x.LastModified >= DateTime.Now.Date)
+                        .OrderByDescending(x => x.Saving)
+                        .AsQueryable();
                 }
             }
             else
             {
-                query = $"EXEC Filter @Data = '', @Order = '{request.sort_by}', @Min ='{request.min}', @Max ='{request.max}',@types='{typeList}',@Shops ='{shopList}', @Condition='{conditionList}'";
+
+
+
+                List<string>? brandList = request.brands?.Split("%2C").ToList();
+                List<string>? storageList = request.storages?.Split("%2C").ToList();
+                List<string>? carrierList = request.carriers?.Split("%2C").ToList();
+                List<int>? typeList = request.types?.Split("%2C").Select(int.Parse).ToList();
+                List<int>? shopList = request.shops?.Split("%2C").Select(int.Parse).ToList();
+                List<int>? conditionList = request.condition?.Split("%2C").Select(int.Parse).ToList();
+                decimal max = request.max is null ? default : decimal.Parse(request.max);
+                decimal min = request.min is null ? default : decimal.Parse(request.min);
+                bool brandExclude = request.excludes?.Contains("brands") ?? false;
+
+                ParameterExpression parameter = Expression.Parameter(typeof(Item), "item");
+                Expression name = Expression.PropertyOrField(parameter, "Name");
+                Expression price = Expression.PropertyOrField(parameter, "Price");
+                Expression typeId = Expression.PropertyOrField(parameter, "TypeId");
+                Expression shoptId = Expression.PropertyOrField(parameter, "ShopId");
+                Expression conditionId = Expression.PropertyOrField(parameter, "ConditionId");
+                BinaryExpression body = Expression.Equal(Expression.PropertyOrField(parameter, "StatusId"), Expression.Constant((int)Status.InStock));
+
+                if (request.search is not null)
+                {
+                    body = body.AddConditions(name, new List<string> { request.search }, false);
+                }
+
+                body = body.AddConditions(name, brandList, brandExclude);
+                body = body.AddConditions(name, storageList, false);
+                body = body.AddConditions(name, carrierList, false);
+                body = body.AddConditions(typeId, typeList);
+                body = body.AddConditions(shoptId, shopList);
+                body = body.AddConditions(conditionId, conditionList);
+                body = body.AddConditions(price, max, true);
+                body = body.AddConditions(price, min, false);
+
+                Func<Item, bool> lambda = Expression.Lambda<Func<Item, bool>>(body, parameter).Compile();
+                query = query.Where(lambda).AsQueryable();
+                if (request.sort_by is not null)
+                {
+                    var sortBy = SortBy(request.sort_by);
+
+                    if (sortBy.Sort == "asc")
+                    {
+                        query = query.OrderBy(sortBy.expression).AsQueryable();
+                    }
+                    else
+                    {
+                        query = query.OrderByDescending(sortBy.expression).AsQueryable();
+                    }
+                }
             }
 
-            items = await _context.Items.FromSqlRaw(query).ToListAsync();
-            mappedItems = _mapper.Map<List<ItemResponseDTO>> (items);
-            response = new Response<List<ItemResponseDTO>>(mappedItems);
+            var stringQuery = query.ToQueryString();
+
+            var items = query
+                        .ProjectTo<ItemResponseDto>(_mapper.ConfigurationProvider)
+                        .ToList();
+
+            var response = new Response<List<ItemResponseDto>>(items);
             return Ok(response);
         }
 
@@ -201,7 +129,7 @@ namespace WebApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<object>> GetItem(int id)
         {
-            var item = await Task.Run(() => _context.Items.FromSqlRaw($"EXEC SP_GET_ONE @ID={id}").AsEnumerable().FirstOrDefault());
+            var item = await _context.Items.FindAsync(id);
 
             if (item == null)
             {
@@ -257,23 +185,24 @@ namespace WebApi.Controllers
 
         // DELETE: api/Items/5
         [HttpDelete]
-        public async Task<ActionResult> DeleteItem([FromQuery]string delete)
+        public async Task<ActionResult> DeleteItem([FromBody] string delete)
         {
             try
             {
                 List<string> idList = delete.Split(',').ToList();
-                
-                var itemList = await _context.Items.Where(x=> idList.Contains(x.Id.ToString()))
+
+                var itemList = await _context.Items.Where(x => idList.Contains(x.Id.ToString()))
                     .ToListAsync();
-                
+
                 if (itemList.Count == 0)
                 {
-                    NotFound();
+                    return NotFound();
                 }
                 _context.Items.RemoveRange(itemList);
+                _context.BlackLists.AddRange(_mapper.Map<List<BlackList>>(itemList));
                 await _context.SaveChangesAsync();
-                
-                return NoContent() ;
+
+                return NoContent();
             }
             catch (Exception ex)
             {
@@ -281,20 +210,37 @@ namespace WebApi.Controllers
             }
         }
 
+        [HttpPost("BanKeyword")]
+        public async Task<ActionResult> BanKeyword([FromBody] BanKeywordDto dto) 
+        {
+
+
+            string query = "EXEC BAN_KEYWORD @Keyword";
+            var keyword = new SqlParameter("@Keyword", dto.Keyword);
+            await _context.Database.ExecuteSqlRawAsync(query, keyword);
+            return NoContent();
+        }
+
+
         private bool ItemExists(Guid id)
         {
             return _context.Items.Any(e => e.Id == id);
         }
 
-        private string SortBy(string str)
+        private SortBy SortBy(string str)
         {
-            Dictionary<string, string> dictionary = new Dictionary<string, string>
+            Expression<Func<Item, decimal>> priceAsc = i => i.Price;
+            Expression<Func<Item, decimal>> priceDesc = i => i.Price;
+            Expression<Func<Item, decimal>> savingDesc = i => i.Saving;
+            Expression<Func<Item, decimal>> savingsPercentageDesc = i => i.SavingsPercentage;
+
+            Dictionary<string, SortBy> dictionary = new Dictionary<string, SortBy>
             {
-                { "price-low-high", " price asc"},
-                { "price-high-low", "price desc"},
-                { "saving-high-low", "saving desc"},
-                { "saving-percent-high-low", "SavingsPercentage desc"},
-                { "default", "id desc"}
+                { "price-low-high", new SortBy{ Sort = "asc", expression = priceAsc} },
+                { "price-high-low",  new SortBy { Sort = "desc", expression = priceDesc } },
+                { "saving-high-low",  new SortBy { Sort = "desc", expression = savingDesc } },
+                { "saving-percent-high-low",  new SortBy { Sort = "desc", expression = savingsPercentageDesc } },
+                { "default",  new SortBy { Sort = "desc", expression = priceAsc } }
             };
 
             if (str == null)
@@ -306,5 +252,11 @@ namespace WebApi.Controllers
                 return dictionary.ContainsKey(str) ? dictionary[str] : dictionary["default"];
             }
         }
+    }
+
+    public class SortBy
+    {
+        public string Sort { get; set; }
+        public Expression<Func<Item, decimal>> expression { get; set; }
     }
 }

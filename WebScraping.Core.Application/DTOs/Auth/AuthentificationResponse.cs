@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace WebScraping.Core.Application.DTOs.Auth
+namespace WebScraping.Core.Application.Dtos.Auth
 {
     public class AuthenticationResponse
     {
@@ -10,6 +10,7 @@ namespace WebScraping.Core.Application.DTOs.Auth
         public List<string> Roles { get; set; }
         public bool IsVerified { get; set; }
         public string AccessToken { get; set; }
+        public int ExpiresIn { get; set; }
 
         [JsonIgnore]
         public string RefreshToken { get; set; }

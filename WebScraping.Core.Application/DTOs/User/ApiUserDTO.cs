@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WebScraping.Core.Application.DTOs.User
+namespace WebScraping.Core.Application.Dtos.User
 {
-    public class ApiUserDTO : LoginDTO
+    public class ApiUserDto : LoginDto
     {
         [Required]
         public string FirstName { get; set; }

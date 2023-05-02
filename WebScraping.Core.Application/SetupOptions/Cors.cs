@@ -7,11 +7,10 @@ namespace WebScraping.Core.Application.SetupOptions
         public static Action<CorsOptions> Options = options =>
         {
             options.AddPolicy("AllowAll", policy =>
-               policy.WithOrigins("http://localhost:4200")
+               policy.WithOrigins("http://localhost:4200", "https://stores.com", "http://localhost:59846")
                      .AllowAnyMethod()
                      .AllowAnyHeader()
-                     .AllowCredentials()
-                     );
+                     .AllowCredentials());
         };
     }
 }

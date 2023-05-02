@@ -364,41 +364,41 @@ FodyWeavers.xsd
 
 # -----------------------Angular --------------
 # Compiled output
-Font End/dist
-Font End/tmp
-Font End/out-tsc
-Font End/bazel-out
+Front End/dist
+Front End/tmp
+Front End/out-tsc
+Front End/bazel-out
 
 # Node
-Font End/node_modules
-Font End/npm-debug.log
-Font End/yarn-error.log
+Front End/node_modules
+Front End/npm-debug.log
+Front End/yarn-error.log
 
 # IDEs and editors
-Font End/.idea/
-Font End/.project
-Font End/.classpath
-Font End/.c9/
-Font End/*.launch
-Font End/.settings/
-Font End/*.sublime-workspace
+Front End/.idea/
+Front End/.project
+Front End/.classpath
+Front End/.c9/
+Front End/*.launch
+Front End/.settings/
+Front End/*.sublime-workspace
 
 # Visual Studio Code
-Font End/.vscode/*
-Font End/!.vscode/settings.json
-Font End/!.vscode/tasks.json
-Font End/!.vscode/launch.json
-Font End/!.vscode/extensions.json
-Font End/.history/*
+Front End/.vscode/*
+Front End/!.vscode/settings.json
+Front End/!.vscode/tasks.json
+Front End/!.vscode/launch.json
+Front End/!.vscode/extensions.json
+Front End/.history/*
 
 # Miscellaneous
-Font End/.angular/cache
-Font End/.sass-cache/
-Font End/connect.lock
-Font End/coverage
-Font End/libpeerconnection.log
-Font End/testem.log
-Font End/typings
+Front End/.angular/cache
+Front End/.sass-cache/
+Front End/connect.lock
+Front End/coverage
+Front End/libpeerconnection.log
+Front End/testem.log
+Front End/typings
 
 # System files
 .DS_Store

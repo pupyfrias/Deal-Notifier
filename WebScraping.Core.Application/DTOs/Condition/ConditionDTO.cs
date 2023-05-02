@@ -1,6 +1,6 @@
-﻿namespace WebScraping.Core.Application.DTOs.Condition
+﻿namespace WebScraping.Core.Application.Dtos.Condition
 {
-    public class ConditionDTO
+    public class ConditionDto
     {
         public string Name { get; set; }
     }

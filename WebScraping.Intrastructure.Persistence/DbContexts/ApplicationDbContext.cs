@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using WebScraping.Core.Application.DTOs;
+using WebScraping.Core.Application.Dtos;
 using WebScraping.Core.Application.Extensions;
 using WebScraping.Core.Application.Models;
 using WebScraping.Core.Domain.Common;
@@ -27,29 +27,30 @@ namespace WebScraping.Infrastructure.Persistence.DbContexts
         }
 
         #region DbSets
-
-        public DbSet<Item> Items { get; set; }
+        public DbSet<Audit> AuditLogs { get; set; }
+        public DbSet<Banned> Banned { get; set; }
         public DbSet<BlackList> BlackLists { get; set; }
+        public DbSet<BlackListDto> SpBlackList { get; set; }
         public DbSet<Condition> Conditions { get; set; }
+        public DbSet<Item> Items { get; set; }
         public DbSet<Shop> Shops { get; set; }
         public DbSet<Status> Statuses { get; set; }
         public DbSet<Supported> Supporteds { get; set; }
         public DbSet<Type> Types { get; set; }
-        public DbSet<BlackListDTO> SpBlackList { get; set; }
-        public DbSet<Audit> AuditLogs { get; set; }
 
         #endregion DbSets
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfiguration(new ItemConfiguration());
-            modelBuilder.ApplyConfiguration(new ConditionConfiguration());
-            modelBuilder.ApplyConfiguration(new ShopConfiguration());
-            modelBuilder.ApplyConfiguration(new TypeConfiguration());
-            modelBuilder.ApplyConfiguration(new StatusConfiguration());
+            modelBuilder.ApplyConfiguration(new BannedConfiguration());
             modelBuilder.ApplyConfiguration(new BlackListConfiguration());
-            modelBuilder.ApplyConfiguration(new SupportedConfiguration());
+            modelBuilder.ApplyConfiguration(new ConditionConfiguration());
+            modelBuilder.ApplyConfiguration(new ItemConfiguration());
+            modelBuilder.ApplyConfiguration(new ShopConfiguration());
             modelBuilder.ApplyConfiguration(new SpBlackListResponseConfiguration());
+            modelBuilder.ApplyConfiguration(new StatusConfiguration());
+            modelBuilder.ApplyConfiguration(new SupportedConfiguration());
+            modelBuilder.ApplyConfiguration(new TypeConfiguration());
         }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

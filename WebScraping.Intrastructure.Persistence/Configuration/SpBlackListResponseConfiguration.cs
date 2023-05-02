@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using WebScraping.Core.Application.DTOs;
+using WebScraping.Core.Application.Dtos;
 
 namespace WebScraping.Infrastructure.Persistence.Configuration
 {
-    public class SpBlackListResponseConfiguration : IEntityTypeConfiguration<BlackListDTO>
+    public class SpBlackListResponseConfiguration : IEntityTypeConfiguration<BlackListDto>
     {
-        public void Configure(EntityTypeBuilder<BlackListDTO> builder)
+        public void Configure(EntityTypeBuilder<BlackListDto> builder)
         {
             builder.HasNoKey();
         }
