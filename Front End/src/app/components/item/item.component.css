@@ -68,10 +68,10 @@ mat-grid-list {
   background-color: var(--bs-purple);
 }
 
-.float-element> span{
-  margin: 20px;
-  display: inline-block;
-}
+  .float-element > span {
+    margin: 20px;
+    display: inline-block;
+  }
 
 .center-element {
   position: absolute;
@@ -79,10 +79,9 @@ mat-grid-list {
   transform: translate(0, -50%);
 }
 
-.button{
+.button {
   width: 100px;
   display: inline-block;
   float: right;
   margin: 12px 5px;
 }
-

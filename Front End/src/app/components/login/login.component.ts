@@ -38,12 +38,11 @@ export class LoginComponent implements OnInit {
     if (this.formGroup.valid) {
       const userName = this.formGroup.get('username')?.value;
       const password = this.formGroup.get('password')?.value;
-      this.authService.login(userName, password ).subscribe(response => {
-        if(response){
+      this.authService.login(userName, password).subscribe(response => {
+        if (response) {
           this.router.navigateByUrl('/');
         }
       });
-
     }
   }
 }

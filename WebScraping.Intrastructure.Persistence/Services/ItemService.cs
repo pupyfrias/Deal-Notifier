@@ -1,72 +1,55 @@
-﻿using System.Collections.Concurrent;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using Serilog;
+using System.Collections.Concurrent;
+using System.Data;
+using System.Linq;
+using WebScraping.Core.Application.Dtos;
 using WebScraping.Core.Application.Heplers;
-using WebScraping.Core.Application.Utils;
+using WebScraping.Core.Application.Interfaces.Services;
 using WebScraping.Core.Domain.Entities;
 using WebScraping.Infrastructure.Persistence.DbContexts;
-using Condition = WebScraping.Core.Application.Emuns.Condition;
 
 namespace WebScraping.Infrastructure.Persistence.Services
 {
-    public static class ItemService
+    public class ItemService : IItemService
     {
         #region Fields
-
-        private static readonly HashSet <string> conditionList = new HashSet<string> { "renovado", "renewed", "reacondicionado", "refurbished", "restaurado", "restored", "used" };
+        private readonly ILogger _logger;
+        private readonly IConfigurationProvider _configurationProvider;
         #endregion Fields
 
+        public ItemService(ILogger logger, IConfigurationProvider configurationProvider)
+        {
+            _logger = logger;
+            _configurationProvider = configurationProvider;
+        }
+
         #region Methods
-
-        /// <summary>
-        /// Validate if the Item can be save.
-        /// </summary>
-        /// <returns>true if the Item is not in BlackList; otherwise, false.</returns>
-        public static async Task<bool> CanBeSaved(this Item item)
-        {
-            bool isBanned = false;
-            bool isInBlackList = false;
-
-            Task bannedTask = Task.Run(() =>
-            {
-                isBanned = Helper.BannedKeywordList.Any(element => item.Name.IndexOf(element.Keyword, StringComparison.OrdinalIgnoreCase) >= 0);
-
-            });
-
-            Task blackListTask = Task.Run(() =>
-            {
-                isInBlackList = Helper.BlacklistedLinks.Any(x => x.Link == item.Link) ;
-            });
-
-            await Task.WhenAll(bannedTask, blackListTask);
-
-            return !(isBanned || isInBlackList);
-        }
-
-        /// <summary>
-        /// Set Item Condition
-        /// </summary>
-        public static void SetCondition(this Item item)
-        {
-            bool isNotNew =  conditionList.Any(condition =>  item.Name.IndexOf(condition, StringComparison.OrdinalIgnoreCase) >= 0);
-            item.ConditionId = isNotNew ? (int)Condition.Used : (int)Condition.New;
-
-        }
-
         /// <summary>
         /// Save item's data
         /// </summary>
         /// <param name="items">Items ConcurrentBag</param>
-        public static void Save(this ConcurrentBag<Item> items)
+        public void SaveOrUpdate(ref ConcurrentBag<Item> items)
         {
             var itemListToSave = new ConcurrentBag<Item>();
             var itemListToUpdate = new ConcurrentBag<Item>();
 
             Parallel.ForEach(items, item =>
             {
-                Helper.CheckedList.Add(item.Link);
+
+                if (ToNotify(item))
+                {
+                    _logger.Information(item.Name);
+                    _logger.Information(item.Link);
+                }
+
+
                 using (var context = new ApplicationDbContext())
                 {
                     var oldItem = context.Items.FirstOrDefault(i => i.Link == item.Link);
-
                     if (oldItem == null)
                     {
                         itemListToSave.Add(item);
@@ -133,7 +116,108 @@ namespace WebScraping.Infrastructure.Persistence.Services
             }
             catch (Exception ex)
             {
-                Logger.CreateLogger().ForContext<ApplicationDbContext>().Error(ex, ex.Message);
+                _logger.Error(ex, ex.Message);
+            }
+        }
+
+
+        public  void UpdateStatus(ref ConcurrentBag<string> checkedList)
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                var listId = checkedList.Select(x => x.Replace("https://www.ebay.com/itm/", ""));
+                string query = "EXEC UPDATE_STATUS_EBAY @ListId, @OutputResult OUTPUT";
+                var listIdParameter = new SqlParameter("@ListId", string.Join(',', listId));
+                var outputResult = new SqlParameter("@OutputResult", SqlDbType.Bit) { Direction = ParameterDirection.Output };
+
+                context.Database.ExecuteSqlRaw(query, listIdParameter, outputResult);
+                bool result = (bool)outputResult.Value;
+                _logger.Information($"El resultado es: {result}");
+            }
+
+            _logger.Information($"{checkedList.Count} Items In Stock");
+            checkedList.Clear();
+        }
+
+        public async Task LoadData()
+        {
+            Task blackList = Task.Run(async () =>
+            {
+                await LoadBlackList();
+            });
+
+            Task bannedKeywordList = Task.Run(async () =>
+            {
+                await LoadBannedKeyword();
+            });
+
+            Task conditionToNotifyList = Task.Run(async () =>
+            {
+                await LoadConditionsToNotify();
+            });
+
+            await Task.WhenAll(blackList, bannedKeywordList, conditionToNotifyList);
+            _logger.Information("All needed data Loaded");
+        }
+
+
+        private bool ToNotify(Item item)
+        {
+           foreach(ConditionsToNotifyDto conditionsToNotify  in Helper.ConditionsToNotifyList)
+            {
+
+                if(conditionsToNotify.ConditionId == item.ConditionId && 
+                    conditionsToNotify.MaxPrice >= item.Price &&
+                    CheckKeywords(conditionsToNotify.Keywords, item.Name)
+                    ) 
+                {
+                    return true;
+                }
+            }
+
+           return false;
+
+        }
+
+        private bool CheckKeywords(string keywords, string title )
+        {
+            var keywordList = keywords.Split(',');
+            return keywordList.Any( keyword => title.IndexOf(keyword) > -1);
+        }
+
+        private async Task LoadBlackList()
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                var backList = await context.BlackLists
+                    .ProjectTo<BlackListDto>(_configurationProvider)
+                    .ToListAsync();
+
+                Helper.BlacklistedLinks = backList.ToHashSet<BlackListDto>();
+            }
+        }
+
+        private  async Task LoadBannedKeyword()
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                var banedList = await context.Banned
+                    .ProjectTo<BannedDto>(_configurationProvider)
+                    .ToListAsync();
+
+                Helper.BannedKeywordList = banedList.ToHashSet<BannedDto>();
+            }
+        }
+
+        private async Task LoadConditionsToNotify()
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                var conditionsToNotifyList = await context.ConditionsToNotify
+                    .ProjectTo<ConditionsToNotifyDto>(_configurationProvider)
+                    .ToListAsync();
+
+                Helper.ConditionsToNotifyList = conditionsToNotifyList.ToHashSet<ConditionsToNotifyDto>();
             }
         }
 

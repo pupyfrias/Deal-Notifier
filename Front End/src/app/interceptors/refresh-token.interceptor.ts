@@ -12,11 +12,10 @@ export class RefreshTokenInterceptor implements HttpInterceptor {
 
   constructor(private authService: AuthService,
     private errorHandlerService: ErrorHandlerService
-    ) {}
+  ) { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     // if (this.authService.isAuthenticated()) {
-      
     // }
     request = this.addAuthorizationHeader(request, this.authService.getAccessToken());
     return next.handle(request).pipe(
@@ -31,13 +30,13 @@ export class RefreshTokenInterceptor implements HttpInterceptor {
     );
   }
 
-  private addAuthorizationHeader(request: HttpRequest<any>, token: string| null): HttpRequest<any> {
+  private addAuthorizationHeader(request: HttpRequest<any>, token: string | null): HttpRequest<any> {
     if (token) {
       return request.clone({
         withCredentials: true,
-        setHeaders: { 
+        setHeaders: {
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json', 
+          'Content-Type': 'application/json',
         }
       });
     }
@@ -48,24 +47,24 @@ export class RefreshTokenInterceptor implements HttpInterceptor {
     if (!this.isRefreshing) {
       this.isRefreshing = true;
       return this.authService.refreshToken()
-      .pipe(
-        switchMap((response: ResponseDTO) => {
-          this.isRefreshing = false;
-          console.log('response', response)
-          if (response && response.data.accessToken) {
-            this.authService.setAccessToken(response.data.accessToken);
-            return next.handle(this.addAuthorizationHeader(request, response.data.accessToken));
-          }
+        .pipe(
+          switchMap((response: ResponseDTO) => {
+            this.isRefreshing = false;
+            console.log('response', response)
+            if (response && response.data.accessToken) {
+              this.authService.setAccessToken(response.data.accessToken);
+              return next.handle(this.addAuthorizationHeader(request, response.data.accessToken));
+            }
 
-          this.errorHandlerService.ShowErrorString('No se pudo obtener un nuevo token de acceso');
-          return throwError('No se pudo obtener un nuevo token de acceso');
-        }),
-        catchError(error => {
-          //this.authService.logout();
-          this.errorHandlerService.ShowError(error);
-          return throwError(error);
-        })
-      );
+            this.errorHandlerService.ShowErrorString('No se pudo obtener un nuevo token de acceso');
+            return throwError('No se pudo obtener un nuevo token de acceso');
+          }),
+          catchError(error => {
+            //this.authService.logout();
+            this.errorHandlerService.ShowError(error);
+            return throwError(error);
+          })
+        );
     } else {
       return next.handle(request);
     }

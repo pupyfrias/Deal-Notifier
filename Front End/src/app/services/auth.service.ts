@@ -12,8 +12,8 @@ export class AuthService {
   private tokenExpiration: number;
   private refreshingTokenSource = new BehaviorSubject<boolean>(false);
   public refreshingToken$ = this.refreshingTokenSource.asObservable();
-  
-  constructor(private http: HttpClient) {}
+
+  constructor(private http: HttpClient) { }
 
   login(username: string, password: string): Observable<boolean> {
     return this.http.post<ResponseDTO>(environment.baseApi + 'account/login', { username, password }).pipe(
@@ -31,18 +31,18 @@ export class AuthService {
 
   refreshToken(): Observable<any> {
     this.refreshingTokenSource.next(true);
-    return this.http.post<any>(environment.baseApi +'account/refresh-token', { accessToken: this.getAccessToken() })
-    .pipe(
-      tap(response => {
-        this.setAccessToken(response.accessToken);
-        this.tokenExpiration = Date.now() + response.expiresIn * 60000;
-        this.refreshingTokenSource.next(false);
-      }),
-      catchError(error => {
-        console.error('Error al actualizar el token:', error);
-        return of(null);
-      })
-    );
+    return this.http.post<any>(environment.baseApi + 'account/refresh-token', { accessToken: this.getAccessToken() })
+      .pipe(
+        tap(response => {
+          this.setAccessToken(response.accessToken);
+          this.tokenExpiration = Date.now() + response.expiresIn * 60000;
+          this.refreshingTokenSource.next(false);
+        }),
+        catchError(error => {
+          console.error('Error al actualizar el token:', error);
+          return of(null);
+        })
+      );
   }
 
   logout(): void {

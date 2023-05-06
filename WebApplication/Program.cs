@@ -1,5 +1,4 @@
 using Serilog;
-using Template.Core.Application.SetupOptions;
 using WebApi.Extensions;
 using WebScraping.Core.Application;
 using WebScraping.Core.Application.SetupOptions;

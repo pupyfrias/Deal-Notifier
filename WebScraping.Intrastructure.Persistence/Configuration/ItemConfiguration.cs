@@ -40,13 +40,6 @@ namespace WebScraping.Infrastructure.Persistence.Configuration
                 .HasDefaultValueSql("0")
                 .IsRequired();
 
-            builder.Property(x => x.Created)
-                .HasColumnType("datetime")
-                .HasDefaultValueSql("getdate()")
-                .IsRequired();
-
-            builder.Property(x => x.LastModified)
-                .HasColumnType("datetime");
 
             builder.Property(x => x.Saving)
                 .HasColumnType("DECIMAL(13,2)")
@@ -57,6 +50,12 @@ namespace WebScraping.Infrastructure.Persistence.Configuration
                 .HasColumnType("DECIMAL(13,2)")
                 .HasDefaultValueSql("0")
                 .IsRequired();
+
+            builder.Property(x => x.Notify)
+                .HasColumnType("BIT")
+                .HasDefaultValueSql("0")
+                .IsRequired();
+
 
             #endregion Properties
 

@@ -49,7 +49,7 @@ namespace WebApi.Controllers
                 HttpOnly = true,
                 Expires = DateTime.UtcNow.AddDays(10),
                 SameSite = SameSiteMode.None,
-               // Domain = "https://stores.com",
+                // Domain = "https://stores.com",
                 Secure = true
             };
             Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace WebScraping.Core.Application.Models
+﻿namespace WebScraping.Core.Application.Models
 {
     public class ItemSummary
     {
@@ -47,7 +45,5 @@ namespace WebScraping.Core.Application.Models
         public UnitPrice UnitPrice { get; set; }
         public string UnitPricingMeasure { get; set; }
         public int WatchCount { get; set; }
-
     }
-
 }

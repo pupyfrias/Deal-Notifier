@@ -1,4 +1,3 @@
-
 import {
   ActivatedRouteSnapshot,
   CanActivate,
@@ -25,12 +24,11 @@ export class AuthGuard implements CanActivate {
   async canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Promise<boolean> {
-    
-      let isAuthenticated = this.authService.isAuthenticated();
-      if(isAuthenticated){
-         return true;
-      }
-      this.router.navigate(['login']);
-      return false;
+    let isAuthenticated = this.authService.isAuthenticated();
+    if (isAuthenticated) {
+      return true;
+    }
+    this.router.navigate(['login']);
+    return false;
   }
 }

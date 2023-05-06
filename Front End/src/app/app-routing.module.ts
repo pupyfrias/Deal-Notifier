@@ -27,7 +27,7 @@ const routes: Routes = [
     loadChildren: () =>
       import('./components/login/login.module').then((m) => m.LoginModule),
   },
- 
+
   {
     path: '**',
     redirectTo: '/',

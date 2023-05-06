@@ -1,15 +1,14 @@
-﻿using Azure.Core;
-using Serilog;
+﻿using Serilog;
 using System.Collections.Concurrent;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
+using WebScraping.Core.Application.Extensions;
+using WebScraping.Core.Application.Interfaces.Services;
 using WebScraping.Core.Application.Models;
-using WebScraping.Core.Application.Utils;
 using WebScraping.Core.Domain.Entities;
-using WebScraping.Infrastructure.Persistence.Services;
 using Condition = WebScraping.Core.Application.Emuns.Condition;
 using Shop = WebScraping.Core.Application.Emuns.Shop;
 using Status = WebScraping.Core.Application.Emuns.Status;
@@ -17,69 +16,88 @@ using Type = WebScraping.Core.Application.Emuns.Type;
 
 namespace WebScraping.Infrastructure.Persistence.Models
 {
-    public class Ebay
+    public class EbayService: IEbayService
     {
-        private static ILogger _logger;
-        private static ConcurrentBag<Item> itemList = new ConcurrentBag<Item>();
-        private static bool tokenRefreshed = false;
+        private  ILogger _logger;
+        private  IItemService _itemService;
+        private  ConcurrentBag<Item> itemList = new ConcurrentBag<Item>();
+        private ConcurrentBag<string> checkedList = new ConcurrentBag<string>();
+        private  bool tokenRefreshed = false;
+        private readonly string baseUrl = @"https://api.ebay.com/buy/browse/v1/item_summary/search?filter=price:[20..100],priceCurrency:USD,conditionIds:{1000|3000},itemLocationCountry:US&sort=price&limit=200&aspect_filter=categoryId:9355,Operating System:{Android},Storage Capacity:{512 GB|256 GB|64 GB|32 GB|128 GB},Brand :{LG|Motorola|Samsung}&q=(LG,Motorola,Samsung) (Metro,Virgin,Boost,Sprint,T-Mobile,Unlocked)&category_ids=9355\";
+        private string? currentUrl = string.Empty;
 
-        public static async Task RunAsync()
+
+        public EbayService(ILogger logger, IItemService itemService) 
         {
+            _logger = logger;
+            _itemService = itemService;
+        }
 
 
-            _logger = Logger.CreateLogger().ForContext<Ebay>();
+        public async Task Init()
+        {
+            await _itemService.LoadData();
+            await RunAsync(baseUrl);
+        }
 
-            if (tokenRefreshed) throw new Exception("An error occurred while refreshing the token");
-
+        private async Task RunAsync(string url)
+        {
             int counter = 1;
-            Uri baseAddress = new Uri("https://api.ebay.com/buy/browse/v1/item_summary/search");
-            string queryParameter = "?filter=price:[20..100],priceCurrency:USD,conditionIds:{1000|3000},itemLocationCountry:US&sort=price&limit=200&aspect_filter=categoryId:9355,Operating System:{Android},Storage Capacity:{512 GB|256 GB|64 GB|32 GB|128 GB},Brand :{LG|Motorola|Samsung}&q=(LG,Motorola,Samsung) (Metro,Virgin,Boost,Sprint,T-Mobile,Unlocked)&category_ids=9355";
+            currentUrl = url;
+
             string accessToken = Environment.GetEnvironmentVariable("AccessToken") ?? string.Empty;
             HttpClient httpClient = new HttpClient();
-            httpClient.BaseAddress = baseAddress;
 
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-            var response = httpClient.GetAsync(queryParameter).Result;
+            var response = httpClient.GetAsync(currentUrl).Result;
             if (response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadFromJsonAsync<eBayResponse>();
                 Mapping(content?.ItemSummaries);
-                itemList.Save();
+                _itemService.SaveOrUpdate(ref itemList);
 
                 _logger.Information($"1\t| {counter}\t| {itemList.Count}");
                 counter++;
                 itemList.Clear();
-                string? next = content?.Next;
-                
-                while(next != null){
+                currentUrl = content?.Next;
 
-                    using (HttpResponseMessage httpResponseMessage = httpClient.GetAsync(next).Result)
+                while (currentUrl != null)
+                {
+                    using (HttpResponseMessage httpResponseMessage = httpClient.GetAsync(currentUrl).Result)
                     {
-
                         if (response.IsSuccessStatusCode)
                         {
                             var data = await httpResponseMessage.Content.ReadFromJsonAsync<eBayResponse>();
                             Mapping(data?.ItemSummaries);
-                            next = data?.Next;
-                            itemList.Save();
+                            currentUrl = data?.Next;
+                            _itemService.SaveOrUpdate(ref itemList);
                             _logger.Information($"1\t| {counter}\t| {itemList.Count}");
                             counter++;
                             itemList.Clear();
+                        }
+                        else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                        {
+                            await RefreshTokenAsync();
+                            await RunAsync(currentUrl);
+                            tokenRefreshed = true;
                         }
                         else
                         {
                             _logger.Warning($"{(int)response.StatusCode} | {response.ReasonPhrase}");
                         }
                     }
-                    
+
                 }
+
+                _itemService.UpdateStatus(ref checkedList);
+
 
             }
             else if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
                 await RefreshTokenAsync();
-                await RunAsync();
+                await RunAsync(currentUrl);
                 tokenRefreshed = true;
             }
             else
@@ -93,7 +111,7 @@ namespace WebScraping.Infrastructure.Persistence.Models
 
 
         #region Private Methods
-        private static void Mapping(List<ItemSummary>? itemSummaries)
+        private void Mapping(List<ItemSummary>? itemSummaries)
         {
             if( itemSummaries != null)
             {
@@ -120,6 +138,7 @@ namespace WebScraping.Infrastructure.Persistence.Models
                         if (canBeSaved)
                         {
                             itemList.Add(item);
+                            checkedList.Add(item.Link);
                         }
                     }
                     catch (Exception e)
@@ -136,7 +155,7 @@ namespace WebScraping.Infrastructure.Persistence.Models
             
         }
 
-        private async static Task RefreshTokenAsync()
+        private async Task RefreshTokenAsync()
         {
             string clientId = Environment.GetEnvironmentVariable("ClientId") ?? string.Empty;
             string clientSecret = Environment.GetEnvironmentVariable("ClientSecret") ?? string.Empty;

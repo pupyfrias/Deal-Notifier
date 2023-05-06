@@ -12,7 +12,6 @@ import { ItemService } from '../../services/item.service';
 import { environment } from 'src/environments/environment';
 import { ToastrService } from 'ngx-toastr';
 
-
 @Component({
   selector: 'app-sidenav',
   templateUrl: './sidenav.component.html',
@@ -242,7 +241,6 @@ export class sidenavComponent implements OnInit, OnDestroy {
     this.SettingsNavigation();
   }
 
-
   Reload() {
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
     this.router.onSameUrlNavigation = 'reload';
@@ -253,17 +251,14 @@ export class sidenavComponent implements OnInit, OnDestroy {
   }
 
   banKeyword(keyword: string) {
-
     var api = environment.baseApi + 'Items/BanKeyword'
     const headers = new HttpHeaders({
       'Content-Type': 'application/json'
     });
 
-
-    this.http.post(api,{keyword}).subscribe(
+    this.http.post(api, { keyword }).subscribe(
       {
         next: (data) => {
-
           this.Reload();
           this.toastr.success(`${keyword} banned`);
           this.keyword = "";
@@ -271,7 +266,6 @@ export class sidenavComponent implements OnInit, OnDestroy {
       }
     );
   }
-
 
   priceChange(e: any): void {
     //MAXIMUS

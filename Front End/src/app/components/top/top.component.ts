@@ -55,13 +55,12 @@ export class TopComponent implements OnInit, OnDestroy {
     }
   }
 
-  logout():void{
+  logout(): void {
     this.authService.logout();
     this.router.navigate(['login']);
   }
 
-  isAuthenticated(): boolean{
-
+  isAuthenticated(): boolean {
     return this.authService.isAuthenticated();
   }
 }

@@ -2,8 +2,5 @@
 {
     public class ThumbnailImage : Image
     {
-
-
     }
-
 }

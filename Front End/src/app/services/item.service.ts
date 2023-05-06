@@ -11,7 +11,7 @@ export class ItemService {
   total$ = new BehaviorSubject<number>(0);
   select$ = new BehaviorSubject<number>(0);
   serch$ = new BehaviorSubject<string>('');
- // data$ = new BehaviorSubject<Item[]>({} as Item[]);
+  // data$ = new BehaviorSubject<Item[]>({} as Item[]);
 
   constructor(private httpClient: HttpClient) { }
 

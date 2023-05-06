@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace WebScraping.Core.Application.Models
+﻿namespace WebScraping.Core.Application.Models
 {
     public class eBayResponse
     {
@@ -15,9 +13,5 @@ namespace WebScraping.Core.Application.Models
         public int Total { get; set; }
 
         public List<Warning> Warnings { get; set; }
-
-
-
     }
-
 }

@@ -13,6 +13,7 @@ namespace WebScraping.Core.Application.Mappings
             CreateMap<Item, ItemResponseDto>().ReverseMap();
             CreateMap<Item, ItemClean>().ReverseMap();
             CreateMap<Condition, ConditionDto>().ReverseMap();
+            CreateMap<ConditionsToNotify, ConditionsToNotifyDto>().ReverseMap();
             CreateMap<BlackList, BlackListDto>().ReverseMap();
             CreateMap<Banned, BannedDto>().ReverseMap();
             CreateMap<BlackList, Item>().IgnoreAllPropertiesWithAnInaccessibleSetter().ReverseMap();

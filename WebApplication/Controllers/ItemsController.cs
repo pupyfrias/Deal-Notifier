@@ -2,10 +2,8 @@
 using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.OData.Query;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 using System.Data;
 using System.Linq.Expressions;
 using WebScraping.Core.Application.Constants;
@@ -63,9 +61,6 @@ namespace WebApi.Controllers
             }
             else
             {
-
-
-
                 List<string>? brandList = request.brands?.Split("%2C").ToList();
                 List<string>? storageList = request.storages?.Split("%2C").ToList();
                 List<string>? carrierList = request.carriers?.Split("%2C").ToList();
@@ -211,16 +206,13 @@ namespace WebApi.Controllers
         }
 
         [HttpPost("BanKeyword")]
-        public async Task<ActionResult> BanKeyword([FromBody] BanKeywordDto dto) 
+        public async Task<ActionResult> BanKeyword([FromBody] BanKeywordDto dto)
         {
-
-
             string query = "EXEC BAN_KEYWORD @Keyword";
             var keyword = new SqlParameter("@Keyword", dto.Keyword);
             await _context.Database.ExecuteSqlRawAsync(query, keyword);
             return NoContent();
         }
-
 
         private bool ItemExists(Guid id)
         {

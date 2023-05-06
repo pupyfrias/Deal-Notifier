@@ -9,7 +9,5 @@
         public string County { get; set; }
         public string PostalCode { get; set; }
         public string StateOrProvince { get; set; }
-
     }
-
 }

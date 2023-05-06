@@ -283,35 +283,33 @@
       </button>
     </mat-expansion-panel>
     <!-- END CONDITION -->
-        <!-- BEGIN BAN KEYWORD -->
-        <mat-expansion-panel>
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              <mat-icon class="custom-icon">not_interested</mat-icon>
-              Ban
-            </mat-panel-title>
-          </mat-expansion-panel-header>
-          <form (submit)="banKeyword(keyword)">
-            <mat-form-field>
-              <mat-label>Keyword</mat-label>
-              <input matInput
-                     class="mt-2"
-                     type="text"
-                     id="banKeyword"
-                     [(ngModel)]="keyword"
-                     />
-            </mat-form-field>
+    <!-- BEGIN BAN KEYWORD -->
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon class="custom-icon">not_interested</mat-icon>
+          Ban
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <form (submit)="banKeyword(keyword)">
+        <mat-form-field>
+          <mat-label>Keyword</mat-label>
+          <input matInput
+                 class="mt-2"
+                 type="text"
+                 id="banKeyword"
+                 [(ngModel)]="keyword" />
+        </mat-form-field>
 
-            <button mat-raised-button
-                    color="primary"
-                    type="submit"
-                    class="mt-2">
-              Go
-            </button>
-          </form>
-
-        </mat-expansion-panel>
-        <!-- END BAN KEYWORD -->
+        <button mat-raised-button
+                color="primary"
+                type="submit"
+                class="mt-2">
+          Go
+        </button>
+      </form>
+    </mat-expansion-panel>
+    <!-- END BAN KEYWORD -->
     <!-- BEGIN CLEAN ALL -->
     <button mat-raised-button
             color="primary"

@@ -6,9 +6,9 @@ using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using WebScraping.Core.Application.Extensions;
 using WebScraping.Core.Application.Heplers;
+using WebScraping.Core.Application.Interfaces.Services;
 using WebScraping.Core.Application.Utils;
 using WebScraping.Core.Domain.Entities;
-using WebScraping.Infrastructure.Persistence.Services;
 using Condition = WebScraping.Core.Application.Emuns.Condition;
 using Shop = WebScraping.Core.Application.Emuns.Shop;
 using Status = WebScraping.Core.Application.Emuns.Status;
@@ -19,9 +19,15 @@ namespace WebScraping.Infrastructure.Persistence.Models
     public class TheStore
     {
         private static ILogger _logger;
+        private IItemService _itemService;
         private static object[,] links = { { "https://thestore.com/c/refurbished-cell-phones-58?condition=Brand%20New&showMore=0", Type.Phone } };
 
-        public static void Run()
+        public TheStore(ILogger logger, IItemService itemService)
+        {
+            _itemService = itemService;
+        }
+
+        public void Run()
         {
             _logger = Logger.CreateLogger().ForContext<TheStore>();
             string option = $@"--user-data-dir={AppDomain.CurrentDomain.BaseDirectory}User Data\The Store";
@@ -107,7 +113,7 @@ namespace WebScraping.Infrastructure.Persistence.Models
                     }
                 }
 
-                itemList.Save();
+                _itemService.SaveOrUpdate(ref itemList);
             }
         }
     }

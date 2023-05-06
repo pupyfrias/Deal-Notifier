@@ -1,8 +1,5 @@
-﻿using System;
-using System.Net.Http;
-using System.Net.Http.Headers;
+﻿using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using System.Threading.Tasks;
 
 namespace WebScraping.Core.Application.Models
 {
@@ -10,7 +7,6 @@ namespace WebScraping.Core.Application.Models
     {
         private static async Task Main(string[] args)
         {
-
             Uri baseAddress = new Uri("https://api.ebay.com/buy/browse/v1/item_summary/search");
             string queryParameter = "?q=phone&filter=price:[20..120],priceCurrency:USD,conditionIds:{1000},itemLocationCountry:US&sort=price&limit=200&aspect_filter=categoryId:9355,Operating System:{Android|iOS|Not Specified},Storage Capacity:{512 GB|256 GB|64 GB|32 GB|128 GB|Not Specified}";
             HttpClient httpClient = new HttpClient();
@@ -22,21 +18,13 @@ namespace WebScraping.Core.Application.Models
             if (response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadFromJsonAsync<eBayResponse>();
-
-
-
             }
             else
             {
                 Console.WriteLine("{0} ({1})", (int)response.StatusCode, response.ReasonPhrase);
             }
 
-
             httpClient.Dispose();
-
         }
-
-
     }
-
 }

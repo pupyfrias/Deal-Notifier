@@ -3,7 +3,5 @@
     public class AutoCorrection
     {
         public string q { get; set; }
-
     }
-
 }

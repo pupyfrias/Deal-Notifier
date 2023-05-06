@@ -24,6 +24,12 @@
       <ProjectReference Include="..\WebScraping.Intrastructure.Identity\WebScraping.Infrastructure.Identity.csproj" />
       <ProjectReference Include="..\WebScraping.Intrastructure.Persistence\WebScraping.Infrastructure.Persistence.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Content Update="appsettings.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
   
   </Project>
   

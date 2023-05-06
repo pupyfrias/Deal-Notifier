@@ -20,7 +20,6 @@ namespace WebScraping.Infrastructure.Persistence.Configuration
                 .HasColumnType("VARCHAR(max)")
                 .IsRequired();
 
-
             #endregion Properties
 
             #region Keys

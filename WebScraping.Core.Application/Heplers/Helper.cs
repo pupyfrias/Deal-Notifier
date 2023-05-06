@@ -7,6 +7,7 @@ namespace WebScraping.Core.Application.Heplers
     {
         public static string AppsettingsPath { get; } = Path.GetFullPath("..\\WebScraping.Core.Application\\appsettings.json");
         public static HashSet<BannedDto> BannedKeywordList { get; set; } = new HashSet<BannedDto>();
+        public static HashSet<ConditionsToNotifyDto> ConditionsToNotifyList { get; set; } = new HashSet<ConditionsToNotifyDto>();
         public static string BasePath { get; } = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
         public static HashSet<BlackListDto> BlacklistedLinks { get; set; } = new HashSet<BlackListDto>();
         public static ConcurrentBag<string> CheckedList { get; set; } = new ConcurrentBag<string>();

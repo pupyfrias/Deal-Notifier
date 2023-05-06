@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace WebScraping.Core.Application.Models
+﻿namespace WebScraping.Core.Application.Models
 {
     public class Refinement
     {
@@ -11,5 +9,4 @@ namespace WebScraping.Core.Application.Models
 
         public string DominantCategoryId { get; set; }
     }
-
 }

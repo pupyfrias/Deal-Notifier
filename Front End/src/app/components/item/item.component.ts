@@ -22,7 +22,6 @@ import { MatSidenavContent } from '@angular/material/sidenav';
 import { ResponseDTO } from '../../models/ResponseDTO';
 import { Item } from '../../models/Item';
 
-
 @Component({
   selector: 'app-item',
   templateUrl: './item.component.html',
@@ -137,9 +136,8 @@ export class ItemComponent implements OnInit, OnDestroy, AfterViewChecked {
             body: `"${this.listIds.toString()}"`
           };
 
-
           this.httpClient
-            .delete(`${api}items`, options )
+            .delete(`${api}items`, options)
             .subscribe({
               error: (error) => {
                 this.NgxSpinnerService.hide();

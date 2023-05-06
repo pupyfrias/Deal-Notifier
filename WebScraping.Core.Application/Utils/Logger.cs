@@ -11,7 +11,6 @@ namespace WebScraping.Core.Application.Utils
     {
         private static ILogger? _logger;
         private static ITextFormatter consoleFormatter = new ExpressionTemplate(OutputTemplate.Console);
-        private static ITextFormatter fileFormatter = new ExpressionTemplate(OutputTemplate.File);
 
         /// <summary>
         /// Create a Logger

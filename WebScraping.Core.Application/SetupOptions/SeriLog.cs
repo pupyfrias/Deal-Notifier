@@ -1,12 +1,17 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Serilog;
-using Serilog.Formatting.Compact;
+using Serilog.Formatting;
 using Serilog.Formatting.Json;
+using Serilog.Templates;
+using WebScraping.Core.Application.Constants;
 
-namespace Template.Core.Application.SetupOptions
+namespace WebScraping.Core.Application.SetupOptions
 {
     public static class SeriLog
     {
+
+        private static ITextFormatter consoleFormatter = new ExpressionTemplate(OutputTemplate.Console);
+
         public static readonly Action<HostBuilderContext, LoggerConfiguration> Options = (hostBuilderContext, loggerContiguration) =>
         {
             loggerContiguration
@@ -39,9 +44,8 @@ namespace Template.Core.Application.SetupOptions
                      formatter: new JsonFormatter()
                  );
              })
-            .WriteTo.Console(new CompactJsonFormatter())
-            .Enrich.FromLogContext()
-            .Enrich.WithProperty("ApplicationName", "WebScraping");
+            .WriteTo.Console(formatter: consoleFormatter)
+            .Enrich.FromLogContext();
 
         };
     }

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace WebScraping.Core.Application.Models
+﻿namespace WebScraping.Core.Application.Models
 {
     public class Warning
     {
@@ -14,5 +12,4 @@ namespace WebScraping.Core.Application.Models
         public List<Parameter> Parameters { get; set; }
         public string Subdomain { get; set; }
     }
-
 }

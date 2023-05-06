@@ -6,9 +6,9 @@ using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using WebScraping.Core.Application.Extensions;
 using WebScraping.Core.Application.Heplers;
+using WebScraping.Core.Application.Interfaces.Services;
 using WebScraping.Core.Application.Utils;
 using WebScraping.Core.Domain.Entities;
-using WebScraping.Infrastructure.Persistence.Services;
 using Shop = WebScraping.Core.Application.Emuns.Shop;
 using Status = WebScraping.Core.Application.Emuns.Status;
 using Type = WebScraping.Core.Application.Emuns.Type;
@@ -18,6 +18,7 @@ namespace WebScraping.Infrastructure.Persistence.Models
     public class Amazon
     {
         private static ILogger _logger;
+        private IItemService _itemService;
         private static string error;
 
         private static object[,] links =
@@ -44,7 +45,12 @@ namespace WebScraping.Infrastructure.Persistence.Models
             {"https://www.amazon.com/s?k=memory+usb+samsung&i=computers&bbn=3151491&rh=n%3A3151491&dc&language=es&__mk_es_US=%C3%85M%C3%85%C5%BD%C3%95%C3%91&qid=1652323252&rnid=2528832011&ref=sr_nr_p_89_1",  Emuns.Type.Memory}*/
         };
 
-        public static void Run()
+        public Amazon(ILogger logger, IItemService itemService)
+        {
+            _itemService = itemService;
+        }
+
+        public void Run()
         {
             _logger = Logger.CreateLogger().ForContext<Amazon>();
             string option = $@"--user-data-dir={AppDomain.CurrentDomain.BaseDirectory}User Data\Amazon";
@@ -126,7 +132,7 @@ namespace WebScraping.Infrastructure.Persistence.Models
                         counter++;
                     }
 
-                    itemList.Save();
+                    _itemService.SaveOrUpdate(ref itemList);
                 }
                 driver.Quit();
             }

@@ -16,9 +16,13 @@ namespace WebScraping.Core.Domain.Entities
         public string Image { get; set; }
         public string Link { get; set; }
         public string Name { get; set; }
+        public bool Notify { get; set; }
         public Condition Condition { get; set; }
         public Shop Shop { get; set; }
         public Status Status { get; set; }
         public Type Type { get; set; }
+
+
+
     }
 }

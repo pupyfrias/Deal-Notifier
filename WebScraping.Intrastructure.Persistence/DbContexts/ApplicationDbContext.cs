@@ -37,6 +37,7 @@ namespace WebScraping.Infrastructure.Persistence.DbContexts
         public DbSet<Status> Statuses { get; set; }
         public DbSet<Supported> Supporteds { get; set; }
         public DbSet<Type> Types { get; set; }
+        public DbSet<ConditionsToNotify> ConditionsToNotify   { get; set; }
 
         #endregion DbSets
 
@@ -45,6 +46,7 @@ namespace WebScraping.Infrastructure.Persistence.DbContexts
             modelBuilder.ApplyConfiguration(new BannedConfiguration());
             modelBuilder.ApplyConfiguration(new BlackListConfiguration());
             modelBuilder.ApplyConfiguration(new ConditionConfiguration());
+            modelBuilder.ApplyConfiguration(new ConditionsToNotifyConfiguration());
             modelBuilder.ApplyConfiguration(new ItemConfiguration());
             modelBuilder.ApplyConfiguration(new ShopConfiguration());
             modelBuilder.ApplyConfiguration(new SpBlackListResponseConfiguration());
