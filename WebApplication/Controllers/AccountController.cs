@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WebScraping.Core.Application.Contracts.Services;
 using WebScraping.Core.Application.Dtos.Auth;
 using WebScraping.Core.Application.Dtos.Token;
-using WebScraping.Core.Application.Interfaces.Services;
 using ILogger = Serilog.ILogger;
 
 namespace WebApi.Controllers

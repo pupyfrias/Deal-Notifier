@@ -1,4 +1,4 @@
-using WebScraping.Core.Application.Interfaces.Services;
+using WebScraping.Core.Application.Contracts.Services;
 using ILogger = Serilog.ILogger;
 using Timer = System.Threading.Timer;
 
@@ -9,9 +9,10 @@ namespace EbayWorkerService
         private readonly IEbayService _ebayService;
         private readonly ILogger _logger;
         private Timer _timer;
+
         public Worker(ILogger logger, IEbayService ebayService)
         {
-            _logger =  logger;
+            _logger = logger;
             _ebayService = ebayService;
         }
 
@@ -38,5 +39,4 @@ namespace EbayWorkerService
             _logger.Information("eBay Service Init completed.");
         }
     }
-
 }

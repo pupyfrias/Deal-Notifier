@@ -1,35 +1,22 @@
-﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
-using Serilog;
-using System.Data;
+﻿using Serilog;
 using System.Diagnostics;
-using WebScraping.Core.Application.Dtos;
-using WebScraping.Core.Application.Heplers;
-using WebScraping.Core.Application.Mappings;
 using WebScraping.Core.Application.Utils;
-using WebScraping.Infrastructure.Persistence.DbContexts;
-using WebScraping.Infrastructure.Persistence.Models;
 
 namespace WebScraping
 {
     public class Program
     {
         private static ILogger _logger;
-        
 
         private static async Task Main(string[] args)
         {
             _logger = Logger.CreateLogger().ForContext<Program>();
-           
+
             try
             {
+                /*                var eBayService = new EbayService();
 
-/*                var eBayService = new EbayService();
-
-                await Timer(eBayService.Init);*/
-
+                                await Timer(eBayService.Init);*/
             }
             catch (Exception e)
             {
@@ -41,9 +28,6 @@ namespace WebScraping
             }
         }
 
-
-
-
         private static void Timer(Action action)
         {
             var timer = new Stopwatch();
@@ -53,7 +37,6 @@ namespace WebScraping
             TimeSpan timeTaken = timer.Elapsed;
             string time = "Time taken: " + timeTaken.ToString(@"m\:ss\.fff");
             _logger.Information(time);
-
         }
 
         private static async Task Timer(Func<Task> action)
@@ -65,13 +48,6 @@ namespace WebScraping
             TimeSpan timeTaken = timer.Elapsed;
             string time = "Time taken: " + timeTaken.ToString(@"m\:ss\.fff");
             _logger.Information(time);
-
         }
-
-
-       
-
-
-       
     }
 }

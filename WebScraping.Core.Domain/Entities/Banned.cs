@@ -2,9 +2,9 @@
 
 namespace WebScraping.Core.Domain.Entities
 {
-    public class Banned : AuditableBaseEntity
+    public class Banned : AuditableEntity<int>
     {
-        public int Id { get; }
+        public override int Id { get; set; }
         public string Keyword { get; set; }
     }
 }

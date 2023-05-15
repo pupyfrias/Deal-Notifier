@@ -5,34 +5,34 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
+using WebScraping.Core.Application.Constants;
+using WebScraping.Core.Application.Contracts.Services;
 using WebScraping.Core.Application.Extensions;
-using WebScraping.Core.Application.Interfaces.Services;
+using WebScraping.Core.Application.Heplers;
 using WebScraping.Core.Application.Models;
 using WebScraping.Core.Domain.Entities;
-using Condition = WebScraping.Core.Application.Emuns.Condition;
-using Shop = WebScraping.Core.Application.Emuns.Shop;
-using Status = WebScraping.Core.Application.Emuns.Status;
-using Type = WebScraping.Core.Application.Emuns.Type;
+using Condition = WebScraping.Core.Application.Enums.Condition;
+using Shop = WebScraping.Core.Application.Enums.Shop;
+using Status = WebScraping.Core.Application.Enums.Status;
+using Type = WebScraping.Core.Application.Enums.Type;
 
 namespace WebScraping.Infrastructure.Persistence.Models
 {
-    public class EbayService: IEbayService
+    public class EbayService : IEbayService
     {
-        private  ILogger _logger;
-        private  IItemService _itemService;
-        private  ConcurrentBag<Item> itemList = new ConcurrentBag<Item>();
+        private readonly ILogger _logger;
+        private readonly IItemService _itemService;
+        private ConcurrentBag<Item> itemList = new ConcurrentBag<Item>();
         private ConcurrentBag<string> checkedList = new ConcurrentBag<string>();
-        private  bool tokenRefreshed = false;
         private readonly string baseUrl = @"https://api.ebay.com/buy/browse/v1/item_summary/search?filter=price:[20..100],priceCurrency:USD,conditionIds:{1000|3000},itemLocationCountry:US&sort=price&limit=200&aspect_filter=categoryId:9355,Operating System:{Android},Storage Capacity:{512 GB|256 GB|64 GB|32 GB|128 GB},Brand :{LG|Motorola|Samsung}&q=(LG,Motorola,Samsung) (Metro,Virgin,Boost,Sprint,T-Mobile,Unlocked)&category_ids=9355\";
         private string? currentUrl = string.Empty;
+        private bool tokenRefreshed;
 
-
-        public EbayService(ILogger logger, IItemService itemService) 
+        public EbayService(ILogger logger, IItemService itemService,IEmailServiceAsync emailService)
         {
             _logger = logger;
             _itemService = itemService;
         }
-
 
         public async Task Init()
         {
@@ -87,10 +87,11 @@ namespace WebScraping.Infrastructure.Persistence.Models
                             _logger.Warning($"{(int)response.StatusCode} | {response.ReasonPhrase}");
                         }
                     }
-
                 }
 
                 _itemService.UpdateStatus(ref checkedList);
+                await  _itemService.NotifyByEmail();
+
 
 
             }
@@ -105,15 +106,16 @@ namespace WebScraping.Infrastructure.Persistence.Models
                 _logger.Warning($"{(int)response.StatusCode} | {response.ReasonPhrase}");
             }
 
-           
             httpClient.Dispose();
         }
 
-
         #region Private Methods
+
+
+
         private void Mapping(List<ItemSummary>? itemSummaries)
         {
-            if( itemSummaries != null)
+            if (itemSummaries != null)
             {
                 Parallel.ForEach(itemSummaries, async (element, stateMain) =>
                 {
@@ -127,16 +129,17 @@ namespace WebScraping.Infrastructure.Persistence.Models
                         Item item = new Item();
                         item.Name = element.Title;
                         item.Link = element.ItemWebUrl.Substring(0, element.ItemWebUrl.IndexOf("?"));
-                        item.Image = element?.ThumbnailImages?[0]?.ImageUrl ?? element?.Image?.ImageUrl ?? string.Empty;
-                        item.Price = price;
-                        item.ShopId = (int)Shop.eBay;
-                        item.TypeId = (int)Type.Phone;
-                        item.StatusId = (int)Status.InStock;
-                        item.ConditionId = element?.Condition == "New" ?  (int)Condition.New: (int)Condition.Used;
                         bool canBeSaved = await item.CanBeSaved();
 
                         if (canBeSaved)
                         {
+                            item.Image = element?.ThumbnailImages?[0]?.ImageUrl ?? element?.Image?.ImageUrl ?? string.Empty;
+                            item.Price = price;
+                            item.ShopId = (int)Shop.eBay;
+                            item.TypeId = (int)Type.Phone;
+                            item.StatusId = (int)Status.InStock;
+                            item.ConditionId = element?.Condition == "New" ? (int)Condition.New : (int)Condition.Used;
+                            item.SetBrand();
                             itemList.Add(item);
                             checkedList.Add(item.Link);
                         }
@@ -151,8 +154,6 @@ namespace WebScraping.Infrastructure.Persistence.Models
             {
                 _logger.Warning("itemSummaries is null");
             }
-
-            
         }
 
         private async Task RefreshTokenAsync()
@@ -176,13 +177,10 @@ namespace WebScraping.Infrastructure.Persistence.Models
                             "https://api.ebay.com/oauth/api_scope/commerce.notification.subscription " +
                             "https://api.ebay.com/oauth/api_scope/commerce.notification.subscription.readonly";
 
-
-
             using HttpClient httpClient = new HttpClient();
             string tokenUrl = "https://api.ebay.com/identity/v1/oauth2/token";
             string credentials = $"{clientId}:{clientSecret}";
             string base64Credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes(credentials));
-
 
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", base64Credentials);
 
@@ -201,17 +199,13 @@ namespace WebScraping.Infrastructure.Persistence.Models
                 var jsonResponse = JsonDocument.Parse(responseBody);
                 var newAccessToken = jsonResponse.RootElement.GetProperty("access_token").GetString() ?? string.Empty;
                 Environment.SetEnvironmentVariable("AccessToken", newAccessToken);
-
             }
             else
             {
                 _logger.Error(await response.Content.ReadAsStringAsync());
             }
-
         }
 
         #endregion Private Methods
-
-
     }
 }

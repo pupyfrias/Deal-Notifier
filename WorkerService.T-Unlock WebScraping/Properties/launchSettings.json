@@ -1,0 +1,11 @@
+﻿{
+  "profiles": {
+    "WorkerService.T_Unlock_WebScraping": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

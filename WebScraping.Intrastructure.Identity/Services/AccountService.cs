@@ -7,11 +7,11 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using WebScraping.Core.Application.Constants;
+using WebScraping.Core.Application.Contracts.Services;
 using WebScraping.Core.Application.Dtos.Auth;
 using WebScraping.Core.Application.Dtos.Token;
 using WebScraping.Core.Application.Dtos.User;
 using WebScraping.Core.Application.Exceptions;
-using WebScraping.Core.Application.Interfaces.Services;
 using WebScraping.Core.Application.Wrappers;
 using WebScraping.Core.Domain.Settings;
 using WebScraping.Infrastructure.Identity.Models;
@@ -22,7 +22,7 @@ namespace WebScraping.Infrastructure.Identity.Services
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly JWTSettings _jwtSettings;
+        private readonly JWTConfig _jwtSettings;
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
         private ApplicationUser _user;
@@ -30,7 +30,7 @@ namespace WebScraping.Infrastructure.Identity.Services
         public AccountService(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            IOptions<JWTSettings> jwtSettings,
+            IOptions<JWTConfig> jwtSettings,
             ILogger logger,
             IMapper mapper
             )

@@ -4,15 +4,15 @@ using SeleniumExtras.WaitHelpers;
 using Serilog;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
+using WebScraping.Core.Application.Contracts.Services;
 using WebScraping.Core.Application.Extensions;
 using WebScraping.Core.Application.Heplers;
-using WebScraping.Core.Application.Interfaces.Services;
 using WebScraping.Core.Application.Utils;
 using WebScraping.Core.Domain.Entities;
-using Condition = WebScraping.Core.Application.Emuns.Condition;
-using Shop = WebScraping.Core.Application.Emuns.Shop;
-using Status = WebScraping.Core.Application.Emuns.Status;
-using Type = WebScraping.Core.Application.Emuns.Type;
+using Condition = WebScraping.Core.Application.Enums.Condition;
+using Shop = WebScraping.Core.Application.Enums.Shop;
+using Status = WebScraping.Core.Application.Enums.Status;
+using Type = WebScraping.Core.Application.Enums.Type;
 
 namespace WebScraping.Infrastructure.Persistence.Models
 {

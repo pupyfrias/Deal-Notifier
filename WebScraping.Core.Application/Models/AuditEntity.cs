@@ -1,4 +1,4 @@
-﻿using Action = WebScraping.Core.Application.Emuns.Action;
+﻿using Action = WebScraping.Core.Application.Enums.Action;
 
 namespace WebScraping.Core.Application.Models
 {

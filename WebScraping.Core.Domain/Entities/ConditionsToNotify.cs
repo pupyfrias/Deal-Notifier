@@ -2,9 +2,9 @@
 
 namespace WebScraping.Core.Domain.Entities
 {
-    public class ConditionsToNotify : AuditableBaseEntity
+    public class ConditionsToNotify : AuditableEntity<int>
     {
-        public int Id { get; set; }
+        public override int Id { get; set; }
         public string Keywords { get; set; }
         public decimal MaxPrice { get; set; }
         public int ConditionId { get; set; }

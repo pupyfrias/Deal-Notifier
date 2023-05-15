@@ -2,9 +2,9 @@
 
 namespace WebScraping.Core.Domain.Entities
 {
-    public class BlackList : AuditableBaseEntity
+    public class BlackList : AuditableEntity<int>
     {
-        public int Id { get; }
+        public override int Id { get; set; }
         public string Link { get; set; }
     }
 }

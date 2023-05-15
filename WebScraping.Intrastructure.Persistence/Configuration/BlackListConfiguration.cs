@@ -4,7 +4,7 @@ using WebScraping.Core.Domain.Entities;
 
 namespace WebScraping.Infrastructure.Persistence.Configuration
 {
-    public class BlackListConfiguration : AuditableBaseEntityConfiguration<BlackList>
+    public class BlackListConfiguration : AuditableEntityConfiguration<BlackList, int>
     {
         public override void Configure(EntityTypeBuilder<BlackList> builder)
         {

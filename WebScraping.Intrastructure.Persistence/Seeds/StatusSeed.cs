@@ -1,21 +1,21 @@
 ﻿using WebScraping.Core.Domain.Entities;
-using Emuns = WebScraping.Core.Application.Emuns;
+using Enums = WebScraping.Core.Application.Enums;
 
 namespace WebScraping.Infrastructure.Persistence.Seeds
 {
-    public class StatusSeed
+    public static class StatusSeed
     {
-        public static List<Status> data = new List<Status>
+        public static List<Status> data { get; set; } = new List<Status>
         {
             new Status
             {
-                Id= (int) Emuns.Status.InStock,
-                Name= Emuns.Status.InStock.ToString()
+                Id= (int) Enums.Status.InStock,
+                Name= Enums.Status.InStock.ToString()
             },
             new Status
             {
-                Id= (int) Emuns.Status.OutStock,
-                Name= Emuns.Status.OutStock.ToString()
+                Id= (int) Enums.Status.OutStock,
+                Name= Enums.Status.OutStock.ToString()
             }
         };
     }

@@ -37,7 +37,6 @@ try
         })
         .Build();
 
-
     await host.RunAsync();
 }
 catch (Exception ex)

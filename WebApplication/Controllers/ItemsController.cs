@@ -14,7 +14,7 @@ using WebScraping.Core.Application.Wrappers;
 using WebScraping.Core.Domain.Entities;
 using WebScraping.Infrastructure.Persistence.DbContexts;
 using ILogger = Serilog.ILogger;
-using Status = WebScraping.Core.Application.Emuns.Status;
+using Status = WebScraping.Core.Application.Enums.Status;
 
 namespace WebApi.Controllers
 {

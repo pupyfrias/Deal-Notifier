@@ -72,6 +72,36 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                     b.ToTable("AuditLogs");
                 });
 
+            modelBuilder.Entity("WebScraping.Core.Domain.Entities.Banned", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Keyword")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(50)");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Banned", (string)null);
+                });
+
             modelBuilder.Entity("WebScraping.Core.Domain.Entities.BlackList", b =>
                 {
                     b.Property<int>("Id")
@@ -100,6 +130,96 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("BlackList", (string)null);
+                });
+
+            modelBuilder.Entity("WebScraping.Core.Domain.Entities.Brand", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("Created")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(max)")
+                        .HasDefaultValue("default");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(30)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Brand", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Unknown"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Samsung"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Apple"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Motorola"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "LG"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Huawei"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Alcatel"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Xiaomi"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "HTC"
+                        });
                 });
 
             modelBuilder.Entity("WebScraping.Core.Domain.Entities.Condition", b =>
@@ -150,6 +270,48 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("WebScraping.Core.Domain.Entities.ConditionsToNotify", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("ConditionId")
+                        .HasColumnType("INT");
+
+                    b.Property<DateTime>("Created")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(max)")
+                        .HasDefaultValue("default");
+
+                    b.Property<string>("Keywords")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(MAX)");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("MaxPrice")
+                        .HasColumnType("DECIMAL(13,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConditionId");
+
+                    b.ToTable("ConditionsToNotify", (string)null);
+                });
+
             modelBuilder.Entity("WebScraping.Core.Domain.Entities.Item", b =>
                 {
                     b.Property<Guid>("Id")
@@ -157,12 +319,18 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasDefaultValueSql("NEWID()");
 
+                    b.Property<int?>("BrandId")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValueSql("1");
+
                     b.Property<int>("ConditionId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Created")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
+                        .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
 
                     b.Property<string>("CreatedBy")
@@ -176,7 +344,7 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                         .HasColumnType("varchar(MAX)");
 
                     b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("nvarchar(max)");
@@ -185,14 +353,34 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("ModelName")
+                        .HasColumnType("varchar(25)");
+
+                    b.Property<string>("ModelNumber")
+                        .HasColumnType("varchar(25)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("VARCHAR(max)");
+
+                    b.Property<DateTime>("Notified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("Notify")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("BIT")
+                        .HasDefaultValueSql("1");
 
                     b.Property<decimal>("OldPrice")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("DECIMAL(13,2)")
                         .HasDefaultValueSql("0");
+
+                    b.Property<int?>("PhoneCarrierId")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValueSql("1");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("DECIMAL(13,2)");
@@ -218,10 +406,14 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BrandId");
+
                     b.HasIndex("ConditionId");
 
                     b.HasIndex("Link")
                         .IsUnique();
+
+                    b.HasIndex("PhoneCarrierId");
 
                     b.HasIndex("ShopId");
 
@@ -230,6 +422,231 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                     b.HasIndex("TypeId");
 
                     b.ToTable("Item", (string)null);
+                });
+
+            modelBuilder.Entity("WebScraping.Core.Domain.Entities.PhoneCarrier", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("Created")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(max)")
+                        .HasDefaultValue("default");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(30)");
+
+                    b.Property<string>("ShortName")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(5)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ShortName")
+                        .IsUnique();
+
+                    b.ToTable("PhoneCarrier", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Unknown",
+                            ShortName = "UNK"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "All Carriers",
+                            ShortName = "ALL"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "AT&T",
+                            ShortName = "ATT"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Verizon",
+                            ShortName = "VZW"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "T-Mobile",
+                            ShortName = "TMB"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Sprint",
+                            ShortName = "SPR"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "U.S. Cellular",
+                            ShortName = "USC"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "CenturyLink",
+                            ShortName = "CTL"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Spectrum",
+                            ShortName = "SPC"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Xfinity",
+                            ShortName = "XFN"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Cricket",
+                            ShortName = "CKT"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Metro",
+                            ShortName = "MPCS"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "TracFone",
+                            ShortName = "TFN"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Boost Mobile",
+                            ShortName = "BST"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Q Link Wireless",
+                            ShortName = "QLK"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Republic Wireless",
+                            ShortName = "RPW"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Straight Talk",
+                            ShortName = "STK"
+                        },
+                        new
+                        {
+                            Id = 18,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Virgin Mobile USA",
+                            ShortName = "VMU"
+                        },
+                        new
+                        {
+                            Id = 19,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Total Wireless",
+                            ShortName = "TWL"
+                        },
+                        new
+                        {
+                            Id = 20,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Google Fi",
+                            ShortName = "GFI"
+                        },
+                        new
+                        {
+                            Id = 21,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Mint Mobile",
+                            ShortName = "MNT"
+                        },
+                        new
+                        {
+                            Id = 22,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Ting",
+                            ShortName = "TNG"
+                        },
+                        new
+                        {
+                            Id = 23,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Consumer Cellular",
+                            ShortName = "CCU"
+                        },
+                        new
+                        {
+                            Id = 24,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Credo Mobile",
+                            ShortName = "CRD"
+                        },
+                        new
+                        {
+                            Id = 25,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "FreedomPop",
+                            ShortName = "FDM"
+                        },
+                        new
+                        {
+                            Id = 26,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Net10 Wireless",
+                            ShortName = "NTW"
+                        });
                 });
 
             modelBuilder.Entity("WebScraping.Core.Domain.Entities.Shop", b =>
@@ -334,64 +751,6 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                         });
                 });
 
-            modelBuilder.Entity("WebScraping.Core.Domain.Entities.Supported", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Carrier")
-                        .IsRequired()
-                        .HasColumnType("VARCHAR(10)");
-
-                    b.Property<string>("Comment")
-                        .IsRequired()
-                        .HasColumnType("VARCHAR(30)");
-
-                    b.Property<DateTime>("Created")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(max)")
-                        .HasDefaultValue("default");
-
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ModelName")
-                        .IsRequired()
-                        .HasColumnType("VARCHAR(30)");
-
-                    b.Property<string>("ModelNumber")
-                        .IsRequired()
-                        .HasColumnType("VARCHAR(30)");
-
-                    b.Property<string>("SupportedBit")
-                        .IsRequired()
-                        .HasColumnType("VARCHAR(MAX)");
-
-                    b.Property<string>("SupportedVersion")
-                        .IsRequired()
-                        .HasColumnType("VARCHAR(MAX)");
-
-                    b.Property<string>("Tool")
-                        .IsRequired()
-                        .HasColumnType("VARCHAR(30)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Supported", (string)null);
-                });
-
             modelBuilder.Entity("WebScraping.Core.Domain.Entities.Type", b =>
                 {
                     b.Property<int>("Id")
@@ -476,14 +835,173 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("WebScraping.Core.Domain.Entities.Unlockable", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("BrandId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Comment")
+                        .HasColumnType("VARCHAR(50)");
+
+                    b.Property<DateTime>("Created")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(max)")
+                        .HasDefaultValue("default");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ModelName")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(15)");
+
+                    b.Property<string>("ModelNumber")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(15)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BrandId");
+
+                    b.HasIndex("ModelNumber")
+                        .IsUnique();
+
+                    b.ToTable("Unlockable", (string)null);
+                });
+
+            modelBuilder.Entity("WebScraping.Core.Domain.Entities.UnlockablePhoneCarrier", b =>
+                {
+                    b.Property<int>("UnlockableId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PhoneCarrierId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UnlockableId", "PhoneCarrierId");
+
+                    b.HasIndex("PhoneCarrierId");
+
+                    b.ToTable("UnlockablePhoneCarrier", (string)null);
+                });
+
+            modelBuilder.Entity("WebScraping.Core.Domain.Entities.UnlockableUnlockTool", b =>
+                {
+                    b.Property<int>("UnlockableId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UnlockToolId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UnlockableId", "UnlockToolId");
+
+                    b.HasIndex("UnlockToolId");
+
+                    b.ToTable("UnlockableUnlockTool", (string)null);
+                });
+
+            modelBuilder.Entity("WebScraping.Core.Domain.Entities.UnlockTool", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("Created")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(max)")
+                        .HasDefaultValue("default");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(20)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UnlockTool", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "T-Unlock"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "SamKey"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Global Unlocker"
+                        });
+                });
+
+            modelBuilder.Entity("WebScraping.Core.Domain.Entities.ConditionsToNotify", b =>
+                {
+                    b.HasOne("WebScraping.Core.Domain.Entities.Condition", "Condition")
+                        .WithMany("ConditionToNotifies")
+                        .HasForeignKey("ConditionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_ConditionsToModify_Condition");
+
+                    b.Navigation("Condition");
+                });
+
             modelBuilder.Entity("WebScraping.Core.Domain.Entities.Item", b =>
                 {
+                    b.HasOne("WebScraping.Core.Domain.Entities.Brand", "Brand")
+                        .WithMany("Items")
+                        .HasForeignKey("BrandId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_Item_BrandId");
+
                     b.HasOne("WebScraping.Core.Domain.Entities.Condition", "Condition")
                         .WithMany("Items")
                         .HasForeignKey("ConditionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_Item_Condition");
+
+                    b.HasOne("WebScraping.Core.Domain.Entities.PhoneCarrier", "PhoneCarrier")
+                        .WithMany("Items")
+                        .HasForeignKey("PhoneCarrierId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_Item_PhoneCarrierId");
 
                     b.HasOne("WebScraping.Core.Domain.Entities.Shop", "Shop")
                         .WithMany("Items")
@@ -506,7 +1024,11 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_Item_Type");
 
+                    b.Navigation("Brand");
+
                     b.Navigation("Condition");
+
+                    b.Navigation("PhoneCarrier");
 
                     b.Navigation("Shop");
 
@@ -515,9 +1037,74 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                     b.Navigation("Type");
                 });
 
-            modelBuilder.Entity("WebScraping.Core.Domain.Entities.Condition", b =>
+            modelBuilder.Entity("WebScraping.Core.Domain.Entities.Unlockable", b =>
+                {
+                    b.HasOne("WebScraping.Core.Domain.Entities.Brand", "Brand")
+                        .WithMany("Supporteds")
+                        .HasForeignKey("BrandId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Brand");
+                });
+
+            modelBuilder.Entity("WebScraping.Core.Domain.Entities.UnlockablePhoneCarrier", b =>
+                {
+                    b.HasOne("WebScraping.Core.Domain.Entities.PhoneCarrier", "PhoneCarrier")
+                        .WithMany("UnlockablePhoneCarriers")
+                        .HasForeignKey("PhoneCarrierId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebScraping.Core.Domain.Entities.Unlockable", "Unlockable")
+                        .WithMany("UnlockablePhoneCarriers")
+                        .HasForeignKey("UnlockableId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PhoneCarrier");
+
+                    b.Navigation("Unlockable");
+                });
+
+            modelBuilder.Entity("WebScraping.Core.Domain.Entities.UnlockableUnlockTool", b =>
+                {
+                    b.HasOne("WebScraping.Core.Domain.Entities.UnlockTool", "UnlockTool")
+                        .WithMany("UnlockableUnlockTools")
+                        .HasForeignKey("UnlockToolId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebScraping.Core.Domain.Entities.Unlockable", "Unlockable")
+                        .WithMany("UnlockableUnlockTools")
+                        .HasForeignKey("UnlockableId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("UnlockTool");
+
+                    b.Navigation("Unlockable");
+                });
+
+            modelBuilder.Entity("WebScraping.Core.Domain.Entities.Brand", b =>
                 {
                     b.Navigation("Items");
+
+                    b.Navigation("Supporteds");
+                });
+
+            modelBuilder.Entity("WebScraping.Core.Domain.Entities.Condition", b =>
+                {
+                    b.Navigation("ConditionToNotifies");
+
+                    b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("WebScraping.Core.Domain.Entities.PhoneCarrier", b =>
+                {
+                    b.Navigation("Items");
+
+                    b.Navigation("UnlockablePhoneCarriers");
                 });
 
             modelBuilder.Entity("WebScraping.Core.Domain.Entities.Shop", b =>
@@ -533,6 +1120,18 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("WebScraping.Core.Domain.Entities.Type", b =>
                 {
                     b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("WebScraping.Core.Domain.Entities.Unlockable", b =>
+                {
+                    b.Navigation("UnlockablePhoneCarriers");
+
+                    b.Navigation("UnlockableUnlockTools");
+                });
+
+            modelBuilder.Entity("WebScraping.Core.Domain.Entities.UnlockTool", b =>
+                {
+                    b.Navigation("UnlockableUnlockTools");
                 });
 #pragma warning restore 612, 618
         }

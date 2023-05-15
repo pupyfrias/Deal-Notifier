@@ -2,6 +2,7 @@
 using WebScraping.Core.Application.Dtos;
 using WebScraping.Core.Application.Dtos.Condition;
 using WebScraping.Core.Application.Dtos.Item;
+using WebScraping.Core.Application.DTOs;
 using WebScraping.Core.Domain.Entities;
 
 namespace WebScraping.Core.Application.Mappings
@@ -16,6 +17,8 @@ namespace WebScraping.Core.Application.Mappings
             CreateMap<ConditionsToNotify, ConditionsToNotifyDto>().ReverseMap();
             CreateMap<BlackList, BlackListDto>().ReverseMap();
             CreateMap<Banned, BannedDto>().ReverseMap();
+            CreateMap<Brand, BrandDto>().ReverseMap();
+            CreateMap<BlackList, Item>().IgnoreAllPropertiesWithAnInaccessibleSetter().ReverseMap();
             CreateMap<BlackList, Item>().IgnoreAllPropertiesWithAnInaccessibleSetter().ReverseMap();
             //CreateMap<ApplicationUser, ApiUserDto>().ReverseMap();
         }

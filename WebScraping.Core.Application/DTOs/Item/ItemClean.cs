@@ -2,9 +2,9 @@
 
 namespace WebScraping.Core.Application.Dtos.Item
 {
-    public class ItemClean : AuditableBaseEntity
+    public class ItemClean : AuditableEntity<Guid>
     {
-        public Guid Id { get; set; }
+        public override Guid Id { get; set; }
         public decimal OldPrice { get; set; }
         public decimal Price { get; set; }
         public decimal Saving { get; set; }

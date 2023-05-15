@@ -9,7 +9,6 @@ namespace WebScraping.Core.Application.SetupOptions
 {
     public static class SeriLog
     {
-
         private static ITextFormatter consoleFormatter = new ExpressionTemplate(OutputTemplate.Console);
 
         public static readonly Action<HostBuilderContext, LoggerConfiguration> Options = (hostBuilderContext, loggerContiguration) =>
@@ -46,7 +45,6 @@ namespace WebScraping.Core.Application.SetupOptions
              })
             .WriteTo.Console(formatter: consoleFormatter)
             .Enrich.FromLogContext();
-
         };
     }
 }

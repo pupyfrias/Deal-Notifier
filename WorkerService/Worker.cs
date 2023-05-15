@@ -4,7 +4,6 @@ namespace WorkerService
     {
         private readonly ILogger<Worker> _logger;
 
-
         public Worker(ILogger<Worker> logger,
           IConfiguration configuration)
         {

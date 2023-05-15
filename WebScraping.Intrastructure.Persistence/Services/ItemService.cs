@@ -5,10 +5,13 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 using System.Collections.Concurrent;
 using System.Data;
-using System.Linq;
+using System.Text;
+using WebScraping.Core.Application.Constants;
+using WebScraping.Core.Application.Contracts.Services;
 using WebScraping.Core.Application.Dtos;
+using WebScraping.Core.Application.DTOs;
+using WebScraping.Core.Application.DTOs.Email;
 using WebScraping.Core.Application.Heplers;
-using WebScraping.Core.Application.Interfaces.Services;
 using WebScraping.Core.Domain.Entities;
 using WebScraping.Infrastructure.Persistence.DbContexts;
 
@@ -17,17 +20,25 @@ namespace WebScraping.Infrastructure.Persistence.Services
     public class ItemService : IItemService
     {
         #region Fields
+
         private readonly ILogger _logger;
         private readonly IConfigurationProvider _configurationProvider;
+        private readonly IEmailServiceAsync _emailService;
+        private readonly IMapper _mapper;
+        public ConcurrentBag<Item> itemToNotifyList { get; set; } = new ConcurrentBag<Item>();
+
         #endregion Fields
 
-        public ItemService(ILogger logger, IConfigurationProvider configurationProvider)
+        public ItemService(ILogger logger, IConfigurationProvider configurationProvider, IEmailServiceAsync emailService, IMapper mapper)
         {
             _logger = logger;
             _configurationProvider = configurationProvider;
+            _emailService = emailService;
+            _mapper = mapper;
         }
 
         #region Methods
+
         /// <summary>
         /// Save item's data
         /// </summary>
@@ -39,57 +50,45 @@ namespace WebScraping.Infrastructure.Persistence.Services
 
             Parallel.ForEach(items, item =>
             {
-
-                if (ToNotify(item))
-                {
-                    _logger.Information(item.Name);
-                    _logger.Information(item.Link);
-                }
-
-
                 using (var context = new ApplicationDbContext())
                 {
                     var oldItem = context.Items.FirstOrDefault(i => i.Link == item.Link);
                     if (oldItem == null)
                     {
                         itemListToSave.Add(item);
+                        ToNotify(item);
                     }
                     else
                     {
                         decimal oldPrice = oldItem.Price;
                         decimal saving = oldPrice - item.Price;
-                        bool validate = false;
 
-                        if (oldPrice > item.Price)
+                        if (oldPrice != item.Price || true)
                         {
-                            oldItem.Saving = saving;
-                            oldItem.SavingsPercentage = (saving / oldPrice) * 100;
+                            if (oldPrice > item.Price)
+                            {
+                                oldItem.Saving = saving;
+                                oldItem.SavingsPercentage = (saving / oldPrice) * 100;
+                                oldItem.OldPrice = oldPrice;
+
+                            }
+                            else if (oldPrice < item.Price)
+                            {
+                                oldItem.OldPrice = 0;
+                                oldItem.Saving = 0;
+                                oldItem.SavingsPercentage = 0;
+                            }
+
                             oldItem.Price = item.Price;
-                            oldItem.OldPrice = oldPrice;
-                            validate = true;
-                        }
-                        else if (oldPrice < item.Price)
-                        {
-                            oldItem.Price = item.Price;
-                            oldItem.OldPrice = 0;
-                            oldItem.Saving = 0;
-                            oldItem.SavingsPercentage = 0;
-                            validate = true;
-                        }
-
-                        if (item.Name != oldItem.Name || item.Image != oldItem.Image)
-                        {
-                            oldItem.Name = item.Name;
-                            oldItem.Image = item.Image;
-                            validate = true;
-                        }
-
-                        if (validate)
-                        {
+                            _mapper.Map(item, oldItem);
                             itemListToUpdate.Add(oldItem);
+                            ToNotify(oldItem);
                         }
+
+
                     }
                 }
+            
             });
 
             try
@@ -120,8 +119,7 @@ namespace WebScraping.Infrastructure.Persistence.Services
             }
         }
 
-
-        public  void UpdateStatus(ref ConcurrentBag<string> checkedList)
+        public void UpdateStatus(ref ConcurrentBag<string> checkedList)
         {
             using (var context = new ApplicationDbContext())
             {
@@ -156,33 +154,71 @@ namespace WebScraping.Infrastructure.Persistence.Services
                 await LoadConditionsToNotify();
             });
 
-            await Task.WhenAll(blackList, bannedKeywordList, conditionToNotifyList);
+            Task brandList = Task.Run(async () =>
+            {
+                await LoadBrands();
+            });
+
+            await Task.WhenAll(blackList, bannedKeywordList, conditionToNotifyList, brandList);
             _logger.Information("All needed data Loaded");
         }
 
 
-        private bool ToNotify(Item item)
-        {
-           foreach(ConditionsToNotifyDto conditionsToNotify  in Helper.ConditionsToNotifyList)
-            {
 
-                if(conditionsToNotify.ConditionId == item.ConditionId && 
+        public async Task NotifyByEmail()
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+
+            var orderItemToNotifyList = itemToNotifyList.OrderBy(item => item.Price);
+            _logger.Information($"orderItemToNotifyList {orderItemToNotifyList.Count()}");
+
+            foreach (var item in orderItemToNotifyList)
+            {
+                stringBuilder.AppendFormat(
+                    @"<div style=""margin: 50px 20px;border-radius: 10px;box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.4);padding: 10px;""> 
+                        <h2 style='margin:0;'>{0}</h2> 
+                        <p style ='font-size:large; margin:0;'>US$ {1}</p> 
+                        <a href='{2}'>
+                            <img src='{3}' style=""width: 540px;height: 720px;object-fit: cover;""/>
+                        </a> 
+                    </div>", item.Name, item.Price, item.Link, item.Image);
+            }
+            string body = stringBuilder.ToString();
+
+            var email = new EmailDto
+            {
+                To = "pupyfrias@gmail.com",
+                Subject = "Phones Offer",
+                Body = body
+            };
+
+
+            await _emailService.SendAsync(email);
+            itemToNotifyList.Clear();
+        }
+
+
+        private void ToNotify(Item item)
+        {
+            foreach (ConditionsToNotifyDto conditionsToNotify in Helper.ConditionsToNotifyList)
+            {
+                if (conditionsToNotify.ConditionId == item.ConditionId &&
                     conditionsToNotify.MaxPrice >= item.Price &&
-                    CheckKeywords(conditionsToNotify.Keywords, item.Name)
-                    ) 
+                    CheckKeywords(conditionsToNotify.Keywords, item.Name) &&
+                    item.Notify
+                    )
                 {
-                    return true;
+                    itemToNotifyList.Add(item);
+                    break;
                 }
             }
 
-           return false;
-
         }
 
-        private bool CheckKeywords(string keywords, string title )
+        private bool CheckKeywords(string keywords, string title)
         {
             var keywordList = keywords.Split(',');
-            return keywordList.Any( keyword => title.IndexOf(keyword) > -1);
+            return keywordList.Any(keyword => title.IndexOf(keyword) > -1);
         }
 
         private async Task LoadBlackList()
@@ -197,7 +233,7 @@ namespace WebScraping.Infrastructure.Persistence.Services
             }
         }
 
-        private  async Task LoadBannedKeyword()
+        private async Task LoadBannedKeyword()
         {
             using (var context = new ApplicationDbContext())
             {
@@ -218,6 +254,18 @@ namespace WebScraping.Infrastructure.Persistence.Services
                     .ToListAsync();
 
                 Helper.ConditionsToNotifyList = conditionsToNotifyList.ToHashSet<ConditionsToNotifyDto>();
+            }
+        }
+
+        private async Task LoadBrands()
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                var brandList = await context.Brands
+                    .ProjectTo<BrandDto>(_configurationProvider)
+                    .ToListAsync();
+
+                Helper.BrandList = brandList.ToHashSet<BrandDto>();
             }
         }
 

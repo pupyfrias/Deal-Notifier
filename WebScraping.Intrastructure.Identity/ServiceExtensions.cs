@@ -8,8 +8,8 @@ using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using System.Text;
 using WebScraping.Core.Application.Constants;
+using WebScraping.Core.Application.Contracts.Services;
 using WebScraping.Core.Application.Extensions;
-using WebScraping.Core.Application.Interfaces.Services;
 using WebScraping.Core.Application.Wrappers;
 using WebScraping.Core.Domain.Settings;
 using WebScraping.Infrastructure.Identity.DbContext;
@@ -44,7 +44,7 @@ namespace WebScraping.Infrastructure.Identity
 
             #region Configure
 
-            services.Configure<JWTSettings>(configuration.GetSection("JWTSettings"));
+            services.Configure<JWTConfig>(configuration.GetSection("JWTConfig"));
 
             #endregion Configure
 
@@ -65,7 +65,7 @@ namespace WebScraping.Infrastructure.Identity
 
             #region Authentication
 
-            var key = Encoding.UTF8.GetBytes(configuration["JWTSettings:key"]);
+            var key = Encoding.UTF8.GetBytes(configuration["JWTConfig:key"]);
             services.AddAuthentication(auth =>
             {
                 auth.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -83,8 +83,8 @@ namespace WebScraping.Infrastructure.Identity
                     ValidateIssuer = true,
                     ValidateIssuerSigningKey = true,
                     ValidateLifetime = true,
-                    ValidAudience = configuration["JWTSettings:Audience"],
-                    ValidIssuer = configuration["JWTSettings:Issuer"],
+                    ValidAudience = configuration["JWTConfig:Audience"],
+                    ValidIssuer = configuration["JWTConfig:Issuer"],
                 };
                 options.Events = new JwtBearerEvents()
                 {

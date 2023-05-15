@@ -2,17 +2,18 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using WebScraping.Core.Application.Dtos;
+using WebScraping.Core.Application.DTOs;
 using WebScraping.Core.Application.Extensions;
 using WebScraping.Core.Application.Models;
 using WebScraping.Core.Domain.Common;
 using WebScraping.Core.Domain.Entities;
 using WebScraping.Infrastructure.Persistence.Configuration;
-using Action = WebScraping.Core.Application.Emuns.Action;
+using Action = WebScraping.Core.Application.Enums.Action;
 using Type = WebScraping.Core.Domain.Entities.Type;
 
 namespace WebScraping.Infrastructure.Persistence.DbContexts
 {
-    public class ApplicationDbContext : Microsoft.EntityFrameworkCore.DbContext
+    public class ApplicationDbContext : DbContext
     {
         private readonly string _userName = "default";
 
@@ -27,6 +28,7 @@ namespace WebScraping.Infrastructure.Persistence.DbContexts
         }
 
         #region DbSets
+
         public DbSet<Audit> AuditLogs { get; set; }
         public DbSet<Banned> Banned { get; set; }
         public DbSet<BlackList> BlackLists { get; set; }
@@ -35,9 +37,13 @@ namespace WebScraping.Infrastructure.Persistence.DbContexts
         public DbSet<Item> Items { get; set; }
         public DbSet<Shop> Shops { get; set; }
         public DbSet<Status> Statuses { get; set; }
-        public DbSet<Supported> Supporteds { get; set; }
+        public DbSet<Unlockable> Unlockables { get; set; }
         public DbSet<Type> Types { get; set; }
-        public DbSet<ConditionsToNotify> ConditionsToNotify   { get; set; }
+        public DbSet<ConditionsToNotify> ConditionsToNotify { get; set; }
+        public DbSet<Brand> Brands { get; set; }
+        public DbSet<UnlockablePhoneCarrier> UnlockablePhoneCarriers { get; set; }
+        public DbSet<UnlockableUnlockTool> UnlockableUnlockTools { get; set; }
+
 
         #endregion DbSets
 
@@ -45,14 +51,19 @@ namespace WebScraping.Infrastructure.Persistence.DbContexts
         {
             modelBuilder.ApplyConfiguration(new BannedConfiguration());
             modelBuilder.ApplyConfiguration(new BlackListConfiguration());
+            modelBuilder.ApplyConfiguration(new BrandConfiguration());
             modelBuilder.ApplyConfiguration(new ConditionConfiguration());
             modelBuilder.ApplyConfiguration(new ConditionsToNotifyConfiguration());
             modelBuilder.ApplyConfiguration(new ItemConfiguration());
+            modelBuilder.ApplyConfiguration(new PhoneCarrierConfiguration());
             modelBuilder.ApplyConfiguration(new ShopConfiguration());
             modelBuilder.ApplyConfiguration(new SpBlackListResponseConfiguration());
             modelBuilder.ApplyConfiguration(new StatusConfiguration());
-            modelBuilder.ApplyConfiguration(new SupportedConfiguration());
             modelBuilder.ApplyConfiguration(new TypeConfiguration());
+            modelBuilder.ApplyConfiguration(new UnlockableConfiguration());
+            modelBuilder.ApplyConfiguration(new UnlockablePhoneCarrierConfiguration());
+            modelBuilder.ApplyConfiguration(new UnlockableUnlockToolConfiguration());
+            modelBuilder.ApplyConfiguration(new UnlockToolConfiguration());
         }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -80,7 +91,7 @@ namespace WebScraping.Infrastructure.Persistence.DbContexts
         {
             var auditEntryList = new List<AuditEntry>();
 
-            foreach (var entry in ChangeTracker.Entries<AuditableBaseEntity>())
+            foreach (var entry in ChangeTracker.Entries<AuditableEntity<int>>())
             {
                 if (entry.State == EntityState.Detached || entry.State == EntityState.Unchanged)
                     continue;
@@ -90,7 +101,7 @@ namespace WebScraping.Infrastructure.Persistence.DbContexts
                 auditEntry.UserName = _userName;
                 auditEntryList.Add(auditEntry);
 
-                #region AuditableBaseEntity
+                #region AuditableEntity<int>
 
                 switch (entry.State)
                 {
@@ -108,7 +119,7 @@ namespace WebScraping.Infrastructure.Persistence.DbContexts
                         break;
                 }
 
-                #endregion AuditableBaseEntity
+                #endregion AuditableEntity<int>
 
                 #region AuditLogs
 

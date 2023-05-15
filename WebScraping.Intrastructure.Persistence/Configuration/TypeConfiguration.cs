@@ -5,7 +5,7 @@ using Type = WebScraping.Core.Domain.Entities.Type;
 
 namespace WebScraping.Infrastructure.Persistence.Configuration
 {
-    public class TypeConfiguration : AuditableBaseEntityConfiguration<Type>
+    public class TypeConfiguration : AuditableEntityConfiguration<Type, int>
     {
         public override void Configure(EntityTypeBuilder<Type> builder)
         {

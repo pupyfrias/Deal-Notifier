@@ -4,7 +4,7 @@ using WebScraping.Core.Domain.Entities;
 
 namespace WebScraping.Infrastructure.Persistence.Configuration
 {
-    public class ItemConfiguration : AuditableBaseEntityConfiguration<Item>
+    public class ItemConfiguration : AuditableEntityConfiguration<Item, Guid>
     {
         public override void Configure(EntityTypeBuilder<Item> builder)
         {
@@ -40,7 +40,6 @@ namespace WebScraping.Infrastructure.Persistence.Configuration
                 .HasDefaultValueSql("0")
                 .IsRequired();
 
-
             builder.Property(x => x.Saving)
                 .HasColumnType("DECIMAL(13,2)")
                 .HasDefaultValueSql("0")
@@ -53,9 +52,20 @@ namespace WebScraping.Infrastructure.Persistence.Configuration
 
             builder.Property(x => x.Notify)
                 .HasColumnType("BIT")
-                .HasDefaultValueSql("0")
+                .HasDefaultValueSql("1")
                 .IsRequired();
 
+            builder.Property(x => x.ModelNumber)
+            .HasColumnType("varchar(25)");
+
+            builder.Property(x => x.ModelName)
+           .HasColumnType("varchar(25)");
+
+            builder.Property(x => x.BrandId)
+           .HasDefaultValueSql("1");
+
+            builder.Property(x => x.PhoneCarrierId)
+           .HasDefaultValueSql("1");
 
             #endregion Properties
 
@@ -83,8 +93,19 @@ namespace WebScraping.Infrastructure.Persistence.Configuration
             .HasForeignKey(x => x.ShopId)
             .HasConstraintName("FK_Item_Shop");
 
+            builder.HasOne(x => x.Brand)
+            .WithMany(x => x.Items)
+            .HasForeignKey(x => x.BrandId)
+            .HasConstraintName("FK_Item_BrandId");
+
+            builder.HasOne(x => x.PhoneCarrier)
+            .WithMany(x => x.Items)
+            .HasForeignKey(x => x.PhoneCarrierId)
+            .HasConstraintName("FK_Item_PhoneCarrierId");
+
             builder.HasIndex(e => e.Link)
             .IsUnique();
+
             #endregion Keys
 
             base.Configure(builder);

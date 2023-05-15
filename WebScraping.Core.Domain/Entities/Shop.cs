@@ -2,9 +2,9 @@
 
 namespace WebScraping.Core.Domain.Entities
 {
-    public class Shop : AuditableBaseEntity
+    public class Shop : AuditableEntity<int>
     {
-        public int Id { get; set; }
+        public override int Id { get; set; }
         public string Name { get; set; }
         public ICollection<Item> Items { get; set; }
     }

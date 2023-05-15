@@ -5,7 +5,7 @@ using WebScraping.Infrastructure.Persistence.Seeds;
 
 namespace WebScraping.Infrastructure.Persistence.Configuration
 {
-    public class StatusConfiguration : AuditableBaseEntityConfiguration<Status>
+    public class StatusConfiguration : AuditableEntityConfiguration<Status, int>
     {
         public override void Configure(EntityTypeBuilder<Status> builder)
         {

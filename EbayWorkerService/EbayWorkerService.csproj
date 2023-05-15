@@ -19,5 +19,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\WebScraping.Intrastructure.Persistence\WebScraping.Infrastructure.Persistence.csproj" />
+    <ProjectReference Include="..\WebScraping.Intrastructure.Shared\WebScraping.Infrastructure.Email.csproj" />
   </ItemGroup>
 </Project>

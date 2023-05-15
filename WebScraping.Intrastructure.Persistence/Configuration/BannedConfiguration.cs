@@ -4,7 +4,7 @@ using WebScraping.Core.Domain.Entities;
 
 namespace WebScraping.Infrastructure.Persistence.Configuration
 {
-    public class BannedConfiguration : AuditableBaseEntityConfiguration<Banned>
+    public class BannedConfiguration : AuditableEntityConfiguration<Banned, int>
     {
         public override void Configure(EntityTypeBuilder<Banned> builder)
         {

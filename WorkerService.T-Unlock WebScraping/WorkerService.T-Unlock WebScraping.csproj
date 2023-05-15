@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-WorkerService.T_Unlock_WebScraping-d2c48afc-eadf-47e0-9d06-f18ef7d85ace</UserSecretsId>
+    <RootNamespace>WorkerService.T_Unlock_WebScraping</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="..\WebApplication\appsettings.json" Link="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
+    <PackageReference Include="Serilog" Version="2.12.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WebScraping.Core.Application\WebScraping.Core.Application.csproj" />
+    <ProjectReference Include="..\WebScraping.Core.Domain\WebScraping.Core.Domain.csproj" />
+    <ProjectReference Include="..\WebScraping.Intrastructure.Persistence\WebScraping.Infrastructure.Persistence.csproj" />
+  </ItemGroup>
+</Project>

@@ -2,9 +2,9 @@
 
 namespace WebScraping.Core.Domain.Entities
 {
-    public class Item : AuditableBaseEntity
+    public class Item : AuditableEntity<Guid>
     {
-        public Guid Id { get; set; }
+        public override Guid Id { get; set; }
         public decimal OldPrice { get; set; }
         public decimal Price { get; set; }
         public decimal Saving { get; set; }
@@ -16,13 +16,17 @@ namespace WebScraping.Core.Domain.Entities
         public string Image { get; set; }
         public string Link { get; set; }
         public string Name { get; set; }
-        public bool Notify { get; set; }
+        public int? BrandId { get; set; }
+        public int? PhoneCarrierId { get; set; }
+        public string? ModelNumber { get; set; }
+        public string? ModelName { get; set; }
+        public bool Notify { get; set; } = true;
+        public DateTime Notified { get; set; }
         public Condition Condition { get; set; }
         public Shop Shop { get; set; }
         public Status Status { get; set; }
         public Type Type { get; set; }
-
-
-
+        public Brand Brand { get; set; }
+        public PhoneCarrier PhoneCarrier { get; set; }
     }
 }

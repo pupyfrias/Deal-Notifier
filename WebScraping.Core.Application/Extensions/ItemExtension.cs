@@ -29,6 +29,20 @@ namespace WebScraping.Core.Application.Extensions
             return !(isBanned || isInBlackList);
         }
 
+        public static void SetBrand(this Item item)
+        {
+            foreach (var brand in Helper.BrandList)
+            {
+                bool isMatched = item.Name.IndexOf(brand.Name, StringComparison.OrdinalIgnoreCase) > -1;
+                if (isMatched)
+                {
+                    item.BrandId = brand.Id;
+                    break;
+                }
+
+            }
+        }
+
         /// <summary>
         /// Set Item Condition
         /// </summary>

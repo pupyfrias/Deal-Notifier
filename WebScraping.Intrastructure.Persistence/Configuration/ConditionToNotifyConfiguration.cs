@@ -1,11 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using WebScraping.Core.Domain.Entities;
-using WebScraping.Infrastructure.Persistence.Seeds;
 
 namespace WebScraping.Infrastructure.Persistence.Configuration
 {
-    public class ConditionsToNotifyConfiguration : AuditableBaseEntityConfiguration<ConditionsToNotify>
+    public class ConditionsToNotifyConfiguration : AuditableEntityConfiguration<ConditionsToNotify, int>
     {
         public override void Configure(EntityTypeBuilder<ConditionsToNotify> builder)
         {
