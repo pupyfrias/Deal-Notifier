@@ -521,7 +521,7 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                             Id = 8,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Spectrum",
-                            ShortName = "SPC"
+                            ShortName = "CHA"
                         },
                         new
                         {
@@ -535,14 +535,14 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                             Id = 10,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Cricket",
-                            ShortName = "CKT"
+                            ShortName = "AIO"
                         },
                         new
                         {
                             Id = 11,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Metro",
-                            ShortName = "MPCS"
+                            ShortName = "TMK"
                         },
                         new
                         {

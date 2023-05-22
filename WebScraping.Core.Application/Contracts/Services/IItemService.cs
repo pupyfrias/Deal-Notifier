@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using WebScraping.Core.Application.Dtos.Item;
 using WebScraping.Core.Domain.Entities;
 
 namespace WebScraping.Core.Application.Contracts.Services
@@ -11,8 +12,10 @@ namespace WebScraping.Core.Application.Contracts.Services
 
         Task NotifyByEmail();
 
-        void SaveOrUpdate(ref ConcurrentBag<Item> items);
+        void SaveOrUpdate(ref ConcurrentBag<ItemCreateDto> items);
 
         void UpdateStatus(ref ConcurrentBag<string> checkedList);
+
+        bool TrySetModelNumberModelNameAndBrand(ref ItemCreateDto item);
     }
 }

@@ -320,7 +320,6 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                         .HasDefaultValueSql("NEWID()");
 
                     b.Property<int?>("BrandId")
-                        .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasDefaultValueSql("1");
@@ -483,7 +482,7 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                         {
                             Id = 3,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "AT&T",
+                            Name = "AT&T|ATT",
                             ShortName = "ATT"
                         },
                         new
@@ -526,7 +525,7 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                             Id = 9,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Spectrum",
-                            ShortName = "SPC"
+                            ShortName = "CHA"
                         },
                         new
                         {
@@ -540,14 +539,14 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                             Id = 11,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Cricket",
-                            ShortName = "CKT"
+                            ShortName = "AIO"
                         },
                         new
                         {
                             Id = 12,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Metro",
-                            ShortName = "MPCS"
+                            Name = "Metro|MetroPCS",
+                            ShortName = "TMK"
                         },
                         new
                         {
@@ -560,7 +559,7 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                         {
                             Id = 14,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Boost Mobile",
+                            Name = "Boost Mobile|Boost",
                             ShortName = "BST"
                         },
                         new
@@ -588,7 +587,7 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                         {
                             Id = 18,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Virgin Mobile USA",
+                            Name = "Virgin Mobile|Virgin",
                             ShortName = "VMU"
                         },
                         new
@@ -609,7 +608,7 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                         {
                             Id = 21,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Mint Mobile",
+                            Name = "Mint Mobile|Mint",
                             ShortName = "MNT"
                         },
                         new
@@ -644,7 +643,7 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                         {
                             Id = 26,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Net10 Wireless",
+                            Name = "Net10 Wireless|Net10",
                             ShortName = "NTW"
                         });
                 });
@@ -868,7 +867,7 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("ModelName")
                         .IsRequired()
-                        .HasColumnType("VARCHAR(15)");
+                        .HasColumnType("VARCHAR(50)");
 
                     b.Property<string>("ModelNumber")
                         .IsRequired()

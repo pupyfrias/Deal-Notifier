@@ -1,4 +1,4 @@
-﻿namespace WebScraping.Core.Domain.Settings
+﻿namespace WebScraping.Core.Domain.Configs
 {
     public class JWTConfig
     {

@@ -1,5 +1,6 @@
-﻿using WebScraping.Core.Application.Heplers;
-using WebScraping.Core.Domain.Entities;
+﻿using WebScraping.Core.Application.Dtos.Item;
+using WebScraping.Core.Application.Heplers;
+using Emuns = WebScraping.Core.Application.Enums;
 
 namespace WebScraping.Core.Application.Extensions
 {
@@ -9,7 +10,7 @@ namespace WebScraping.Core.Application.Extensions
         /// Validate if the Item can be save.
         /// </summary>
         /// <returns>true if the Item is not in BlackList; otherwise, false.</returns>
-        public static async Task<bool> CanBeSaved(this Item item)
+        public static async Task<bool> CanBeSaved(this ItemCreateDto item)
         {
             bool isBanned = false;
             bool isInBlackList = false;
@@ -29,7 +30,7 @@ namespace WebScraping.Core.Application.Extensions
             return !(isBanned || isInBlackList);
         }
 
-        public static void SetBrand(this Item item)
+        public static void SetBrand(this ItemCreateDto item)
         {
             foreach (var brand in Helper.BrandList)
             {
@@ -43,10 +44,37 @@ namespace WebScraping.Core.Application.Extensions
             }
         }
 
+
+
+
+        public static void SetPhoneCarrier(this ItemCreateDto item)
+        {
+            foreach (var phoneCarrier in Helper.PhoneCarrierList)
+            {
+                var slitPhoneCarrierName = phoneCarrier.Name.Split('|');
+
+                foreach(string name in slitPhoneCarrierName)
+                {
+                    bool isMatched = item.Name.IndexOf(name, StringComparison.OrdinalIgnoreCase) > -1;
+                    if (isMatched)
+                    {
+                        item.PhoneCarrierId = phoneCarrier.Id;
+                        return;
+                    }
+                }
+            }
+
+            if(item.PhoneCarrierId == null) 
+            {
+                item.PhoneCarrierId = (int) Emuns.PhoneCarrier.UNK;
+            }
+        }
+
+
         /// <summary>
         /// Set Item Condition
         /// </summary>
-        public static void SetCondition(this Item item)
+        public static void SetCondition(this ItemCreateDto item)
         {
             /* bool isNotNew =  conditionList.Any(condition =>  item.Name.IndexOf(condition, StringComparison.OrdinalIgnoreCase) >= 0);
              item.ConditionId = isNotNew ? (int)Condition.Used : (int)Condition.New;*/

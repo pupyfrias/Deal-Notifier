@@ -1,18 +1,17 @@
 using Serilog;
-using System.Configuration;
 using System.Reflection;
 using WebScraping.Core.Application.Contracts.Repositories;
 using WebScraping.Core.Application.Contracts.Services;
 using WebScraping.Core.Application.Services;
 using WebScraping.Core.Application.SetupOptions;
 using WebScraping.Core.Domain.Configs;
-using WebScraping.Core.Domain.Settings;
 using WebScraping.Infrastructure.Persistence.DbContexts;
 using WebScraping.Infrastructure.Persistence.Repositories;
 using WorkerService.T_Unlock_WebScraping;
 
 
 Environment.CurrentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
 IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((hostContext, services) =>
     {
@@ -52,12 +51,5 @@ IHost host = Host.CreateDefaultBuilder(args)
     .UseSerilog(SeriLog.Options)
     .Build();
 
-try
-{
-    await host.RunAsync();
-}
-catch (Exception)
-{
-    throw;
-}
 
+await host.RunAsync();

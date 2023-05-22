@@ -62,7 +62,8 @@ namespace WebScraping.Infrastructure.Persistence.Configuration
            .HasColumnType("varchar(25)");
 
             builder.Property(x => x.BrandId)
-           .HasDefaultValueSql("1");
+           .HasDefaultValueSql("1")
+           .IsRequired(false);
 
             builder.Property(x => x.PhoneCarrierId)
            .HasDefaultValueSql("1");

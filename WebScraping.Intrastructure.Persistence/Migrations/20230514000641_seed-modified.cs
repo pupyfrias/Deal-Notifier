@@ -62,7 +62,7 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                 keyColumn: "Id",
                 keyValue: 9,
                 columns: new[] { "Name", "ShortName" },
-                values: new object[] { "Spectrum", "SPC" });
+                values: new object[] { "Spectrum", "CHA" });
 
             migrationBuilder.UpdateData(
                 table: "PhoneCarrier",
@@ -76,14 +76,14 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                 keyColumn: "Id",
                 keyValue: 11,
                 columns: new[] { "Name", "ShortName" },
-                values: new object[] { "Cricket", "CKT" });
+                values: new object[] { "Cricket", "AIO" });
 
             migrationBuilder.UpdateData(
                 table: "PhoneCarrier",
                 keyColumn: "Id",
                 keyValue: 12,
                 columns: new[] { "Name", "ShortName" },
-                values: new object[] { "Metro", "MPCS" });
+                values: new object[] { "Metro", "TMK" });
 
             migrationBuilder.UpdateData(
                 table: "PhoneCarrier",
@@ -236,7 +236,7 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                 keyColumn: "Id",
                 keyValue: 8,
                 columns: new[] { "Name", "ShortName" },
-                values: new object[] { "Spectrum", "SPC" });
+                values: new object[] { "Spectrum", "CHA" });
 
             migrationBuilder.UpdateData(
                 table: "PhoneCarrier",
@@ -250,14 +250,14 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                 keyColumn: "Id",
                 keyValue: 10,
                 columns: new[] { "Name", "ShortName" },
-                values: new object[] { "Cricket", "CKT" });
+                values: new object[] { "Cricket", "AIO" });
 
             migrationBuilder.UpdateData(
                 table: "PhoneCarrier",
                 keyColumn: "Id",
                 keyValue: 11,
                 columns: new[] { "Name", "ShortName" },
-                values: new object[] { "Metro", "MPCS" });
+                values: new object[] { "Metro", "TMK" });
 
             migrationBuilder.UpdateData(
                 table: "PhoneCarrier",

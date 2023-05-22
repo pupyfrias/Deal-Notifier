@@ -23,7 +23,7 @@ namespace WebScraping.Infrastructure.Persistence.Seeds
             new PhoneCarrier
             {
                 Id = (int)Enums.PhoneCarrier.ATT,
-                Name = "AT&T",
+                Name = "AT&T|ATT",
                 ShortName = Enums.PhoneCarrier.ATT.ToString(),
             },
             new PhoneCarrier
@@ -58,9 +58,9 @@ namespace WebScraping.Infrastructure.Persistence.Seeds
             },
             new PhoneCarrier
             {
-                Id = (int)Enums.PhoneCarrier.SPC,
+                Id = (int)Enums.PhoneCarrier.CHA,
                 Name = "Spectrum",
-                ShortName = Enums.PhoneCarrier.SPC.ToString(),
+                ShortName = Enums.PhoneCarrier.CHA.ToString(),
             },
             new PhoneCarrier
             {
@@ -70,15 +70,15 @@ namespace WebScraping.Infrastructure.Persistence.Seeds
             },
             new PhoneCarrier
             {
-                Id = (int)Enums.PhoneCarrier.CKT,
+                Id = (int)Enums.PhoneCarrier.AIO,
                 Name = "Cricket",
-                ShortName = Enums.PhoneCarrier.CKT.ToString(),
+                ShortName = Enums.PhoneCarrier.AIO.ToString(),
             },
             new PhoneCarrier
             {
-                Id = (int)Enums.PhoneCarrier.MPCS,
-                Name = "Metro | MetroPCS",
-                ShortName = Enums.PhoneCarrier.MPCS.ToString(),
+                Id = (int)Enums.PhoneCarrier.TMK,
+                Name = "Metro|MetroPCS",
+                ShortName = Enums.PhoneCarrier.TMK.ToString(),
             },
             new PhoneCarrier
             {
@@ -89,7 +89,7 @@ namespace WebScraping.Infrastructure.Persistence.Seeds
             new PhoneCarrier
             {
                 Id = (int)Enums.PhoneCarrier.BST,
-                Name = "Boost Mobile",
+                Name = "Boost Mobile|Boost",
                 ShortName = Enums.PhoneCarrier.BST.ToString(),
             },
             new PhoneCarrier
@@ -113,7 +113,7 @@ namespace WebScraping.Infrastructure.Persistence.Seeds
             new PhoneCarrier
             {
                 Id = (int)Enums.PhoneCarrier.VMU,
-                Name = "Virgin Mobile USA",
+                Name = "Virgin Mobile|Virgin",
                 ShortName = Enums.PhoneCarrier.VMU.ToString(),
             },new PhoneCarrier
             {
@@ -130,7 +130,7 @@ namespace WebScraping.Infrastructure.Persistence.Seeds
             new PhoneCarrier
             {
                 Id = (int)Enums.PhoneCarrier.MNT,
-                Name = "Mint Mobile",
+                Name = "Mint Mobile|Mint",
                 ShortName = Enums.PhoneCarrier.MNT.ToString(),
             },
             new PhoneCarrier
@@ -160,8 +160,14 @@ namespace WebScraping.Infrastructure.Persistence.Seeds
             new PhoneCarrier
             {
                 Id = (int)Enums.PhoneCarrier.NTW,
-                Name = "Net10 Wireless",
+                Name = "Net10 Wireless|Net10",
                 ShortName = Enums.PhoneCarrier.NTW.ToString(),
+            },
+             new PhoneCarrier
+            {
+                Id = (int)Enums.PhoneCarrier.DSH,
+                Name = "Dish",
+                ShortName = Enums.PhoneCarrier.DSH.ToString(),
             }
         };
     }

@@ -7,10 +7,9 @@ using System.Text;
 using System.Text.Json;
 using WebScraping.Core.Application.Constants;
 using WebScraping.Core.Application.Contracts.Services;
+using WebScraping.Core.Application.Dtos.Item;
 using WebScraping.Core.Application.Extensions;
-using WebScraping.Core.Application.Heplers;
-using WebScraping.Core.Application.Models;
-using WebScraping.Core.Domain.Entities;
+using WebScraping.Core.Application.Models.eBay;
 using Condition = WebScraping.Core.Application.Enums.Condition;
 using Shop = WebScraping.Core.Application.Enums.Shop;
 using Status = WebScraping.Core.Application.Enums.Status;
@@ -22,7 +21,7 @@ namespace WebScraping.Infrastructure.Persistence.Models
     {
         private readonly ILogger _logger;
         private readonly IItemService _itemService;
-        private ConcurrentBag<Item> itemList = new ConcurrentBag<Item>();
+        private ConcurrentBag<ItemCreateDto> itemList = new ConcurrentBag<ItemCreateDto>();
         private ConcurrentBag<string> checkedList = new ConcurrentBag<string>();
         private readonly string baseUrl = @"https://api.ebay.com/buy/browse/v1/item_summary/search?filter=price:[20..100],priceCurrency:USD,conditionIds:{1000|3000},itemLocationCountry:US&sort=price&limit=200&aspect_filter=categoryId:9355,Operating System:{Android},Storage Capacity:{512 GB|256 GB|64 GB|32 GB|128 GB},Brand :{LG|Motorola|Samsung}&q=(LG,Motorola,Samsung) (Metro,Virgin,Boost,Sprint,T-Mobile,Unlocked)&category_ids=9355\";
         private string? currentUrl = string.Empty;
@@ -126,7 +125,7 @@ namespace WebScraping.Infrastructure.Persistence.Models
 
                         if (shippingCost != null) { price += decimal.Parse(shippingCost); }
 
-                        Item item = new Item();
+                        ItemCreateDto item = new ItemCreateDto();
                         item.Name = element.Title;
                         item.Link = element.ItemWebUrl.Substring(0, element.ItemWebUrl.IndexOf("?"));
                         bool canBeSaved = await item.CanBeSaved();
@@ -139,7 +138,10 @@ namespace WebScraping.Infrastructure.Persistence.Models
                             item.TypeId = (int)Type.Phone;
                             item.StatusId = (int)Status.InStock;
                             item.ConditionId = element?.Condition == "New" ? (int)Condition.New : (int)Condition.Used;
-                            item.SetBrand();
+                            var setted = _itemService.TrySetModelNumberModelNameAndBrand(ref item);
+                            if(!setted) item.SetBrand();
+
+                            item.SetPhoneCarrier();
                             itemList.Add(item);
                             checkedList.Add(item.Link);
                         }

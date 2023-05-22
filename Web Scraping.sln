@@ -33,7 +33,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EbayWorkerService", "EbayWo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkerService", "WorkerService\WorkerService.csproj", "{21409A6B-660E-4C63-ADC4-8F32307B6734}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkerService.T-Unlock WebScraping", "WorkerService.T-Unlock WebScraping\WorkerService.T-Unlock WebScraping.csproj", "{0A528F10-0E66-42CE-A98C-73D6D7239C61}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkerService.T-Unlock WebScraping", "WorkerService.T-Unlock WebScraping\WorkerService.T-Unlock WebScraping.csproj", "{0A528F10-0E66-42CE-A98C-73D6D7239C61}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkerService.Samkey", "WorkerService.Samkey\WorkerService.Samkey.csproj", "{E3878137-CA53-4D17-B060-8D8784B49203}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -143,6 +145,14 @@ Global
 		{0A528F10-0E66-42CE-A98C-73D6D7239C61}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0A528F10-0E66-42CE-A98C-73D6D7239C61}.Release|x86.ActiveCfg = Release|Any CPU
 		{0A528F10-0E66-42CE-A98C-73D6D7239C61}.Release|x86.Build.0 = Release|Any CPU
+		{E3878137-CA53-4D17-B060-8D8784B49203}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3878137-CA53-4D17-B060-8D8784B49203}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3878137-CA53-4D17-B060-8D8784B49203}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E3878137-CA53-4D17-B060-8D8784B49203}.Debug|x86.Build.0 = Debug|Any CPU
+		{E3878137-CA53-4D17-B060-8D8784B49203}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3878137-CA53-4D17-B060-8D8784B49203}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3878137-CA53-4D17-B060-8D8784B49203}.Release|x86.ActiveCfg = Release|Any CPU
+		{E3878137-CA53-4D17-B060-8D8784B49203}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -162,6 +172,7 @@ Global
 		{5E813FD2-D410-4625-A438-2A13B5DF6758} = {BFDA4940-5399-4634-9FF8-52A3732EDDB2}
 		{21409A6B-660E-4C63-ADC4-8F32307B6734} = {BFDA4940-5399-4634-9FF8-52A3732EDDB2}
 		{0A528F10-0E66-42CE-A98C-73D6D7239C61} = {BFDA4940-5399-4634-9FF8-52A3732EDDB2}
+		{E3878137-CA53-4D17-B060-8D8784B49203} = {BFDA4940-5399-4634-9FF8-52A3732EDDB2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6F7C4828-DCA5-4747-98E6-EBC0C1D2AB62}

@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-WorkerService.Samkey-7f07597b-0037-45bb-9f52-57dad4f04e40</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="..\WebApplication\appsettings.json" Link="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WebScraping.Core.Application\WebScraping.Core.Application.csproj" />
+    <ProjectReference Include="..\WebScraping.Core.Domain\WebScraping.Core.Domain.csproj" />
+    <ProjectReference Include="..\WebScraping.Intrastructure.Persistence\WebScraping.Infrastructure.Persistence.csproj" />
+  </ItemGroup>
+</Project>

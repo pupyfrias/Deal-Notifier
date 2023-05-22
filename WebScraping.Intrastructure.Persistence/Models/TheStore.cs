@@ -5,6 +5,7 @@ using Serilog;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using WebScraping.Core.Application.Contracts.Services;
+using WebScraping.Core.Application.Dtos.Item;
 using WebScraping.Core.Application.Extensions;
 using WebScraping.Core.Application.Heplers;
 using WebScraping.Core.Application.Utils;
@@ -37,7 +38,7 @@ namespace WebScraping.Infrastructure.Persistence.Models
                 driver.Navigate().GoToUrl((string)links[0, 0]);
                 int counter = 1;
                 WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(15));
-                ConcurrentBag<Item> itemList = new ConcurrentBag<Item>();
+                ConcurrentBag<ItemCreateDto> itemList = new ConcurrentBag<ItemCreateDto>();
 
                 while (true)
                 {
@@ -64,7 +65,7 @@ namespace WebScraping.Infrastructure.Persistence.Models
                                 IWebElement ePriceWhole = element.FindElement(By.ClassName("amount"));
                                 IWebElement conditionName = element.FindElement(By.ClassName("product-tile__condition"));
 
-                                Item item = new Item();
+                                ItemCreateDto item = new ItemCreateDto();
                                 item.Name = $"{eName.Text.RemoveSpecialCharacters()} {conditionName.Text.RemoveSpecialCharacters()}";
                                 item.Link = Helper.GetLocalPath(eLink.GetAttribute("href"));
                                 item.Image = "https://thestore.com" + eImage.GetAttribute("data-src").Replace("height=300", "height=400");

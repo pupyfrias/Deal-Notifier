@@ -12,12 +12,12 @@ namespace WebScraping.Core.Application.Mappings
         public AutomapperConfig()
         {
             CreateMap<Item, ItemResponseDto>().ReverseMap();
-            CreateMap<Item, ItemClean>().ReverseMap();
+            /*CreateMap<Item, ItemCreateDto>().ReverseMap();*/
             CreateMap<Condition, ConditionDto>().ReverseMap();
             CreateMap<ConditionsToNotify, ConditionsToNotifyDto>().ReverseMap();
             CreateMap<BlackList, BlackListDto>().ReverseMap();
             CreateMap<Banned, BannedDto>().ReverseMap();
-            CreateMap<Brand, BrandDto>().ReverseMap();
+            CreateMap<Brand, BrandReadDto>().ReverseMap();
             CreateMap<BlackList, Item>().IgnoreAllPropertiesWithAnInaccessibleSetter().ReverseMap();
             CreateMap<BlackList, Item>().IgnoreAllPropertiesWithAnInaccessibleSetter().ReverseMap();
             //CreateMap<ApplicationUser, ApiUserDto>().ReverseMap();

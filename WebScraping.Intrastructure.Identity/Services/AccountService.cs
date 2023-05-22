@@ -13,7 +13,7 @@ using WebScraping.Core.Application.Dtos.Token;
 using WebScraping.Core.Application.Dtos.User;
 using WebScraping.Core.Application.Exceptions;
 using WebScraping.Core.Application.Wrappers;
-using WebScraping.Core.Domain.Settings;
+using WebScraping.Core.Domain.Configs;
 using WebScraping.Infrastructure.Identity.Models;
 
 namespace WebScraping.Infrastructure.Identity.Services

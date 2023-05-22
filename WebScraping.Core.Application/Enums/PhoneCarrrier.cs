@@ -10,10 +10,10 @@
         SPR,
         USC,
         CTL,
-        SPC,
+        CHA,
         XFN,
-        CKT,
-        MPCS,
+        AIO,
+        TMK,
         TFN,
         BST,
         QLK,
@@ -28,5 +28,6 @@
         CRD,
         FDM,
         NTW,
+        DSH
     }
 }

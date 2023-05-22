@@ -9,11 +9,19 @@ using System.Text;
 using WebScraping.Core.Application.Constants;
 using WebScraping.Core.Application.Contracts.Services;
 using WebScraping.Core.Application.Dtos;
+using WebScraping.Core.Application.Dtos.PhoneCarrier;
 using WebScraping.Core.Application.DTOs;
 using WebScraping.Core.Application.DTOs.Email;
 using WebScraping.Core.Application.Heplers;
 using WebScraping.Core.Domain.Entities;
 using WebScraping.Infrastructure.Persistence.DbContexts;
+using System.Linq.Dynamic.Core;
+using WebScraping.Core.Application.Dtos.Unlockable;
+using System.Linq.Expressions;
+using System.Reflection;
+using System.Text.RegularExpressions;
+using WebScraping.Core.Application.Dtos.Item;
+using System;
 
 namespace WebScraping.Infrastructure.Persistence.Services
 {
@@ -21,9 +29,9 @@ namespace WebScraping.Infrastructure.Persistence.Services
     {
         #region Fields
 
-        private readonly ILogger _logger;
         private readonly IConfigurationProvider _configurationProvider;
         private readonly IEmailServiceAsync _emailService;
+        private readonly ILogger _logger;
         private readonly IMapper _mapper;
         public ConcurrentBag<Item> itemToNotifyList { get; set; } = new ConcurrentBag<Item>();
 
@@ -39,13 +47,81 @@ namespace WebScraping.Infrastructure.Persistence.Services
 
         #region Methods
 
+        public async Task LoadData()
+        {
+            Task blackList = Task.Run(async () =>
+            {
+                await LoadBlackList();
+            });
+
+            Task bannedKeywordList = Task.Run(async () =>
+            {
+                await LoadBannedKeyword();
+            });
+
+            Task conditionToNotifyList = Task.Run(async () =>
+            {
+                await LoadConditionsToNotify();
+            });
+
+            Task brandList = Task.Run(async () =>
+            {
+                await LoadBrands();
+            });
+
+
+            Task phoneCarrierList = Task.Run(async () =>
+            {
+                await LoadPhoneCarriers();
+            });
+
+            await Task.WhenAll(blackList, bannedKeywordList, conditionToNotifyList, brandList, phoneCarrierList);
+            _logger.Information("All needed data Loaded");
+        }
+
+        public async Task NotifyByEmail()
+        {
+            if (itemToNotifyList.Count > 0)
+            {
+                StringBuilder stringBuilder = new StringBuilder();
+
+                var orderItemToNotifyList = itemToNotifyList.OrderBy(item => item.Price);
+                _logger.Information($"orderItemToNotifyList {orderItemToNotifyList.Count()}");
+
+                foreach (var item in orderItemToNotifyList)
+                {
+                    stringBuilder.AppendFormat(
+                        @"<div style=""margin: 50px 20px;border-radius: 10px;box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.4);padding: 10px;""> 
+                        <h2 style='margin:0;'>{0}</h2> 
+                        <p style ='font-size:large; margin:0;'>US$ {1}</p> 
+                        <a href='{2}'>
+                            <img src='{3}' style=""width: 540px;height: 720px;object-fit: cover;""/>
+                        </a> 
+                    </div>", item.Name, item.Price, item.Link, item.Image);
+                }
+                string body = stringBuilder.ToString();
+
+                var email = new EmailDto
+                {
+                    To = "pupyfrias@gmail.com",
+                    Subject = "Phones Offer",
+                    Body = body
+                };
+
+
+                await _emailService.SendAsync(email);
+                itemToNotifyList.Clear();
+            }
+
+        }
+
         /// <summary>
         /// Save item's data
         /// </summary>
         /// <param name="items">Items ConcurrentBag</param>
-        public void SaveOrUpdate(ref ConcurrentBag<Item> items)
+        public void SaveOrUpdate(ref ConcurrentBag<ItemCreateDto> items)
         {
-            var itemListToSave = new ConcurrentBag<Item>();
+            var itemListToSave = new ConcurrentBag<ItemCreateDto>();
             var itemListToUpdate = new ConcurrentBag<Item>();
 
             Parallel.ForEach(items, item =>
@@ -56,7 +132,7 @@ namespace WebScraping.Infrastructure.Persistence.Services
                     if (oldItem == null)
                     {
                         itemListToSave.Add(item);
-                        ToNotify(item);
+                        ToNotify(_mapper.Map<Item>(item));
                     }
                     else
                     {
@@ -97,7 +173,7 @@ namespace WebScraping.Infrastructure.Persistence.Services
                 {
                     using (var context = new ApplicationDbContext())
                     {
-                        context.Items.AddRange(itemListToSave);
+                        context.Items.AddRange(_mapper.Map<List<Item>>(itemListToSave.ToList()));
                         context.SaveChanges();
                     }
                 });
@@ -119,6 +195,40 @@ namespace WebScraping.Infrastructure.Persistence.Services
             }
         }
 
+        public bool TrySetModelNumberModelNameAndBrand(ref ItemCreateDto item)
+        {
+            using (var context = new ApplicationDbContext())
+            {
+
+                var possibleModelNumber = Regex.Match(
+                    item.Name,
+                    "((?:sm-)?[a-z]\\d{3,4}[a-z]{0,3}\\d?)|(xt\\d{4}(-(\\d{1,2}|[a-z]))?)|((?:lg|lm)-?[a-z]{1,2}\\d{3}([a-z]{1,2})?\\d?(?:\\([a-z]\\))?)",
+                    RegexOptions.IgnoreCase
+                    );
+
+                if(possibleModelNumber.Value != string.Empty)
+                {
+                    _logger.Information(possibleModelNumber.Value);
+                    var unlockable = context.Unlockables.Where(x => x.ModelNumber.Contains(possibleModelNumber.Value))
+                        .ProjectTo<UnlockableReadDto>(_configurationProvider)
+                        .FirstOrDefault();
+
+
+                    if (unlockable != null)
+                    {
+                        item.BrandId = unlockable.BrandId;
+                        item.ModelName = unlockable.ModelName;
+                        item.ModelNumber = unlockable.ModelNumber;
+                        return true;
+                    }
+                }
+
+                return false;
+
+
+            }
+        }
+
         public void UpdateStatus(ref ConcurrentBag<string> checkedList)
         {
             using (var context = new ApplicationDbContext())
@@ -136,68 +246,6 @@ namespace WebScraping.Infrastructure.Persistence.Services
             _logger.Information($"{checkedList.Count} Items In Stock");
             checkedList.Clear();
         }
-
-        public async Task LoadData()
-        {
-            Task blackList = Task.Run(async () =>
-            {
-                await LoadBlackList();
-            });
-
-            Task bannedKeywordList = Task.Run(async () =>
-            {
-                await LoadBannedKeyword();
-            });
-
-            Task conditionToNotifyList = Task.Run(async () =>
-            {
-                await LoadConditionsToNotify();
-            });
-
-            Task brandList = Task.Run(async () =>
-            {
-                await LoadBrands();
-            });
-
-            await Task.WhenAll(blackList, bannedKeywordList, conditionToNotifyList, brandList);
-            _logger.Information("All needed data Loaded");
-        }
-
-
-
-        public async Task NotifyByEmail()
-        {
-            StringBuilder stringBuilder = new StringBuilder();
-
-            var orderItemToNotifyList = itemToNotifyList.OrderBy(item => item.Price);
-            _logger.Information($"orderItemToNotifyList {orderItemToNotifyList.Count()}");
-
-            foreach (var item in orderItemToNotifyList)
-            {
-                stringBuilder.AppendFormat(
-                    @"<div style=""margin: 50px 20px;border-radius: 10px;box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.4);padding: 10px;""> 
-                        <h2 style='margin:0;'>{0}</h2> 
-                        <p style ='font-size:large; margin:0;'>US$ {1}</p> 
-                        <a href='{2}'>
-                            <img src='{3}' style=""width: 540px;height: 720px;object-fit: cover;""/>
-                        </a> 
-                    </div>", item.Name, item.Price, item.Link, item.Image);
-            }
-            string body = stringBuilder.ToString();
-
-            var email = new EmailDto
-            {
-                To = "pupyfrias@gmail.com",
-                Subject = "Phones Offer",
-                Body = body
-            };
-
-
-            await _emailService.SendAsync(email);
-            itemToNotifyList.Clear();
-        }
-
-
         private void ToNotify(Item item)
         {
             foreach (ConditionsToNotifyDto conditionsToNotify in Helper.ConditionsToNotifyList)
@@ -214,23 +262,12 @@ namespace WebScraping.Infrastructure.Persistence.Services
             }
 
         }
-
+        #region Private Methods
+        
         private bool CheckKeywords(string keywords, string title)
         {
             var keywordList = keywords.Split(',');
             return keywordList.Any(keyword => title.IndexOf(keyword) > -1);
-        }
-
-        private async Task LoadBlackList()
-        {
-            using (var context = new ApplicationDbContext())
-            {
-                var backList = await context.BlackLists
-                    .ProjectTo<BlackListDto>(_configurationProvider)
-                    .ToListAsync();
-
-                Helper.BlacklistedLinks = backList.ToHashSet<BlackListDto>();
-            }
         }
 
         private async Task LoadBannedKeyword()
@@ -245,6 +282,29 @@ namespace WebScraping.Infrastructure.Persistence.Services
             }
         }
 
+        private async Task LoadBlackList()
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                var backList = await context.BlackLists
+                    .ProjectTo<BlackListDto>(_configurationProvider)
+                    .ToListAsync();
+
+                Helper.BlacklistedLinks = backList.ToHashSet<BlackListDto>();
+            }
+        }
+        private async Task LoadBrands()
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                var brandList = await context.Brands
+                    .ProjectTo<BrandReadDto>(_configurationProvider)
+                    .ToListAsync();
+
+                Helper.BrandList = brandList.ToHashSet<BrandReadDto>();
+            }
+        }
+
         private async Task LoadConditionsToNotify()
         {
             using (var context = new ApplicationDbContext())
@@ -256,18 +316,18 @@ namespace WebScraping.Infrastructure.Persistence.Services
                 Helper.ConditionsToNotifyList = conditionsToNotifyList.ToHashSet<ConditionsToNotifyDto>();
             }
         }
-
-        private async Task LoadBrands()
+        private async Task LoadPhoneCarriers()
         {
             using (var context = new ApplicationDbContext())
             {
-                var brandList = await context.Brands
-                    .ProjectTo<BrandDto>(_configurationProvider)
+                var phoneCarrirerList = await context.PhoneCarriers
+                    .ProjectTo<PhoneCarrierReadDto>(_configurationProvider)
                     .ToListAsync();
 
-                Helper.BrandList = brandList.ToHashSet<BrandDto>();
+                Helper.PhoneCarrierList = phoneCarrirerList.ToHashSet<PhoneCarrierReadDto>();
             }
         }
+        #endregion Private Methods
 
         #endregion Methods
     }

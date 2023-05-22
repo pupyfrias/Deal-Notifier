@@ -11,7 +11,7 @@ using WebScraping.Core.Application.Constants;
 using WebScraping.Core.Application.Contracts.Services;
 using WebScraping.Core.Application.Extensions;
 using WebScraping.Core.Application.Wrappers;
-using WebScraping.Core.Domain.Settings;
+using WebScraping.Core.Domain.Configs;
 using WebScraping.Infrastructure.Identity.DbContext;
 using WebScraping.Infrastructure.Identity.Models;
 using WebScraping.Infrastructure.Identity.Services;

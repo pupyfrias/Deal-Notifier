@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using WebScraping.Core.Application.Dtos;
 using WebScraping.Core.Application.DTOs;
 using WebScraping.Core.Application.Extensions;
@@ -43,6 +45,7 @@ namespace WebScraping.Infrastructure.Persistence.DbContexts
         public DbSet<Brand> Brands { get; set; }
         public DbSet<UnlockablePhoneCarrier> UnlockablePhoneCarriers { get; set; }
         public DbSet<UnlockableUnlockTool> UnlockableUnlockTools { get; set; }
+        public DbSet<PhoneCarrier> PhoneCarriers { get; set; }
 
 
         #endregion DbSets
@@ -84,6 +87,7 @@ namespace WebScraping.Infrastructure.Persistence.DbContexts
                 .AddJsonFile("appsettings.json").Build();
 
             optionsBuilder.UseSqlServer(config.GetConnectionString("DefaultConnection"));
+            //optionsBuilder.LogTo(Console.WriteLine, new[] { DbLoggerCategory.Database.Command.Name }, LogLevel.Information);
             base.OnConfiguring(optionsBuilder);
         }
 
