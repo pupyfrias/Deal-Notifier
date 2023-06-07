@@ -18,7 +18,7 @@ namespace WebScraping.Infrastructure.Persistence.Repositories
             _context = context;
         }
 
-        public async Task<UnlockableUnlockTool> CreateAsync(UnlockableUnlockTool entity)
+        public async Task<UnlockablePhoneUnlockTool> CreateAsync(UnlockablePhoneUnlockTool entity)
         {
             await _context.AddAsync(entity);  
             await _context.SaveChangesAsync();

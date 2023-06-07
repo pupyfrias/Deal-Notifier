@@ -10,9 +10,15 @@ using WebScraping.Infrastructure.Persistence.Repositories;
 using WorkerService.T_Unlock_WebScraping;
 
 
-Environment.CurrentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
 IHost host = Host.CreateDefaultBuilder(args)
+        .ConfigureAppConfiguration((hostingContext, config) =>
+        {
+            config.SetBasePath(baseDirectory)
+                  .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                  .AddJsonFile($"appsettings.{hostingContext.HostingEnvironment.EnvironmentName}.json", optional: true, reloadOnChange: true);
+        })
     .ConfigureServices((hostContext, services) =>
     {
         services.AddHostedService<Worker>();
@@ -50,6 +56,9 @@ IHost host = Host.CreateDefaultBuilder(args)
     })
     .UseSerilog(SeriLog.Options)
     .Build();
-
-
+var env = host.Services.GetRequiredService<IHostEnvironment>();
+if (env.IsProduction())
+{
+    Environment.CurrentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+}
 await host.RunAsync();

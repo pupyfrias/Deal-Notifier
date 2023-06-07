@@ -15,7 +15,7 @@ namespace WebScraping.Core.Application.Services
             _repository = repository;
         }
 
-        public async Task<UnlockableUnlockTool> CreateAsync(UnlockableUnlockTool entity)
+        public async Task<UnlockablePhoneUnlockTool> CreateAsync(UnlockablePhoneUnlockTool entity)
         {
            return await _repository.CreateAsync(entity);
         }

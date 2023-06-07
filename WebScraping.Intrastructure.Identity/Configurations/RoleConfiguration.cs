@@ -9,7 +9,7 @@ namespace WebScraping.Infrastructure.Identity.Configurations
     {
         public void Configure(EntityTypeBuilder<IdentityRole> builder)
         {
-            builder.ToTable("Role");
+            builder.ToTable("Roles");
 
             builder.HasData(RoleSeed.data);
         }

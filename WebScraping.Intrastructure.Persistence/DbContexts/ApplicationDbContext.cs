@@ -8,6 +8,7 @@ using WebScraping.Core.Application.DTOs;
 using WebScraping.Core.Application.Extensions;
 using WebScraping.Core.Application.Models;
 using WebScraping.Core.Domain.Common;
+using WebScraping.Core.Domain.Contracts;
 using WebScraping.Core.Domain.Entities;
 using WebScraping.Infrastructure.Persistence.Configuration;
 using Action = WebScraping.Core.Application.Enums.Action;
@@ -39,13 +40,14 @@ namespace WebScraping.Infrastructure.Persistence.DbContexts
         public DbSet<Item> Items { get; set; }
         public DbSet<Shop> Shops { get; set; }
         public DbSet<Status> Statuses { get; set; }
-        public DbSet<Unlockable> Unlockables { get; set; }
+        public DbSet<UnlockablePhone> UnlockablePhones { get; set; }
         public DbSet<Type> Types { get; set; }
         public DbSet<ConditionsToNotify> ConditionsToNotify { get; set; }
         public DbSet<Brand> Brands { get; set; }
-        public DbSet<UnlockablePhoneCarrier> UnlockablePhoneCarriers { get; set; }
-        public DbSet<UnlockableUnlockTool> UnlockableUnlockTools { get; set; }
+        public DbSet<UnlockablePhonePhoneCarrier> UnlockablePhoneCarriers { get; set; }
+        public DbSet<UnlockablePhoneUnlockTool> UnlockableUnlockTools { get; set; }
         public DbSet<PhoneCarrier> PhoneCarriers { get; set; }
+        public DbSet<UnlockProbability> UnlockProbability { get; set; }
 
 
         #endregion DbSets
@@ -63,10 +65,11 @@ namespace WebScraping.Infrastructure.Persistence.DbContexts
             modelBuilder.ApplyConfiguration(new SpBlackListResponseConfiguration());
             modelBuilder.ApplyConfiguration(new StatusConfiguration());
             modelBuilder.ApplyConfiguration(new TypeConfiguration());
-            modelBuilder.ApplyConfiguration(new UnlockableConfiguration());
-            modelBuilder.ApplyConfiguration(new UnlockablePhoneCarrierConfiguration());
-            modelBuilder.ApplyConfiguration(new UnlockableUnlockToolConfiguration());
+            modelBuilder.ApplyConfiguration(new UnlockablePhoneConfiguration());
+            modelBuilder.ApplyConfiguration(new UnlockablePhonePhoneCarrierConfiguration());
+            modelBuilder.ApplyConfiguration(new UnlockablePhoneUnlockToolConfiguration());
             modelBuilder.ApplyConfiguration(new UnlockToolConfiguration());
+            modelBuilder.ApplyConfiguration(new UnlockProbabilityConfiguration());
         }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -86,7 +89,7 @@ namespace WebScraping.Infrastructure.Persistence.DbContexts
             var config = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json").Build();
 
-            optionsBuilder.UseSqlServer(config.GetConnectionString("DefaultConnection"));
+            optionsBuilder.UseSqlServer(config.GetConnectionString("DealNotifierConnection"));
             //optionsBuilder.LogTo(Console.WriteLine, new[] { DbLoggerCategory.Database.Command.Name }, LogLevel.Information);
             base.OnConfiguring(optionsBuilder);
         }
@@ -95,7 +98,7 @@ namespace WebScraping.Infrastructure.Persistence.DbContexts
         {
             var auditEntryList = new List<AuditEntry>();
 
-            foreach (var entry in ChangeTracker.Entries<AuditableEntity<int>>())
+            foreach (var entry in ChangeTracker.Entries<IAuditableEntity>())
             {
                 if (entry.State == EntityState.Detached || entry.State == EntityState.Unchanged)
                     continue;

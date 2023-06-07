@@ -21,12 +21,14 @@ namespace WebScraping.Infrastructure.Persistence.Configuration
                    .HasColumnType("VARCHAR(15)")
                    .IsRequired();
 
+            builder.Property(x => x.Id)
+                .ValueGeneratedNever();
+
+
             #endregion Properties
 
             #region Keys
-
             builder.HasKey(x => x.Id);
-
             #endregion Keys
 
             #region Data Seeding

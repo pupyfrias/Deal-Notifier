@@ -12,14 +12,13 @@ using WebScraping.Infrastructure.Identity.DbContext;
 namespace WebScraping.Infrastructure.Identity.Migrations
 {
     [DbContext(typeof(IdentityContext))]
-    [Migration("20221219020642_first")]
+    [Migration("20230606202125_first")]
     partial class first
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasDefaultSchema("Identity")
                 .HasAnnotation("ProductVersion", "6.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
@@ -49,34 +48,34 @@ namespace WebScraping.Infrastructure.Identity.Migrations
                         .HasDatabaseName("RoleNameIndex")
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
-                    b.ToTable("Role", "Identity");
+                    b.ToTable("Roles", (string)null);
 
                     b.HasData(
                         new
                         {
-                            Id = "9a81b7c1-fa60-4458-b926-4527b7278a31",
-                            ConcurrencyStamp = "5247e69e-f937-4610-baf4-b110ab238691",
+                            Id = "19064d13-08ad-4bee-89f0-65fea5e27f2f",
+                            ConcurrencyStamp = "986c4753-f4fb-461f-b64a-92612085db03",
                             Name = "SuperAdmin",
                             NormalizedName = "SUPERADMIN"
                         },
                         new
                         {
-                            Id = "cdc4719e-3ab5-4e15-b2ed-0a10e0892b2a",
-                            ConcurrencyStamp = "5fb623d5-cbe2-478a-8232-a5bc147b73e5",
+                            Id = "b6aadd3d-33e2-48c8-aa63-90728530faaf",
+                            ConcurrencyStamp = "0eb76056-b88c-4d4e-81b4-033ca9a7ad04",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "314c97bd-ac78-41a0-bfa9-1b009dd0ab8b",
-                            ConcurrencyStamp = "bcecb6d0-2a79-459d-881b-a5e49e3ca03c",
+                            Id = "afaf62bb-83e2-489b-81b8-8510618e39f3",
+                            ConcurrencyStamp = "2de3b762-cf66-44b6-982c-66ca69677789",
                             Name = "Moderator",
                             NormalizedName = "MODERATOR"
                         },
                         new
                         {
-                            Id = "dce9c204-9bde-4c1e-8acc-034d1299eead",
-                            ConcurrencyStamp = "ee40ff92-7122-4d90-bbd6-12127125607d",
+                            Id = "99d509e0-12a2-42e1-935f-395fdc44b7c1",
+                            ConcurrencyStamp = "ca3f3cc0-aff6-4a84-9017-e607dbb6c683",
                             Name = "Basic",
                             NormalizedName = "BASIC"
                         });
@@ -104,7 +103,7 @@ namespace WebScraping.Infrastructure.Identity.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("RoleClaims", "Identity");
+                    b.ToTable("RoleClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -129,7 +128,7 @@ namespace WebScraping.Infrastructure.Identity.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserClaims", "Identity");
+                    b.ToTable("UserClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
@@ -151,7 +150,7 @@ namespace WebScraping.Infrastructure.Identity.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserLogins", "Identity");
+                    b.ToTable("UserLogins", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
@@ -166,23 +165,23 @@ namespace WebScraping.Infrastructure.Identity.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("UserRoles", "Identity");
+                    b.ToTable("UserRoles", (string)null);
 
                     b.HasData(
                         new
                         {
-                            UserId = "2103fbf1-85e5-4088-93b0-d2bcbcf5bbba",
-                            RoleId = "9a81b7c1-fa60-4458-b926-4527b7278a31"
+                            UserId = "377d278f-2088-48b6-b0ea-b8bbae8e518d",
+                            RoleId = "19064d13-08ad-4bee-89f0-65fea5e27f2f"
                         },
                         new
                         {
-                            UserId = "2103fbf1-85e5-4088-93b0-d2bcbcf5bbba",
-                            RoleId = "dce9c204-9bde-4c1e-8acc-034d1299eead"
+                            UserId = "377d278f-2088-48b6-b0ea-b8bbae8e518d",
+                            RoleId = "99d509e0-12a2-42e1-935f-395fdc44b7c1"
                         },
                         new
                         {
-                            UserId = "34743d58-5503-4ed8-86a8-aa786201e4c5",
-                            RoleId = "dce9c204-9bde-4c1e-8acc-034d1299eead"
+                            UserId = "0e270601-d417-4c8a-9a81-3d841026a509",
+                            RoleId = "99d509e0-12a2-42e1-935f-395fdc44b7c1"
                         });
                 });
 
@@ -202,7 +201,7 @@ namespace WebScraping.Infrastructure.Identity.Migrations
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("UserTokens", "Identity");
+                    b.ToTable("UserTokens", (string)null);
                 });
 
             modelBuilder.Entity("WebScraping.Infrastructure.Identity.Models.ApplicationUser", b =>
@@ -275,14 +274,14 @@ namespace WebScraping.Infrastructure.Identity.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.ToTable("User", "Identity");
+                    b.ToTable("Users", (string)null);
 
                     b.HasData(
                         new
                         {
-                            Id = "2103fbf1-85e5-4088-93b0-d2bcbcf5bbba",
+                            Id = "377d278f-2088-48b6-b0ea-b8bbae8e518d",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "73df4070-eee8-47ae-84db-325253a765f5",
+                            ConcurrencyStamp = "5b1a9eb3-f28f-4bce-989f-f686453f61af",
                             Email = "superuser@gmail.com",
                             EmailConfirmed = true,
                             FirstName = "John",
@@ -290,17 +289,17 @@ namespace WebScraping.Infrastructure.Identity.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "SUPERUSER@GMAIL.COM",
                             NormalizedUserName = "SUPERUSER",
-                            PasswordHash = "AQAAAAEAACcQAAAAEE5V7GLrrGMeQ8Plni5NW6f4hTSFta9d+OIoavUhEq4N0OLUotwhmQoq+QzX6c5Xcw==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEI3H3kOljInjP4Et/c2v2hJb6kMHQB2Zqd56lHcF32crh9Wp8FkeZiNSnqknosVsGg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "12787eb2-157f-421f-8e34-915717ae0102",
+                            SecurityStamp = "713f4d75-eb71-44f7-8d21-2a1ec02f7ca8",
                             TwoFactorEnabled = false,
                             UserName = "superuser"
                         },
                         new
                         {
-                            Id = "34743d58-5503-4ed8-86a8-aa786201e4c5",
+                            Id = "0e270601-d417-4c8a-9a81-3d841026a509",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "e7c43df2-8644-4842-a99f-531959d744f6",
+                            ConcurrencyStamp = "31c91a4b-5760-43a6-a529-099fb2304e34",
                             Email = "basicuser@gmail.com",
                             EmailConfirmed = true,
                             FirstName = "John",
@@ -308,9 +307,9 @@ namespace WebScraping.Infrastructure.Identity.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "BASICUSER@GMAIL.COM",
                             NormalizedUserName = "BASICUSER",
-                            PasswordHash = "AQAAAAEAACcQAAAAEGXlMwbeVDnuA/7Tgxgkzx1VExy+pQA6KUYeawcAF3l9jaRgONHzbGixDKiyYwNtlw==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEK7fNvuHnJD05jfViJlAeIy8yK+C+Znfp/7TSZq1Kt3rdmLHfrrxQI/xcfeJ3Qv74g==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "fedcfd17-3785-49a0-b17e-40a2a86ec030",
+                            SecurityStamp = "ff1ae7ec-d052-43bf-a2d1-5fa5535274ab",
                             TwoFactorEnabled = false,
                             UserName = "basicuser"
                         });

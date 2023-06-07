@@ -15,12 +15,12 @@ namespace WebScraping.Core.Application.Services
             _repository = repository;
         }
 
-        public async Task<UnlockablePhoneCarrier> CreateAsync(UnlockablePhoneCarrier entity)
+        public async Task<UnlockablePhonePhoneCarrier> CreateAsync(UnlockablePhonePhoneCarrier entity)
         {
            return await _repository.CreateAsync(entity);
         }
 
-        public async Task<bool> ExistsAsync(UnlockablePhoneCarrier entity)
+        public async Task<bool> ExistsAsync(UnlockablePhonePhoneCarrier entity)
         {
             return await _repository.ExistsAsync(entity);
         }

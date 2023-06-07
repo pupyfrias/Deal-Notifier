@@ -3,8 +3,8 @@ using WebScraping.Core.Domain.Entities;
 
 namespace WebScraping.Core.Application.Contracts.Services
 {
-    public interface IUnlockableServiceAsync: IGenericServiceAsync<Unlockable>
+    public interface IUnlockableServiceAsync: IGenericServiceAsync<UnlockablePhone>
     {
-        Task<Unlockable?> GetByModelNumberAsync(string modelNumber);
+        Task<UnlockablePhone?> GetByModelNumberAsync(string modelNumber);
     }
 }

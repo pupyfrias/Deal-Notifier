@@ -148,16 +148,16 @@ namespace WorkerService.Samkey
 
                         var model = await _unlockableServiceAsync.CreateAsync(unlockableCreateDto);
 
-                        var unlockableUnlockTool = new UnlockableUnlockTool
+                        var unlockableUnlockTool = new UnlockablePhoneUnlockTool
                         {
-                            UnlockableId = model.Id,
+                            UnlockablePhoneId = model.Id,
                             UnlockToolId = (int)Enums.UnlockTool.SamKey
                         };
                         await _unlockableUnlockToolServiceAsync.CreateAsync(unlockableUnlockTool);
 
 
 
-                    }/*
+                    
                         foreach (var carrier in carrierList)
                         {
                             var phoneCarrier = phoneCarrierList
@@ -165,9 +165,9 @@ namespace WorkerService.Samkey
                                 pc.ShortName.Contains(carrier.Trim(), StringComparison.OrdinalIgnoreCase));
                             if (phoneCarrier != null)
                             {
-                                var unlockablePhoneCarrier = new UnlockablePhoneCarrier
+                                var unlockablePhoneCarrier = new UnlockablePhonePhoneCarrier
                                 {
-                                    UnlockableId = model.Id,
+                                    UnlockablePhoneId = model.Id,
                                     PhoneCarrierId = phoneCarrier.Id,
                                 };
 
@@ -184,9 +184,9 @@ namespace WorkerService.Samkey
                                 pc.ShortName.Contains(carrier.Trim(), StringComparison.OrdinalIgnoreCase));
                             if (phoneCarrier != null)
                             {
-                                var unlockablePhoneCarrier = new UnlockablePhoneCarrier
+                                var unlockablePhoneCarrier = new UnlockablePhonePhoneCarrier
                                 {
-                                    UnlockableId = possibleUnlockable.Id,
+                                    UnlockablePhoneId = possibleUnlockable.Id,
                                     PhoneCarrierId = phoneCarrier.Id,
                                 };
 
@@ -202,10 +202,10 @@ namespace WorkerService.Samkey
                                 _logger.Warning($"Carrier [{carrier}] no exists on DataBase");
                             }
                         }
-                    }*/
+                    }
 
-                    counter++;
-                    _logger.Information(counter.ToString());
+                   /* counter++;
+                    _logger.Information(counter.ToString());*/
                 }
             }
             catch(Exception ex)

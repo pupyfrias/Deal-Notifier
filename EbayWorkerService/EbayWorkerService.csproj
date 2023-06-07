@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="..\WebApplication\appsettings.Development.json" Link="appsettings.Development.json" />
     <Content Include="..\WebApplication\appsettings.json" Link="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

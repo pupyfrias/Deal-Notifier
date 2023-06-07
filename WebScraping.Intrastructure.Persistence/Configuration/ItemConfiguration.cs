@@ -55,11 +55,24 @@ namespace WebScraping.Infrastructure.Persistence.Configuration
                 .HasDefaultValueSql("1")
                 .IsRequired();
 
+            builder.Property(x => x.IsAuction)
+                .HasColumnType("BIT")
+                .HasDefaultValueSql("0")
+                .IsRequired();
+
+
+            builder.Property(x => x.Notified)
+                .IsRequired(false);
+
             builder.Property(x => x.ModelNumber)
             .HasColumnType("varchar(25)");
 
             builder.Property(x => x.ModelName)
            .HasColumnType("varchar(25)");
+
+            builder.Property(x => x.ItemEndDate)
+            .HasColumnType("DateTime")
+            .IsRequired(false);
 
             builder.Property(x => x.BrandId)
            .HasDefaultValueSql("1")
@@ -67,6 +80,9 @@ namespace WebScraping.Infrastructure.Persistence.Configuration
 
             builder.Property(x => x.PhoneCarrierId)
            .HasDefaultValueSql("1");
+
+            builder.Property(x => x.BidCount)
+           .HasColumnType("Int");
 
             #endregion Properties
 
@@ -97,12 +113,17 @@ namespace WebScraping.Infrastructure.Persistence.Configuration
             builder.HasOne(x => x.Brand)
             .WithMany(x => x.Items)
             .HasForeignKey(x => x.BrandId)
-            .HasConstraintName("FK_Item_BrandId");
+            .HasConstraintName("FK_Item_Brand");
 
             builder.HasOne(x => x.PhoneCarrier)
             .WithMany(x => x.Items)
             .HasForeignKey(x => x.PhoneCarrierId)
-            .HasConstraintName("FK_Item_PhoneCarrierId");
+            .HasConstraintName("FK_Item_PhoneCarrier");
+
+            builder.HasOne(x => x.UnlockProbability)
+            .WithMany(x => x.Items)
+            .HasForeignKey(x => x.UnlockProbabilityId)
+            .HasConstraintName("FK_Item_UnlockProbability");
 
             builder.HasIndex(e => e.Link)
             .IsUnique();

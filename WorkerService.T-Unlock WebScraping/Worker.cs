@@ -166,9 +166,9 @@ namespace WorkerService.T_Unlock_WebScraping
 
                         var model = await _unlockableServiceAsync.CreateAsync(unlockableCreateDto);
 
-                        var unlockableUnlockTool = new UnlockableUnlockTool
+                        var unlockableUnlockTool = new UnlockablePhoneUnlockTool
                         {
-                            UnlockableId = model.Id,
+                            UnlockablePhoneId = model.Id,
                             UnlockToolId = (int)Enums.UnlockTool.TUnlock
                         };
                         await _unlockableUnlockToolServiceAsync.CreateAsync(unlockableUnlockTool);
@@ -178,9 +178,9 @@ namespace WorkerService.T_Unlock_WebScraping
                             var phoneCarrier = phoneCarrierList.FirstOrDefault(pc => pc.Name.Contains(carrier.Trim(), StringComparison.OrdinalIgnoreCase));
                             if (phoneCarrier != null)
                             {
-                                var unlockablePhoneCarrier = new UnlockablePhoneCarrier
+                                var unlockablePhoneCarrier = new UnlockablePhonePhoneCarrier
                                 {
-                                    UnlockableId = model.Id,
+                                    UnlockablePhoneId = model.Id,
                                     PhoneCarrierId = phoneCarrier.Id,
                                 };
 
@@ -195,9 +195,9 @@ namespace WorkerService.T_Unlock_WebScraping
                             var phoneCarrier = phoneCarrierList.FirstOrDefault(pc => pc.Name.Contains(carrier.Trim(), StringComparison.OrdinalIgnoreCase));
                             if (phoneCarrier != null)
                             {
-                                var unlockablePhoneCarrier = new UnlockablePhoneCarrier
+                                var unlockablePhoneCarrier = new UnlockablePhonePhoneCarrier
                                 {
-                                    UnlockableId = possibleUnlockable.Id,
+                                    UnlockablePhoneId = possibleUnlockable.Id,
                                     PhoneCarrierId = phoneCarrier.Id,
                                 };
 

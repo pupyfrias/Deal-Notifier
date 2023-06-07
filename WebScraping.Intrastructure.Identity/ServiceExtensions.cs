@@ -35,7 +35,7 @@ namespace WebScraping.Infrastructure.Identity
             {
                 services.AddDbContext<IdentityContext>(option =>
                 {
-                    option.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
+                    option.UseSqlServer(configuration.GetConnectionString("DealNotifierSecurityConnection"),
                         optionAction => optionAction.MigrationsAssembly(typeof(IdentityContext).Assembly.FullName));
                 });
             }

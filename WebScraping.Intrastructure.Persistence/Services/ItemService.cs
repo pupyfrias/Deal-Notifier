@@ -2,26 +2,27 @@
 using AutoMapper.QueryableExtensions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OData.Edm;
 using Serilog;
+using System;
 using System.Collections.Concurrent;
 using System.Data;
+using System.Linq.Dynamic.Core;
 using System.Text;
+using System.Text.RegularExpressions;
 using WebScraping.Core.Application.Constants;
 using WebScraping.Core.Application.Contracts.Services;
 using WebScraping.Core.Application.Dtos;
+using WebScraping.Core.Application.Dtos.Item;
 using WebScraping.Core.Application.Dtos.PhoneCarrier;
+using WebScraping.Core.Application.Dtos.Unlockable;
 using WebScraping.Core.Application.DTOs;
 using WebScraping.Core.Application.DTOs.Email;
+using WebScraping.Core.Application.Enums;
 using WebScraping.Core.Application.Heplers;
 using WebScraping.Core.Domain.Entities;
 using WebScraping.Infrastructure.Persistence.DbContexts;
-using System.Linq.Dynamic.Core;
-using WebScraping.Core.Application.Dtos.Unlockable;
-using System.Linq.Expressions;
-using System.Reflection;
-using System.Text.RegularExpressions;
-using WebScraping.Core.Application.Dtos.Item;
-using System;
+using Enums = WebScraping.Core.Application.Enums;
 
 namespace WebScraping.Infrastructure.Persistence.Services
 {
@@ -69,7 +70,6 @@ namespace WebScraping.Infrastructure.Persistence.Services
                 await LoadBrands();
             });
 
-
             Task phoneCarrierList = Task.Run(async () =>
             {
                 await LoadPhoneCarriers();
@@ -90,14 +90,18 @@ namespace WebScraping.Infrastructure.Persistence.Services
 
                 foreach (var item in orderItemToNotifyList)
                 {
+                    var probability = item.UnlockProbabilityId == 3 ? Enums.UnlockProbability.High.ToString() : Enums.UnlockProbability.Middle.ToString();
+
                     stringBuilder.AppendFormat(
-                        @"<div style=""margin: 50px 20px;border-radius: 10px;box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.4);padding: 10px;""> 
-                        <h2 style='margin:0;'>{0}</h2> 
-                        <p style ='font-size:large; margin:0;'>US$ {1}</p> 
+                        @"<div style=""margin: 50px 20px;border-radius: 10px;box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.4);padding: 10px;"">
+                        <h2 style='margin:0;'>{0}</h2>
+                        <p style ='font-size:large; margin:0;'>US$ {1}</p>
+                        <p style ='font-size:large; margin:0;'>Unlock Probability: {5}</p>
+                        <a href='https://api-stores.com:8081/api/Items/{4}/cancel-notification' style= 'display:block'> Cancel Notification</a>
                         <a href='{2}'>
                             <img src='{3}' style=""width: 540px;height: 720px;object-fit: cover;""/>
-                        </a> 
-                    </div>", item.Name, item.Price, item.Link, item.Image);
+                        </a>
+                    </div>", item.Name, item.Price, item.Link, item.Image, item.Id, probability);
                 }
                 string body = stringBuilder.ToString();
 
@@ -108,11 +112,9 @@ namespace WebScraping.Infrastructure.Persistence.Services
                     Body = body
                 };
 
-
                 await _emailService.SendAsync(email);
                 itemToNotifyList.Clear();
             }
-
         }
 
         /// <summary>
@@ -121,7 +123,7 @@ namespace WebScraping.Infrastructure.Persistence.Services
         /// <param name="items">Items ConcurrentBag</param>
         public void SaveOrUpdate(ref ConcurrentBag<ItemCreateDto> items)
         {
-            var itemListToSave = new ConcurrentBag<ItemCreateDto>();
+            var itemListToSave = new ConcurrentBag<Item>();
             var itemListToUpdate = new ConcurrentBag<Item>();
 
             Parallel.ForEach(items, item =>
@@ -131,8 +133,11 @@ namespace WebScraping.Infrastructure.Persistence.Services
                     var oldItem = context.Items.FirstOrDefault(i => i.Link == item.Link);
                     if (oldItem == null)
                     {
-                        itemListToSave.Add(item);
-                        ToNotify(_mapper.Map<Item>(item));
+                        var mappedItem = _mapper.Map<Item>(item);
+
+                        ToNotify(mappedItem);
+                        itemListToSave.Add(mappedItem);
+                        
                     }
                     else
                     {
@@ -146,7 +151,6 @@ namespace WebScraping.Infrastructure.Persistence.Services
                                 oldItem.Saving = saving;
                                 oldItem.SavingsPercentage = (saving / oldPrice) * 100;
                                 oldItem.OldPrice = oldPrice;
-
                             }
                             else if (oldPrice < item.Price)
                             {
@@ -157,14 +161,12 @@ namespace WebScraping.Infrastructure.Persistence.Services
 
                             oldItem.Price = item.Price;
                             _mapper.Map(item, oldItem);
-                            itemListToUpdate.Add(oldItem);
                             ToNotify(oldItem);
+                            itemListToUpdate.Add(oldItem);
+                            
                         }
-
-
                     }
                 }
-            
             });
 
             try
@@ -173,7 +175,7 @@ namespace WebScraping.Infrastructure.Persistence.Services
                 {
                     using (var context = new ApplicationDbContext())
                     {
-                        context.Items.AddRange(_mapper.Map<List<Item>>(itemListToSave.ToList()));
+                        context.Items.AddRange(itemListToSave);
                         context.SaveChanges();
                     }
                 });
@@ -195,37 +197,134 @@ namespace WebScraping.Infrastructure.Persistence.Services
             }
         }
 
-        public bool TrySetModelNumberModelNameAndBrand(ref ItemCreateDto item)
+        public void SetUnlockProbability(ref ItemCreateDto item)
+        {
+            var modelNumber = item.ModelNumber;
+            var modelName = item.ModelName;
+            UnlockablePhone? unlockable = default;
+
+            if (item.Name.Contains("unlocked", StringComparison.OrdinalIgnoreCase))
+            {
+                item.UnlockProbabilityId = (int)Enums.UnlockProbability.High;
+            }
+            else
+            {
+                using (var context = new ApplicationDbContext())
+                {
+                    bool anyUnlockToolCanUnlockIt = false, anyPhoneCarrierMatch = false;
+
+                    if (modelNumber != null)
+                    {
+                        unlockable = context.UnlockablePhones.FirstOrDefault(x => x.ModelNumber == modelNumber);
+                    }
+                    else if (modelName != null)
+                    {
+                        unlockable = context.UnlockablePhones.FirstOrDefault(x => x.ModelName == modelName);
+                    }
+
+
+                    if (unlockable != null)
+                    {
+                        anyUnlockToolCanUnlockIt = context.UnlockableUnlockTools.FirstOrDefault(x => x.UnlockablePhoneId == unlockable.Id) != null;
+                        anyPhoneCarrierMatch = context.UnlockablePhoneCarriers.FirstOrDefault(x => x.UnlockablePhoneId == unlockable.Id) != null;
+                    }
+
+                    if (anyUnlockToolCanUnlockIt && anyPhoneCarrierMatch)
+                    {
+                        item.UnlockProbabilityId = (int)Enums.UnlockProbability.High;
+                    }
+                    else if (anyUnlockToolCanUnlockIt || anyPhoneCarrierMatch)
+                    {
+                        item.UnlockProbabilityId = (int)Enums.UnlockProbability.Middle;
+                    }
+                    else
+                    {
+                        item.UnlockProbabilityId = (int)Enums.UnlockProbability.Low;
+                    }
+                }
+            }
+        }
+
+        public void TrySetModelNumberModelNameAndBrand(ref ItemCreateDto item)
         {
             using (var context = new ApplicationDbContext())
             {
-
                 var possibleModelNumber = Regex.Match(
                     item.Name,
                     "((?:sm-)?[a-z]\\d{3,4}[a-z]{0,3}\\d?)|(xt\\d{4}(-(\\d{1,2}|[a-z]))?)|((?:lg|lm)-?[a-z]{1,2}\\d{3}([a-z]{1,2})?\\d?(?:\\([a-z]\\))?)",
                     RegexOptions.IgnoreCase
                     );
 
-                if(possibleModelNumber.Value != string.Empty)
+                if (possibleModelNumber.Value != string.Empty)
                 {
-                    _logger.Information(possibleModelNumber.Value);
-                    var unlockable = context.Unlockables.Where(x => x.ModelNumber.Contains(possibleModelNumber.Value))
+                    var unlockable = context.UnlockablePhones.Where(x => x.ModelNumber.Contains(possibleModelNumber.Value))
                         .ProjectTo<UnlockableReadDto>(_configurationProvider)
                         .FirstOrDefault();
-
 
                     if (unlockable != null)
                     {
                         item.BrandId = unlockable.BrandId;
                         item.ModelName = unlockable.ModelName;
                         item.ModelNumber = unlockable.ModelNumber;
-                        return true;
                     }
+                    
                 }
 
-                return false;
+                if(item.BrandId == null && item.ModelName == null && item.ModelNumber == null)
+                {
+                    #region set brand
+                    foreach (var brand in Helper.BrandList)
+                    {
+                        bool isMatched = item.Name.IndexOf(brand.Name, StringComparison.OrdinalIgnoreCase) > -1;
+                        if (isMatched)
+                        {
+                            item.BrandId = brand.Id;
+                            break;
+                        }
 
+                    }
+                    #endregion set brand
 
+                    #region set modelName & phone Carrier
+                    UnlockableReadDto? unlockable;
+                    var possibleModelName = Regex.Match(
+                    item.Name,
+                    "((?<=samsung\\s+)(galaxy\\s+)?\\w+[+]?)|((?<=motorola\\s+)moto\\s+\\w+)|(lg\\s+\\w+( \\d)?)",
+                    RegexOptions.IgnoreCase
+                    );
+
+                    if (possibleModelName.Value != string.Empty)
+                    {
+                       
+                        int phoneCarrierId = item.PhoneCarrierId ?? (int) Enums.PhoneCarrier.UNK;
+                        unlockable = context.UnlockablePhones
+                            .Include(x => x.UnlockablePhoneCarriers)
+                            .Where(x => x.ModelName.Contains(possibleModelName.Value) &&
+                            x.UnlockablePhoneCarriers.Any(u=> u.PhoneCarrierId == phoneCarrierId))
+                           .ProjectTo<UnlockableReadDto>(_configurationProvider)
+                           .FirstOrDefault();
+
+                        if (unlockable != null)
+                        {
+                            item.ModelName = unlockable.ModelName;
+                            item.ModelNumber = unlockable.ModelNumber;
+                        }
+                        else
+                        {
+                            unlockable = context.UnlockablePhones
+                            .Where(x => x.ModelName.Contains(possibleModelName.Value))
+                           .ProjectTo<UnlockableReadDto>(_configurationProvider)
+                           .FirstOrDefault();
+
+                            if (unlockable != null)
+                            {
+                                item.ModelName = unlockable.ModelName;
+                            }
+                           
+                        }
+                        #endregion set modelName & phone Carrier
+                    }
+                }
             }
         }
 
@@ -246,24 +345,54 @@ namespace WebScraping.Infrastructure.Persistence.Services
             _logger.Information($"{checkedList.Count} Items In Stock");
             checkedList.Clear();
         }
+
         private void ToNotify(Item item)
         {
+            DateTime notified = item.Notified.HasValue ? (DateTime) item.Notified : DateTime.MinValue;
+
             foreach (ConditionsToNotifyDto conditionsToNotify in Helper.ConditionsToNotifyList)
             {
-                if (conditionsToNotify.ConditionId == item.ConditionId &&
-                    conditionsToNotify.MaxPrice >= item.Price &&
-                    CheckKeywords(conditionsToNotify.Keywords, item.Name) &&
-                    item.Notify
+                if (conditionsToNotify.ConditionId == item.ConditionId 
+                    && conditionsToNotify.MaxPrice >= item.Price 
+                    && CheckKeywords(conditionsToNotify.Keywords, item.Name) 
+                    && item.Notify
+                    && notified.Date != DateTime.Now.Date
+
                     )
                 {
+
+                    if (item.TypeId == (int)Enums.Type.Phone 
+                        && (item.UnlockProbabilityId != (int)Enums.UnlockProbability.Middle && item.UnlockProbabilityId != (int)Enums.UnlockProbability.High))
+                    {
+                        break;
+                    }
+
+                    if (item.IsAuction)
+                    {
+                        var diff = (notified - DateTime.Now).TotalHours;
+                        if(diff > 2 || diff < 0) 
+                        {
+                            break;
+                        }
+                        
+                    }
+
+
                     itemToNotifyList.Add(item);
+                    item.Notified = DateTime.Now;
                     break;
                 }
             }
-
         }
+
+
+
+
+
+
+
         #region Private Methods
-        
+
         private bool CheckKeywords(string keywords, string title)
         {
             var keywordList = keywords.Split(',');
@@ -293,6 +422,7 @@ namespace WebScraping.Infrastructure.Persistence.Services
                 Helper.BlacklistedLinks = backList.ToHashSet<BlackListDto>();
             }
         }
+
         private async Task LoadBrands()
         {
             using (var context = new ApplicationDbContext())
@@ -316,6 +446,7 @@ namespace WebScraping.Infrastructure.Persistence.Services
                 Helper.ConditionsToNotifyList = conditionsToNotifyList.ToHashSet<ConditionsToNotifyDto>();
             }
         }
+
         private async Task LoadPhoneCarriers()
         {
             using (var context = new ApplicationDbContext())
@@ -327,6 +458,7 @@ namespace WebScraping.Infrastructure.Persistence.Services
                 Helper.PhoneCarrierList = phoneCarrirerList.ToHashSet<PhoneCarrierReadDto>();
             }
         }
+
         #endregion Private Methods
 
         #endregion Methods

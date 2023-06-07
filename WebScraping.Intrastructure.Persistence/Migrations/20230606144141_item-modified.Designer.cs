@@ -12,8 +12,8 @@ using WebScraping.Infrastructure.Persistence.DbContexts;
 namespace WebScraping.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230521221427_phonecarrier-enums-modified")]
-    partial class phonecarrierenumsmodified
+    [Migration("20230606144141_item-modified")]
+    partial class itemmodified
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -227,10 +227,7 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("WebScraping.Core.Domain.Entities.Condition", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("Created")
                         .ValueGeneratedOnAdd()
@@ -266,7 +263,7 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = 2,
+                            Id = 0,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Used"
                         });
@@ -321,6 +318,9 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasDefaultValueSql("NEWID()");
 
+                    b.Property<int>("BidCount")
+                        .HasColumnType("Int");
+
                     b.Property<int?>("BrandId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
@@ -344,6 +344,14 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(MAX)");
 
+                    b.Property<bool>("IsAuction")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("BIT")
+                        .HasDefaultValueSql("0");
+
+                    b.Property<DateTime?>("ItemEndDate")
+                        .HasColumnType("DateTime");
+
                     b.Property<DateTime?>("LastModified")
                         .HasColumnType("datetime2");
 
@@ -364,7 +372,7 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("VARCHAR(max)");
 
-                    b.Property<DateTime>("Notified")
+                    b.Property<DateTime?>("Notified")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("Notify")
@@ -405,6 +413,9 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                     b.Property<int>("TypeId")
                         .HasColumnType("int");
 
+                    b.Property<int>("UnlockProbabilityId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("BrandId");
@@ -421,6 +432,8 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                     b.HasIndex("StatusId");
 
                     b.HasIndex("TypeId");
+
+                    b.HasIndex("UnlockProbabilityId");
 
                     b.ToTable("Item", (string)null);
                 });
@@ -647,6 +660,13 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Net10 Wireless|Net10",
                             ShortName = "NTW"
+                        },
+                        new
+                        {
+                            Id = 27,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Dish",
+                            ShortName = "DSH"
                         });
                 });
 
@@ -707,10 +727,7 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("WebScraping.Core.Domain.Entities.Status", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("Created")
                         .ValueGeneratedOnAdd()
@@ -746,7 +763,7 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = 2,
+                            Id = 0,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "OutStock"
                         });
@@ -836,7 +853,7 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                         });
                 });
 
-            modelBuilder.Entity("WebScraping.Core.Domain.Entities.Unlockable", b =>
+            modelBuilder.Entity("WebScraping.Core.Domain.Entities.UnlockablePhone", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -882,37 +899,94 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                     b.HasIndex("ModelNumber")
                         .IsUnique();
 
-                    b.ToTable("Unlockable", (string)null);
+                    b.ToTable("UnlockablePhone", (string)null);
                 });
 
-            modelBuilder.Entity("WebScraping.Core.Domain.Entities.UnlockablePhoneCarrier", b =>
+            modelBuilder.Entity("WebScraping.Core.Domain.Entities.UnlockablePhonePhoneCarrier", b =>
                 {
-                    b.Property<int>("UnlockableId")
+                    b.Property<int>("UnlockablePhoneId")
                         .HasColumnType("int");
 
                     b.Property<int>("PhoneCarrierId")
                         .HasColumnType("int");
 
-                    b.HasKey("UnlockableId", "PhoneCarrierId");
+                    b.HasKey("UnlockablePhoneId", "PhoneCarrierId");
 
                     b.HasIndex("PhoneCarrierId");
 
-                    b.ToTable("UnlockablePhoneCarrier", (string)null);
+                    b.ToTable("UnlockablePhonePhoneCarrier", (string)null);
                 });
 
-            modelBuilder.Entity("WebScraping.Core.Domain.Entities.UnlockableUnlockTool", b =>
+            modelBuilder.Entity("WebScraping.Core.Domain.Entities.UnlockablePhoneUnlockTool", b =>
                 {
-                    b.Property<int>("UnlockableId")
+                    b.Property<int>("UnlockablePhoneId")
                         .HasColumnType("int");
 
                     b.Property<int>("UnlockToolId")
                         .HasColumnType("int");
 
-                    b.HasKey("UnlockableId", "UnlockToolId");
+                    b.HasKey("UnlockablePhoneId", "UnlockToolId");
 
                     b.HasIndex("UnlockToolId");
 
-                    b.ToTable("UnlockableUnlockTool", (string)null);
+                    b.ToTable("UnlockablePhoneUnlockTool", (string)null);
+                });
+
+            modelBuilder.Entity("WebScraping.Core.Domain.Entities.UnlockProbability", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Created")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(max)")
+                        .HasDefaultValue("default");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(15)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UnlockProbability", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 0,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "None"
+                        },
+                        new
+                        {
+                            Id = 1,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Low"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Middle"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "High"
+                        });
                 });
 
             modelBuilder.Entity("WebScraping.Core.Domain.Entities.UnlockTool", b =>
@@ -988,7 +1062,7 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                         .HasForeignKey("BrandId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK_Item_BrandId");
+                        .HasConstraintName("FK_Item_Brand");
 
                     b.HasOne("WebScraping.Core.Domain.Entities.Condition", "Condition")
                         .WithMany("Items")
@@ -1002,7 +1076,7 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                         .HasForeignKey("PhoneCarrierId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK_Item_PhoneCarrierId");
+                        .HasConstraintName("FK_Item_PhoneCarrier");
 
                     b.HasOne("WebScraping.Core.Domain.Entities.Shop", "Shop")
                         .WithMany("Items")
@@ -1025,6 +1099,13 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_Item_Type");
 
+                    b.HasOne("WebScraping.Core.Domain.Entities.UnlockProbability", "UnlockProbability")
+                        .WithMany("Items")
+                        .HasForeignKey("UnlockProbabilityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_Item_UnlockProbability");
+
                     b.Navigation("Brand");
 
                     b.Navigation("Condition");
@@ -1036,9 +1117,11 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                     b.Navigation("Status");
 
                     b.Navigation("Type");
+
+                    b.Navigation("UnlockProbability");
                 });
 
-            modelBuilder.Entity("WebScraping.Core.Domain.Entities.Unlockable", b =>
+            modelBuilder.Entity("WebScraping.Core.Domain.Entities.UnlockablePhone", b =>
                 {
                     b.HasOne("WebScraping.Core.Domain.Entities.Brand", "Brand")
                         .WithMany("Supporteds")
@@ -1049,7 +1132,7 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                     b.Navigation("Brand");
                 });
 
-            modelBuilder.Entity("WebScraping.Core.Domain.Entities.UnlockablePhoneCarrier", b =>
+            modelBuilder.Entity("WebScraping.Core.Domain.Entities.UnlockablePhonePhoneCarrier", b =>
                 {
                     b.HasOne("WebScraping.Core.Domain.Entities.PhoneCarrier", "PhoneCarrier")
                         .WithMany("UnlockablePhoneCarriers")
@@ -1057,9 +1140,9 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebScraping.Core.Domain.Entities.Unlockable", "Unlockable")
+                    b.HasOne("WebScraping.Core.Domain.Entities.UnlockablePhone", "Unlockable")
                         .WithMany("UnlockablePhoneCarriers")
-                        .HasForeignKey("UnlockableId")
+                        .HasForeignKey("UnlockablePhoneId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1068,7 +1151,7 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                     b.Navigation("Unlockable");
                 });
 
-            modelBuilder.Entity("WebScraping.Core.Domain.Entities.UnlockableUnlockTool", b =>
+            modelBuilder.Entity("WebScraping.Core.Domain.Entities.UnlockablePhoneUnlockTool", b =>
                 {
                     b.HasOne("WebScraping.Core.Domain.Entities.UnlockTool", "UnlockTool")
                         .WithMany("UnlockableUnlockTools")
@@ -1076,9 +1159,9 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebScraping.Core.Domain.Entities.Unlockable", "Unlockable")
+                    b.HasOne("WebScraping.Core.Domain.Entities.UnlockablePhone", "Unlockable")
                         .WithMany("UnlockableUnlockTools")
-                        .HasForeignKey("UnlockableId")
+                        .HasForeignKey("UnlockablePhoneId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1123,11 +1206,16 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                     b.Navigation("Items");
                 });
 
-            modelBuilder.Entity("WebScraping.Core.Domain.Entities.Unlockable", b =>
+            modelBuilder.Entity("WebScraping.Core.Domain.Entities.UnlockablePhone", b =>
                 {
                     b.Navigation("UnlockablePhoneCarriers");
 
                     b.Navigation("UnlockableUnlockTools");
+                });
+
+            modelBuilder.Entity("WebScraping.Core.Domain.Entities.UnlockProbability", b =>
+                {
+                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("WebScraping.Core.Domain.Entities.UnlockTool", b =>

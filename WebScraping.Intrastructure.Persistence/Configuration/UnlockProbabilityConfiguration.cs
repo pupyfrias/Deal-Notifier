@@ -5,20 +5,20 @@ using WebScraping.Infrastructure.Persistence.Seeds;
 
 namespace WebScraping.Infrastructure.Persistence.Configuration
 {
-    public class StatusConfiguration : AuditableEntityConfiguration<Status, int>
+    public class UnlockProbabilityConfiguration : AuditableEntityConfiguration<UnlockProbability, int>
     {
-        public override void Configure(EntityTypeBuilder<Status> builder)
+        public override void Configure(EntityTypeBuilder<UnlockProbability> builder)
         {
             #region Table
 
-            builder.ToTable("Status");
+            builder.ToTable("UnlockProbability");
 
             #endregion Table
 
             #region Properties
 
             builder.Property(x => x.Name)
-                   .HasColumnType("VARCHAR(20)")
+                   .HasColumnType("VARCHAR(15)")
                    .IsRequired();
 
             builder.Property(x => x.Id)
@@ -27,12 +27,13 @@ namespace WebScraping.Infrastructure.Persistence.Configuration
             #endregion Properties
 
             #region Keys
+
             builder.HasKey(x => x.Id);
             #endregion Keys
 
             #region Data Seeding
 
-            builder.HasData(StatusSeed.data);
+            builder.HasData(UnlockProbabilitySeed.data);
 
             #endregion Data Seeding
 

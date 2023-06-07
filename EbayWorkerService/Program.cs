@@ -7,10 +7,16 @@ using WebScraping.Infrastructure.Email;
 using WebScraping.Infrastructure.Persistence.Models;
 using WebScraping.Infrastructure.Persistence.Services;
 
-Environment.CurrentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+var environment = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT");
+
+if(environment != "Development")
+{
+    Environment.CurrentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+}
+
 
 IHost host = Host.CreateDefaultBuilder(args)
-
     .UseWindowsService(options =>
     {
         options.ServiceName = "ebay";
@@ -25,5 +31,6 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
     })
    .Build();
+
 
 await host.RunAsync();

@@ -6,6 +6,6 @@ namespace WebScraping.Core.Domain.Entities
     {
         public override int Id { get; set; }
         public string Name { get; set; }
-        public List<UnlockableUnlockTool> UnlockableUnlockTools { get; set; }
+        public List<UnlockablePhoneUnlockTool> UnlockableUnlockTools { get; set; }
     }
 }

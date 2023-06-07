@@ -2,8 +2,8 @@
 
 namespace WebScraping.Core.Application.Contracts.Repositories
 {
-    public interface IUnlockableRepositoryAsync: IGenericRepositoryAsync<Unlockable>
+    public interface IUnlockableRepositoryAsync: IGenericRepositoryAsync<UnlockablePhone>
     {
-        Task<Unlockable?> GetByModelNumberAsync(string modelNumber);
+        Task<UnlockablePhone?> GetByModelNumberAsync(string modelNumber);
     }
 }

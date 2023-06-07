@@ -8,8 +8,8 @@ namespace WebScraping.Core.Application.Mappings
     {
         public UnlockablemapperConfig()
         {
-            CreateMap<UnlockableCreateDto, Unlockable>().ReverseMap();
-            CreateMap<UnlockableReadDto, Unlockable>().ReverseMap();
+            CreateMap<UnlockableCreateDto, UnlockablePhone>().ReverseMap();
+            CreateMap<UnlockableReadDto, UnlockablePhone>().ReverseMap();
 
         }
     }

@@ -6,7 +6,7 @@ using WebScraping.Infrastructure.Persistence.DbContexts;
 
 namespace WebScraping.Infrastructure.Persistence.Repositories
 {
-    public class UnlockableRepositoryAsync : GenericRepositoryAsync<Unlockable>, IUnlockableRepositoryAsync
+    public class UnlockableRepositoryAsync : GenericRepositoryAsync<UnlockablePhone>, IUnlockableRepositoryAsync
     {
 
         #region Private Variable
@@ -20,9 +20,9 @@ namespace WebScraping.Infrastructure.Persistence.Repositories
             _context = context;
         }
 
-        public async Task<Unlockable?> GetByModelNumberAsync(string modelNumber)
+        public async Task<UnlockablePhone?> GetByModelNumberAsync(string modelNumber)
         {
-            return await _context.Unlockables.FirstOrDefaultAsync(x => x.ModelNumber == modelNumber);
+            return await _context.UnlockablePhones.FirstOrDefaultAsync(x => x.ModelNumber == modelNumber);
         }
 
         #endregion Constructor

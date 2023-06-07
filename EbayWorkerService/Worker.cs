@@ -24,6 +24,9 @@ namespace EbayWorkerService
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+
+            var environment = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT");
+            _logger.Information($"environment :{environment}");
             _logger.Information("Starting ExecuteAsync.");
             TimerCallback callback = async (state) => await TimerElapsed();
 

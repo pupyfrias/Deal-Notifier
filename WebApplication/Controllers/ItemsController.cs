@@ -135,8 +135,6 @@ namespace WebApi.Controllers
         }
 
         // PUT: api/Items/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
         public async Task<IActionResult> PutItem(Guid id, Item item)
         {
@@ -167,8 +165,6 @@ namespace WebApi.Controllers
         }
 
         // POST: api/Items
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
         public async Task<ActionResult<Item>> PostItem(Item item)
         {
@@ -213,6 +209,26 @@ namespace WebApi.Controllers
             await _context.Database.ExecuteSqlRawAsync(query, keyword);
             return NoContent();
         }
+
+
+        [AllowAnonymous]
+        [HttpGet("{id}/cancel-notification")]
+        public async Task<ActionResult> CancelNotification(Guid id)
+        {
+            var item =  await _context.Items.FindAsync(id);
+
+            if(item == null)
+            {
+                return NotFound(id);
+            }
+
+            item.Notify = false;
+            await _context.SaveChangesAsync();
+
+            return Ok(new {success = true});
+
+        }
+
 
         private bool ItemExists(Guid id)
         {

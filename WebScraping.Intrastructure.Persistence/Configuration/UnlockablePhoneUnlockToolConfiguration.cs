@@ -4,20 +4,20 @@ using WebScraping.Core.Domain.Entities;
 
 namespace WebScraping.Infrastructure.Persistence.Configuration
 {
-    public class UnlockableUnlockToolConfiguration : IEntityTypeConfiguration<UnlockableUnlockTool>
+    public class UnlockablePhoneUnlockToolConfiguration : IEntityTypeConfiguration<UnlockablePhoneUnlockTool>
     {
-        public void Configure(EntityTypeBuilder<UnlockableUnlockTool> builder)
+        public void Configure(EntityTypeBuilder<UnlockablePhoneUnlockTool> builder)
         {
             #region Table
 
-            builder.ToTable("UnlockableUnlockTool");
+            builder.ToTable("UnlockablePhoneUnlockTool");
 
             #endregion Table
 
 
             #region Keys
 
-            builder.HasKey(x=> new {x.UnlockableId, x.UnlockToolId});
+            builder.HasKey(x=> new {x.UnlockablePhoneId, x.UnlockToolId});
 
             builder.HasOne(x => x.UnlockTool)
                 .WithMany(x => x.UnlockableUnlockTools)
@@ -25,7 +25,7 @@ namespace WebScraping.Infrastructure.Persistence.Configuration
 
             builder.HasOne(x => x.Unlockable)
                 .WithMany(x => x.UnlockableUnlockTools)
-                .HasForeignKey(x => x.UnlockableId);
+                .HasForeignKey(x => x.UnlockablePhoneId);
 
             #endregion Keys
 

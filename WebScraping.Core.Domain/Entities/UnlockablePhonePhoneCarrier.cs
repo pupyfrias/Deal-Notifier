@@ -1,10 +1,10 @@
 ﻿namespace WebScraping.Core.Domain.Entities
 {
-    public class UnlockablePhoneCarrier
+    public class UnlockablePhonePhoneCarrier
     {
-        public int UnlockableId { get; set; }
+        public int UnlockablePhoneId { get; set; }
         public int PhoneCarrierId { get; set; }
-        public Unlockable Unlockable { get; set; }
+        public UnlockablePhone Unlockable { get; set; }
         public PhoneCarrier PhoneCarrier { get; set; }
 
     }

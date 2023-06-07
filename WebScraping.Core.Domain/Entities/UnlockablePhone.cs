@@ -2,7 +2,7 @@
 
 namespace WebScraping.Core.Domain.Entities
 {
-    public class Unlockable : AuditableEntity<int>
+    public class UnlockablePhone : AuditableEntity<int>
     {
         public override int Id { get; set; }
         public int BrandId { get; set; }
@@ -10,7 +10,7 @@ namespace WebScraping.Core.Domain.Entities
         public string ModelName { get; set; }
         public string ModelNumber { get; set; }
         public Brand Brand { get; set; }
-        public List <UnlockablePhoneCarrier> UnlockablePhoneCarriers { get; set; }
-        public List <UnlockableUnlockTool> UnlockableUnlockTools { get; set; }
+        public List <UnlockablePhonePhoneCarrier> UnlockablePhoneCarriers { get; set; }
+        public List <UnlockablePhoneUnlockTool> UnlockableUnlockTools { get; set; }
     }
 }

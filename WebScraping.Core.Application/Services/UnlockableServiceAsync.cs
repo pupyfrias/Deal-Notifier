@@ -7,7 +7,7 @@ using WebScraping.Core.Domain.Entities;
 
 namespace WebScraping.Core.Application.Services
 {
-    public class UnlockableServiceAsync: GenericServiceAsync<Unlockable>, IUnlockableServiceAsync
+    public class UnlockableServiceAsync: GenericServiceAsync<UnlockablePhone>, IUnlockableServiceAsync
     {
         #region Private Variable
         private readonly IUnlockableRepositoryAsync _repository;
@@ -18,7 +18,7 @@ namespace WebScraping.Core.Application.Services
             _repository = repository;
         }
 
-        public async Task<Unlockable?> GetByModelNumberAsync(string modelNumber)
+        public async Task<UnlockablePhone?> GetByModelNumberAsync(string modelNumber)
         {
             return await _repository.GetByModelNumberAsync(modelNumber);
         }

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace WebScraping.Infrastructure.Persistence.Migrations
 {
-    public partial class tableadded : Migration
+    public partial class seedsandentitiesmodified : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -84,8 +84,7 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                 name: "Condition",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "VARCHAR(15)", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "default"),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
@@ -146,8 +145,7 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                 name: "Status",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "VARCHAR(20)", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "default"),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
@@ -177,6 +175,22 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UnlockProbability",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "VARCHAR(15)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "default"),
+                    Created = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModified = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UnlockProbability", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UnlockTool",
                 columns: table => new
                 {
@@ -194,14 +208,14 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Unlockable",
+                name: "UnlockablePhone",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     BrandId = table.Column<int>(type: "int", nullable: false),
-                    Comment = table.Column<string>(type: "VARCHAR(50)", nullable: false),
-                    ModelName = table.Column<string>(type: "VARCHAR(15)", nullable: false),
+                    Comment = table.Column<string>(type: "VARCHAR(50)", nullable: true),
+                    ModelName = table.Column<string>(type: "VARCHAR(50)", nullable: false),
                     ModelNumber = table.Column<string>(type: "VARCHAR(15)", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "default"),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
@@ -210,9 +224,9 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Unlockable", x => x.Id);
+                    table.PrimaryKey("PK_UnlockablePhone", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Unlockable_Brand_BrandId",
+                        name: "FK_UnlockablePhone_Brand_BrandId",
                         column: x => x.BrandId,
                         principalTable: "Brand",
                         principalColumn: "Id",
@@ -260,11 +274,14 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                     Image = table.Column<string>(type: "varchar(MAX)", nullable: false),
                     Link = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "VARCHAR(max)", nullable: false),
-                    BrandId = table.Column<int>(type: "int", nullable: false, defaultValueSql: "1"),
+                    BrandId = table.Column<int>(type: "int", nullable: true, defaultValueSql: "1"),
                     PhoneCarrierId = table.Column<int>(type: "int", nullable: false, defaultValueSql: "1"),
                     ModelNumber = table.Column<string>(type: "varchar(25)", nullable: true),
                     ModelName = table.Column<string>(type: "varchar(25)", nullable: true),
                     Notify = table.Column<bool>(type: "BIT", nullable: false, defaultValueSql: "1"),
+                    BidCount = table.Column<int>(type: "Int", nullable: false),
+                    UnlockProbabilityId = table.Column<int>(type: "int", nullable: false),
+                    ItemEndDate = table.Column<DateTime>(type: "DateTime", nullable: true),
                     Notified = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "default"),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
@@ -275,7 +292,7 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_Item", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Item_BrandId",
+                        name: "FK_Item_Brand",
                         column: x => x.BrandId,
                         principalTable: "Brand",
                         principalColumn: "Id",
@@ -287,7 +304,7 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Item_PhoneCarrierId",
+                        name: "FK_Item_PhoneCarrier",
                         column: x => x.PhoneCarrierId,
                         principalTable: "PhoneCarrier",
                         principalColumn: "Id",
@@ -310,50 +327,56 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                         principalTable: "Type",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Item_UnlockProbability",
+                        column: x => x.UnlockProbabilityId,
+                        principalTable: "UnlockProbability",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "UnlockablePhoneCarrier",
+                name: "UnlockablePhonePhoneCarrier",
                 columns: table => new
                 {
-                    UnlockableId = table.Column<int>(type: "int", nullable: false),
+                    UnlockablePhoneId = table.Column<int>(type: "int", nullable: false),
                     PhoneCarrierId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UnlockablePhoneCarrier", x => new { x.UnlockableId, x.PhoneCarrierId });
+                    table.PrimaryKey("PK_UnlockablePhonePhoneCarrier", x => new { x.UnlockablePhoneId, x.PhoneCarrierId });
                     table.ForeignKey(
-                        name: "FK_UnlockablePhoneCarrier_PhoneCarrier_PhoneCarrierId",
+                        name: "FK_UnlockablePhonePhoneCarrier_PhoneCarrier_PhoneCarrierId",
                         column: x => x.PhoneCarrierId,
                         principalTable: "PhoneCarrier",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UnlockablePhoneCarrier_Unlockable_UnlockableId",
-                        column: x => x.UnlockableId,
-                        principalTable: "Unlockable",
+                        name: "FK_UnlockablePhonePhoneCarrier_UnlockablePhone_UnlockablePhoneId",
+                        column: x => x.UnlockablePhoneId,
+                        principalTable: "UnlockablePhone",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "UnlockableUnlockTool",
+                name: "UnlockablePhoneUnlockTool",
                 columns: table => new
                 {
-                    UnlockableId = table.Column<int>(type: "int", nullable: false),
+                    UnlockablePhoneId = table.Column<int>(type: "int", nullable: false),
                     UnlockToolId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UnlockableUnlockTool", x => new { x.UnlockableId, x.UnlockToolId });
+                    table.PrimaryKey("PK_UnlockablePhoneUnlockTool", x => new { x.UnlockablePhoneId, x.UnlockToolId });
                     table.ForeignKey(
-                        name: "FK_UnlockableUnlockTool_Unlockable_UnlockableId",
-                        column: x => x.UnlockableId,
-                        principalTable: "Unlockable",
+                        name: "FK_UnlockablePhoneUnlockTool_UnlockablePhone_UnlockablePhoneId",
+                        column: x => x.UnlockablePhoneId,
+                        principalTable: "UnlockablePhone",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UnlockableUnlockTool_UnlockTool_UnlockToolId",
+                        name: "FK_UnlockablePhoneUnlockTool_UnlockTool_UnlockToolId",
                         column: x => x.UnlockToolId,
                         principalTable: "UnlockTool",
                         principalColumn: "Id",
@@ -381,8 +404,8 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                 columns: new[] { "Id", "LastModified", "LastModifiedBy", "Name" },
                 values: new object[,]
                 {
-                    { 1, null, null, "New" },
-                    { 2, null, null, "Used" }
+                    { 0, null, null, "Used" },
+                    { 1, null, null, "New" }
                 });
 
             migrationBuilder.InsertData(
@@ -391,30 +414,32 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                 values: new object[,]
                 {
                     { 1, null, null, "Unknown", "UNK" },
-                    { 2, null, null, "AT&T", "ATT" },
-                    { 3, null, null, "Verizon", "VZW" },
-                    { 4, null, null, "T-Mobile", "TMB" },
-                    { 5, null, null, "Sprint", "SPR" },
-                    { 6, null, null, "U.S. Cellular", "USC" },
-                    { 7, null, null, "CenturyLink", "CTL" },
-                    { 8, null, null, "Spectrum", "CHA" },
-                    { 9, null, null, "Xfinity", "XFN" },
-                    { 10, null, null, "Cricket", "AIO" },
-                    { 11, null, null, "Metro", "TMK" },
-                    { 12, null, null, "TracFone", "TFN" },
-                    { 13, null, null, "Boost Mobile", "BST" },
-                    { 14, null, null, "Q Link Wireless", "QLK" },
-                    { 15, null, null, "Republic Wireless", "RPW" },
-                    { 16, null, null, "Straight Talk", "STK" },
-                    { 17, null, null, "Virgin Mobile USA", "VMU" },
-                    { 18, null, null, "Total Wireless", "TWL" },
-                    { 19, null, null, "Google Fi", "GFI" },
-                    { 20, null, null, "Mint Mobile", "MNT" },
-                    { 21, null, null, "Ting", "TNG" },
-                    { 22, null, null, "Consumer Cellular", "CCU" },
-                    { 23, null, null, "Credo Mobile", "CRD" },
-                    { 24, null, null, "FreedomPop", "FDM" },
-                    { 25, null, null, "Net10 Wireless", "NTW" }
+                    { 2, null, null, "All Carriers", "ALL" },
+                    { 3, null, null, "AT&T|ATT", "ATT" },
+                    { 4, null, null, "Verizon", "VZW" },
+                    { 5, null, null, "T-Mobile", "TMB" },
+                    { 6, null, null, "Sprint", "SPR" },
+                    { 7, null, null, "U.S. Cellular", "USC" },
+                    { 8, null, null, "CenturyLink", "CTL" },
+                    { 9, null, null, "Spectrum", "CHA" },
+                    { 10, null, null, "Xfinity", "XFN" },
+                    { 11, null, null, "Cricket", "AIO" },
+                    { 12, null, null, "Metro|MetroPCS", "TMK" },
+                    { 13, null, null, "TracFone", "TFN" },
+                    { 14, null, null, "Boost Mobile|Boost", "BST" },
+                    { 15, null, null, "Q Link Wireless", "QLK" },
+                    { 16, null, null, "Republic Wireless", "RPW" },
+                    { 17, null, null, "Straight Talk", "STK" },
+                    { 18, null, null, "Virgin Mobile|Virgin", "VMU" },
+                    { 19, null, null, "Total Wireless", "TWL" },
+                    { 20, null, null, "Google Fi", "GFI" },
+                    { 21, null, null, "Mint Mobile|Mint", "MNT" },
+                    { 22, null, null, "Ting", "TNG" },
+                    { 23, null, null, "Consumer Cellular", "CCU" },
+                    { 24, null, null, "Credo Mobile", "CRD" },
+                    { 25, null, null, "FreedomPop", "FDM" },
+                    { 26, null, null, "Net10 Wireless|Net10", "NTW" },
+                    { 27, null, null, "Dish", "DSH" }
                 });
 
             migrationBuilder.InsertData(
@@ -430,22 +455,19 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
             migrationBuilder.InsertData(
                 table: "Status",
                 columns: new[] { "Id", "LastModified", "LastModifiedBy", "Name" },
-                values: new object[,]
-                {
-                    { 1, null, null, "InStock" },
-                    { 2, null, null, "OutStock" }
-                });
+                values: new object[] { 0, null, null, "OutStock" });
 
             migrationBuilder.InsertData(
-                table: "Type",
+                table: "Status",
                 columns: new[] { "Id", "LastModified", "LastModifiedBy", "Name" },
-                values: new object[] { 1, null, null, "Accessory" });
+                values: new object[] { 1, null, null, "InStock" });
 
             migrationBuilder.InsertData(
                 table: "Type",
                 columns: new[] { "Id", "LastModified", "LastModifiedBy", "Name" },
                 values: new object[,]
                 {
+                    { 1, null, null, "Accessory" },
                     { 2, null, null, "Headphone" },
                     { 3, null, null, "Memory" },
                     { 4, null, null, "Microphone" },
@@ -453,6 +475,27 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                     { 6, null, null, "Speaker" },
                     { 7, null, null, "Streaming" },
                     { 8, null, null, "TV" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "UnlockProbability",
+                columns: new[] { "Id", "LastModified", "LastModifiedBy", "Name" },
+                values: new object[,]
+                {
+                    { 0, null, null, "None" },
+                    { 1, null, null, "Low" },
+                    { 2, null, null, "Middle" },
+                    { 3, null, null, "High" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "UnlockTool",
+                columns: new[] { "Id", "LastModified", "LastModifiedBy", "Name" },
+                values: new object[,]
+                {
+                    { 1, null, null, "T-Unlock" },
+                    { 2, null, null, "SamKey" },
+                    { 3, null, null, "Global Unlocker" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -497,30 +540,35 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                 column: "TypeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Item_UnlockProbabilityId",
+                table: "Item",
+                column: "UnlockProbabilityId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PhoneCarrier_ShortName",
                 table: "PhoneCarrier",
                 column: "ShortName",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Unlockable_BrandId",
-                table: "Unlockable",
+                name: "IX_UnlockablePhone_BrandId",
+                table: "UnlockablePhone",
                 column: "BrandId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Unlockable_ModelNumber",
-                table: "Unlockable",
+                name: "IX_UnlockablePhone_ModelNumber",
+                table: "UnlockablePhone",
                 column: "ModelNumber",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_UnlockablePhoneCarrier_PhoneCarrierId",
-                table: "UnlockablePhoneCarrier",
+                name: "IX_UnlockablePhonePhoneCarrier_PhoneCarrierId",
+                table: "UnlockablePhonePhoneCarrier",
                 column: "PhoneCarrierId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UnlockableUnlockTool_UnlockToolId",
-                table: "UnlockableUnlockTool",
+                name: "IX_UnlockablePhoneUnlockTool_UnlockToolId",
+                table: "UnlockablePhoneUnlockTool",
                 column: "UnlockToolId");
         }
 
@@ -545,10 +593,10 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                 name: "SpBlackList");
 
             migrationBuilder.DropTable(
-                name: "UnlockablePhoneCarrier");
+                name: "UnlockablePhonePhoneCarrier");
 
             migrationBuilder.DropTable(
-                name: "UnlockableUnlockTool");
+                name: "UnlockablePhoneUnlockTool");
 
             migrationBuilder.DropTable(
                 name: "Condition");
@@ -563,10 +611,13 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                 name: "Type");
 
             migrationBuilder.DropTable(
+                name: "UnlockProbability");
+
+            migrationBuilder.DropTable(
                 name: "PhoneCarrier");
 
             migrationBuilder.DropTable(
-                name: "Unlockable");
+                name: "UnlockablePhone");
 
             migrationBuilder.DropTable(
                 name: "UnlockTool");

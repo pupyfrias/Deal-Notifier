@@ -9,7 +9,7 @@ namespace WebScraping.Infrastructure.Identity.Configurations
     {
         public void Configure(EntityTypeBuilder<ApplicationUser> builder)
         {
-            builder.ToTable("User");
+            builder.ToTable("Users");
             builder.HasData(UserSeed.data);
         }
     }

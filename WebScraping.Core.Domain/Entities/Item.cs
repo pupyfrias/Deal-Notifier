@@ -20,13 +20,18 @@ namespace WebScraping.Core.Domain.Entities
         public int? PhoneCarrierId { get; set; }
         public string? ModelNumber { get; set; }
         public string? ModelName { get; set; }
-        public bool Notify { get; set; } = true;
-        public DateTime Notified { get; set; }
+        public bool Notify { get; set; }
+        public bool IsAuction { get; set; }
+        public int BidCount { get; set; }
+        public int UnlockProbabilityId { get; set; }
+        public DateTime? ItemEndDate { get; set; }
+        public DateTime? Notified { get; set; }
         public Condition Condition { get; set; }
         public Shop Shop { get; set; }
         public Status Status { get; set; }
         public Type Type { get; set; }
         public Brand Brand { get; set; }
         public PhoneCarrier PhoneCarrier { get; set; }
+        public UnlockProbability UnlockProbability { get; set; }
     }
 }

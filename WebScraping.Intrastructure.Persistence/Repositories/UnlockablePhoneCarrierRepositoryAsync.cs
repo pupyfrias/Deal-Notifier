@@ -20,18 +20,18 @@ namespace WebScraping.Infrastructure.Persistence.Repositories
             _context = context;
         }
 
-        public async Task<UnlockablePhoneCarrier> CreateAsync(UnlockablePhoneCarrier entity)
+        public async Task<UnlockablePhonePhoneCarrier> CreateAsync(UnlockablePhonePhoneCarrier entity)
         {
             await _context.AddAsync(entity);  
             await _context.SaveChangesAsync();
             return entity;
         }
 
-        public async Task<bool> ExistsAsync(UnlockablePhoneCarrier entity)
+        public async Task<bool> ExistsAsync(UnlockablePhonePhoneCarrier entity)
         {
             return  await _context.UnlockablePhoneCarriers
                 .AnyAsync(x=> x.PhoneCarrierId == entity.PhoneCarrierId &&
-                              x.UnlockableId == entity.UnlockableId);
+                              x.UnlockablePhoneId == entity.UnlockablePhoneId);
         }
 
         #endregion Constructor

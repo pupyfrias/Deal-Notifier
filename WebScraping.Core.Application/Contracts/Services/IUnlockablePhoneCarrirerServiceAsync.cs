@@ -4,7 +4,7 @@ namespace WebScraping.Core.Application.Contracts.Services
 {
     public interface IUnlockablePhoneCarrierServiceAsync
     {
-        Task<UnlockablePhoneCarrier> CreateAsync(UnlockablePhoneCarrier entity);
-        Task<bool> ExistsAsync(UnlockablePhoneCarrier entity);
+        Task<UnlockablePhonePhoneCarrier> CreateAsync(UnlockablePhonePhoneCarrier entity);
+        Task<bool> ExistsAsync(UnlockablePhonePhoneCarrier entity);
     }
 }

@@ -2,11 +2,10 @@
 
 namespace WebScraping.Core.Domain.Entities
 {
-    public class Brand : AuditableEntity<int>
+    public class UnlockProbability : AuditableEntity<int>
     {
         public override int Id { get; set; }
         public string Name { get; set; }
-        public ICollection<Item> Items { get; set; }
-        public ICollection<UnlockablePhone> Supporteds { get; set; }
+        public List<Item> Items { get; set; }
     }
 }

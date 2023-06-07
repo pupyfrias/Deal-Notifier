@@ -4,13 +4,13 @@ using WebScraping.Core.Domain.Entities;
 
 namespace WebScraping.Infrastructure.Persistence.Configuration
 {
-    public class UnlockableConfiguration : AuditableEntityConfiguration<Unlockable, int>
+    public class UnlockablePhoneConfiguration : AuditableEntityConfiguration<UnlockablePhone, int>
     {
-        public override void Configure(EntityTypeBuilder<Unlockable> builder)
+        public override void Configure(EntityTypeBuilder<UnlockablePhone> builder)
         {
             #region Table
 
-            builder.ToTable("Unlockable");
+            builder.ToTable("UnlockablePhone");
 
             #endregion Table
 

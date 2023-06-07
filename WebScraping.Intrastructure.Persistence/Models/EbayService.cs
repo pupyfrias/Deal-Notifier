@@ -10,10 +10,8 @@ using WebScraping.Core.Application.Contracts.Services;
 using WebScraping.Core.Application.Dtos.Item;
 using WebScraping.Core.Application.Extensions;
 using WebScraping.Core.Application.Models.eBay;
-using Condition = WebScraping.Core.Application.Enums.Condition;
-using Shop = WebScraping.Core.Application.Enums.Shop;
-using Status = WebScraping.Core.Application.Enums.Status;
-using Type = WebScraping.Core.Application.Enums.Type;
+using Enums = WebScraping.Core.Application.Enums;
+
 
 namespace WebScraping.Infrastructure.Persistence.Models
 {
@@ -121,7 +119,7 @@ namespace WebScraping.Infrastructure.Persistence.Models
                     try
                     {
                         var shippingCost = element.ShippingOptions?[0]?.ShippingCost?.Value;
-                        decimal price = decimal.Parse(element.Price.Value);
+                        decimal price =  element.CurrentBidPrice != null ?  decimal.Parse(element.CurrentBidPrice.Value) : decimal.Parse(element.Price.Value);
 
                         if (shippingCost != null) { price += decimal.Parse(shippingCost); }
 
@@ -134,14 +132,17 @@ namespace WebScraping.Infrastructure.Persistence.Models
                         {
                             item.Image = element?.ThumbnailImages?[0]?.ImageUrl ?? element?.Image?.ImageUrl ?? string.Empty;
                             item.Price = price;
-                            item.ShopId = (int)Shop.eBay;
-                            item.TypeId = (int)Type.Phone;
-                            item.StatusId = (int)Status.InStock;
-                            item.ConditionId = element?.Condition == "New" ? (int)Condition.New : (int)Condition.Used;
-                            var setted = _itemService.TrySetModelNumberModelNameAndBrand(ref item);
-                            if(!setted) item.SetBrand();
-
+                            item.ShopId = (int) Enums.Shop.eBay;
+                            item.TypeId = (int) Enums.Type.Phone;
+                            item.StatusId = (int) Enums.Status.InStock;
+                            item.ConditionId = element?.Condition == "New" ? (int)Enums.Condition.New : (int)Enums.Condition.Used;
+                            item.ItemEndDate = element?.ItemEndDate?.AddHours(-4);
                             item.SetPhoneCarrier();
+                            _itemService.TrySetModelNumberModelNameAndBrand(ref item);
+                            item.BidCount = element?.BidCount ?? 0;
+                            item.IsAuction = item.ItemEndDate != null;
+                            
+                            _itemService.SetUnlockProbability(ref item);
                             itemList.Add(item);
                             checkedList.Add(item.Link);
                         }

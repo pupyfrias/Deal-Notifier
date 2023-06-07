@@ -15,5 +15,9 @@
         public int? PhoneCarrierId { get; set; }
         public string? ModelNumber { get; set; }
         public string? ModelName { get; set; }
+        public DateTime? ItemEndDate { get; set; }
+        public int BidCount { get; set; }
+        public bool IsAuction { get; set; }
+        public int UnlockProbabilityId { get; set; }
     }
 }

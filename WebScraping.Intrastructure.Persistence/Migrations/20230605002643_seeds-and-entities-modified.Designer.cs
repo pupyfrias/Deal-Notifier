@@ -12,8 +12,8 @@ using WebScraping.Infrastructure.Persistence.DbContexts;
 namespace WebScraping.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230514000113_table-added")]
-    partial class tableadded
+    [Migration("20230605002643_seeds-and-entities-modified")]
+    partial class seedsandentitiesmodified
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -227,10 +227,7 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("WebScraping.Core.Domain.Entities.Condition", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("Created")
                         .ValueGeneratedOnAdd()
@@ -266,7 +263,7 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = 2,
+                            Id = 0,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Used"
                         });
@@ -321,8 +318,10 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasDefaultValueSql("NEWID()");
 
+                    b.Property<int>("BidCount")
+                        .HasColumnType("Int");
+
                     b.Property<int?>("BrandId")
-                        .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasDefaultValueSql("1");
@@ -344,6 +343,9 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                     b.Property<string>("Image")
                         .IsRequired()
                         .HasColumnType("varchar(MAX)");
+
+                    b.Property<DateTime?>("ItemEndDate")
+                        .HasColumnType("DateTime");
 
                     b.Property<DateTime?>("LastModified")
                         .HasColumnType("datetime2");
@@ -406,6 +408,9 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                     b.Property<int>("TypeId")
                         .HasColumnType("int");
 
+                    b.Property<int>("UnlockProbabilityId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("BrandId");
@@ -422,6 +427,8 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                     b.HasIndex("StatusId");
 
                     b.HasIndex("TypeId");
+
+                    b.HasIndex("UnlockProbabilityId");
 
                     b.ToTable("Item", (string)null);
                 });
@@ -478,169 +485,183 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                         {
                             Id = 2,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "AT&T",
-                            ShortName = "ATT"
+                            Name = "All Carriers",
+                            ShortName = "ALL"
                         },
                         new
                         {
                             Id = 3,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "AT&T|ATT",
+                            ShortName = "ATT"
+                        },
+                        new
+                        {
+                            Id = 4,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Verizon",
                             ShortName = "VZW"
                         },
                         new
                         {
-                            Id = 4,
+                            Id = 5,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "T-Mobile",
                             ShortName = "TMB"
                         },
                         new
                         {
-                            Id = 5,
+                            Id = 6,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Sprint",
                             ShortName = "SPR"
                         },
                         new
                         {
-                            Id = 6,
+                            Id = 7,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "U.S. Cellular",
                             ShortName = "USC"
                         },
                         new
                         {
-                            Id = 7,
+                            Id = 8,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "CenturyLink",
                             ShortName = "CTL"
                         },
                         new
                         {
-                            Id = 8,
+                            Id = 9,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Spectrum",
                             ShortName = "CHA"
                         },
                         new
                         {
-                            Id = 9,
+                            Id = 10,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Xfinity",
                             ShortName = "XFN"
                         },
                         new
                         {
-                            Id = 10,
+                            Id = 11,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Cricket",
                             ShortName = "AIO"
                         },
                         new
                         {
-                            Id = 11,
+                            Id = 12,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Metro",
+                            Name = "Metro|MetroPCS",
                             ShortName = "TMK"
                         },
                         new
                         {
-                            Id = 12,
+                            Id = 13,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "TracFone",
                             ShortName = "TFN"
                         },
                         new
                         {
-                            Id = 13,
+                            Id = 14,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Boost Mobile",
+                            Name = "Boost Mobile|Boost",
                             ShortName = "BST"
                         },
                         new
                         {
-                            Id = 14,
+                            Id = 15,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Q Link Wireless",
                             ShortName = "QLK"
                         },
                         new
                         {
-                            Id = 15,
+                            Id = 16,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Republic Wireless",
                             ShortName = "RPW"
                         },
                         new
                         {
-                            Id = 16,
+                            Id = 17,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Straight Talk",
                             ShortName = "STK"
                         },
                         new
                         {
-                            Id = 17,
+                            Id = 18,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Virgin Mobile USA",
+                            Name = "Virgin Mobile|Virgin",
                             ShortName = "VMU"
                         },
                         new
                         {
-                            Id = 18,
+                            Id = 19,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Total Wireless",
                             ShortName = "TWL"
                         },
                         new
                         {
-                            Id = 19,
+                            Id = 20,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Google Fi",
                             ShortName = "GFI"
                         },
                         new
                         {
-                            Id = 20,
+                            Id = 21,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Mint Mobile",
+                            Name = "Mint Mobile|Mint",
                             ShortName = "MNT"
                         },
                         new
                         {
-                            Id = 21,
+                            Id = 22,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Ting",
                             ShortName = "TNG"
                         },
                         new
                         {
-                            Id = 22,
+                            Id = 23,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Consumer Cellular",
                             ShortName = "CCU"
                         },
                         new
                         {
-                            Id = 23,
+                            Id = 24,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Credo Mobile",
                             ShortName = "CRD"
                         },
                         new
                         {
-                            Id = 24,
+                            Id = 25,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "FreedomPop",
                             ShortName = "FDM"
                         },
                         new
                         {
-                            Id = 25,
+                            Id = 26,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Net10 Wireless",
+                            Name = "Net10 Wireless|Net10",
                             ShortName = "NTW"
+                        },
+                        new
+                        {
+                            Id = 27,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Dish",
+                            ShortName = "DSH"
                         });
                 });
 
@@ -701,10 +722,7 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("WebScraping.Core.Domain.Entities.Status", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("Created")
                         .ValueGeneratedOnAdd()
@@ -740,7 +758,7 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = 2,
+                            Id = 0,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "OutStock"
                         });
@@ -830,7 +848,7 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                         });
                 });
 
-            modelBuilder.Entity("WebScraping.Core.Domain.Entities.Unlockable", b =>
+            modelBuilder.Entity("WebScraping.Core.Domain.Entities.UnlockablePhone", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -842,7 +860,6 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Comment")
-                        .IsRequired()
                         .HasColumnType("VARCHAR(50)");
 
                     b.Property<DateTime>("Created")
@@ -864,7 +881,7 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("ModelName")
                         .IsRequired()
-                        .HasColumnType("VARCHAR(15)");
+                        .HasColumnType("VARCHAR(50)");
 
                     b.Property<string>("ModelNumber")
                         .IsRequired()
@@ -877,37 +894,94 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                     b.HasIndex("ModelNumber")
                         .IsUnique();
 
-                    b.ToTable("Unlockable", (string)null);
+                    b.ToTable("UnlockablePhone", (string)null);
                 });
 
-            modelBuilder.Entity("WebScraping.Core.Domain.Entities.UnlockablePhoneCarrier", b =>
+            modelBuilder.Entity("WebScraping.Core.Domain.Entities.UnlockablePhonePhoneCarrier", b =>
                 {
-                    b.Property<int>("UnlockableId")
+                    b.Property<int>("UnlockablePhoneId")
                         .HasColumnType("int");
 
                     b.Property<int>("PhoneCarrierId")
                         .HasColumnType("int");
 
-                    b.HasKey("UnlockableId", "PhoneCarrierId");
+                    b.HasKey("UnlockablePhoneId", "PhoneCarrierId");
 
                     b.HasIndex("PhoneCarrierId");
 
-                    b.ToTable("UnlockablePhoneCarrier", (string)null);
+                    b.ToTable("UnlockablePhonePhoneCarrier", (string)null);
                 });
 
-            modelBuilder.Entity("WebScraping.Core.Domain.Entities.UnlockableUnlockTool", b =>
+            modelBuilder.Entity("WebScraping.Core.Domain.Entities.UnlockablePhoneUnlockTool", b =>
                 {
-                    b.Property<int>("UnlockableId")
+                    b.Property<int>("UnlockablePhoneId")
                         .HasColumnType("int");
 
                     b.Property<int>("UnlockToolId")
                         .HasColumnType("int");
 
-                    b.HasKey("UnlockableId", "UnlockToolId");
+                    b.HasKey("UnlockablePhoneId", "UnlockToolId");
 
                     b.HasIndex("UnlockToolId");
 
-                    b.ToTable("UnlockableUnlockTool", (string)null);
+                    b.ToTable("UnlockablePhoneUnlockTool", (string)null);
+                });
+
+            modelBuilder.Entity("WebScraping.Core.Domain.Entities.UnlockProbability", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Created")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(max)")
+                        .HasDefaultValue("default");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(15)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UnlockProbability", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 0,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "None"
+                        },
+                        new
+                        {
+                            Id = 1,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Low"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Middle"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "High"
+                        });
                 });
 
             modelBuilder.Entity("WebScraping.Core.Domain.Entities.UnlockTool", b =>
@@ -942,6 +1016,26 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("UnlockTool", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "T-Unlock"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "SamKey"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Global Unlocker"
+                        });
                 });
 
             modelBuilder.Entity("WebScraping.Core.Domain.Entities.ConditionsToNotify", b =>
@@ -963,7 +1057,7 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                         .HasForeignKey("BrandId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK_Item_BrandId");
+                        .HasConstraintName("FK_Item_Brand");
 
                     b.HasOne("WebScraping.Core.Domain.Entities.Condition", "Condition")
                         .WithMany("Items")
@@ -977,7 +1071,7 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                         .HasForeignKey("PhoneCarrierId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK_Item_PhoneCarrierId");
+                        .HasConstraintName("FK_Item_PhoneCarrier");
 
                     b.HasOne("WebScraping.Core.Domain.Entities.Shop", "Shop")
                         .WithMany("Items")
@@ -1000,6 +1094,13 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_Item_Type");
 
+                    b.HasOne("WebScraping.Core.Domain.Entities.UnlockProbability", "UnlockProbability")
+                        .WithMany("Items")
+                        .HasForeignKey("UnlockProbabilityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_Item_UnlockProbability");
+
                     b.Navigation("Brand");
 
                     b.Navigation("Condition");
@@ -1011,9 +1112,11 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                     b.Navigation("Status");
 
                     b.Navigation("Type");
+
+                    b.Navigation("UnlockProbability");
                 });
 
-            modelBuilder.Entity("WebScraping.Core.Domain.Entities.Unlockable", b =>
+            modelBuilder.Entity("WebScraping.Core.Domain.Entities.UnlockablePhone", b =>
                 {
                     b.HasOne("WebScraping.Core.Domain.Entities.Brand", "Brand")
                         .WithMany("Supporteds")
@@ -1024,7 +1127,7 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                     b.Navigation("Brand");
                 });
 
-            modelBuilder.Entity("WebScraping.Core.Domain.Entities.UnlockablePhoneCarrier", b =>
+            modelBuilder.Entity("WebScraping.Core.Domain.Entities.UnlockablePhonePhoneCarrier", b =>
                 {
                     b.HasOne("WebScraping.Core.Domain.Entities.PhoneCarrier", "PhoneCarrier")
                         .WithMany("UnlockablePhoneCarriers")
@@ -1032,9 +1135,9 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebScraping.Core.Domain.Entities.Unlockable", "Unlockable")
+                    b.HasOne("WebScraping.Core.Domain.Entities.UnlockablePhone", "Unlockable")
                         .WithMany("UnlockablePhoneCarriers")
-                        .HasForeignKey("UnlockableId")
+                        .HasForeignKey("UnlockablePhoneId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1043,7 +1146,7 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                     b.Navigation("Unlockable");
                 });
 
-            modelBuilder.Entity("WebScraping.Core.Domain.Entities.UnlockableUnlockTool", b =>
+            modelBuilder.Entity("WebScraping.Core.Domain.Entities.UnlockablePhoneUnlockTool", b =>
                 {
                     b.HasOne("WebScraping.Core.Domain.Entities.UnlockTool", "UnlockTool")
                         .WithMany("UnlockableUnlockTools")
@@ -1051,9 +1154,9 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebScraping.Core.Domain.Entities.Unlockable", "Unlockable")
+                    b.HasOne("WebScraping.Core.Domain.Entities.UnlockablePhone", "Unlockable")
                         .WithMany("UnlockableUnlockTools")
-                        .HasForeignKey("UnlockableId")
+                        .HasForeignKey("UnlockablePhoneId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1098,11 +1201,16 @@ namespace WebScraping.Infrastructure.Persistence.Migrations
                     b.Navigation("Items");
                 });
 
-            modelBuilder.Entity("WebScraping.Core.Domain.Entities.Unlockable", b =>
+            modelBuilder.Entity("WebScraping.Core.Domain.Entities.UnlockablePhone", b =>
                 {
                     b.Navigation("UnlockablePhoneCarriers");
 
                     b.Navigation("UnlockableUnlockTools");
+                });
+
+            modelBuilder.Entity("WebScraping.Core.Domain.Entities.UnlockProbability", b =>
+                {
+                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("WebScraping.Core.Domain.Entities.UnlockTool", b =>

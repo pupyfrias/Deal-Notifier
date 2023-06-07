@@ -2,7 +2,7 @@
 {
     public enum Status
     {
-        InStock = 1,
-        OutStock
+        OutStock,
+        InStock
     }
 }

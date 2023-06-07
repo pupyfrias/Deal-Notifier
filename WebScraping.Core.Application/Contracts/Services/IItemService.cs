@@ -16,6 +16,8 @@ namespace WebScraping.Core.Application.Contracts.Services
 
         void UpdateStatus(ref ConcurrentBag<string> checkedList);
 
-        bool TrySetModelNumberModelNameAndBrand(ref ItemCreateDto item);
+        void TrySetModelNumberModelNameAndBrand(ref ItemCreateDto item);
+
+        void SetUnlockProbability(ref ItemCreateDto item);
     }
 }

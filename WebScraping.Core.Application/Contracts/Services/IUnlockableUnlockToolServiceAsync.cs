@@ -5,6 +5,6 @@ namespace WebScraping.Core.Application.Contracts.Services
 {
     public interface IUnlockableUnlockToolServiceAsync
     {
-        Task<UnlockableUnlockTool> CreateAsync(UnlockableUnlockTool entity);
+        Task<UnlockablePhoneUnlockTool> CreateAsync(UnlockablePhoneUnlockTool entity);
     }
 }

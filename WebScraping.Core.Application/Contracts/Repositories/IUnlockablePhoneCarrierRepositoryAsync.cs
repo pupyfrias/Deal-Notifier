@@ -4,7 +4,7 @@ namespace WebScraping.Core.Application.Contracts.Repositories
 {
     public interface IUnlockableUnlockToolRepositoryAsync
     {
-        Task<UnlockableUnlockTool> CreateAsync(UnlockableUnlockTool entity);
+        Task<UnlockablePhoneUnlockTool> CreateAsync(UnlockablePhoneUnlockTool entity);
 
     }
 }

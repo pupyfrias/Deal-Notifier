@@ -18,8 +18,8 @@
         public string Epid { get; set; }
         public Image Image { get; set; }
         public string ItemAffiliateWebUrl { get; set; }
-        public string ItemCreationDate { get; set; }
-        public string ItemEndDate { get; set; }
+        public DateTime ItemCreationDate { get; set; }
+        public DateTime? ItemEndDate { get; set; }
         public string ItemGroupHref { get; set; }
         public string ItemGroupType { get; set; }
         public string ItemHref { get; set; }
@@ -45,5 +45,6 @@
         public UnitPrice UnitPrice { get; set; }
         public string UnitPricingMeasure { get; set; }
         public int WatchCount { get; set; }
+
     }
 }

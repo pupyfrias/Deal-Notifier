@@ -14,5 +14,9 @@
         public string Image { get; set; }
         public string Link { get; set; }
         public string Name { get; set; }
+        public DateTime? ItemEndDate { get; set; }
+        public int BidCount { get; set; }
+        public bool IsAuction { get; set; }
+        public int UnlockProbabilityId { get; set; }
     }
 }

@@ -9,7 +9,7 @@ namespace WebScraping.Infrastructure.Persistence.DbContexts
         {
             Action<DbContextOptionsBuilder> Options = (options) =>
             {
-                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
+                options.UseSqlServer(configuration.GetConnectionString("DealNotifierConnection"),
                             optionAction => optionAction.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName));
 
                 options.EnableSensitiveDataLogging();
@@ -18,7 +18,7 @@ namespace WebScraping.Infrastructure.Persistence.DbContexts
             return Options;
         };
 
-        public static Action<DbContextOptionsBuilder> InMemoryOptions = (options) =>
+        public static readonly Action<DbContextOptionsBuilder> InMemoryOptions = (options) =>
         {
             options.UseInMemoryDatabase("ApplicationDb");
         };
