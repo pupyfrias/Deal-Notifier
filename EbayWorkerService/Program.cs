@@ -1,11 +1,11 @@
 using EbayWorkerService;
 using Serilog;
 using System.Reflection;
-using WebScraping.Core.Application.Contracts.Services;
-using WebScraping.Core.Application.SetupOptions;
-using WebScraping.Infrastructure.Email;
-using WebScraping.Infrastructure.Persistence.Models;
-using WebScraping.Infrastructure.Persistence.Services;
+using DealNotifier.Core.Application.Contracts.Services;
+using DealNotifier.Core.Application.SetupOptions;
+using DealNotifier.Infrastructure.Email;
+using DealNotifier.Infrastructure.Persistence.Models;
+using DealNotifier.Infrastructure.Persistence.Services;
 
 
 var environment = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT");

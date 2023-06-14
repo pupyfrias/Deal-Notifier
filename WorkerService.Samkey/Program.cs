@@ -1,12 +1,12 @@
 using Serilog;
 using System.Reflection;
-using WebScraping.Core.Application.Contracts.Repositories;
-using WebScraping.Core.Application.Contracts.Services;
-using WebScraping.Core.Application.Services;
-using WebScraping.Core.Application.SetupOptions;
-using WebScraping.Core.Domain.Configs;
-using WebScraping.Infrastructure.Persistence.DbContexts;
-using WebScraping.Infrastructure.Persistence.Repositories;
+using DealNotifier.Core.Application.Contracts.Repositories;
+using DealNotifier.Core.Application.Contracts.Services;
+using DealNotifier.Core.Application.Services;
+using DealNotifier.Core.Application.SetupOptions;
+using DealNotifier.Core.Domain.Configs;
+using DealNotifier.Infrastructure.Persistence.DbContexts;
+using DealNotifier.Infrastructure.Persistence.Repositories;
 using WorkerService.Samkey;
 
 

@@ -1,12 +1,12 @@
 using Microsoft.Extensions.Options;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using WebScraping.Core.Application.Contracts.Services;
-using WebScraping.Core.Application.Dtos.PhoneCarrier;
-using WebScraping.Core.Application.Dtos.Unlockable;
-using WebScraping.Core.Domain.Configs;
-using WebScraping.Core.Domain.Entities;
-using Enums = WebScraping.Core.Application.Enums;
+using DealNotifier.Core.Application.Contracts.Services;
+using DealNotifier.Core.Application.DTOs.PhoneCarrier;
+using DealNotifier.Core.Application.DTOs.Unlockable;
+using DealNotifier.Core.Domain.Configs;
+using DealNotifier.Core.Domain.Entities;
+using Enums = DealNotifier.Core.Application.Enums;
 using ILogger = Serilog.ILogger;
 using Timer = System.Threading.Timer;
 
