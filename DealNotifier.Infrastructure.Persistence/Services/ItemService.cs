@@ -1,26 +1,23 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using DealNotifier.Core.Application.Constants;
+using DealNotifier.Core.Application.Contracts.Services;
+using DealNotifier.Core.Application.DTOs;
+using DealNotifier.Core.Application.DTOs.Email;
+using DealNotifier.Core.Application.DTOs.Item;
+using DealNotifier.Core.Application.DTOs.PhoneCarrier;
+using DealNotifier.Core.Application.DTOs.Unlockable;
+using DealNotifier.Core.Application.Heplers;
+using DealNotifier.Core.Domain.Entities;
+using DealNotifier.Infrastructure.Persistence.DbContexts;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OData.Edm;
 using Serilog;
-using System;
 using System.Collections.Concurrent;
 using System.Data;
 using System.Linq.Dynamic.Core;
 using System.Text;
 using System.Text.RegularExpressions;
-using DealNotifier.Core.Application.Constants;
-using DealNotifier.Core.Application.Contracts.Services;
-using DealNotifier.Core.Application.DTOs;
-using DealNotifier.Core.Application.DTOs.Item;
-using DealNotifier.Core.Application.DTOs.PhoneCarrier;
-using DealNotifier.Core.Application.DTOs.Unlockable;
-using DealNotifier.Core.Application.DTOs.Email;
-using DealNotifier.Core.Application.Enums;
-using DealNotifier.Core.Application.Heplers;
-using DealNotifier.Core.Domain.Entities;
-using DealNotifier.Infrastructure.Persistence.DbContexts;
 using Enums = DealNotifier.Core.Application.Enums;
 
 namespace DealNotifier.Infrastructure.Persistence.Services

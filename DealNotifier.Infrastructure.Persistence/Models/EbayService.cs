@@ -51,7 +51,7 @@ namespace DealNotifier.Infrastructure.Persistence.Models
             {
                 var content = await response.Content.ReadFromJsonAsync<eBayResponse>();
                 Mapping(content?.ItemSummaries);
-                _itemService.SaveOrUpdate(ref itemList);
+                _itemService.SaveOrUpdate(in itemList);
 
                 _logger.Information($"Total: {content?.Total}");
                 _logger.Information($"1\t| {counter}\t| {itemList.Count}");
@@ -80,7 +80,7 @@ namespace DealNotifier.Infrastructure.Persistence.Models
                             Mapping(data?.ItemSummaries);
                             currentUrl = data?.Next;
                             
-                            _itemService.SaveOrUpdate(ref itemList);
+                            _itemService.SaveOrUpdate(in itemList);
                             _logger.Information($"1\t| {counter}\t| {itemList.Count}");
                             counter++;
                             itemList.Clear();
