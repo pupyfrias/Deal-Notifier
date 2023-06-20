@@ -10,7 +10,7 @@ using DealNotifier.Core.Domain.Configs;
 using Microsoft.Extensions.Options;
 
 
-namespace WorkerService.T_Unlock_DealNotifier
+namespace WorkerService.T_Unlock_WebScraping
 {
     public class Worker : BackgroundService
     {
@@ -60,7 +60,7 @@ namespace WorkerService.T_Unlock_DealNotifier
             {
                 _logger.Error(ex, ex.Message);
             }
-           
+
         }
 
         /*protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -108,8 +108,8 @@ namespace WorkerService.T_Unlock_DealNotifier
             await Scrapping();
             _logger.Information("T-Unlock Scraping Service completed.");
 
-           
-           
+
+
         }
 
 
@@ -128,7 +128,7 @@ namespace WorkerService.T_Unlock_DealNotifier
 
         private async Task Scrapping()
         {
-            foreach(var path in _tUnlockUrlConfig.Paths)
+            foreach (var path in _tUnlockUrlConfig.Paths)
             {
                 string urlBase = _tUnlockUrlConfig.Base;
                 string url = urlBase + path;
@@ -217,6 +217,6 @@ namespace WorkerService.T_Unlock_DealNotifier
                 }
             }
         }
-       
+
     }
 }

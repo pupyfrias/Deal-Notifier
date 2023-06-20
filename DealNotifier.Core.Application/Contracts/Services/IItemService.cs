@@ -12,7 +12,7 @@ namespace DealNotifier.Core.Application.Contracts.Services
 
         Task NotifyByEmail();
 
-        void SaveOrUpdate(ref ConcurrentBag<ItemCreateDto> items);
+        void SaveOrUpdate(in ConcurrentBag<ItemCreateDto> items);
 
         void UpdateStatus(ref ConcurrentBag<string> checkedList);
 

@@ -11,19 +11,21 @@ using DealNotifier.Core.Application.DTOs.Item;
 using DealNotifier.Core.Application.Extensions;
 using DealNotifier.Core.Application.Models.eBay;
 using Enums = DealNotifier.Core.Application.Enums;
-
+using Newtonsoft.Json;
+using Microsoft.IdentityModel.Tokens;
 
 namespace DealNotifier.Infrastructure.Persistence.Models
 {
     public class EbayService : IEbayService
     {
-        private readonly ILogger _logger;
-        private readonly IItemService _itemService;
         private ConcurrentBag<ItemCreateDto> itemList = new ConcurrentBag<ItemCreateDto>();
         private ConcurrentBag<string> checkedList = new ConcurrentBag<string>();
+        private DateTime expiresAt;
+        private readonly IItemService _itemService;
+        private readonly ILogger _logger;
         private readonly string baseUrl = @"https://api.ebay.com/buy/browse/v1/item_summary/search?filter=price:[20..100],priceCurrency:USD,conditionIds:{1000|3000},itemLocationCountry:US&sort=price&limit=200&aspect_filter=categoryId:9355,Operating System:{Android},Storage Capacity:{512 GB|256 GB|64 GB|32 GB|128 GB}&q=(LG,Motorola,Samsung)&category_ids=9355";
+        private string accessToken = string.Empty;
         private string? currentUrl = string.Empty;
-        private bool tokenRefreshed;
 
         public EbayService(ILogger logger, IItemService itemService, IEmailServiceAsync emailService)
         {
@@ -37,12 +39,9 @@ namespace DealNotifier.Infrastructure.Persistence.Models
             await RunAsync(baseUrl);
         }
 
-        private async Task RunAsync(string url)
+        private async Task RunAsync(string? url, int counter = 1)
         {
-            int counter = 1;
             currentUrl = url;
-
-            string accessToken = Environment.GetEnvironmentVariable("AccessToken") ?? string.Empty;
             HttpClient httpClient = new HttpClient();
 
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -54,20 +53,33 @@ namespace DealNotifier.Infrastructure.Persistence.Models
                 Mapping(content?.ItemSummaries);
                 _itemService.SaveOrUpdate(ref itemList);
 
+                _logger.Information($"Total: {content?.Total}");
                 _logger.Information($"1\t| {counter}\t| {itemList.Count}");
                 counter++;
                 itemList.Clear();
                 currentUrl = content?.Next;
 
-                while (currentUrl != null)
+
+                while (true)
                 {
+                    if (expiresAt <= DateTime.Now)
+                    {
+                        await RefreshTokenAsync();
+                        await RunAsync(currentUrl, counter);
+                        return;
+                    }
+
+
                     using (HttpResponseMessage httpResponseMessage = httpClient.GetAsync(currentUrl).Result)
                     {
                         if (response.IsSuccessStatusCode)
                         {
                             var data = await httpResponseMessage.Content.ReadFromJsonAsync<eBayResponse>();
+                            if (data?.Next == null) break;
+
                             Mapping(data?.ItemSummaries);
                             currentUrl = data?.Next;
+                            
                             _itemService.SaveOrUpdate(ref itemList);
                             _logger.Information($"1\t| {counter}\t| {itemList.Count}");
                             counter++;
@@ -75,13 +87,16 @@ namespace DealNotifier.Infrastructure.Persistence.Models
                         }
                         else if (response.StatusCode == HttpStatusCode.Unauthorized)
                         {
+                            _logger.Information("Unauthorized inside while");
                             await RefreshTokenAsync();
-                            await RunAsync(currentUrl);
-                            tokenRefreshed = true;
+                            await RunAsync(currentUrl, counter);
+                            return;
+
                         }
                         else
                         {
                             _logger.Warning($"{(int)response.StatusCode} | {response.ReasonPhrase}");
+                            break;
                         }
                     }
                 }
@@ -89,14 +104,13 @@ namespace DealNotifier.Infrastructure.Persistence.Models
                 _itemService.UpdateStatus(ref checkedList);
                 await _itemService.NotifyByEmail();
 
-
-
             }
-            else if (response.StatusCode == HttpStatusCode.Unauthorized)
+            else if (response.StatusCode == HttpStatusCode.Unauthorized || accessToken.IsNullOrEmpty())
             {
+                _logger.Information("Unauthorized");
                 await RefreshTokenAsync();
                 await RunAsync(currentUrl);
-                tokenRefreshed = true;
+                
             }
             else
             {
@@ -118,29 +132,28 @@ namespace DealNotifier.Infrastructure.Persistence.Models
                 {
                     try
                     {
-                        decimal price = 0;
-                        bool isAuction = decimal.TryParse(element.CurrentBidPrice?.Value, out decimal currentBidPrice);
-
-                        if (isAuction)
-                        {
-                            price = currentBidPrice;
-                        }
-                        else
-                        {
-                            decimal.TryParse(element.Price?.Value, out price);
-                        }
-
-                        decimal.TryParse(element.ShippingOptions?[0]?.ShippingCost?.Value, out decimal shippingCost);
-                        price += shippingCost;
-
                         ItemCreateDto item = new ItemCreateDto();
                         item.Name = element.Title;
                         item.Link = element.ItemWebUrl.Substring(0, element.ItemWebUrl.IndexOf("?"));
                         bool canBeSaved = await item.CanBeSaved();
 
-
                         if (canBeSaved)
                         {
+                            decimal price = 0;
+                            bool isAuction = decimal.TryParse(element.CurrentBidPrice?.Value, out decimal currentBidPrice);
+
+                            if (isAuction)
+                            {
+                                price = currentBidPrice;
+                            }
+                            else
+                            {
+                                decimal.TryParse(element.Price?.Value, out price);
+                            }
+
+                            decimal.TryParse(element.ShippingOptions?[0]?.ShippingCost?.Value, out decimal shippingCost);
+                            price += shippingCost;
+
                             item.Image = element?.ThumbnailImages?[0]?.ImageUrl ?? element?.Image?.ImageUrl ?? string.Empty;
                             item.Price = price;
                             item.ShopId = (int)Enums.Shop.eBay;
@@ -211,8 +224,10 @@ namespace DealNotifier.Infrastructure.Persistence.Models
             {
                 string responseBody = await response.Content.ReadAsStringAsync();
                 var jsonResponse = JsonDocument.Parse(responseBody);
-                var newAccessToken = jsonResponse.RootElement.GetProperty("access_token").GetString() ?? string.Empty;
-                Environment.SetEnvironmentVariable("AccessToken", newAccessToken);
+                accessToken = jsonResponse.RootElement.GetProperty("access_token").GetString() ?? string.Empty;
+                var expiresIn = jsonResponse.RootElement.GetProperty("expires_in").GetInt32();
+                expiresAt = DateTime.Now.AddSeconds(expiresIn - 60);
+                _logger.Information("Token Refreshed");
             }
             else
             {

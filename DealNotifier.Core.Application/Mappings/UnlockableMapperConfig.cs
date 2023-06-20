@@ -4,9 +4,9 @@ using DealNotifier.Core.Domain.Entities;
 
 namespace DealNotifier.Core.Application.Mappings
 {
-    public class UnlockablemapperConfig : Profile
+    public class UnlockableMapperConfig : Profile
     {
-        public UnlockablemapperConfig()
+        public UnlockableMapperConfig()
         {
             CreateMap<UnlockableCreateDto, UnlockablePhone>().ReverseMap();
             CreateMap<UnlockableReadDto, UnlockablePhone>().ReverseMap();

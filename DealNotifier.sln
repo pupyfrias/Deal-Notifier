@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EbayWorkerService", "EbayWo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkerService.Samkey", "WorkerService.Samkey\WorkerService.Samkey.csproj", "{E3878137-CA53-4D17-B060-8D8784B49203}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DealNotifier", "DealNotifier\DealNotifier.csproj", "{19FE7C3D-C3B6-4352-AFFD-FBCCB334ABEA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebScraping", "DealNotifier\WebScraping.csproj", "{19FE7C3D-C3B6-4352-AFFD-FBCCB334ABEA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DealNotifier.Core.Application", "DealNotifier.Core.Application\DealNotifier.Core.Application.csproj", "{8D7A3CC1-F1E3-4063-909E-53BBE68BCE65}"
 EndProject

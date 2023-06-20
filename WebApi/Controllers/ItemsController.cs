@@ -18,7 +18,7 @@ using Status = DealNotifier.Core.Application.Enums.Status;
 
 namespace WebApi.Controllers
 {
-    [Authorize(Roles = $"{Role.SuperAdmin}")]
+    //[Authorize(Roles = $"{Role.SuperAdmin}")]
     [Route("api/[controller]")]
     [ApiController]
     public class ItemsController : ControllerBase
@@ -190,7 +190,8 @@ namespace WebApi.Controllers
                     return NotFound();
                 }
                 _context.Items.RemoveRange(itemList);
-                _context.BlackLists.AddRange(_mapper.Map<List<BlackList>>(itemList));
+                var mappedItemList = _mapper.Map<List<BlackList>>(itemList);
+                _context.BlackLists.AddRange(mappedItemList);
                 await _context.SaveChangesAsync();
 
                 return NoContent();
@@ -201,6 +202,7 @@ namespace WebApi.Controllers
             }
         }
 
+        [AllowAnonymous]
         [HttpPost("BanKeyword")]
         public async Task<ActionResult> BanKeyword([FromBody] BanKeywordDto dto)
         {

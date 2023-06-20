@@ -4,9 +4,9 @@ using DealNotifier.Core.Domain.Entities;
 
 namespace DealNotifier.Core.Application.Mappings
 {
-    public class PhoneCarriermapperConfig : Profile
+    public class PhoneCarrierMapperConfig : Profile
     {
-        public PhoneCarriermapperConfig()
+        public PhoneCarrierMapperConfig()
         {
             CreateMap<PhoneCarrierReadDto, PhoneCarrier>().ReverseMap();
 

@@ -96,7 +96,7 @@ namespace DealNotifier.Infrastructure.Persistence.Services
                         <h2 style='margin:0;'>{0}</h2>
                         <p style ='font-size:large; margin:0;'>US$ {1}</p>
                         <p style ='font-size:large; margin:0;'>Unlock Probability: {5}</p>
-                        <a href='https://api-stores.com:8081/api/Items/{4}/cancel-notification' style= 'display:block'> Cancel Notification</a>
+                        <a href='https://10.0.0.3:8081/api/Items/{4}/cancel-notification' style= 'display:block'> Cancel Notification</a>
                         <a href='{2}'>
                             <img src='{3}' style=""width: 540px;height: 720px;object-fit: cover;""/>
                         </a>
@@ -120,7 +120,7 @@ namespace DealNotifier.Infrastructure.Persistence.Services
         /// Save item's data
         /// </summary>
         /// <param name="items">Items ConcurrentBag</param>
-        public void SaveOrUpdate(ref ConcurrentBag<ItemCreateDto> items)
+        public void SaveOrUpdate(in ConcurrentBag<ItemCreateDto> items)
         {
             var itemListToSave = new ConcurrentBag<Item>();
             var itemListToUpdate = new ConcurrentBag<Item>();
@@ -143,7 +143,7 @@ namespace DealNotifier.Infrastructure.Persistence.Services
                         decimal oldPrice = oldItem.Price;
                         decimal saving = oldPrice - item.Price;
 
-                        if (oldPrice != item.Price)
+                        if (oldPrice != item.Price || item.IsAuction)
                         {
                             if (oldPrice > item.Price)
                             {
@@ -348,6 +348,7 @@ namespace DealNotifier.Infrastructure.Persistence.Services
         private void ToNotify(Item item)
         {
             DateTime notified = item.Notified.HasValue ? (DateTime)item.Notified : DateTime.MinValue;
+            DateTime itemEndDate = item.ItemEndDate.HasValue ? (DateTime)item.ItemEndDate : DateTime.MinValue;
 
             foreach (ConditionsToNotifyDto conditionsToNotify in Helper.ConditionsToNotifyList)
             {
@@ -369,8 +370,8 @@ namespace DealNotifier.Infrastructure.Persistence.Services
 
                     if (item.IsAuction)
                     {
-                        var diff = (notified - DateTime.Now).TotalHours;
-                        if (diff > 2 || diff < 0)
+                        var diff = (itemEndDate - DateTime.Now).TotalHours;
+                        if (diff > 2 || diff < 0 || item.BidCount > 3)  
                         {
                             break;
                         }

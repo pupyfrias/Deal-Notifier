@@ -1,7 +1,6 @@
 ﻿using DealNotifier.Core.Application.DTOs.Item;
 using DealNotifier.Core.Application.Enums;
 using DealNotifier.Core.Application.Heplers;
-using Emuns = DealNotifier.Core.Application.Enums;
 
 namespace DealNotifier.Core.Application.Extensions
 {

@@ -4,7 +4,7 @@ using DealNotifier.Core.Application;
 using DealNotifier.Core.Application.SetupOptions;
 using DealNotifier.Infrastructure.Identity;
 using DealNotifier.Infrastructure.Persistence;
-
+using WebApi.Middlewares;
 {
     var builder = WebApplication.CreateBuilder(args);
     ConfigurationManager configuration = builder.Configuration;
@@ -27,7 +27,12 @@ using DealNotifier.Infrastructure.Persistence;
         app.UseSwaggerUI();
     }
 
-    app.AddMiddlewares();
+    app.UseMiddleware<ExceptionMiddleware>();
+    app.UseSerilogRequestLogging();
+    app.UseHttpsRedirection();
+    app.UseCors("AllowAll");
+    app.UseAuthentication();
+    app.UseAuthorization();
     app.MapControllers();
     app.Run();
 }

@@ -7,8 +7,7 @@ using DealNotifier.Core.Application.SetupOptions;
 using DealNotifier.Core.Domain.Configs;
 using DealNotifier.Infrastructure.Persistence.DbContexts;
 using DealNotifier.Infrastructure.Persistence.Repositories;
-using WorkerService.T_Unlock_DealNotifier;
-
+using WorkerService.T_Unlock_WebScraping;
 
 string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
 

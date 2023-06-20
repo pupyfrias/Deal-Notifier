@@ -2,7 +2,7 @@
 using Serilog;
 using System.Diagnostics;
 
-namespace DealNotifier
+namespace WebScraping
 {
     public class Program
     {
