@@ -133,7 +133,7 @@ namespace DealNotifier.Infrastructure.Persistence.Models
                         counter++;
                     }
 
-                    _itemService.SaveOrUpdate(ref itemList);
+                    _itemService.SaveOrUpdate(in itemList);
                 }
                 driver.Quit();
             }

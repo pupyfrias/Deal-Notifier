@@ -5,7 +5,7 @@ namespace DealNotifier.Infrastructure.Identity.Seeds
 {
     public static class UserRoleSeed
     {
-        public static List<IdentityUserRole<string>> data = new List<IdentityUserRole<string>>
+        public readonly static IReadOnlyList<IdentityUserRole<string>> data = new List<IdentityUserRole<string>>
         {
             new IdentityUserRole<string>
             {

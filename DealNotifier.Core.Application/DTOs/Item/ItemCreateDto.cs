@@ -19,5 +19,6 @@
         public int BidCount { get; set; }
         public bool IsAuction { get; set; }
         public int UnlockProbabilityId { get; set; }
+        public bool Notify { get; set; } = true;
     }
 }

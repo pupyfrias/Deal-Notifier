@@ -8,6 +8,7 @@ using DealNotifier.Core.Application.DTOs.Item;
 using DealNotifier.Core.Application.DTOs.PhoneCarrier;
 using DealNotifier.Core.Application.DTOs.Unlockable;
 using DealNotifier.Core.Application.Heplers;
+using DealNotifier.Core.Application.Models.eBay;
 using DealNotifier.Core.Domain.Entities;
 using DealNotifier.Infrastructure.Persistence.DbContexts;
 using Microsoft.Data.SqlClient;
@@ -40,6 +41,11 @@ namespace DealNotifier.Infrastructure.Persistence.Services
             _configurationProvider = configurationProvider;
             _emailService = emailService;
             _mapper = mapper;
+        }
+
+        public ItemService()
+        {
+                
         }
 
         #region Methods
@@ -126,6 +132,7 @@ namespace DealNotifier.Infrastructure.Persistence.Services
             {
                 using (var context = new ApplicationDbContext())
                 {
+
                     var oldItem = context.Items.FirstOrDefault(i => i.Link == item.Link);
                     if (oldItem == null)
                     {
@@ -140,7 +147,11 @@ namespace DealNotifier.Infrastructure.Persistence.Services
                         decimal oldPrice = oldItem.Price;
                         decimal saving = oldPrice - item.Price;
 
-                        if (oldPrice != item.Price || item.IsAuction)
+                        if (oldPrice != item.Price ||
+                            oldItem.UnlockProbabilityId != item.UnlockProbabilityId ||
+                            oldItem.Image != item.Image ||
+                            item.IsAuction
+                            )
                         {
                             if (oldPrice > item.Price)
                             {
@@ -157,13 +168,17 @@ namespace DealNotifier.Infrastructure.Persistence.Services
 
                             oldItem.Notified = null;
                             _mapper.Map(item, oldItem);
-                            ToNotify(oldItem);
                             itemListToUpdate.Add(oldItem);
+                            if ((oldPrice - item.Price) >= 5 || item.IsAuction)
+                            {
+                                ToNotify(oldItem);
+                            }
+
 
                         }
                     }
                 }
-            });
+            }); 
 
             try
             {
@@ -197,9 +212,10 @@ namespace DealNotifier.Infrastructure.Persistence.Services
         {
             var modelNumber = item.ModelNumber;
             var modelName = item.ModelName;
-            UnlockablePhone? unlockable = default;
+            var carrierId = item.PhoneCarrierId;
 
-            if (item.Name.Contains("unlocked", StringComparison.OrdinalIgnoreCase))
+            if (item.Name.Contains("unlocked", StringComparison.OrdinalIgnoreCase) 
+                || item.Name.Contains("ulk", StringComparison.OrdinalIgnoreCase))
             {
                 item.UnlockProbabilityId = (int)Enums.UnlockProbability.High;
             }
@@ -207,36 +223,38 @@ namespace DealNotifier.Infrastructure.Persistence.Services
             {
                 using (var context = new ApplicationDbContext())
                 {
-                    bool anyUnlockToolCanUnlockIt = false, anyPhoneCarrierMatch = false;
+                    string query = "EXEC CAN_BE_UNLOCKED_MODELNUMBER @modelNumber, @carrierId, @OutputResult OUTPUT";
+                    var modelNameParameter = new SqlParameter("@modelName", modelName);
+                    var modelNumberParameter = new SqlParameter("@modelNumber", modelNumber);
+                    var carrierIdParameter = new SqlParameter("@carrierId", carrierId);
+                    var outputResult = new SqlParameter("@OutputResult", SqlDbType.Bit) { Direction = ParameterDirection.Output };
 
-                    if (modelNumber != null)
+                    if(modelNumber != null)
                     {
-                        unlockable = context.UnlockablePhones.FirstOrDefault(x => x.ModelNumber == modelNumber);
+                        context.Database.ExecuteSqlRaw(query, modelNumberParameter, carrierIdParameter, outputResult);
+                        bool result = (bool)outputResult.Value;
+
+                        if (result)
+                        {
+                            item.UnlockProbabilityId = (int)Enums.UnlockProbability.High;
+                            return;
+                        }
+
                     }
-                    else if (modelName != null)
+                    else if(modelName != null)
                     {
-                        unlockable = context.UnlockablePhones.FirstOrDefault(x => x.ModelName == modelName);
+                        query = "EXEC CAN_BE_UNLOCKED_MODELNAME @modelName, @carrierId, @OutputResult OUTPUT";
+                        context.Database.ExecuteSqlRaw(query, modelNameParameter, carrierIdParameter, outputResult);
+                        bool result = (bool)outputResult.Value;
+
+                        if (result)
+                        {
+                            item.UnlockProbabilityId = (int)Enums.UnlockProbability.Middle;
+                            return;
+                        }
                     }
 
-
-                    if (unlockable != null)
-                    {
-                        anyUnlockToolCanUnlockIt = context.UnlockableUnlockTools.FirstOrDefault(x => x.UnlockablePhoneId == unlockable.Id) != null;
-                        anyPhoneCarrierMatch = context.UnlockablePhoneCarriers.FirstOrDefault(x => x.UnlockablePhoneId == unlockable.Id) != null;
-                    }
-
-                    if (anyUnlockToolCanUnlockIt && anyPhoneCarrierMatch)
-                    {
-                        item.UnlockProbabilityId = (int)Enums.UnlockProbability.High;
-                    }
-                    else if (anyUnlockToolCanUnlockIt || anyPhoneCarrierMatch)
-                    {
-                        item.UnlockProbabilityId = (int)Enums.UnlockProbability.Middle;
-                    }
-                    else
-                    {
-                        item.UnlockProbabilityId = (int)Enums.UnlockProbability.Low;
-                    }
+                    item.UnlockProbabilityId = (int)Enums.UnlockProbability.Low;
                 }
             }
         }
@@ -359,8 +377,7 @@ namespace DealNotifier.Infrastructure.Persistence.Services
                     )
                 {
 
-                    if (item.TypeId == (int)Enums.Type.Phone
-                        && item.UnlockProbabilityId != (int)Enums.UnlockProbability.Middle && item.UnlockProbabilityId != (int)Enums.UnlockProbability.High)
+                    if (item.TypeId == (int)Enums.Type.Phone && item.UnlockProbabilityId == (int)Enums.UnlockProbability.Low)
                     {
                         break;
                     }

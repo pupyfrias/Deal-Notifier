@@ -7,6 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="Google.Protobuf" Version="3.21.5" />
+      <PackageReference Include="Grpc.Net.ClientFactory" Version="2.49.0" />
+      <PackageReference Include="Grpc.Tools" Version="2.49.0">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
       <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.11" />
       <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
       <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.11" />
@@ -22,6 +28,18 @@
     <ItemGroup>
       <ProjectReference Include="..\DealNotifier.Core.Application\DealNotifier.Core.Application.csproj" />
       <ProjectReference Include="..\DealNotifier.Core.Domain\DealNotifier.Core.Domain.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Protobuf Include="..\..\DealNotifier Security\DealNotifierSecurity.GrpcService\Protos\auth.proto" GrpcServices="Client">
+        <Link>Protos\auth.proto</Link>
+      </Protobuf>
+      <Protobuf Include="..\..\DealNotifier Security\DealNotifierSecurity.GrpcService\Protos\role.proto" GrpcServices="Client">
+        <Link>Protos\role.proto</Link>
+      </Protobuf>
+      <Protobuf Include="..\..\DealNotifier Security\DealNotifierSecurity.GrpcService\Protos\user.proto" GrpcServices="Client">
+        <Link>Protos\user.proto</Link>
+      </Protobuf>
     </ItemGroup>
   
   </Project>

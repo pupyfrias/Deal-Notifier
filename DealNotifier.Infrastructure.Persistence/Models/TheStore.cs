@@ -114,7 +114,7 @@ namespace DealNotifier.Infrastructure.Persistence.Models
                     }
                 }
 
-                _itemService.SaveOrUpdate(ref itemList);
+                _itemService.SaveOrUpdate(in itemList);
             }
         }
     }

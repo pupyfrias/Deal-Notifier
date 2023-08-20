@@ -22,7 +22,7 @@ namespace DealNotifier.Infrastructure.Identity.Services
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly JWTConfig _jwtSettings;
+        private readonly JWTConfig _jwtConfig;
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
         private ApplicationUser _user;
@@ -30,14 +30,14 @@ namespace DealNotifier.Infrastructure.Identity.Services
         public AccountService(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            IOptions<JWTConfig> jwtSettings,
+            IOptions<JWTConfig> jwtConfig,
             ILogger logger,
             IMapper mapper
             )
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _jwtSettings = jwtSettings.Value;
+            _jwtConfig = jwtConfig.Value;
             _logger = logger;
             _mapper = mapper;
         }
@@ -76,7 +76,7 @@ namespace DealNotifier.Infrastructure.Identity.Services
                 UserName = _user.UserName,
                 IsVerified = _user.EmailConfirmed,
                 Roles = roleList,
-                ExpiresIn = _jwtSettings.DurationInMinutes
+                ExpiresIn = _jwtConfig.DurationInMinutes
             };
 
             _logger.Information("User {UserName} logged in", _user.UserName);
@@ -116,7 +116,7 @@ namespace DealNotifier.Infrastructure.Identity.Services
 
         private async Task<string> GenerateAccessTokenAsync()
         {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtConfig.Key));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
             var roleList = await _userManager.GetRolesAsync(_user);
 
@@ -134,10 +134,10 @@ namespace DealNotifier.Infrastructure.Identity.Services
             .Union(rolesClaims);
 
             var securityToken = new JwtSecurityToken(
-                issuer: _jwtSettings.Issuer,
-                audience: _jwtSettings.Audience,
+                issuer: _jwtConfig.Issuer,
+                audience: _jwtConfig.Audience,
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(_jwtSettings.DurationInMinutes),
+                expires: DateTime.Now.AddMinutes(_jwtConfig.DurationInMinutes),
                 signingCredentials: credentials);
 
             var token = new JwtSecurityTokenHandler().WriteToken(securityToken);
@@ -163,7 +163,7 @@ namespace DealNotifier.Infrastructure.Identity.Services
                 var tokenResponse = new RefreshTokenResponseDto
                 {
                     AccessToken = accessToken,
-                    ExpiresIn = _jwtSettings.DurationInMinutes,
+                    ExpiresIn = _jwtConfig.DurationInMinutes,
                     RefreshToken = await CreateRefreshTokenAsync()
                 };
 

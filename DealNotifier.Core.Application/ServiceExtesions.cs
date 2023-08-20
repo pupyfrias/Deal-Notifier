@@ -1,5 +1,4 @@
-﻿using DealNotifier.Core.Application.Mappings;
-using DealNotifier.Core.Application.SetupOptions;
+﻿using DealNotifier.Core.Application.SetupOptions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
