@@ -3,6 +3,7 @@ using DealNotifier.Core.Application.Exceptions;
 using DealNotifier.Core.Application.Extensions;
 using DealNotifier.Core.Application.Wrappers;
 using ILogger = Serilog.ILogger;
+using Grpc.Core;
 
 namespace WebApi.Middlewares
 {
@@ -25,16 +26,72 @@ namespace WebApi.Middlewares
             }
             catch (Exception e)
             {
+
+                Exception exception = e.InnerException ?? e;
+
                 #region StatusCode
 
-                switch (e)
+
+
+                string message = exception.Message;
+                switch (exception)
                 {
-                    case ApiException:
+                    case BadRequestException:
                         context.Response.StatusCode = StatusCodes.Status400BadRequest;
                         break;
 
                     case KeyNotFoundException:
                         context.Response.StatusCode = StatusCodes.Status404NotFound;
+                        break;
+
+                    case RpcException rpcE:
+
+                        message = rpcE.Status.Detail;
+                        switch (rpcE.StatusCode)
+                        {
+                            case StatusCode.OK:
+                                context.Response.StatusCode = StatusCodes.Status200OK;
+                                break;
+                            case StatusCode.Unauthenticated:
+                                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                                break;
+                            case StatusCode.PermissionDenied:
+                                context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                                break;
+                            case StatusCode.NotFound:
+                                context.Response.StatusCode = StatusCodes.Status404NotFound;
+                                break;
+                            case StatusCode.AlreadyExists:
+                            case StatusCode.Aborted:
+                                context.Response.StatusCode = StatusCodes.Status409Conflict;
+                                break;
+                            case StatusCode.InvalidArgument:
+                            case StatusCode.OutOfRange:
+                                context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                                break;
+                            case StatusCode.FailedPrecondition:
+                                context.Response.StatusCode = StatusCodes.Status412PreconditionFailed;
+                                break;
+                            case StatusCode.Cancelled:
+                                context.Response.StatusCode = StatusCodes.Status408RequestTimeout;
+                                break;
+                            case StatusCode.ResourceExhausted:
+                                context.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+                                break;
+                            case StatusCode.DeadlineExceeded:
+                                context.Response.StatusCode = StatusCodes.Status504GatewayTimeout;
+                                break;
+                            case StatusCode.Unimplemented:
+                                context.Response.StatusCode = StatusCodes.Status501NotImplemented;
+                                break;
+                            case StatusCode.Unavailable:
+                                context.Response.StatusCode = StatusCodes.Status503ServiceUnavailable;
+                                break;
+  
+                            default:
+                                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                                break;
+                        }
                         break;
 
                     default:
@@ -48,7 +105,7 @@ namespace WebApi.Middlewares
                 LogContext.PushProperty("UserName", userName);
                 _logger.Error(e, e.Message);
 
-                var response = new Response<string>(e.Message);
+                var response = new Response<string>(message);
                 context.Response.ContentType = "application/json";
                 await context.Response.WriteAsJsonAsync(response);
             }

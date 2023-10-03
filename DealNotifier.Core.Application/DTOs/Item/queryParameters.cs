@@ -1,18 +1,18 @@
 ﻿namespace DealNotifier.Core.Application.DTOs.Item
 {
-    public class queryParameters
+    public class QueryParameters
     {
-        public string? brands { get; set; }
-        public string? storages { get; set; }
-        public string? search { get; set; }
-        public string? max { get; set; }
-        public string? min { get; set; }
-        public string? sort_by { get; set; }
-        public string? offer { get; set; }
-        public string? types { get; set; }
-        public string? condition { get; set; }
-        public string? carriers { get; set; }
-        public string? excludes { get; set; }
-        public string? shops { get; set; }
+        public string? Brands { get; set; }
+        public string? Storages { get; set; }
+        public string? Search { get; set; }
+        public string? Max { get; set; }
+        public string? Min { get; set; }
+        public string? Sort_by { get; set; }
+        public string? Offer { get; set; }
+        public string? Types { get; set; }
+        public string? Condition { get; set; }
+        public string? Carriers { get; set; }
+        public string? Excludes { get; set; }
+        public string? Shops { get; set; }
     }
 }

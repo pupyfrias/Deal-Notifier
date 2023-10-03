@@ -146,7 +146,7 @@ namespace WorkerService.Samkey
                         };
 
 
-                        var model = await _unlockableServiceAsync.CreateAsync(unlockableCreateDto);
+                        var model = await _unlockableServiceAsync.CreateAsync<UnlockableCreateDto, UnlockablePhone>(unlockableCreateDto);
 
                         var unlockableUnlockTool = new UnlockablePhoneUnlockTool
                         {

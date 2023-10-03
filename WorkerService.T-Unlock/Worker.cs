@@ -164,7 +164,7 @@ namespace WorkerService.T_Unlock_WebScraping
                         };
 
 
-                        var model = await _unlockableServiceAsync.CreateAsync(unlockableCreateDto);
+                        var model = await _unlockableServiceAsync.CreateAsync<UnlockableCreateDto, UnlockablePhone>(unlockableCreateDto);
 
                         var unlockableUnlockTool = new UnlockablePhoneUnlockTool
                         {

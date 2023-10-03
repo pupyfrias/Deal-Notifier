@@ -1,10 +1,11 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using DealNotifier.Infrastructure.Persistence.DbContexts;
-using Microsoft.EntityFrameworkCore;
 using DealNotifier.Core.Application.Contracts;
 using DealNotifier.Core.Application.Contracts.Repositories;
 using DealNotifier.Core.Domain.Contracts;
+using DealNotifier.Infrastructure.Persistence.DbContexts;
+using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace DealNotifier.Infrastructure.Persistence.Repositories
 {
@@ -32,16 +33,8 @@ namespace DealNotifier.Infrastructure.Persistence.Repositories
 
         public async Task<TEntity> CreateAsync(TEntity entity)
         {
-            try
-            {
-                await _context.AddAsync(entity);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-
-            }
-
+            await _context.AddAsync(entity);
+            await _context.SaveChangesAsync();
             return entity;
         }
 
@@ -60,9 +53,17 @@ namespace DealNotifier.Infrastructure.Persistence.Repositories
                               .FirstOrDefaultAsync();
         }
 
-        public async Task<int> GetTotalCountAsync()
+        public async Task<int> GetTotalCountAsync(Expression<Func<TEntity, bool>> criteria)
         {
-            return await _context.Set<TEntity>().CountAsync();
+            if (criteria == null)
+            {
+                return await _context.Set<TEntity>().CountAsync();
+            }
+            else
+            {
+
+                return await _context.Set<TEntity>().Where(criteria).CountAsync();
+            }
         }
 
         public async Task UpdateAsync(TEntity entity)
@@ -75,15 +76,18 @@ namespace DealNotifier.Infrastructure.Persistence.Repositories
         public async Task<List<TDestination>> GetAllAsync<TDestination>(ISpecification<TEntity> spec)
         {
             var query = _context.Set<TEntity>().AsQueryable();
+            query = ApplySpecification(query, spec);
 
-            if (spec != null)
-            {
-                query = ApplySpecification(query, spec);
-            }
+            var x = query.ProjectTo<TDestination>(_configurationProvider).ToQueryString();
+
+            return await query.ProjectTo<TDestination>(_configurationProvider).ToListAsync();
+        }
 
 
-            return await query.ProjectTo<TDestination>(_configurationProvider)
-                              .ToListAsync();
+
+        public async Task<List<TDestination>> GetAllAsync<TDestination>()
+        {
+            return await _context.Set<TEntity>().ProjectTo<TDestination>(_configurationProvider).ToListAsync();
         }
 
 
@@ -97,13 +101,13 @@ namespace DealNotifier.Infrastructure.Persistence.Repositories
                 query = query.Where(spec.Criteria);
             }
 
-            if (spec.OrderBy != null)
+            if (spec.Descending)
+            {
+                query = query.OrderByDescending(spec.OrderBy);
+            }
+            else
             {
                 query = query.OrderBy(spec.OrderBy);
-            }
-            else if (spec.OrderByDescending != null)
-            {
-                query = query.OrderByDescending(spec.OrderByDescending);
             }
 
             if (spec.IsPagingEnabled)
@@ -113,6 +117,8 @@ namespace DealNotifier.Infrastructure.Persistence.Repositories
 
             return query;
         }
+
+
         #endregion Private Methods
     }
 }

@@ -8,22 +8,22 @@ using DealNotifier.Core.Application.Contracts.Services;
 using DealNotifier.Core.Application.DTOs.Item;
 using DealNotifier.Core.Application.Extensions;
 using DealNotifier.Core.Application.Heplers;
-using DealNotifier.Core.Application.Utils;
 using DealNotifier.Core.Domain.Entities;
 using Condition = DealNotifier.Core.Application.Enums.Condition;
 using Shop = DealNotifier.Core.Application.Enums.Shop;
 using Status = DealNotifier.Core.Application.Enums.Status;
 using Type = DealNotifier.Core.Application.Enums.Type;
+using DealNotifier.Core.Application.Utilities;
 
 namespace DealNotifier.Infrastructure.Persistence.Models
 {
     public class TheStore
     {
         private static ILogger _logger;
-        private IItemService _itemService;
+        private IItemServiceAsync _itemService;
         private static object[,] links = { { "https://thestore.com/c/refurbished-cell-phones-58?condition=Brand%20New&showMore=0", Type.Phone } };
 
-        public TheStore(ILogger logger, IItemService itemService)
+        public TheStore(ILogger logger, IItemServiceAsync itemService)
         {
             _itemService = itemService;
         }

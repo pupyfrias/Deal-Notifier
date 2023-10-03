@@ -1,5 +1,5 @@
 ﻿using DealNotifier.Core.Application.Heplers;
-using DealNotifier.Core.Application.Utils;
+using DealNotifier.Core.Application.Utilities;
 using OpenQA.Selenium;
 
 namespace DealNotifier.Core.Application.Extensions

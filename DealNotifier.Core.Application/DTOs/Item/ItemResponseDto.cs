@@ -1,4 +1,6 @@
-﻿namespace DealNotifier.Core.Application.DTOs.Item
+﻿
+
+namespace DealNotifier.Core.Application.DTOs.Item
 {
     public class ItemResponseDto
     {
@@ -18,5 +20,11 @@
         public int BidCount { get; set; }
         public bool IsAuction { get; set; }
         public int UnlockProbabilityId { get; set; }
+        public string ConditionName { get; set; }
+        public string ShopName { get; set; }
+        public string StatusName { get; set; }
+        public string TypeName { get; set; }
+        public string UnlockProbabilityName { get; set; }
+
     }
 }

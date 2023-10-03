@@ -5,8 +5,7 @@ using DealNotifier.Core.Application.Contracts.Services;
 using DealNotifier.Core.Application.SetupOptions;
 using DealNotifier.Infrastructure.Email;
 using DealNotifier.Infrastructure.Persistence.Models;
-using DealNotifier.Infrastructure.Persistence.Services;
-
+using DealNotifier.Core.Application.Services;
 
 var environment = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT");
 
@@ -25,7 +24,7 @@ IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((hostContext, services) =>
     {
         services.AddHostedService<Worker>();
-        services.AddSingleton<IItemService, ItemService>();
+        services.AddSingleton<IItemServiceAsync, ItemServiceAsync>();
         services.AddSingleton<IEbayService, EbayService>();
         services.AddInfrastructureEmail(hostContext.Configuration);
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

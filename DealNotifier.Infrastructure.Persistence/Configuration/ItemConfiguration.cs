@@ -76,7 +76,7 @@ namespace DealNotifier.Infrastructure.Persistence.Configuration
 
             builder.Property(x => x.BrandId)
            .HasDefaultValueSql("1")
-           .IsRequired(false);
+           .IsRequired();
 
             builder.Property(x => x.PhoneCarrierId)
            .HasDefaultValueSql("1");

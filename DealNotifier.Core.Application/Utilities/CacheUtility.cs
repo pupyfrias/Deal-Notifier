@@ -3,9 +3,9 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 
-namespace DealNotifier.Core.Application.Utils
+namespace DealNotifier.Core.Application.Utilities
 {
-    public static class CacheUtils
+    public static class CacheUtility
     {
         public static string GenerateETag<TSource>(TSource source)
         {

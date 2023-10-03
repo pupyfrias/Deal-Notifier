@@ -1,29 +1,34 @@
 ﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using DealNotifier.Core.Application.Constants;
+using DealNotifier.Core.Application.Contracts.Repositories;
 using DealNotifier.Core.Application.Contracts.Services;
-using DealNotifier.Core.Application.DTOs;
 using DealNotifier.Core.Application.DTOs.Email;
+using DealNotifier.Core.Application.DTOs;
 using DealNotifier.Core.Application.DTOs.Item;
 using DealNotifier.Core.Application.DTOs.PhoneCarrier;
 using DealNotifier.Core.Application.DTOs.Unlockable;
 using DealNotifier.Core.Application.Heplers;
-using DealNotifier.Core.Application.Models.eBay;
 using DealNotifier.Core.Domain.Entities;
-using DealNotifier.Infrastructure.Persistence.DbContexts;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
-using Serilog;
+using Microsoft.Extensions.Caching.Memory;
 using System.Collections.Concurrent;
 using System.Data;
-using System.Linq.Dynamic.Core;
-using System.Text;
 using System.Text.RegularExpressions;
-using Enums = DealNotifier.Core.Application.Enums;
+using System.Text;
+using Serilog;
+using Microsoft.Extensions.Configuration;
+using IConfigurationProvider = AutoMapper.IConfigurationProvider;
+using DealNotifier.Core.Application.Extensions;
+using DealNotifier.Core.Application.Models;
+using DealNotifier.Core.Domain.Contracts;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore;
+using AutoMapper.QueryableExtensions;
 
-namespace DealNotifier.Infrastructure.Persistence.Services
+namespace DealNotifier.Core.Application.Services
 {
-    public class ItemService : IItemService
+    public class ItemServiceAsync : GenericServiceAsync<Item>, IItemServiceAsync
     {
         #region Fields
 
@@ -35,18 +40,17 @@ namespace DealNotifier.Infrastructure.Persistence.Services
 
         #endregion Fields
 
-        public ItemService(ILogger logger, IConfigurationProvider configurationProvider, IEmailServiceAsync emailService, IMapper mapper)
+        #region Constructor
+
+        public ItemServiceAsync(IItemRepositoryAsync repository, IMapper mapper, IHttpContextAccessor httpContext, IMemoryCache cache, IItemRepositoryAsync itemRepository, IConfigurationProvider configurationProvider, IEmailServiceAsync emailService, ILogger logger) : base(repository, mapper, httpContext, cache)
         {
             _logger = logger;
             _configurationProvider = configurationProvider;
             _emailService = emailService;
             _mapper = mapper;
         }
+        #endregion Constructor
 
-        public ItemService()
-        {
-                
-        }
 
         #region Methods
 
@@ -125,7 +129,7 @@ namespace DealNotifier.Infrastructure.Persistence.Services
         /// <param name="items">Items ConcurrentBag</param>
         public void SaveOrUpdate(in ConcurrentBag<ItemCreateDto> items)
         {
-            var itemListToSave = new ConcurrentBag<Item>();
+            /*var itemListToSave = new ConcurrentBag<Item>();
             var itemListToUpdate = new ConcurrentBag<Item>();
 
             Parallel.ForEach(items, item =>
@@ -178,11 +182,11 @@ namespace DealNotifier.Infrastructure.Persistence.Services
                         }
                     }
                 }
-            }); 
+            });*/
 
             try
             {
-                var savingTask = Task.Run(() =>
+               /* var savingTask = Task.Run(() =>
                 {
                     using (var context = new ApplicationDbContext())
                     {
@@ -200,7 +204,7 @@ namespace DealNotifier.Infrastructure.Persistence.Services
                     }
                 });
 
-                Task.WhenAll(updatingTask, savingTask).Wait();
+                Task.WhenAll(updatingTask, savingTask).Wait();*/
             }
             catch (Exception ex)
             {
@@ -210,11 +214,11 @@ namespace DealNotifier.Infrastructure.Persistence.Services
 
         public void SetUnlockProbability(ref ItemCreateDto item)
         {
-            var modelNumber = item.ModelNumber;
+            /*var modelNumber = item.ModelNumber;
             var modelName = item.ModelName;
             var carrierId = item.PhoneCarrierId;
 
-            if (item.Name.Contains("unlocked", StringComparison.OrdinalIgnoreCase) 
+            if (item.Name.Contains("unlocked", StringComparison.OrdinalIgnoreCase)
                 || item.Name.Contains("ulk", StringComparison.OrdinalIgnoreCase))
             {
                 item.UnlockProbabilityId = (int)Enums.UnlockProbability.High;
@@ -229,7 +233,7 @@ namespace DealNotifier.Infrastructure.Persistence.Services
                     var carrierIdParameter = new SqlParameter("@carrierId", carrierId);
                     var outputResult = new SqlParameter("@OutputResult", SqlDbType.Bit) { Direction = ParameterDirection.Output };
 
-                    if(modelNumber != null)
+                    if (modelNumber != null)
                     {
                         context.Database.ExecuteSqlRaw(query, modelNumberParameter, carrierIdParameter, outputResult);
                         bool result = (bool)outputResult.Value;
@@ -241,7 +245,7 @@ namespace DealNotifier.Infrastructure.Persistence.Services
                         }
 
                     }
-                    else if(modelName != null)
+                    else if (modelName != null)
                     {
                         query = "EXEC CAN_BE_UNLOCKED_MODELNAME @modelName, @carrierId, @OutputResult OUTPUT";
                         context.Database.ExecuteSqlRaw(query, modelNameParameter, carrierIdParameter, outputResult);
@@ -256,12 +260,12 @@ namespace DealNotifier.Infrastructure.Persistence.Services
 
                     item.UnlockProbabilityId = (int)Enums.UnlockProbability.Low;
                 }
-            }
+            }*/
         }
 
         public void TrySetModelNumberModelNameAndBrand(ref ItemCreateDto item)
         {
-            using (var context = new ApplicationDbContext())
+            /*using (var context = new ApplicationDbContext())
             {
                 var possibleModelNumber = Regex.Match(
                     item.Name,
@@ -339,12 +343,12 @@ namespace DealNotifier.Infrastructure.Persistence.Services
                         #endregion set modelName & phone Carrier
                     }
                 }
-            }
+            }*/
         }
 
         public void UpdateStatus(ref ConcurrentBag<string> checkedList)
         {
-            using (var context = new ApplicationDbContext())
+            /*using (var context = new ApplicationDbContext())
             {
                 var listId = checkedList.Select(x => x.Replace("https://www.ebay.com/itm/", ""));
                 string query = "EXEC UPDATE_STATUS_EBAY @ListId, @OutputResult OUTPUT";
@@ -357,7 +361,7 @@ namespace DealNotifier.Infrastructure.Persistence.Services
             }
 
             _logger.Information($"{checkedList.Count} Items In Stock");
-            checkedList.Clear();
+            checkedList.Clear();*/
         }
 
         private void ToNotify(Item item)
@@ -385,7 +389,7 @@ namespace DealNotifier.Infrastructure.Persistence.Services
                     if (item.IsAuction)
                     {
                         var diff = (itemEndDate - DateTime.Now).TotalHours;
-                        if (diff > 2 || diff < 0 || item.BidCount > 3)  
+                        if (diff > 2 || diff < 0 || item.BidCount > 3)
                         {
                             break;
                         }
@@ -401,11 +405,6 @@ namespace DealNotifier.Infrastructure.Persistence.Services
         }
 
 
-
-
-
-
-
         #region Private Methods
 
         private bool CheckKeywords(string keywords, string title)
@@ -416,66 +415,68 @@ namespace DealNotifier.Infrastructure.Persistence.Services
 
         private async Task LoadBannedKeyword()
         {
-            using (var context = new ApplicationDbContext())
+            /*using (var context = new ApplicationDbContext())
             {
                 var banedList = await context.Banned
                     .ProjectTo<BannedDto>(_configurationProvider)
                     .ToListAsync();
 
                 Helper.BannedKeywordList = banedList.ToHashSet<BannedDto>();
-            }
+            }*/
         }
 
         private async Task LoadBlackList()
         {
-            using (var context = new ApplicationDbContext())
+           /* using (var context = new ApplicationDbContext())
             {
                 var backList = await context.BlackLists
                     .ProjectTo<BlackListDto>(_configurationProvider)
                     .ToListAsync();
 
                 Helper.BlacklistedLinks = backList.ToHashSet<BlackListDto>();
-            }
+            }*/
         }
 
         private async Task LoadBrands()
         {
-            using (var context = new ApplicationDbContext())
+            /*using (var context = new ApplicationDbContext())
             {
                 var brandList = await context.Brands
                     .ProjectTo<BrandReadDto>(_configurationProvider)
                     .ToListAsync();
 
                 Helper.BrandList = brandList.ToHashSet<BrandReadDto>();
-            }
+            }*/
         }
 
         private async Task LoadConditionsToNotify()
         {
-            using (var context = new ApplicationDbContext())
+           /* using (var context = new ApplicationDbContext())
             {
                 var conditionsToNotifyList = await context.ConditionsToNotify
                     .ProjectTo<ConditionsToNotifyDto>(_configurationProvider)
                     .ToListAsync();
 
                 Helper.ConditionsToNotifyList = conditionsToNotifyList.ToHashSet<ConditionsToNotifyDto>();
-            }
+            }*/
         }
 
         private async Task LoadPhoneCarriers()
         {
-            using (var context = new ApplicationDbContext())
+           /* using (var context = new ApplicationDbContext())
             {
                 var phoneCarrirerList = await context.PhoneCarriers
                     .ProjectTo<PhoneCarrierReadDto>(_configurationProvider)
                     .ToListAsync();
 
                 Helper.PhoneCarrierList = phoneCarrirerList.ToHashSet<PhoneCarrierReadDto>();
-            }
+            }*/
         }
 
         #endregion Private Methods
 
         #endregion Methods
     }
+
+
 }

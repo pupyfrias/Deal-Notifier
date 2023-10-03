@@ -16,10 +16,10 @@ namespace DealNotifier.Core.Application.DTOs.Item
         public string Image { get; set; }
         public string Link { get; set; }
         public string Name { get; set; }
-        public int? BrandId { get; set; }
-        public int? PhoneCarrierId { get; set; }
-        public string? ModelNumber { get; set; }
-        public string? ModelName { get; set; }
+        public int BrandId { get; set; }
+        public int PhoneCarrierId { get; set; }
+        public string ModelNumber { get; set; }
+        public string ModelName { get; set; }
         public bool Notify { get; set; }
         public DateTime? ItemEndDate { get; set; }
         public int BidCount { get; set; }

@@ -4,7 +4,7 @@ using DealNotifier.Core.Domain.Entities;
 
 namespace DealNotifier.Core.Application.Contracts.Services
 {
-    public interface IItemService
+    public interface IItemServiceAsync: IGenericServiceAsync<Item>
     {
         ConcurrentBag<Item> itemToNotifyList { get; set; }
 

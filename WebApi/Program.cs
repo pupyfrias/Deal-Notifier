@@ -5,6 +5,7 @@ using DealNotifier.Core.Application.SetupOptions;
 using DealNotifier.Infrastructure.Identity;
 using DealNotifier.Infrastructure.Persistence;
 using WebApi.Middlewares;
+using DealNotifier.Infrastructure.Email;
 {
     var builder = WebApplication.CreateBuilder(args);
     ConfigurationManager configuration = builder.Configuration;
@@ -14,6 +15,7 @@ using WebApi.Middlewares;
     builder.Services.AddApplicationLayer(configuration);
     builder.Services.AddPersistenceInfrastructure(configuration);
     builder.Services.AddIdentityInfrastructure(configuration);
+    builder.Services.AddInfrastructureEmail(configuration);
 
     #endregion Add services to the container
 

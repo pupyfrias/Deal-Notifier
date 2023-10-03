@@ -1,6 +1,6 @@
 ﻿using OpenQA.Selenium.Chrome;
 
-namespace DealNotifier.Core.Application.Utils
+namespace DealNotifier.Core.Application.Utilities
 {
     public class SeleniumTools
     {

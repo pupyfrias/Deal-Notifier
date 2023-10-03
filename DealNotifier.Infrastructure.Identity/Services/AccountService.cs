@@ -48,19 +48,19 @@ namespace DealNotifier.Infrastructure.Identity.Services
 
             if (_user == null)
             {
-                throw new ApiException($"No Accounts Registered with {request.UserName}.");
+                throw new BadRequestException($"No Accounts Registered with {request.UserName}.");
             }
 
             var result = await _signInManager.PasswordSignInAsync(_user.UserName, request.Password, false, lockoutOnFailure: false);
 
             if (!result.Succeeded)
             {
-                throw new ApiException($"Invalid Password for {request.UserName}");
+                throw new BadRequestException($"Invalid Password for {request.UserName}");
             }
 
             if (!_user.EmailConfirmed)
             {
-                throw new ApiException($"Account Not Comfirmed for {_user.Email}");
+                throw new BadRequestException($"Account Not Comfirmed for {_user.Email}");
             }
 
             var accessToken = await GenerateAccessTokenAsync();

@@ -1,4 +1,8 @@
-﻿using DealNotifier.Infrastructure.Identity.DbContext;
+﻿using DealNotifier.Core.Application.Constants;
+using DealNotifier.Core.Application.Contracts.Services;
+using DealNotifier.Core.Application.Wrappers;
+using DealNotifier.Core.Domain.Configs;
+using DealNotifier.Infrastructure.Identity.DbContext;
 using DealNotifier.Infrastructure.Identity.Models;
 using DealNotifier.Infrastructure.Identity.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -8,13 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using Serilog;
 using System.Text;
-using DealNotifier.Core.Application.Constants;
-using DealNotifier.Core.Application.Contracts.Services;
-using DealNotifier.Core.Application.Extensions;
-using DealNotifier.Core.Application.Wrappers;
-using DealNotifier.Core.Domain.Configs;
 
 namespace DealNotifier.Infrastructure.Identity
 {
@@ -60,6 +58,8 @@ namespace DealNotifier.Infrastructure.Identity
             #region Dependency injection
 
             services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IAuthService, AuthService>();
+
 
             #endregion Dependency injection
 
@@ -90,35 +90,32 @@ namespace DealNotifier.Infrastructure.Identity
                 {
                     OnChallenge = async (context) =>
                     {
+                        var statusCode = StatusCodes.Status401Unauthorized;
+                        context.Response.StatusCode = statusCode;
                         context.HandleResponse();
-                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                        Response<string> response;
-                        //string userName = context.HttpContext.GetUserName();
 
-                        if (context.AuthenticateFailure == null)
+                        var response = new ApiResponse<Exception>
                         {
-                            string message = "You Are not Authenticated";
-                            response = new Response<string>(message);
-                            Log.Warning(message);
-                        }
-                        else
-                        {
-                            response = new Response<string>($"{context?.Error}");
-                            Log.Warning(context?.Error);
-                        }
+                            StatusCode = statusCode,
+                            Message = "You are not authenticated"
+                        };
 
                         await context.Response.WriteAsJsonAsync(response);
+
                     },
                     OnForbidden = async (context) =>
                     {
-                        context.Response.StatusCode = 403;
+                        var statusCode = StatusCodes.Status403Forbidden;
+                        context.Response.StatusCode = statusCode;
                         context.Response.ContentType = "application/json";
-                        var response = new Response<string>("You are not authorized to access this resource");
-                        await context.Response.WriteAsJsonAsync(response);
-                        string pathRequest = context.HttpContext.Request.Path;
-                        string userName = context.HttpContext.GetUserName();
 
-                        Log.Warning($"User {userName} are not authorized to access to {pathRequest}");
+                        var response = new ApiResponse<Exception>
+                        {
+                            StatusCode = statusCode,
+                            Message = "You are not authorized to access this resource"
+                        };
+
+                        await context.Response.WriteAsJsonAsync(response);                    
                     }
                 };
             });

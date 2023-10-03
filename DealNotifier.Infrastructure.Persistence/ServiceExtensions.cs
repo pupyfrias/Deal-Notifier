@@ -1,4 +1,6 @@
-﻿using DealNotifier.Infrastructure.Persistence.DbContexts;
+﻿using DealNotifier.Core.Application.Contracts.Repositories;
+using DealNotifier.Infrastructure.Persistence.DbContexts;
+using DealNotifier.Infrastructure.Persistence.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -20,6 +22,14 @@ namespace DealNotifier.Infrastructure.Persistence
             }
 
             #endregion DbContext
+
+            #region Dependency Injection
+
+            services.AddScoped(typeof(IGenericRepositoryAsync<>), typeof(GenericRepositoryAsync<>));
+            services.AddScoped<IItemRepositoryAsync, ItemRepositoryAsync>();
+
+
+            #endregion Dependency Injection
         }
     }
 }

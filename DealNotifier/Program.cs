@@ -1,4 +1,4 @@
-﻿using DealNotifier.Core.Application.Utils;
+﻿using DealNotifier.Core.Application.Utilities;
 using Serilog;
 using System.Diagnostics;
 

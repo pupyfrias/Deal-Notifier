@@ -5,7 +5,7 @@ using Serilog.Formatting;
 using Serilog.Formatting.Json;
 using Serilog.Templates;
 
-namespace DealNotifier.Core.Application.Utils
+namespace DealNotifier.Core.Application.Utilities
 {
     public class Logger
     {

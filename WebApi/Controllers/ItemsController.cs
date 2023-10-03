@@ -1,18 +1,21 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using DealNotifier.Core.Application.Contracts.Services;
+using DealNotifier.Core.Application.DTOs;
+using DealNotifier.Core.Application.DTOs.Item;
+using DealNotifier.Core.Application.Exceptions;
+using DealNotifier.Core.Application.Models;
+using DealNotifier.Core.Application.Request;
+using DealNotifier.Core.Application.Specification;
+using DealNotifier.Core.Application.Wrappers;
+using DealNotifier.Core.Domain.Entities;
+using DealNotifier.Infrastructure.Persistence.DbContexts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 using System.Linq.Expressions;
-using DealNotifier.Core.Application.Constants;
-using DealNotifier.Core.Application.DTOs;
-using DealNotifier.Core.Application.DTOs.Item;
-using DealNotifier.Core.Application.Extensions;
-using DealNotifier.Core.Application.Wrappers;
-using DealNotifier.Core.Domain.Entities;
-using DealNotifier.Infrastructure.Persistence.DbContexts;
 using ILogger = Serilog.ILogger;
 using Status = DealNotifier.Core.Application.Enums.Status;
 
@@ -26,91 +29,56 @@ namespace WebApi.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
+        private readonly IItemServiceAsync _itemServiceAsync;
 
         public ItemsController(ApplicationDbContext context,
             IMapper mapper,
             IHttpContextAccessor httpContext,
-            ILogger logger)
+            ILogger logger,
+            IItemServiceAsync itemServiceAsync
+            )
         {
             _context = context;
             _mapper = mapper;
             _logger = logger;
+            _itemServiceAsync = itemServiceAsync;
         }
 
-        // GET: api/Items
+
+
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] queryParameters request)
+        public async Task<ActionResult<ApiResponse<PagedCollection<ItemResponseDto>>>> GetAllItemsAsync([FromQuery] ItemRequest request)
+        {
+            var data = await _itemServiceAsync.GetAllWithPaginationAsync<ItemResponseDto, ItemSpecification>(request);
+            var response = new ApiResponse<PagedCollection<ItemResponseDto>>(data);
+            return Ok(response);
+        }
+
+
+        // GET: api/Items
+        [HttpGet("klk")]
+        public async Task<IActionResult> Get([FromQuery] QueryParameters request)
         {
             _logger.Information("Getting all Item");
             IQueryable<Item> query = _context.Items.AsQueryable();
 
-            if (request.offer is not null)
+            if (request.Offer is not null)
             {
-                if (request.offer.Contains("all"))
+                if (request.Offer.Contains("all"))
                 {
-                    query = query.Where(x => x.Saving > 0)
-                        .OrderByDescending(x => x.Saving)
-                        .AsQueryable();
+                    query = HandleOfferQuery(query);
                 }
                 else
                 {
-                    query = query.Where(x => x.Saving > 0 && x.LastModified >= DateTime.Now.Date)
-                        .OrderByDescending(x => x.Saving)
-                        .AsQueryable();
+                    query = HandleTodayOfferQuery(query);
                 }
             }
             else
             {
-                List<string>? brandList = request.brands?.Split("%2C").ToList();
-                List<string>? storageList = request.storages?.Split("%2C").ToList();
-                List<string>? carrierList = request.carriers?.Split("%2C").ToList();
-                List<int>? typeList = request.types?.Split("%2C").Select(int.Parse).ToList();
-                List<int>? shopList = request.shops?.Split("%2C").Select(int.Parse).ToList();
-                List<int>? conditionList = request.condition?.Split("%2C").Select(int.Parse).ToList();
-                decimal max = request.max is null ? default : decimal.Parse(request.max);
-                decimal min = request.min is null ? default : decimal.Parse(request.min);
-                bool brandExclude = request.excludes?.Contains("brands") ?? false;
-
-                ParameterExpression parameter = Expression.Parameter(typeof(Item), "item");
-                Expression name = Expression.PropertyOrField(parameter, "Name");
-                Expression price = Expression.PropertyOrField(parameter, "Price");
-                Expression typeId = Expression.PropertyOrField(parameter, "TypeId");
-                Expression shoptId = Expression.PropertyOrField(parameter, "ShopId");
-                Expression conditionId = Expression.PropertyOrField(parameter, "ConditionId");
-                BinaryExpression body = Expression.Equal(Expression.PropertyOrField(parameter, "StatusId"), Expression.Constant((int)Status.InStock));
-
-                if (request.search is not null)
-                {
-                    body = body.AddConditions(name, new List<string> { request.search }, false);
-                }
-
-                body = body.AddConditions(name, brandList, brandExclude);
-                body = body.AddConditions(name, storageList, false);
-                body = body.AddConditions(name, carrierList, false);
-                body = body.AddConditions(typeId, typeList);
-                body = body.AddConditions(shoptId, shopList);
-                body = body.AddConditions(conditionId, conditionList);
-                body = body.AddConditions(price, max, true);
-                body = body.AddConditions(price, min, false);
-
-                Func<Item, bool> lambda = Expression.Lambda<Func<Item, bool>>(body, parameter).Compile();
-                query = query.Where(lambda).AsQueryable();
-                if (request.sort_by is not null)
-                {
-                    var sortBy = SortBy(request.sort_by);
-
-                    if (sortBy.Sort == "asc")
-                    {
-                        query = query.OrderBy(sortBy.expression).AsQueryable();
-                    }
-                    else
-                    {
-                        query = query.OrderByDescending(sortBy.expression).AsQueryable();
-                    }
-                }
+                query = HandleGeneralQuery(query, request);
             }
 
-            var stringQuery = query.ToQueryString();
+            //var stringQuery = query.ToQueryString();
 
             var items = query
                         .ProjectTo<ItemResponseDto>(_mapper.ConfigurationProvider)
@@ -119,6 +87,7 @@ namespace WebApi.Controllers
             var response = new Response<List<ItemResponseDto>>(items);
             return Ok(response);
         }
+
 
         // GET: api/Items/5
         [HttpGet("{id}")]
@@ -232,41 +201,71 @@ namespace WebApi.Controllers
         }
 
 
+        #region Private Methods
+
         private bool ItemExists(Guid id)
         {
             return _context.Items.Any(e => e.Id == id);
         }
 
-        private SortBy SortBy(string str)
+       
+        private IQueryable<Item> HandleOfferQuery(IQueryable<Item> query)
         {
-            Expression<Func<Item, decimal>> priceAsc = i => i.Price;
-            Expression<Func<Item, decimal>> priceDesc = i => i.Price;
-            Expression<Func<Item, decimal>> savingDesc = i => i.Saving;
-            Expression<Func<Item, decimal>> savingsPercentageDesc = i => i.SavingsPercentage;
+            return query.Where(x => x.Saving > 0)
+                        .OrderByDescending(x => x.Saving)
+                        .AsQueryable();
 
-            Dictionary<string, SortBy> dictionary = new Dictionary<string, SortBy>
-            {
-                { "price-low-high", new SortBy{ Sort = "asc", expression = priceAsc} },
-                { "price-high-low",  new SortBy { Sort = "desc", expression = priceDesc } },
-                { "saving-high-low",  new SortBy { Sort = "desc", expression = savingDesc } },
-                { "saving-percent-high-low",  new SortBy { Sort = "desc", expression = savingsPercentageDesc } },
-                { "default",  new SortBy { Sort = "desc", expression = priceAsc } }
-            };
-
-            if (str == null)
-            {
-                return dictionary["default"];
-            }
-            else
-            {
-                return dictionary.ContainsKey(str) ? dictionary[str] : dictionary["default"];
-            }
         }
-    }
 
-    public class SortBy
-    {
-        public string Sort { get; set; }
-        public Expression<Func<Item, decimal>> expression { get; set; }
+        private IQueryable<Item> HandleTodayOfferQuery(IQueryable<Item> query)
+        {
+            return query.Where(x => x.Saving > 0 && x.LastModified >= DateTime.Now.Date)
+                            .OrderByDescending(x => x.Saving)
+                            .AsQueryable();
+
+        }
+
+        private IQueryable<Item> HandleGeneralQuery(IQueryable<Item> query, QueryParameters request)
+        {
+            string[]? brandList = request.Brands?.Split(",");
+            string[]? storageList = request.Storages?.Split(",");
+            string[]? carrierList = request.Carriers?.Split(",");
+            string[]? typeList = request.Types?.Split(",");
+            string[]? shopList = request.Shops?.Split(",");
+            string[]? conditionList = request.Condition?.Split(",");
+            decimal.TryParse(request.Max, out decimal max);
+            decimal.TryParse(request.Min, out decimal min);
+            bool brandExclude = request.Excludes?.Contains("brands") ?? false;
+
+            var parameter = Expression.Parameter(typeof(Item), "item");
+            var name = Expression.PropertyOrField(parameter, "Name");
+            var price = Expression.PropertyOrField(parameter, "Price");
+            var typeId = Expression.PropertyOrField(parameter, "TypeId");
+            var shopId = Expression.PropertyOrField(parameter, "ShopId");
+            var conditionId = Expression.PropertyOrField(parameter, "ConditionId");
+            var body = Expression.Equal(Expression.PropertyOrField(parameter, "StatusId"), Expression.Constant((int)Status.InStock));
+
+            /*if (request.Search is not null)
+            {
+                body = body.Contains(name, new string[] { request.Search }, false);
+            }
+
+            body = body.Contains(name, brandList, brandExclude);
+            body = body.Contains(name, storageList, false);
+            body = body.Contains(name, carrierList, false);
+            body = body.Equal(typeId, typeList);
+            body = body.Equal(shopId, shopList);
+            body = body.Equal(conditionId, conditionList);
+            body = body.LessThanOrEquall(price, max);
+            body = body.GreaterThanOrEqual(price, min);
+*/
+
+            Expression<Func<Item, bool>> lambda = Expression.Lambda<Func<Item, bool>>(body, parameter);
+            query = query.Where(lambda);
+
+            return query;
+        }
+        #endregion Private Methods
+
     }
 }
