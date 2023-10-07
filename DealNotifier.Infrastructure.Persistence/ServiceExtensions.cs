@@ -34,6 +34,7 @@ namespace DealNotifier.Infrastructure.Persistence
             services.AddScoped<IConditionRepositoryAsync, ConditionRepositoryAsync>();
             services.AddScoped<IItemTypeRepositoryAsync, ItemTypeRepositoryAsync>();
             services.AddScoped<INotificationCriteriaRepositoryAsync, NotificationCriteriaRepositoryAsync>();
+            services.AddScoped<IPhoneCarrierRepositoryAsync, PhoneCarrierRepositoryAsync>();
 
             #endregion Dependency Injection
         }

@@ -37,6 +37,7 @@ namespace DealNotifier.Core.Application
             services.AddScoped<IConditionServiceAsync, ConditionServiceAsync>();
             services.AddScoped<IItemTypeServiceAsync, ItemTypeServiceAsync>();
             services.AddScoped<INotificationCriteriaServiceAsync, NotificationCriteriaServiceAsync>();
+            services.AddScoped<IPhoneCarrierServiceAsync, PhoneCarrierServiceAsync>();
 
 
             #endregion Dependency Injection
