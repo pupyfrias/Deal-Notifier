@@ -1,4 +1,5 @@
 ﻿using DealNotifier.Core.Application.Interfaces.Repositories;
+using DealNotifier.Core.Application.Interfaces.Services;
 using DealNotifier.Infrastructure.Persistence.DbContexts;
 using DealNotifier.Infrastructure.Persistence.Repositories;
 using Microsoft.Extensions.Configuration;
@@ -32,6 +33,7 @@ namespace DealNotifier.Infrastructure.Persistence
             services.AddScoped<IBrandRepositoryAsync, BrandRepositoryAsync>();
             services.AddScoped<IConditionRepositoryAsync, ConditionRepositoryAsync>();
             services.AddScoped<IItemTypeRepositoryAsync, ItemTypeRepositoryAsync>();
+            services.AddScoped<INotificationCriteriaRepositoryAsync, NotificationCriteriaRepositoryAsync>();
 
             #endregion Dependency Injection
         }
