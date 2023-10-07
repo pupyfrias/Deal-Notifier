@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using WebApi.Controllers.V1;
 
 namespace DealNotifier.Core.Application
 {
@@ -38,6 +39,7 @@ namespace DealNotifier.Core.Application
             services.AddScoped<IItemTypeServiceAsync, ItemTypeServiceAsync>();
             services.AddScoped<INotificationCriteriaServiceAsync, NotificationCriteriaServiceAsync>();
             services.AddScoped<IPhoneCarrierServiceAsync, PhoneCarrierServiceAsync>();
+            services.AddScoped<IPhoneUnlockToolServiceAsync, PhoneUnlockToolServiceAsync>();
 
 
             #endregion Dependency Injection

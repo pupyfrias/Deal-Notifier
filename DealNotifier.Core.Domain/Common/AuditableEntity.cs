@@ -11,6 +11,6 @@ namespace DealNotifier.Core.Domain.Common
         public DateTime Created { get; set; }
         public string? LastModifiedBy { get; set; }
         public DateTime? LastModified { get; set; }
-        object IAuditableEntity.Id { get => Id; set => Id = (TKey)value; }
+        object IAuditableEntity.Id { get => Id!; set => Id = (TKey)value; }
     }
 }
