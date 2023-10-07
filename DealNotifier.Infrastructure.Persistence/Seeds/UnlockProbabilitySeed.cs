@@ -5,7 +5,7 @@ namespace DealNotifier.Infrastructure.Persistence.Seeds
 {
     public static class UnlockProbabilitySeed
     {
-        public static List<UnlockProbability> data { get; set; } = new List<UnlockProbability>
+        public static List<UnlockProbability> Data { get; } = new List<UnlockProbability>
         {
             new UnlockProbability
             {

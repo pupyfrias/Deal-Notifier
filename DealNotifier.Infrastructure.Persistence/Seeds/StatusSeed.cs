@@ -5,7 +5,7 @@ namespace DealNotifier.Infrastructure.Persistence.Seeds
 {
     public static class StatusSeed
     {
-        public static List<StockStatus> data { get; set; } = new List<StockStatus>
+        public static List<StockStatus> Data { get;} = new List<StockStatus>
         {
             new StockStatus
             {

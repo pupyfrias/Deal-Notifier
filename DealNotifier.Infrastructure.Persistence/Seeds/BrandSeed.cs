@@ -5,7 +5,7 @@ namespace DealNotifier.Infrastructure.Persistence.Seeds
 {
     public static class BrandSeed
     {
-        public static List<Brand> data { get; set; } = new List<Brand>()
+        public static List<Brand> Data { get;} = new List<Brand>()
         {
              new Brand
             {

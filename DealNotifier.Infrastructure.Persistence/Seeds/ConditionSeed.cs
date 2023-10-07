@@ -5,7 +5,7 @@ namespace DealNotifier.Infrastructure.Persistence.Seeds
 {
     public static class ConditionSeed
     {
-        public static List<Condition> data { get; set; } = new List<Condition>
+        public static List<Condition> Data { get; } = new List<Condition>
         {
             new Condition
             {

@@ -6,7 +6,7 @@ namespace DealNotifier.Infrastructure.Persistence.Seeds
 {
     public static class ItemTypeSeed
     {
-        public static List<ItemType> data { get; set; } = new List<ItemType>
+        public static List<ItemType> Data { get;} = new List<ItemType>
         {
             new ItemType
             {

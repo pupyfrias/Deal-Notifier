@@ -2,7 +2,7 @@
 {
     public enum UnlockProbability
     {
-        None,
+        None = 1,
         Low,
         Middle,
         High

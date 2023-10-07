@@ -5,7 +5,7 @@ namespace DealNotifier.Infrastructure.Persistence.Seeds
 {
     public static class ShopSeed
     {
-        public static List<Shop> data { get; set; } = new List<Shop>
+        public static List<Shop> Data { get;} = new List<Shop>
         {
             new Shop
             {

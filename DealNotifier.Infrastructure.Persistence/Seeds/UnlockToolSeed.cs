@@ -5,7 +5,7 @@ namespace DealNotifier.Infrastructure.Persistence.Seeds
 {
     public static class UnlockToolSeed
     {
-        public static List<PhoneUnlockTool> data { get; set; } = new List<PhoneUnlockTool>
+        public static List<PhoneUnlockTool> Data { get;} = new List<PhoneUnlockTool>
         {
             new PhoneUnlockTool
             {
