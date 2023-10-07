@@ -142,8 +142,15 @@ namespace DealNotifier.Core.Application.Services
             return mappedEntity;
         }
 
-        public virtual async Task UpdateAsync<TSource>(TKey id, TSource source)
+        public virtual async Task UpdateAsync<TSource>(TKey id, TSource source) where TSource : IHasId<TKey>
         {
+
+            if (!id!.Equals(source.Id))
+            {
+                throw new BadRequestException("The source ID does not match the provided ID");
+            }
+
+
             var entity = await GetByIdAsync(id);
 
             if (entity == null)

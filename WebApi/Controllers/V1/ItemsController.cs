@@ -45,9 +45,9 @@ namespace WebApi.Controllers.V1
 
         // PUT: api/Items/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutItem(Guid id, ItemUpdateRequest item)
+        public async Task<IActionResult> PutItem(Guid id, ItemUpdateRequest request)
         {
-            await _itemServiceAsync.UpdateAsync(id, item);
+            await _itemServiceAsync.UpdateAsync(id, request);
             return NoContent();
         }
 

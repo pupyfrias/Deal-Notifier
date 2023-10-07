@@ -42,7 +42,7 @@ namespace DealNotifier.Infrastructure.Persistence.Configuration
 
             #region Data Seeding
 
-            builder.HasData(PhoneCarrierSeed.data);
+            builder.HasData(PhoneCarrierSeed.Data);
 
             #endregion Data Seeding
 

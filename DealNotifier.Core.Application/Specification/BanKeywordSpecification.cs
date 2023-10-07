@@ -9,7 +9,7 @@ namespace DealNotifier.Core.Application.Specification
     {
         public BanKeywordSpecification(BanKeywordFilterAndPaginationRequest request): base(request)
         {
-            #region Criteria
+
 
             #region Keywords
 
@@ -17,13 +17,10 @@ namespace DealNotifier.Core.Application.Specification
             {
                 Expression<Func<BanKeyword, bool>> expression = item => item.Keyword.Contains(request.Keyword);
 
-                Criteria = Criteria is null ? expression : Criteria.And(expression);
+                Criteria =  expression;
             }
 
             #endregion Keywords
-
-
-            #endregion Criteria
 
             
         }

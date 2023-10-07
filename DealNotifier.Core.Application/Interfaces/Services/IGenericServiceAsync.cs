@@ -20,6 +20,6 @@ namespace DealNotifier.Core.Application.Interfaces.Services
 
         Task<TEntity> GetByIdAsync(TKey id);
 
-        Task UpdateAsync<TSource>(TKey id, TSource source);
+        Task UpdateAsync<TSource>(TKey id, TSource source) where TSource : IHasId<TKey>;
     }
 }

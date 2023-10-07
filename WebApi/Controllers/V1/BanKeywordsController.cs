@@ -41,17 +41,17 @@ namespace WebApi.Controllers.V1
 
         // PUT: api/BanKeywords/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBanKeyword(int id, BanKeywordUpdateRequest banKeyword)
+        public async Task<IActionResult> PutBanKeyword(int id, BanKeywordUpdateRequest request)
         {
-            await _banKeywordServiceAsync.UpdateAsync(id, banKeyword);
+            await _banKeywordServiceAsync.UpdateAsync(id, request);
             return NoContent();
         }
 
         // POST: api/BanKeywords
         [HttpPost]
-        public async Task<ActionResult<BanKeyword>> PostBanKeyword(BanKeywordCreateRequest banKeyword)
+        public async Task<ActionResult<BanKeyword>> PostBanKeyword(BanKeywordCreateRequest request)
         {
-            var createdBanKeyword = await _banKeywordServiceAsync.CreateAsync(banKeyword);
+            var createdBanKeyword = await _banKeywordServiceAsync.CreateAsync(request);
             var response = new ApiResponse<BanKeyword>(createdBanKeyword);
             return CreatedAtAction("GetBanKeyword", new { id = createdBanKeyword.Id }, response);
         }

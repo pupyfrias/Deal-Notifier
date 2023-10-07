@@ -29,6 +29,8 @@ namespace DealNotifier.Infrastructure.Persistence
             services.AddScoped<IItemRepositoryAsync, ItemRepositoryAsync>();
             services.AddScoped<IBanKeywordRepositoryAsync, BanKeywordRepositoryAsync>();
             services.AddScoped<IBanLinkRepositoryAsync, BanLinkRepositoryAsync>();
+            services.AddScoped<IBrandRepositoryAsync, BrandRepositoryAsync>();
+            services.AddScoped<IConditionRepositoryAsync, ConditionRepositoryAsync>();
 
             #endregion Dependency Injection
         }

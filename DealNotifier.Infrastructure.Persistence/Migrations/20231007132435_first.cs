@@ -84,7 +84,8 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                 name: "Condition",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "VARCHAR(15)", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "default"),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
@@ -169,7 +170,8 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                 name: "StockStatus",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "VARCHAR(20)", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "default"),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
@@ -185,7 +187,8 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                 name: "UnlockProbability",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "VARCHAR(15)", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "default"),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
@@ -395,8 +398,8 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                 columns: new[] { "Id", "LastModified", "LastModifiedBy", "Name" },
                 values: new object[,]
                 {
-                    { 0, null, null, "Used" },
-                    { 1, null, null, "New" }
+                    { 1, null, null, "New" },
+                    { 2, null, null, "Used" }
                 });
 
             migrationBuilder.InsertData(
@@ -480,8 +483,8 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                 columns: new[] { "Id", "LastModified", "LastModifiedBy", "Name" },
                 values: new object[,]
                 {
-                    { 0, null, null, "OutStock" },
-                    { 1, null, null, "InStock" }
+                    { 1, null, null, "InStock" },
+                    { 2, null, null, "OutStock" }
                 });
 
             migrationBuilder.InsertData(
@@ -489,10 +492,10 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                 columns: new[] { "Id", "LastModified", "LastModifiedBy", "Name" },
                 values: new object[,]
                 {
-                    { 0, null, null, "None" },
-                    { 1, null, null, "Low" },
-                    { 2, null, null, "Middle" },
-                    { 3, null, null, "High" }
+                    { 1, null, null, "None" },
+                    { 2, null, null, "Low" },
+                    { 3, null, null, "Middle" },
+                    { 4, null, null, "High" }
                 });
 
             migrationBuilder.CreateIndex(

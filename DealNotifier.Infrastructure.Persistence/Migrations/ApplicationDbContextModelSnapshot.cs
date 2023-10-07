@@ -216,7 +216,10 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("DealNotifier.Core.Domain.Entities.Condition", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("Created")
                         .ValueGeneratedOnAdd()
@@ -252,7 +255,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = 0,
+                            Id = 2,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Used"
                         });
@@ -853,7 +856,10 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("DealNotifier.Core.Domain.Entities.StockStatus", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("Created")
                         .ValueGeneratedOnAdd()
@@ -889,7 +895,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = 0,
+                            Id = 2,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "OutStock"
                         });
@@ -975,7 +981,10 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("DealNotifier.Core.Domain.Entities.UnlockProbability", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("Created")
                         .ValueGeneratedOnAdd()
@@ -1005,25 +1014,25 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 0,
+                            Id = 1,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "None"
                         },
                         new
                         {
-                            Id = 1,
+                            Id = 2,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Low"
                         },
                         new
                         {
-                            Id = 2,
+                            Id = 3,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Middle"
                         },
                         new
                         {
-                            Id = 3,
+                            Id = 4,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "High"
                         });
@@ -1110,7 +1119,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("DealNotifier.Core.Domain.Entities.UnlockabledPhone", b =>
                 {
                     b.HasOne("DealNotifier.Core.Domain.Entities.Brand", "Brand")
-                        .WithMany("Supporteds")
+                        .WithMany("UnlockabledPhones")
                         .HasForeignKey("BrandId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1160,7 +1169,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                 {
                     b.Navigation("Items");
 
-                    b.Navigation("Supporteds");
+                    b.Navigation("UnlockabledPhones");
                 });
 
             modelBuilder.Entity("DealNotifier.Core.Domain.Entities.Condition", b =>

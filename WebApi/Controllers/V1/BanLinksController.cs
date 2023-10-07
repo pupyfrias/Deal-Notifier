@@ -1,5 +1,6 @@
 ﻿using DealNotifier.Core.Application.Interfaces.Services;
 using DealNotifier.Core.Application.Services;
+using DealNotifier.Core.Application.Specification;
 using DealNotifier.Core.Application.ViewModels.Common;
 using DealNotifier.Core.Application.ViewModels.V1;
 using DealNotifier.Core.Application.ViewModels.V1.BanLink;
@@ -12,6 +13,7 @@ namespace WebApi.Controllers.V1
 {
     //[Authorize(Roles = $"{Role.SuperAdmin}")]
     [ApiVersion("1.0")]
+    [Route("api/[controller]")]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     public class BanLinksController : ControllerBase
@@ -42,17 +44,17 @@ namespace WebApi.Controllers.V1
 
         // PUT: api/BanLinks/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBanLink(int id, BanLinkUpdateRequest banLink)
+        public async Task<IActionResult> PutBanLink(int id, BanLinkUpdateRequest request)
         {
-            await _banLinkServiceAsync.UpdateAsync(id, banLink);
+            await _banLinkServiceAsync.UpdateAsync(id, request);
             return NoContent();
         }
 
         // POST: api/BanLinks
         [HttpPost]
-        public async Task<ActionResult<BanLink>> PostBanLink(BanLinkCreateRequest banLink)
+        public async Task<ActionResult<BanLink>> PostBanLink(BanLinkCreateRequest request)
         {
-            var createdBanLink = await _banLinkServiceAsync.CreateAsync(banLink);
+            var createdBanLink = await _banLinkServiceAsync.CreateAsync(request);
             var response = new ApiResponse<BanLink>(createdBanLink);
             return CreatedAtAction("GetBanLink", new { id = createdBanLink.Id }, response);
         }

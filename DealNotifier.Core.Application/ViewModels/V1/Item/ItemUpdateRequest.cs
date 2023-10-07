@@ -1,6 +1,8 @@
-﻿namespace DealNotifier.Core.Application.ViewModels.V1.Item
+﻿using DealNotifier.Core.Application.Interfaces;
+
+namespace DealNotifier.Core.Application.ViewModels.V1.Item
 {
-    public class ItemUpdateRequest
+    public class ItemUpdateRequest: IHasId<Guid>
     {
         public int BidCount { get; set; }
         public int BrandId { get; set; }
