@@ -1,4 +1,4 @@
-﻿using DealNotifier.Core.Application.DTOs.Email;
+﻿using DealNotifier.Core.Application.ViewModels.V1.Email;
 
 namespace DealNotifier.Core.Application.Constants
 {

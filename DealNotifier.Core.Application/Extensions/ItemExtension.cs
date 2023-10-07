@@ -1,6 +1,6 @@
-﻿using DealNotifier.Core.Application.DTOs.Item;
-using DealNotifier.Core.Application.Enums;
+﻿using DealNotifier.Core.Application.Enums;
 using DealNotifier.Core.Application.Heplers;
+using DealNotifier.Core.Application.ViewModels.V1.Item;
 
 namespace DealNotifier.Core.Application.Extensions
 {
@@ -10,7 +10,7 @@ namespace DealNotifier.Core.Application.Extensions
         /// Validate if the Item can be save.
         /// </summary>
         /// <returns>true if the Item is not in BlackList; otherwise, false.</returns>
-        public static async Task<bool> CanBeSaved(this ItemCreateDto item)
+        public static async Task<bool> CanBeSaved(this ItemCreateRequest item)
         {
             bool isBanned = false;
             bool isInBlackList = false;
@@ -22,7 +22,7 @@ namespace DealNotifier.Core.Application.Extensions
 
             Task blackListTask = Task.Run(() =>
             {
-                isInBlackList = Helper.BlacklistedLinks.Any(x => x.Link == item.Link);
+                isInBlackList = Helper.BanLinkList.Any(x => x.Link == item.Link);
             });
 
             await Task.WhenAll(bannedTask, blackListTask);
@@ -30,12 +30,7 @@ namespace DealNotifier.Core.Application.Extensions
             return !(isBanned || isInBlackList);
         }
 
-
-
-
-
-
-        public static void SetPhoneCarrier(this ItemCreateDto item)
+        public static void SetPhoneCarrier(this ItemCreateRequest item)
         {
             foreach (var phoneCarrier in Helper.PhoneCarrierList)
             {
@@ -58,11 +53,10 @@ namespace DealNotifier.Core.Application.Extensions
             }
         }
 
-
         /// <summary>
         /// Set Item Condition
         /// </summary>
-        public static void SetCondition(this ItemCreateDto item)
+        public static void SetCondition(this ItemCreateRequest item)
         {
             /* bool isNotNew =  conditionList.Any(condition =>  item.Name.IndexOf(condition, StringComparison.OrdinalIgnoreCase) >= 0);
              item.ConditionId = isNotNew ? (int)Condition.Used : (int)Condition.New;*/

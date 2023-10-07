@@ -1,22 +1,19 @@
-﻿using DealNotifier.Core.Application.Extensions;
-using DealNotifier.Core.Application.Request;
+﻿using DealNotifier.Core.Application.Exceptions;
+using DealNotifier.Core.Application.Extensions;
+using DealNotifier.Core.Application.ViewModels.V1.Item;
 using DealNotifier.Core.Domain.Entities;
 using System.Linq.Expressions;
-using System.Linq;
-using DealNotifier.Core.Application.Exceptions;
-using System;
 
 namespace DealNotifier.Core.Application.Specification
 {
     public class ItemSpecification : Specification<Item>
     {
-        public ItemSpecification(ItemRequest request)
+        public ItemSpecification(ItemFilterAndPaginationRequest request):base(request)
         {
             #region Criteria
 
-
             #region Storages
-            
+
             if (request.Storages != null)
             {
                 Expression<Func<Item, bool>> expression = item => false;
@@ -41,7 +38,7 @@ namespace DealNotifier.Core.Application.Specification
             #endregion Storages
 
             #region Shops
-            
+
             if (request.Shops != null)
             {
                 var shopList = request.Shops.Split(",").Select(int.Parse);
@@ -49,6 +46,7 @@ namespace DealNotifier.Core.Application.Specification
 
                 Criteria = Criteria is null ? expression : Criteria.And(expression);
             }
+
             #endregion Shops
 
             #region Conditions
@@ -60,6 +58,7 @@ namespace DealNotifier.Core.Application.Specification
 
                 Criteria = Criteria is null ? expression : Criteria.And(expression);
             }
+
             #endregion Conditions
 
             #region Types
@@ -71,6 +70,7 @@ namespace DealNotifier.Core.Application.Specification
 
                 Criteria = Criteria is null ? expression : Criteria.And(expression);
             }
+
             #endregion Types
 
             #region Brands
@@ -82,6 +82,7 @@ namespace DealNotifier.Core.Application.Specification
 
                 Criteria = Criteria is null ? expression : Criteria.And(expression);
             }
+
             #endregion Brands
 
             #region PhoneCarriers
@@ -93,6 +94,7 @@ namespace DealNotifier.Core.Application.Specification
 
                 Criteria = Criteria is null ? expression : Criteria.And(expression);
             }
+
             #endregion PhoneCarriers
 
             #region UnlockProbabilities
@@ -104,22 +106,25 @@ namespace DealNotifier.Core.Application.Specification
 
                 Criteria = Criteria is null ? expression : Criteria.And(expression);
             }
+
             #endregion UnlockProbabilities
 
             #region Min
+
             if (request.Min != null)
             {
-               bool parsed =  decimal.TryParse(request.Min, out var min);
+                bool parsed = decimal.TryParse(request.Min, out var min);
 
                 if (!parsed) throw new BadRequestException("'Min' query parameter must be decimal");
 
-                
                 Expression<Func<Item, bool>> expression = item => item.Price > min;
                 Criteria = Criteria is null ? expression : Criteria.And(expression);
             }
+
             #endregion Min
 
             #region Max
+
             if (request.Max != null)
             {
                 bool parsed = decimal.TryParse(request.Max, out var max);
@@ -129,17 +134,21 @@ namespace DealNotifier.Core.Application.Specification
                 Expression<Func<Item, bool>> expression = item => item.Price < max;
                 Criteria = Criteria is null ? expression : Criteria.And(expression);
             }
+
             #endregion Max
 
             #region Search
+
             if (request.Search != null)
             {
                 Expression<Func<Item, bool>> expression = item => item.Name.Contains(request.Search);
                 Criteria = Criteria is null ? expression : Criteria.And(expression);
             }
+
             #endregion Search
 
             #region Offer
+
             if (request.Offer != null)
             {
                 Expression<Func<Item, bool>> expression;
@@ -153,43 +162,12 @@ namespace DealNotifier.Core.Application.Specification
                     expression = item => item.Saving > 0;
                 }
 
-                
                 Criteria = Criteria is null ? expression : Criteria.And(expression);
             }
+
             #endregion Offer
 
-
             #endregion Criteria
-
-            #region OrderBy
-
-            switch (request.OrderBy?.ToLower())
-            {
-                case "name":
-                    ApplyOrderBy(p => p.Name);
-                    break;
-                case "price":
-                    ApplyOrderBy(p => p.Price);
-                    break;
-                case "savingspercentage":
-                    ApplyOrderBy(p => p.SavingsPercentage);
-                    break;
-                case "saving":
-                    ApplyOrderBy(p => p.Saving);
-                    break;
-                default:
-                    ApplyOrderBy(p => p.Id);
-                    break;
-            }
-
-            Descending = request?.Descending ?? false;
-
-            #endregion OrderBy
-
-            #region Pagination
-            ApplyPaging(request.Offset, request.Limit);
-            #endregion Pagination
-
         }
     }
 }

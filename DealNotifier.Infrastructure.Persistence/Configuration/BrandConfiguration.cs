@@ -1,8 +1,7 @@
-﻿using DealNotifier.Infrastructure.Persistence.Seeds;
+﻿using DealNotifier.Core.Domain.Entities;
+using DealNotifier.Infrastructure.Persistence.Seeds;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using DealNotifier.Core.Application.DTOs;
-using DealNotifier.Core.Domain.Entities;
 
 namespace DealNotifier.Infrastructure.Persistence.Configuration
 {

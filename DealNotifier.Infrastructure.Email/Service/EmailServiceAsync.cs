@@ -1,10 +1,10 @@
-﻿using DealNotifier.Infrastructure.Email.Settings;
+﻿using DealNotifier.Core.Application.Constants;
+using DealNotifier.Core.Application.ViewModels.V1.Email;
+using DealNotifier.Infrastructure.Email.Settings;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
-using DealNotifier.Core.Application.Constants;
-using DealNotifier.Core.Application.DTOs.Email;
 
 namespace DealNotifier.Infrastructure.Email.Service
 {

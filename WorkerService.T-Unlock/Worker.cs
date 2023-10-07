@@ -1,20 +1,18 @@
-using HtmlAgilityPack;
-using DealNotifier.Core.Application.Contracts.Services;
-using DealNotifier.Core.Application.DTOs.PhoneCarrier;
-using DealNotifier.Core.Application.DTOs.Unlockable;
+using DealNotifier.Core.Application.Interfaces.Services;
+using DealNotifier.Core.Application.ViewModels.V1.PhoneCarrier;
+using DealNotifier.Core.Application.ViewModels.V1.Unlockable;
+using DealNotifier.Core.Domain.Configs;
 using DealNotifier.Core.Domain.Entities;
+using HtmlAgilityPack;
+using Microsoft.Extensions.Options;
+using Enums = DealNotifier.Core.Application.Enums;
 using ILogger = Serilog.ILogger;
 using Timer = System.Threading.Timer;
-using Enums = DealNotifier.Core.Application.Enums;
-using DealNotifier.Core.Domain.Configs;
-using Microsoft.Extensions.Options;
-
 
 namespace WorkerService.T_Unlock_WebScraping
 {
     public class Worker : BackgroundService
     {
-
         private readonly ILogger _logger;
         private readonly IUnlockableServiceAsync _unlockableServiceAsync;
         private readonly IPhoneCarrierServiceAsync _phoneCarrierServiceAsync;
@@ -60,7 +58,6 @@ namespace WorkerService.T_Unlock_WebScraping
             {
                 _logger.Error(ex, ex.Message);
             }
-
         }
 
         /*protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -98,8 +95,6 @@ namespace WorkerService.T_Unlock_WebScraping
             }
         }*/
 
-
-
         private async Task TimerElapsed()
         {
             _logger.Information($"Timer elapsed. Running T-Unlock Scraping Service Init. {DateTime.Now}");
@@ -107,11 +102,7 @@ namespace WorkerService.T_Unlock_WebScraping
             phoneCarrierList = await _phoneCarrierServiceAsync.GetAllAsync<PhoneCarrierReadDto>();
             await Scrapping();
             _logger.Information("T-Unlock Scraping Service completed.");
-
-
-
         }
-
 
         private int GetBrandId(string path)
         {
@@ -124,7 +115,6 @@ namespace WorkerService.T_Unlock_WebScraping
 
             return keyValues.TryGetValue(path, out int brandId) ? brandId : (int)Enums.Brand.Unknown;
         }
-
 
         private async Task Scrapping()
         {
@@ -151,7 +141,6 @@ namespace WorkerService.T_Unlock_WebScraping
                     var modelName = h7List[1].InnerText;
                     var carrierList = h4.InnerText.Split(',');
 
-
                     var possibleUnlockable = await _unlockableServiceAsync.GetByModelNumberAsync(modelNumbre);
 
                     if (possibleUnlockable == null)
@@ -163,13 +152,12 @@ namespace WorkerService.T_Unlock_WebScraping
                             ModelNumber = modelNumbre
                         };
 
+                        var model = await _unlockableServiceAsync.CreateAsync<UnlockableCreateDto>(unlockableCreateDto);
 
-                        var model = await _unlockableServiceAsync.CreateAsync<UnlockableCreateDto, UnlockablePhone>(unlockableCreateDto);
-
-                        var unlockableUnlockTool = new UnlockablePhoneUnlockTool
+                        var unlockableUnlockTool = new UnlockabledPhoneUnlockTool
                         {
-                            UnlockablePhoneId = model.Id,
-                            UnlockToolId = (int)Enums.UnlockTool.TUnlock
+                            UnlockablePhoneId= model.Id,
+                            PhoneUnlockToolId = (int)Enums.UnlockTool.TUnlock
                         };
                         await _unlockableUnlockToolServiceAsync.CreateAsync(unlockableUnlockTool);
 
@@ -178,9 +166,9 @@ namespace WorkerService.T_Unlock_WebScraping
                             var phoneCarrier = phoneCarrierList.FirstOrDefault(pc => pc.Name.Contains(carrier.Trim(), StringComparison.OrdinalIgnoreCase));
                             if (phoneCarrier != null)
                             {
-                                var unlockablePhoneCarrier = new UnlockablePhonePhoneCarrier
+                                var unlockablePhoneCarrier = new UnlockabledPhonePhoneCarrier
                                 {
-                                    UnlockablePhoneId = model.Id,
+                                    UnlockabledPhoneId = model.Id,
                                     PhoneCarrierId = phoneCarrier.Id,
                                 };
 
@@ -195,9 +183,9 @@ namespace WorkerService.T_Unlock_WebScraping
                             var phoneCarrier = phoneCarrierList.FirstOrDefault(pc => pc.Name.Contains(carrier.Trim(), StringComparison.OrdinalIgnoreCase));
                             if (phoneCarrier != null)
                             {
-                                var unlockablePhoneCarrier = new UnlockablePhonePhoneCarrier
+                                var unlockablePhoneCarrier = new UnlockabledPhonePhoneCarrier
                                 {
-                                    UnlockablePhoneId = possibleUnlockable.Id,
+                                    UnlockabledPhoneId = possibleUnlockable.Id,
                                     PhoneCarrierId = phoneCarrier.Id,
                                 };
 
@@ -217,6 +205,5 @@ namespace WorkerService.T_Unlock_WebScraping
                 }
             }
         }
-
     }
 }

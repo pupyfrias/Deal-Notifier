@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Identity;
-using DealNotifier.Core.Application.Constants;
+﻿using DealNotifier.Core.Application.Constants;
+using Microsoft.AspNetCore.Identity;
 
 namespace DealNotifier.Infrastructure.Identity.Seeds
 {
     public static class UserRoleSeed
     {
-        public readonly static IReadOnlyList<IdentityUserRole<string>> data = new List<IdentityUserRole<string>>
+        public static readonly IReadOnlyList<IdentityUserRole<string>> data = new List<IdentityUserRole<string>>
         {
             new IdentityUserRole<string>
             {

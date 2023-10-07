@@ -1,40 +1,51 @@
-using Serilog;
-using WebApi.Extensions;
 using DealNotifier.Core.Application;
-using DealNotifier.Core.Application.SetupOptions;
+using DealNotifier.Core.Application.Setups;
+using DealNotifier.Infrastructure.Email;
 using DealNotifier.Infrastructure.Identity;
 using DealNotifier.Infrastructure.Persistence;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Serilog;
 using WebApi.Middlewares;
-using DealNotifier.Infrastructure.Email;
+
+var builder = WebApplication.CreateBuilder(args);
+ConfigurationManager configuration = builder.Configuration;
+
+#region Add services to the container
+
+builder.Services.AddApplicationLayer(configuration);
+builder.Services.AddPersistenceInfrastructure(configuration);
+builder.Services.AddIdentityInfrastructure(configuration);
+builder.Services.AddInfrastructureEmail(configuration);
+
+#endregion Add services to the container
+
+builder.Host.UseSerilog(SeriLogSetup.Configure);
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
 {
-    var builder = WebApplication.CreateBuilder(args);
-    ConfigurationManager configuration = builder.Configuration;
-
-    #region Add services to the container
-
-    builder.Services.AddApplicationLayer(configuration);
-    builder.Services.AddPersistenceInfrastructure(configuration);
-    builder.Services.AddIdentityInfrastructure(configuration);
-    builder.Services.AddInfrastructureEmail(configuration);
-
-    #endregion Add services to the container
-
-    builder.Host.UseSerilog(SeriLog.Options);
-    var app = builder.Build();
-
-    // Configure the HTTP request pipeline.
-    if (app.Environment.IsDevelopment())
+    app.UseSwagger();
+    app.UseSwaggerUI(options =>
     {
-        app.UseSwagger();
-        app.UseSwaggerUI();
-    }
+        var provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
 
-    app.UseMiddleware<ExceptionMiddleware>();
-    app.UseSerilogRequestLogging();
-    app.UseHttpsRedirection();
-    app.UseCors("AllowAll");
-    app.UseAuthentication();
-    app.UseAuthorization();
-    app.MapControllers();
-    app.Run();
+        foreach (var description in provider.ApiVersionDescriptions)
+        {
+            var url = $"/swagger/{description.GroupName}/swagger.json";
+            var name = description.GroupName.ToUpperInvariant();
+            options.SwaggerEndpoint(url, name);
+        }
+    });
+
+
 }
+
+app.UseMiddleware<ExceptionMiddleware>();
+app.UseSerilogRequestLogging();
+app.UseHttpsRedirection();
+app.UseCors("AllowAll");
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapControllers();
+app.Run();

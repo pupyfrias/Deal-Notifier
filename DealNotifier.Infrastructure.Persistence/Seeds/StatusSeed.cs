@@ -5,14 +5,14 @@ namespace DealNotifier.Infrastructure.Persistence.Seeds
 {
     public static class StatusSeed
     {
-        public static List<Status> data { get; set; } = new List<Status>
+        public static List<StockStatus> data { get; set; } = new List<StockStatus>
         {
-            new Status
+            new StockStatus
             {
                 Id= (int) Enums.Status.InStock,
                 Name= Enums.Status.InStock.ToString()
             },
-            new Status
+            new StockStatus
             {
                 Id= (int) Enums.Status.OutStock,
                 Name= Enums.Status.OutStock.ToString()

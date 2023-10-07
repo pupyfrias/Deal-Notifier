@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using DealNotifier.Core.Application.DTOs.Auth;
+using DealNotifier.Core.Application.ViewModels.V1.Auth;
 
 namespace DealNotifier.Infrastructure.Identity.Mappings
 {
@@ -9,7 +9,6 @@ namespace DealNotifier.Infrastructure.Identity.Mappings
         {
             CreateMap<AuthenticationResponse, AuthProto.AuthenticationResponse>().ReverseMap();
             CreateMap<AuthenticationRequest, AuthProto.AuthenticationRequest>().ReverseMap();
-
         }
     }
 }

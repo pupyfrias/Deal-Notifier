@@ -1,17 +1,14 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using DealNotifier.Core.Application.DTOs;
-using DealNotifier.Core.Application.Extensions;
-using DealNotifier.Core.Application.Models;
-using DealNotifier.Core.Domain.Common;
+﻿using DealNotifier.Core.Application.Extensions;
+using DealNotifier.Core.Application.ViewModels;
+using DealNotifier.Core.Application.ViewModels.V1;
 using DealNotifier.Core.Domain.Contracts;
 using DealNotifier.Core.Domain.Entities;
 using DealNotifier.Infrastructure.Persistence.Configuration;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Action = DealNotifier.Core.Application.Enums.Action;
-using Type = DealNotifier.Core.Domain.Entities.Type;
+using ItemType = DealNotifier.Core.Domain.Entities.ItemType;
 
 namespace DealNotifier.Infrastructure.Persistence.DbContexts
 {
@@ -32,55 +29,33 @@ namespace DealNotifier.Infrastructure.Persistence.DbContexts
         #region DbSets
 
         public DbSet<Audit> AuditLogs { get; set; }
-        public DbSet<Banned> Banned { get; set; }
-        public DbSet<BlackList> BlackLists { get; set; }
-        public DbSet<BlackListDto> SpBlackList { get; set; }
-        public DbSet<Condition> Conditions { get; set; }
-        public DbSet<Item> Items { get; set; }
-        public DbSet<Shop> Shops { get; set; }
-        public DbSet<Status> Statuses { get; set; }
-        public DbSet<UnlockablePhone> UnlockablePhones { get; set; }
-        public DbSet<Type> Types { get; set; }
-        public DbSet<ConditionsToNotify> ConditionsToNotify { get; set; }
+        public DbSet<BanKeyword> BanKeywords { get; set; }
+        public DbSet<BanLink> BanLinks { get; set; }
         public DbSet<Brand> Brands { get; set; }
-        public DbSet<UnlockablePhonePhoneCarrier> UnlockablePhoneCarriers { get; set; }
-        public DbSet<UnlockablePhoneUnlockTool> UnlockableUnlockTools { get; set; }
+        public DbSet<Condition> Conditions { get; set; }
+        public DbSet<NotificationCriteria> NotificationCriteria { get; set; }
+        public DbSet<Item> Items { get; set; }
         public DbSet<PhoneCarrier> PhoneCarriers { get; set; }
+        public DbSet<Shop> Shops { get; set; }
+        public DbSet<StockStatus> StockStatuses { get; set; }
+        public DbSet<ItemType> Types { get; set; }
+        public DbSet<UnlockabledPhonePhoneCarrier> UnlockabledPhonePhoneCarriers { get; set; }
+        public DbSet<UnlockabledPhone> UnlockabledPhones { get; set; }
+        public DbSet<UnlockabledPhoneUnlockTool> UnlockablePhoneUnlockTools { get; set; }
         public DbSet<UnlockProbability> UnlockProbability { get; set; }
-
 
         #endregion DbSets
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        public override int SaveChanges()
         {
-            modelBuilder.ApplyConfiguration(new BannedConfiguration());
-            modelBuilder.ApplyConfiguration(new BlackListConfiguration());
-            modelBuilder.ApplyConfiguration(new BrandConfiguration());
-            modelBuilder.ApplyConfiguration(new ConditionConfiguration());
-            modelBuilder.ApplyConfiguration(new ConditionsToNotifyConfiguration());
-            modelBuilder.ApplyConfiguration(new ItemConfiguration());
-            modelBuilder.ApplyConfiguration(new PhoneCarrierConfiguration());
-            modelBuilder.ApplyConfiguration(new ShopConfiguration());
-            modelBuilder.ApplyConfiguration(new SpBlackListResponseConfiguration());
-            modelBuilder.ApplyConfiguration(new StatusConfiguration());
-            modelBuilder.ApplyConfiguration(new TypeConfiguration());
-            modelBuilder.ApplyConfiguration(new UnlockablePhoneConfiguration());
-            modelBuilder.ApplyConfiguration(new UnlockablePhonePhoneCarrierConfiguration());
-            modelBuilder.ApplyConfiguration(new UnlockablePhoneUnlockToolConfiguration());
-            modelBuilder.ApplyConfiguration(new UnlockToolConfiguration());
-            modelBuilder.ApplyConfiguration(new UnlockProbabilityConfiguration());
+            SetEntry();
+            return base.SaveChanges();
         }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             SetEntry();
             return base.SaveChangesAsync(cancellationToken);
-        }
-
-        public override int SaveChanges()
-        {
-            SetEntry();
-            return base.SaveChanges();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -93,6 +68,24 @@ namespace DealNotifier.Infrastructure.Persistence.DbContexts
             base.OnConfiguring(optionsBuilder);
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.ApplyConfiguration(new BanKeywordConfiguration());
+            modelBuilder.ApplyConfiguration(new BanLinkConfiguration());
+            modelBuilder.ApplyConfiguration(new BrandConfiguration());
+            modelBuilder.ApplyConfiguration(new ConditionConfiguration());
+            modelBuilder.ApplyConfiguration(new ItemConfiguration());
+            modelBuilder.ApplyConfiguration(new NotificationCriteriaConfiguration());
+            modelBuilder.ApplyConfiguration(new PhoneCarrierConfiguration());
+            modelBuilder.ApplyConfiguration(new PhoneUnlockToolConfiguration());
+            modelBuilder.ApplyConfiguration(new ShopConfiguration());
+            modelBuilder.ApplyConfiguration(new StockStatusConfiguration());
+            modelBuilder.ApplyConfiguration(new ItemTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new UnlockabledPhoneConfiguration());
+            modelBuilder.ApplyConfiguration(new UnlockabledPhoneUnlockToolConfiguration());
+            modelBuilder.ApplyConfiguration(new UnlockabledPhonePhoneCarrierConfiguration());
+            modelBuilder.ApplyConfiguration(new UnlockProbabilityConfiguration());
+        }
         private void SetEntry()
         {
             var auditEntryList = new List<AuditEntry>();

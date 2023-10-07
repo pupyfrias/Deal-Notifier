@@ -1,16 +1,17 @@
 ﻿using AutoMapper;
+using DealNotifier.Core.Application.Interfaces.Repositories;
+using DealNotifier.Core.Domain.Entities;
 using DealNotifier.Infrastructure.Persistence.DbContexts;
 using Microsoft.EntityFrameworkCore;
-using DealNotifier.Core.Application.Contracts.Repositories;
-using DealNotifier.Core.Domain.Entities;
 
 namespace DealNotifier.Infrastructure.Persistence.Repositories
 {
-    public class UnlockableRepositoryAsync : GenericRepositoryAsync<UnlockablePhone>, IUnlockableRepositoryAsync
+    public class UnlockableRepositoryAsync : GenericRepositoryAsync<UnlockabledPhone, int>, IUnlockableRepositoryAsync
     {
-
         #region Private Variable
+
         private readonly ApplicationDbContext _context;
+
         #endregion Private Variable
 
         #region Constructor
@@ -20,9 +21,9 @@ namespace DealNotifier.Infrastructure.Persistence.Repositories
             _context = context;
         }
 
-        public async Task<UnlockablePhone?> GetByModelNumberAsync(string modelNumber)
+        public async Task<UnlockabledPhone?> GetByModelNumberAsync(string modelNumber)
         {
-            return await _context.UnlockablePhones.FirstOrDefaultAsync(x => x.ModelNumber == modelNumber);
+            return await _context.UnlockabledPhones.FirstOrDefaultAsync(x => x.ModelNumber == modelNumber);
         }
 
         #endregion Constructor

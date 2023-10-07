@@ -5,7 +5,6 @@ namespace DealNotifier.Infrastructure.Persistence.Seeds
 {
     public static class PhoneCarrierSeed
     {
-
         public static List<PhoneCarrier> data { get; set; } = new List<PhoneCarrier>()
         {
             new PhoneCarrier

@@ -1,39 +1,29 @@
 ﻿using AutoMapper;
 using DealNotifier.Core.Application.Constants;
-using DealNotifier.Core.Application.Contracts.Repositories;
-using DealNotifier.Core.Application.Contracts.Services;
-using DealNotifier.Core.Application.DTOs.Email;
-using DealNotifier.Core.Application.DTOs;
-using DealNotifier.Core.Application.DTOs.Item;
-using DealNotifier.Core.Application.DTOs.PhoneCarrier;
-using DealNotifier.Core.Application.DTOs.Unlockable;
 using DealNotifier.Core.Application.Heplers;
+using DealNotifier.Core.Application.Interfaces.Repositories;
+using DealNotifier.Core.Application.Interfaces.Services;
+using DealNotifier.Core.Application.ViewModels.V1;
+using DealNotifier.Core.Application.ViewModels.V1.Email;
+using DealNotifier.Core.Application.ViewModels.V1.Item;
 using DealNotifier.Core.Domain.Entities;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Caching.Memory;
+using Serilog;
 using System.Collections.Concurrent;
 using System.Data;
-using System.Text.RegularExpressions;
 using System.Text;
-using Serilog;
-using Microsoft.Extensions.Configuration;
 using IConfigurationProvider = AutoMapper.IConfigurationProvider;
-using DealNotifier.Core.Application.Extensions;
-using DealNotifier.Core.Application.Models;
-using DealNotifier.Core.Domain.Contracts;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore;
-using AutoMapper.QueryableExtensions;
 
 namespace DealNotifier.Core.Application.Services
 {
-    public class ItemServiceAsync : GenericServiceAsync<Item>, IItemServiceAsync
+    public class ItemServiceAsync : GenericServiceAsync<Item, Guid>, IItemServiceAsync
     {
         #region Fields
 
         private readonly IConfigurationProvider _configurationProvider;
-        private readonly IEmailServiceAsync _emailService;
+        private readonly IEmailServiceAsync _emailServiceAsync;
+        private readonly IItemRepositoryAsync _itemRepositoryAsync;
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
         public ConcurrentBag<Item> itemToNotifyList { get; set; } = new ConcurrentBag<Item>();
@@ -42,15 +32,16 @@ namespace DealNotifier.Core.Application.Services
 
         #region Constructor
 
-        public ItemServiceAsync(IItemRepositoryAsync repository, IMapper mapper, IHttpContextAccessor httpContext, IMemoryCache cache, IItemRepositoryAsync itemRepository, IConfigurationProvider configurationProvider, IEmailServiceAsync emailService, ILogger logger) : base(repository, mapper, httpContext, cache)
+        public ItemServiceAsync(IMapper mapper, IHttpContextAccessor httpContext, IMemoryCache cache, IItemRepositoryAsync itemRepository, IConfigurationProvider configurationProvider, IEmailServiceAsync emailService, ILogger logger) : base(itemRepository, mapper, httpContext, cache)
         {
             _logger = logger;
             _configurationProvider = configurationProvider;
-            _emailService = emailService;
+            _emailServiceAsync = emailService;
             _mapper = mapper;
+            _itemRepositoryAsync = itemRepository;
         }
-        #endregion Constructor
 
+        #endregion Constructor
 
         #region Methods
 
@@ -118,7 +109,7 @@ namespace DealNotifier.Core.Application.Services
                     Body = body
                 };
 
-                await _emailService.SendAsync(email);
+                await _emailServiceAsync.SendAsync(email);
                 itemToNotifyList.Clear();
             }
         }
@@ -127,7 +118,7 @@ namespace DealNotifier.Core.Application.Services
         /// Save item's data
         /// </summary>
         /// <param name="items">Items ConcurrentBag</param>
-        public void SaveOrUpdate(in ConcurrentBag<ItemCreateDto> items)
+        public void SaveOrUpdate(in ConcurrentBag<ItemCreateRequest> items)
         {
             /*var itemListToSave = new ConcurrentBag<Item>();
             var itemListToUpdate = new ConcurrentBag<Item>();
@@ -136,7 +127,6 @@ namespace DealNotifier.Core.Application.Services
             {
                 using (var context = new ApplicationDbContext())
                 {
-
                     var oldItem = context.Items.FirstOrDefault(i => i.Link == item.Link);
                     if (oldItem == null)
                     {
@@ -144,7 +134,6 @@ namespace DealNotifier.Core.Application.Services
 
                         ToNotify(mappedItem);
                         itemListToSave.Add(mappedItem);
-
                     }
                     else
                     {
@@ -177,8 +166,6 @@ namespace DealNotifier.Core.Application.Services
                             {
                                 ToNotify(oldItem);
                             }
-
-
                         }
                     }
                 }
@@ -186,25 +173,25 @@ namespace DealNotifier.Core.Application.Services
 
             try
             {
-               /* var savingTask = Task.Run(() =>
-                {
-                    using (var context = new ApplicationDbContext())
-                    {
-                        context.Items.AddRange(itemListToSave);
-                        context.SaveChanges();
-                    }
-                });
+                /* var savingTask = Task.Run(() =>
+                 {
+                     using (var context = new ApplicationDbContext())
+                     {
+                         context.Items.AddRange(itemListToSave);
+                         context.SaveChanges();
+                     }
+                 });
 
-                var updatingTask = Task.Run(() =>
-                {
-                    using (var context = new ApplicationDbContext())
-                    {
-                        context.Items.UpdateRange(itemListToUpdate);
-                        context.SaveChanges();
-                    }
-                });
+                 var updatingTask = Task.Run(() =>
+                 {
+                     using (var context = new ApplicationDbContext())
+                     {
+                         context.Items.UpdateRange(itemListToUpdate);
+                         context.SaveChanges();
+                     }
+                 });
 
-                Task.WhenAll(updatingTask, savingTask).Wait();*/
+                 Task.WhenAll(updatingTask, savingTask).Wait();*/
             }
             catch (Exception ex)
             {
@@ -212,7 +199,7 @@ namespace DealNotifier.Core.Application.Services
             }
         }
 
-        public void SetUnlockProbability(ref ItemCreateDto item)
+        public void SetUnlockProbability(ref ItemCreateRequest item)
         {
             /*var modelNumber = item.ModelNumber;
             var modelName = item.ModelName;
@@ -243,7 +230,6 @@ namespace DealNotifier.Core.Application.Services
                             item.UnlockProbabilityId = (int)Enums.UnlockProbability.High;
                             return;
                         }
-
                     }
                     else if (modelName != null)
                     {
@@ -263,7 +249,7 @@ namespace DealNotifier.Core.Application.Services
             }*/
         }
 
-        public void TrySetModelNumberModelNameAndBrand(ref ItemCreateDto item)
+        public void TrySetModelNumberModelNameAndBrand(ref ItemCreateRequest item)
         {
             /*using (var context = new ApplicationDbContext())
             {
@@ -285,12 +271,12 @@ namespace DealNotifier.Core.Application.Services
                         item.ModelName = unlockable.ModelName;
                         item.ModelNumber = unlockable.ModelNumber;
                     }
-
                 }
 
                 if (item.BrandId == null && item.ModelName == null && item.ModelNumber == null)
                 {
                     #region set brand
+
                     foreach (var brand in Helper.BrandList)
                     {
                         bool isMatched = item.Name.IndexOf(brand.Name, StringComparison.OrdinalIgnoreCase) > -1;
@@ -299,11 +285,12 @@ namespace DealNotifier.Core.Application.Services
                             item.BrandId = brand.Id;
                             break;
                         }
-
                     }
+
                     #endregion set brand
 
                     #region set modelName & phone Carrier
+
                     UnlockableReadDto? unlockable;
                     var possibleModelName = Regex.Match(
                     item.Name,
@@ -313,7 +300,6 @@ namespace DealNotifier.Core.Application.Services
 
                     if (possibleModelName.Value != string.Empty)
                     {
-
                         int phoneCarrierId = item.PhoneCarrierId ?? (int)Enums.PhoneCarrier.UNK;
                         unlockable = context.UnlockablePhones
                             .Include(x => x.UnlockablePhoneCarriers)
@@ -338,8 +324,8 @@ namespace DealNotifier.Core.Application.Services
                             {
                                 item.ModelName = unlockable.ModelName;
                             }
-
                         }
+
                         #endregion set modelName & phone Carrier
                     }
                 }
@@ -371,7 +357,6 @@ namespace DealNotifier.Core.Application.Services
 
             foreach (ConditionsToNotifyDto conditionsToNotify in Helper.ConditionsToNotifyList)
             {
-
                 if (conditionsToNotify.ConditionId == item.ConditionId
                     && conditionsToNotify.MaxPrice >= item.Price
                     && CheckKeywords(conditionsToNotify.Keywords, item.Name)
@@ -380,8 +365,7 @@ namespace DealNotifier.Core.Application.Services
 
                     )
                 {
-
-                    if (item.TypeId == (int)Enums.Type.Phone && item.UnlockProbabilityId == (int)Enums.UnlockProbability.Low)
+                    if (item.TypeId == (int)Enums.ItemType.Phone && item.UnlockProbabilityId == (int)Enums.UnlockProbability.Low)
                     {
                         break;
                     }
@@ -393,9 +377,7 @@ namespace DealNotifier.Core.Application.Services
                         {
                             break;
                         }
-
                     }
-
 
                     itemToNotifyList.Add(item);
                     item.Notified = DateTime.Now;
@@ -403,7 +385,6 @@ namespace DealNotifier.Core.Application.Services
                 }
             }
         }
-
 
         #region Private Methods
 
@@ -427,14 +408,14 @@ namespace DealNotifier.Core.Application.Services
 
         private async Task LoadBlackList()
         {
-           /* using (var context = new ApplicationDbContext())
-            {
-                var backList = await context.BlackLists
-                    .ProjectTo<BlackListDto>(_configurationProvider)
-                    .ToListAsync();
+            /* using (var context = new ApplicationDbContext())
+             {
+                 var backList = await context.BlackLists
+                     .ProjectTo<BlackListDto>(_configurationProvider)
+                     .ToListAsync();
 
-                Helper.BlacklistedLinks = backList.ToHashSet<BlackListDto>();
-            }*/
+                 Helper.BlacklistedLinks = backList.ToHashSet<BlackListDto>();
+             }*/
         }
 
         private async Task LoadBrands()
@@ -451,32 +432,33 @@ namespace DealNotifier.Core.Application.Services
 
         private async Task LoadConditionsToNotify()
         {
-           /* using (var context = new ApplicationDbContext())
-            {
-                var conditionsToNotifyList = await context.ConditionsToNotify
-                    .ProjectTo<ConditionsToNotifyDto>(_configurationProvider)
-                    .ToListAsync();
+            /* using (var context = new ApplicationDbContext())
+             {
+                 var conditionsToNotifyList = await context.ConditionsToNotify
+                     .ProjectTo<ConditionsToNotifyDto>(_configurationProvider)
+                     .ToListAsync();
 
-                Helper.ConditionsToNotifyList = conditionsToNotifyList.ToHashSet<ConditionsToNotifyDto>();
-            }*/
+                 Helper.ConditionsToNotifyList = conditionsToNotifyList.ToHashSet<ConditionsToNotifyDto>();
+             }*/
         }
 
         private async Task LoadPhoneCarriers()
         {
-           /* using (var context = new ApplicationDbContext())
-            {
-                var phoneCarrirerList = await context.PhoneCarriers
-                    .ProjectTo<PhoneCarrierReadDto>(_configurationProvider)
-                    .ToListAsync();
+            /* using (var context = new ApplicationDbContext())
+             {
+                 var phoneCarrirerList = await context.PhoneCarriers
+                     .ProjectTo<PhoneCarrierReadDto>(_configurationProvider)
+                     .ToListAsync();
 
-                Helper.PhoneCarrierList = phoneCarrirerList.ToHashSet<PhoneCarrierReadDto>();
-            }*/
+                 Helper.PhoneCarrierList = phoneCarrirerList.ToHashSet<PhoneCarrierReadDto>();
+             }*/
         }
+
+
+
 
         #endregion Private Methods
 
         #endregion Methods
     }
-
-
 }

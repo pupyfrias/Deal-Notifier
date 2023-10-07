@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using DealNotifier.Core.Application.DTOs.PhoneCarrier;
+using DealNotifier.Core.Application.ViewModels.V1.PhoneCarrier;
 using DealNotifier.Core.Domain.Entities;
 
 namespace DealNotifier.Core.Application.Mappings
@@ -9,7 +9,6 @@ namespace DealNotifier.Core.Application.Mappings
         public PhoneCarrierMapperConfig()
         {
             CreateMap<PhoneCarrierReadDto, PhoneCarrier>().ReverseMap();
-
         }
     }
 }

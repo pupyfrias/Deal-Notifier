@@ -1,4 +1,4 @@
-﻿using DealNotifier.Core.Application.Contracts.Repositories;
+﻿using DealNotifier.Core.Application.Interfaces.Repositories;
 using DealNotifier.Infrastructure.Persistence.DbContexts;
 using DealNotifier.Infrastructure.Persistence.Repositories;
 using Microsoft.Extensions.Configuration;
@@ -14,20 +14,21 @@ namespace DealNotifier.Infrastructure.Persistence
 
             if (configuration.GetValue<bool>("UseInMemoryDatabase"))
             {
-                services.AddDbContext<ApplicationDbContext>(DbContextAction.InMemoryOptions);
+                services.AddDbContext<ApplicationDbContext>(DbContextSetup.InMemoryOptions);
             }
             else
             {
-                services.AddDbContext<ApplicationDbContext>(DbContextAction.DbOptions(configuration));
+                services.AddDbContext<ApplicationDbContext>(DbContextSetup.Configure(configuration));
             }
 
             #endregion DbContext
 
             #region Dependency Injection
 
-            services.AddScoped(typeof(IGenericRepositoryAsync<>), typeof(GenericRepositoryAsync<>));
+            services.AddScoped(typeof(IGenericRepositoryAsync<,>), typeof(GenericRepositoryAsync<,>));
             services.AddScoped<IItemRepositoryAsync, ItemRepositoryAsync>();
-
+            services.AddScoped<IBanKeywordRepositoryAsync, BanKeywordRepositoryAsync>();
+            services.AddScoped<IBanLinkRepositoryAsync, BanLinkRepositoryAsync>();
 
             #endregion Dependency Injection
         }

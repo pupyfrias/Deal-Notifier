@@ -1,4 +1,4 @@
-using DealNotifier.Core.Application.Contracts.Services;
+using DealNotifier.Core.Application.Interfaces.Services;
 using ILogger = Serilog.ILogger;
 using Timer = System.Threading.Timer;
 

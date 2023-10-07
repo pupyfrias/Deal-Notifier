@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
-using DealNotifier.Infrastructure.Persistence.DbContexts;
-using DealNotifier.Core.Application.Contracts.Repositories;
+using DealNotifier.Core.Application.Interfaces.Repositories;
 using DealNotifier.Core.Domain.Entities;
+using DealNotifier.Infrastructure.Persistence.DbContexts;
 
 namespace DealNotifier.Infrastructure.Persistence.Repositories
 {
-    public class PhoneCarrierRepositoryAsync : GenericRepositoryAsync<PhoneCarrier>, IPhoneCarrierRepositoryAsync
+    public class PhoneCarrierRepositoryAsync : GenericRepositoryAsync<PhoneCarrier, int>, IPhoneCarrierRepositoryAsync
     {
         #region Constructor
 

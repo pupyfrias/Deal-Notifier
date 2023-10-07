@@ -1,6 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DealNotifier.Core.Domain.Common;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using DealNotifier.Core.Domain.Common;
 
 namespace DealNotifier.Infrastructure.Persistence.Configuration
 {

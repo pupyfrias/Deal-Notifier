@@ -1,16 +1,16 @@
-﻿using AutoMapper;
+﻿using DealNotifier.Core.Application.Interfaces.Repositories;
+using DealNotifier.Core.Domain.Entities;
 using DealNotifier.Infrastructure.Persistence.DbContexts;
 using Microsoft.EntityFrameworkCore;
-using DealNotifier.Core.Application.Contracts.Repositories;
-using DealNotifier.Core.Domain.Entities;
 
 namespace DealNotifier.Infrastructure.Persistence.Repositories
 {
     public class UnlockablePhoneCarrierRepositoryAsync : IUnlockablePhoneCarrierRepositoryAsync
     {
-
         #region Private Variable
+
         private readonly ApplicationDbContext _context;
+
         #endregion Private Variable
 
         #region Constructor
@@ -20,18 +20,18 @@ namespace DealNotifier.Infrastructure.Persistence.Repositories
             _context = context;
         }
 
-        public async Task<UnlockablePhonePhoneCarrier> CreateAsync(UnlockablePhonePhoneCarrier entity)
+        public async Task<UnlockabledPhonePhoneCarrier> CreateAsync(UnlockabledPhonePhoneCarrier entity)
         {
             await _context.AddAsync(entity);
             await _context.SaveChangesAsync();
             return entity;
         }
 
-        public async Task<bool> ExistsAsync(UnlockablePhonePhoneCarrier entity)
+        public async Task<bool> ExistsAsync(UnlockabledPhonePhoneCarrier entity)
         {
-            return await _context.UnlockablePhoneCarriers
+            return await _context.UnlockabledPhonePhoneCarriers
                 .AnyAsync(x => x.PhoneCarrierId == entity.PhoneCarrierId &&
-                              x.UnlockablePhoneId == entity.UnlockablePhoneId);
+                              x.UnlockabledPhoneId == entity.UnlockabledPhoneId);
         }
 
         #endregion Constructor

@@ -1,8 +1,10 @@
-﻿using DealNotifier.Core.Application.Contracts.Services;
+﻿using DealNotifier.Core.Application.Interfaces.Services;
 using DealNotifier.Core.Application.Services;
-using DealNotifier.Core.Application.SetupOptions;
+using DealNotifier.Core.Application.Setups;
+using DealNotifier.Core.Application.Setups.Swagger;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace DealNotifier.Core.Application
@@ -11,20 +13,28 @@ namespace DealNotifier.Core.Application
     {
         public static void AddApplicationLayer(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddCors(Cors.Options);
+            services.AddApiVersioning(ApiVersionSetup.Configure);
             services.AddAuthorization();
-            services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen(SwaggerGen.Options);
-            services.AddHttpContextAccessor();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddControllers();
+            services.AddCors(CorsSetup.Configure);
+            services.AddEndpointsApiExplorer();
+            services.AddHttpContextAccessor();
             services.AddMemoryCache();
+            services.AddSwaggerGen(SwaggerGenSetup.Configure);
+            services.AddVersionedApiExplorer(VersionedApiExplorerSetup.Configure);
+
+
 
             #region Dependency Injection
 
-            services.AddScoped(typeof(IGenericServiceAsync<>), typeof(GenericServiceAsync<>));
+            services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
+            services.AddScoped(typeof(IGenericServiceAsync<,>), typeof(GenericServiceAsync<,>));
             services.AddScoped<IItemServiceAsync, ItemServiceAsync>();
-            
+            services.AddScoped<IBanKeywordServiceAsync, BanKeywordServiceAsync>();
+            services.AddScoped<IBanLinkServiceAsync, BanLinkServiceAsync>();
+
+
             #endregion Dependency Injection
         }
     }

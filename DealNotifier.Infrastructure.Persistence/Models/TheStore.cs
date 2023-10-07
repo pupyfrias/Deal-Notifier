@@ -1,19 +1,18 @@
-﻿using OpenQA.Selenium;
+﻿using DealNotifier.Core.Application.Extensions;
+using DealNotifier.Core.Application.Heplers;
+using DealNotifier.Core.Application.Utilities;
+using DealNotifier.Core.Application.ViewModels.V1.Item;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
 using Serilog;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
-using DealNotifier.Core.Application.Contracts.Services;
-using DealNotifier.Core.Application.DTOs.Item;
-using DealNotifier.Core.Application.Extensions;
-using DealNotifier.Core.Application.Heplers;
-using DealNotifier.Core.Domain.Entities;
 using Condition = DealNotifier.Core.Application.Enums.Condition;
 using Shop = DealNotifier.Core.Application.Enums.Shop;
 using Status = DealNotifier.Core.Application.Enums.Status;
-using Type = DealNotifier.Core.Application.Enums.Type;
-using DealNotifier.Core.Application.Utilities;
+using ItemType = DealNotifier.Core.Application.Enums.ItemType;
+using DealNotifier.Core.Application.Interfaces.Services;
 
 namespace DealNotifier.Infrastructure.Persistence.Models
 {
@@ -21,7 +20,7 @@ namespace DealNotifier.Infrastructure.Persistence.Models
     {
         private static ILogger _logger;
         private IItemServiceAsync _itemService;
-        private static object[,] links = { { "https://thestore.com/c/refurbished-cell-phones-58?condition=Brand%20New&showMore=0", Type.Phone } };
+        private static object[,] links = { { "https://thestore.com/c/refurbished-cell-phones-58?condition=Brand%20New&showMore=0", ItemType.Phone } };
 
         public TheStore(ILogger logger, IItemServiceAsync itemService)
         {
@@ -38,7 +37,7 @@ namespace DealNotifier.Infrastructure.Persistence.Models
                 driver.Navigate().GoToUrl((string)links[0, 0]);
                 int counter = 1;
                 WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(15));
-                ConcurrentBag<ItemCreateDto> itemList = new ConcurrentBag<ItemCreateDto>();
+                ConcurrentBag<ItemCreateRequest> itemList = new ConcurrentBag<ItemCreateRequest>();
 
                 while (true)
                 {
@@ -65,7 +64,7 @@ namespace DealNotifier.Infrastructure.Persistence.Models
                                 IWebElement ePriceWhole = element.FindElement(By.ClassName("amount"));
                                 IWebElement conditionName = element.FindElement(By.ClassName("product-tile__condition"));
 
-                                ItemCreateDto item = new ItemCreateDto();
+                                ItemCreateRequest item = new ItemCreateRequest();
                                 item.Name = $"{eName.Text.RemoveSpecialCharacters()} {conditionName.Text.RemoveSpecialCharacters()}";
                                 item.Link = Helper.GetLocalPath(eLink.GetAttribute("href"));
                                 item.Image = "https://thestore.com" + eImage.GetAttribute("data-src").Replace("height=300", "height=400");

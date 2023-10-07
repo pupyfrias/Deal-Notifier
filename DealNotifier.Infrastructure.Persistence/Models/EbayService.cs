@@ -1,24 +1,23 @@
-﻿using Serilog;
+﻿using DealNotifier.Core.Application.Constants;
+using DealNotifier.Core.Application.Extensions;
+using DealNotifier.Core.Application.Interfaces.Services;
+using DealNotifier.Core.Application.ViewModels.eBay;
+using DealNotifier.Core.Application.ViewModels.V1.Item;
+using Microsoft.IdentityModel.Tokens;
+using Serilog;
 using System.Collections.Concurrent;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
-using DealNotifier.Core.Application.Constants;
-using DealNotifier.Core.Application.Contracts.Services;
-using DealNotifier.Core.Application.DTOs.Item;
-using DealNotifier.Core.Application.Extensions;
-using DealNotifier.Core.Application.Models.eBay;
 using Enums = DealNotifier.Core.Application.Enums;
-using Newtonsoft.Json;
-using Microsoft.IdentityModel.Tokens;
 
 namespace DealNotifier.Infrastructure.Persistence.Models
 {
     public class EbayService : IEbayService
     {
-        private ConcurrentBag<ItemCreateDto> itemList = new ConcurrentBag<ItemCreateDto>();
+        private ConcurrentBag<ItemCreateRequest> itemList = new ConcurrentBag<ItemCreateRequest>();
         private ConcurrentBag<string> checkedList = new ConcurrentBag<string>();
         private DateTime expiresAt;
         private readonly IItemServiceAsync _itemService;
@@ -59,7 +58,6 @@ namespace DealNotifier.Infrastructure.Persistence.Models
                 itemList.Clear();
                 currentUrl = content?.Next;
 
-
                 while (true)
                 {
                     if (expiresAt <= DateTime.Now)
@@ -68,7 +66,6 @@ namespace DealNotifier.Infrastructure.Persistence.Models
                         await RunAsync(currentUrl, counter);
                         return;
                     }
-
 
                     using (HttpResponseMessage httpResponseMessage = httpClient.GetAsync(currentUrl).Result)
                     {
@@ -79,7 +76,7 @@ namespace DealNotifier.Infrastructure.Persistence.Models
 
                             Mapping(data?.ItemSummaries);
                             currentUrl = data?.Next;
-                            
+
                             _itemService.SaveOrUpdate(in itemList);
                             _logger.Information($"1\t| {counter}\t| {itemList.Count}");
                             counter++;
@@ -91,7 +88,6 @@ namespace DealNotifier.Infrastructure.Persistence.Models
                             await RefreshTokenAsync();
                             await RunAsync(currentUrl, counter);
                             return;
-
                         }
                         else
                         {
@@ -103,14 +99,12 @@ namespace DealNotifier.Infrastructure.Persistence.Models
 
                 _itemService.UpdateStatus(ref checkedList);
                 await _itemService.NotifyByEmail();
-
             }
             else if (response.StatusCode == HttpStatusCode.Unauthorized || accessToken.IsNullOrEmpty())
             {
                 _logger.Information("Unauthorized");
                 await RefreshTokenAsync();
                 await RunAsync(currentUrl);
-                
             }
             else
             {
@@ -122,8 +116,6 @@ namespace DealNotifier.Infrastructure.Persistence.Models
 
         #region Private Methods
 
-
-
         private void Mapping(List<ItemSummary>? itemSummaries)
         {
             if (itemSummaries != null)
@@ -132,7 +124,7 @@ namespace DealNotifier.Infrastructure.Persistence.Models
                 {
                     try
                     {
-                        ItemCreateDto item = new ItemCreateDto();
+                        ItemCreateRequest item = new ItemCreateRequest();
                         item.Name = element.Title;
                         item.Link = element.ItemWebUrl.Substring(0, element.ItemWebUrl.IndexOf("?"));
                         bool canBeSaved = await item.CanBeSaved();
@@ -157,7 +149,7 @@ namespace DealNotifier.Infrastructure.Persistence.Models
                             item.Image = element?.ThumbnailImages?[0]?.ImageUrl ?? element?.Image?.ImageUrl ?? string.Empty;
                             item.Price = price;
                             item.ShopId = (int)Enums.Shop.eBay;
-                            item.TypeId = (int)Enums.Type.Phone;
+                            item.TypeId = (int)Enums.ItemType.Phone;
                             item.StatusId = (int)Enums.Status.InStock;
                             item.ConditionId = element?.Condition == "New" ? (int)Enums.Condition.New : (int)Enums.Condition.Used;
                             item.ItemEndDate = element?.ItemEndDate?.AddHours(-4);

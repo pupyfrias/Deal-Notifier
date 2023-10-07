@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
-using DealNotifier.Core.Application.DTOs;
-using DealNotifier.Core.Application.DTOs.Condition;
-using DealNotifier.Core.Application.DTOs.Item;
+using DealNotifier.Core.Application.ViewModels.V1;
+using DealNotifier.Core.Application.ViewModels.V1.Condition;
 using DealNotifier.Core.Domain.Entities;
 
 namespace DealNotifier.Core.Application.Mappings
@@ -11,8 +10,8 @@ namespace DealNotifier.Core.Application.Mappings
         public AutoMapperConfig()
         {
             CreateMap<Condition, ConditionDto>().ReverseMap();
-            CreateMap<ConditionsToNotify, ConditionsToNotifyDto>().ReverseMap();
-            CreateMap<BlackList, BlackListDto>().ReverseMap();
+            CreateMap<NotificationCriteria, ConditionsToNotifyDto>().ReverseMap();
+            CreateMap<BanLink, BanLink>().ReverseMap();
             CreateMap<Brand, BrandReadDto>().ReverseMap();
         }
     }

@@ -1,5 +1,5 @@
 ﻿using DealNotifier.Core.Application.Constants;
-using DealNotifier.Core.Application.Contracts.Services;
+using DealNotifier.Core.Application.Interfaces.Services;
 using DealNotifier.Core.Application.Wrappers;
 using DealNotifier.Core.Domain.Configs;
 using DealNotifier.Infrastructure.Identity.DbContext;
@@ -60,7 +60,6 @@ namespace DealNotifier.Infrastructure.Identity
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IAuthService, AuthService>();
 
-
             #endregion Dependency injection
 
             #region Authentication
@@ -101,7 +100,6 @@ namespace DealNotifier.Infrastructure.Identity
                         };
 
                         await context.Response.WriteAsJsonAsync(response);
-
                     },
                     OnForbidden = async (context) =>
                     {
@@ -115,7 +113,7 @@ namespace DealNotifier.Infrastructure.Identity
                             Message = "You are not authorized to access this resource"
                         };
 
-                        await context.Response.WriteAsJsonAsync(response);                    
+                        await context.Response.WriteAsJsonAsync(response);
                     }
                 };
             });

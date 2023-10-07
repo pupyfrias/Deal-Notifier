@@ -1,5 +1,5 @@
-﻿using Serilog.Context;
-using DealNotifier.Core.Application.Extensions;
+﻿using DealNotifier.Core.Application.Extensions;
+using Serilog.Context;
 
 namespace WebApi.Middlewares
 {

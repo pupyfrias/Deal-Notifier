@@ -7,6 +7,6 @@ namespace DealNotifier.Core.Domain.Entities
         public override int Id { get; set; }
         public string Name { get; set; }
         public ICollection<Item> Items { get; set; }
-        public ICollection<UnlockablePhone> Supporteds { get; set; }
+        public ICollection<UnlockabledPhone> Supporteds { get; set; }
     }
 }

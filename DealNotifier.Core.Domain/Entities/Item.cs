@@ -18,8 +18,8 @@ namespace DealNotifier.Core.Domain.Entities
         public string Name { get; set; }
         public int BrandId { get; set; }
         public int PhoneCarrierId { get; set; }
-        public string ModelNumber { get; set; }
-        public string ModelName { get; set; }
+        public string? ModelNumber { get; set; }
+        public string? ModelName { get; set; }
         public bool Notify { get; set; }
         public bool IsAuction { get; set; }
         public int BidCount { get; set; }
@@ -28,8 +28,8 @@ namespace DealNotifier.Core.Domain.Entities
         public DateTime? Notified { get; set; }
         public Condition Condition { get; set; }
         public Shop Shop { get; set; }
-        public Status Status { get; set; }
-        public Type Type { get; set; }
+        public StockStatus Status { get; set; }
+        public ItemType Type { get; set; }
         public Brand Brand { get; set; }
         public PhoneCarrier PhoneCarrier { get; set; }
         public UnlockProbability UnlockProbability { get; set; }

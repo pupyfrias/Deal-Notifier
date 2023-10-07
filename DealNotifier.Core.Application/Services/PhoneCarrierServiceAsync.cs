@@ -1,17 +1,16 @@
 ﻿using AutoMapper;
-using DealNotifier.Core.Application.Contracts.Repositories;
-using DealNotifier.Core.Application.Contracts.Services;
+using DealNotifier.Core.Application.Interfaces.Repositories;
+using DealNotifier.Core.Application.Interfaces.Services;
+using DealNotifier.Core.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
-using DealNotifier.Core.Domain.Entities;
 
 namespace DealNotifier.Core.Application.Services
 {
-    public class PhoneCarrierServiceAsync : GenericServiceAsync<PhoneCarrier>, IPhoneCarrierServiceAsync
+    public class PhoneCarrierServiceAsync : GenericServiceAsync<PhoneCarrier, int>, IPhoneCarrierServiceAsync
     {
         public PhoneCarrierServiceAsync(IPhoneCarrierRepositoryAsync repository, IMapper mapper, IHttpContextAccessor httpContext, IMemoryCache cache) : base(repository, mapper, httpContext, cache)
         {
-
         }
     }
 }

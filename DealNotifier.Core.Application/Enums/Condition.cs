@@ -2,7 +2,6 @@
 {
     public enum Condition
     {
-
         Used,
         New
     }

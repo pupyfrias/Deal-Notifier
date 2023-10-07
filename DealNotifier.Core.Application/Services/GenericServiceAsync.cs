@@ -1,33 +1,31 @@
 ﻿using AutoMapper;
-using DealNotifier.Core.Application.Contracts;
-using DealNotifier.Core.Application.Contracts.Repositories;
-using DealNotifier.Core.Application.Contracts.Services;
 using DealNotifier.Core.Application.Exceptions;
-using DealNotifier.Core.Application.Models;
+using DealNotifier.Core.Application.Interfaces;
+using DealNotifier.Core.Application.Interfaces.Repositories;
+using DealNotifier.Core.Application.Interfaces.Services;
 using DealNotifier.Core.Application.Utilities;
-using DealNotifier.Core.Domain.Exceptions;
+using DealNotifier.Core.Application.ViewModels.Common;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Caching.Memory;
-using System.Reflection;
 using System.Web;
 
 namespace DealNotifier.Core.Application.Services
 {
-    public class GenericServiceAsync<TEntity> : IGenericServiceAsync<TEntity>
+    public class GenericServiceAsync<TEntity, TKey> : IGenericServiceAsync<TEntity, TKey>
     {
         #region Private Variable
 
         private readonly IMemoryCache _cache;
         private readonly IHttpContextAccessor _httpContext;
         private readonly IMapper _mapper;
-        private readonly IGenericRepositoryAsync<TEntity> _repository;
+        private readonly IGenericRepositoryAsync<TEntity, TKey> _repository;
 
         #endregion Private Variable
 
         #region Constructor
 
-        public GenericServiceAsync(IGenericRepositoryAsync<TEntity> repository, IMapper mapper, IHttpContextAccessor httpContext, IMemoryCache cache)
+        public GenericServiceAsync(IGenericRepositoryAsync<TEntity, TKey> repository, IMapper mapper, IHttpContextAccessor httpContext, IMemoryCache cache)
         {
             _repository = repository;
             _mapper = mapper;
@@ -39,18 +37,17 @@ namespace DealNotifier.Core.Application.Services
 
         #region Public Methods
 
-
-        public virtual async Task<TDestination> CreateAsync<TSource, TDestination>(TSource source)
+        public virtual async Task<TEntity> CreateAsync<TSource>(TSource source)
         {
             var entity = _mapper.Map<TEntity>(source);
-            await _repository.CreateAsync(entity);
+            var createdEntity = await _repository.CreateAsync(entity);
             CacheUtility.InvalidateCache<TEntity>(_cache);
-            return _mapper.Map<TDestination>(entity);
+            return createdEntity;
         }
 
-        public virtual async Task DeleteAsync<TKey>(TKey id)
+        public virtual async Task DeleteAsync(TKey id)
         {
-            var entity = await GetByIdAsync<TKey, TEntity>(id);
+            var entity = await GetByIdAsync(id);
 
             if (entity is null)
             {
@@ -61,9 +58,9 @@ namespace DealNotifier.Core.Application.Services
             CacheUtility.InvalidateCache<TEntity>(_cache);
         }
 
-        public virtual async Task<bool> ExistsAsync<TKey>(TKey id)
+        public virtual async Task<bool> ExistsAsync(TKey id)
         {
-            var entity = await GetByIdAsync<TKey, TEntity>(id);
+            var entity = await GetByIdProjectedAsync<TEntity>(id);
             return entity != null;
         }
 
@@ -72,15 +69,12 @@ namespace DealNotifier.Core.Application.Services
             return await _repository.GetAllAsync<TDestination>();
         }
 
-        public virtual async Task<PagedCollection<TDestination>> GetAllWithPaginationAsync<TDestination, TSpecification>(IRequestBase request)
+        public virtual async Task<PagedCollection<TDestination>> GetAllWithPaginationAsync<TDestination, TSpecification>(IPaginationBase request)
         where TSpecification : ISpecification<TEntity>
         {
-
-
             var type = typeof(TSpecification);
             object[] constructorArguments = new object[] { request };
             var spec = (TSpecification)Activator.CreateInstance(type, constructorArguments)!;
-
 
             if (spec.Skip % spec.Take != 0)
             {
@@ -125,9 +119,10 @@ namespace DealNotifier.Core.Application.Services
             var eTag = CacheUtility.GenerateETag(mappedEntities);
             return (mappedEntities, eTag);
         }
-        public virtual async Task<TDestination> GetByIdAsync<TKey, TDestination>(TKey id)
+
+        public virtual async Task<TDestination> GetByIdProjectedAsync<TDestination>(TKey id)
         {
-            var mappedEntity = await _repository.GetByIdAsync<TKey, TDestination>(id);
+            var mappedEntity = await _repository.GetByIdProjectedAsync<TDestination>(id);
             if (mappedEntity is null)
             {
                 throw new NotFoundException(typeof(TEntity).Name, id != null ? id : "No Key Provided");
@@ -136,22 +131,20 @@ namespace DealNotifier.Core.Application.Services
             return mappedEntity;
         }
 
-        public virtual async Task UpdateAsync<TKey, TSource>(TKey id, TSource source)
+        public virtual async Task<TEntity> GetByIdAsync(TKey id)
         {
-            PropertyInfo? propertyInfo = typeof(TSource).GetProperties().FirstOrDefault(p => p.Name.ToLower() == "id");
-            if (propertyInfo is null)
+            var mappedEntity = await _repository.GetByIdAsync(id);
+            if (mappedEntity is null)
             {
-                throw new ArgumentException("The entity does not have an Id property");
+                throw new NotFoundException(typeof(TEntity).Name, id != null ? id : "No Key Provided");
             }
 
-            TKey? sourceId = (TKey?)propertyInfo.GetValue(source);
+            return mappedEntity;
+        }
 
-            if (!EqualityComparer<TKey>.Default.Equals(id, sourceId))
-            {
-                throw new BadRequestException("Invalid Id used in request");
-            }
-
-            var entity = await GetByIdAsync<TKey, TEntity>(id);
+        public virtual async Task UpdateAsync<TSource>(TKey id, TSource source)
+        {
+            var entity = await GetByIdAsync(id);
 
             if (entity == null)
             {
@@ -163,11 +156,10 @@ namespace DealNotifier.Core.Application.Services
             await _repository.UpdateAsync(entity);
         }
 
-
         #endregion Public Methods
 
-
         #region Private Methods
+
         private string? GetNextURL(string url, int limit, int offset, int total)
         {
             var newOffSet = limit + offset;
@@ -206,6 +198,7 @@ namespace DealNotifier.Core.Application.Services
             uriBuilder.Query = query.ToString();
             return uriBuilder.ToString();
         }
+
         #endregion Private Methods
     }
 }

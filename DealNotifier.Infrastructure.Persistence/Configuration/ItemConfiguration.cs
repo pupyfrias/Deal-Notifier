@@ -1,6 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DealNotifier.Core.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using DealNotifier.Core.Domain.Entities;
 
 namespace DealNotifier.Infrastructure.Persistence.Configuration
 {
@@ -59,7 +59,6 @@ namespace DealNotifier.Infrastructure.Persistence.Configuration
                 .HasColumnType("BIT")
                 .HasDefaultValueSql("0")
                 .IsRequired();
-
 
             builder.Property(x => x.Notified)
                 .IsRequired(false);

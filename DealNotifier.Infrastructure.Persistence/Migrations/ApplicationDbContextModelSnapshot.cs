@@ -22,15 +22,6 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("DealNotifier.Core.Application.DTOs.BlackListDto", b =>
-                {
-                    b.Property<string>("Link")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.ToTable("SpBlackList");
-                });
-
             modelBuilder.Entity("DealNotifier.Core.Domain.Entities.Audit", b =>
                 {
                     b.Property<int>("Id")
@@ -72,7 +63,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                     b.ToTable("AuditLogs");
                 });
 
-            modelBuilder.Entity("DealNotifier.Core.Domain.Entities.Banned", b =>
+            modelBuilder.Entity("DealNotifier.Core.Domain.Entities.BanKeyword", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -99,10 +90,10 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Banned", (string)null);
+                    b.ToTable("BanKeyword", (string)null);
                 });
 
-            modelBuilder.Entity("DealNotifier.Core.Domain.Entities.BlackList", b =>
+            modelBuilder.Entity("DealNotifier.Core.Domain.Entities.BanLink", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -129,7 +120,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("BlackList", (string)null);
+                    b.ToTable("BanLink", (string)null);
                 });
 
             modelBuilder.Entity("DealNotifier.Core.Domain.Entities.Brand", b =>
@@ -267,48 +258,6 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                         });
                 });
 
-            modelBuilder.Entity("DealNotifier.Core.Domain.Entities.ConditionsToNotify", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("ConditionId")
-                        .HasColumnType("INT");
-
-                    b.Property<DateTime>("Created")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(max)")
-                        .HasDefaultValue("default");
-
-                    b.Property<string>("Keywords")
-                        .IsRequired()
-                        .HasColumnType("VARCHAR(MAX)");
-
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("MaxPrice")
-                        .HasColumnType("DECIMAL(13,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ConditionId");
-
-                    b.ToTable("ConditionsToNotify", (string)null);
-                });
-
             modelBuilder.Entity("DealNotifier.Core.Domain.Entities.Item", b =>
                 {
                     b.Property<Guid>("Id")
@@ -319,7 +268,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                     b.Property<int>("BidCount")
                         .HasColumnType("Int");
 
-                    b.Property<int?>("BrandId")
+                    b.Property<int>("BrandId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasDefaultValueSql("1");
@@ -383,8 +332,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                         .HasColumnType("DECIMAL(13,2)")
                         .HasDefaultValueSql("0");
 
-                    b.Property<int?>("PhoneCarrierId")
-                        .IsRequired()
+                    b.Property<int>("PhoneCarrierId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasDefaultValueSql("1");
@@ -434,6 +382,132 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                     b.HasIndex("UnlockProbabilityId");
 
                     b.ToTable("Item", (string)null);
+                });
+
+            modelBuilder.Entity("DealNotifier.Core.Domain.Entities.ItemType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("Created")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(max)")
+                        .HasDefaultValue("default");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(20)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ItemType", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Accessory"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Headphone"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Memory"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Microphone"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Phone"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Speaker"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Streaming"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "TV"
+                        });
+                });
+
+            modelBuilder.Entity("DealNotifier.Core.Domain.Entities.NotificationCriteria", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("ConditionId")
+                        .HasColumnType("INT");
+
+                    b.Property<DateTime>("Created")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(max)")
+                        .HasDefaultValue("default");
+
+                    b.Property<string>("Keywords")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(MAX)");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("MaxPrice")
+                        .HasColumnType("DECIMAL(13,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConditionId");
+
+                    b.ToTable("NotificationCriteria", (string)null);
                 });
 
             modelBuilder.Entity("DealNotifier.Core.Domain.Entities.PhoneCarrier", b =>
@@ -668,6 +742,60 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("DealNotifier.Core.Domain.Entities.PhoneUnlockTool", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("Created")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(max)")
+                        .HasDefaultValue("default");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(20)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PhoneUnlockTool", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "T-Unlock"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "SamKey"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Global Unlocker"
+                        });
+                });
+
             modelBuilder.Entity("DealNotifier.Core.Domain.Entities.Shop", b =>
                 {
                     b.Property<int>("Id")
@@ -722,7 +850,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                         });
                 });
 
-            modelBuilder.Entity("DealNotifier.Core.Domain.Entities.Status", b =>
+            modelBuilder.Entity("DealNotifier.Core.Domain.Entities.StockStatus", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int");
@@ -750,7 +878,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Status", (string)null);
+                    b.ToTable("StockStatus", (string)null);
 
                     b.HasData(
                         new
@@ -767,91 +895,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                         });
                 });
 
-            modelBuilder.Entity("DealNotifier.Core.Domain.Entities.Type", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("Created")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(max)")
-                        .HasDefaultValue("default");
-
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("VARCHAR(20)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Type", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Accessory"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Headphone"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Memory"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Microphone"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Phone"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Speaker"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Streaming"
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "TV"
-                        });
-                });
-
-            modelBuilder.Entity("DealNotifier.Core.Domain.Entities.UnlockablePhone", b =>
+            modelBuilder.Entity("DealNotifier.Core.Domain.Entities.UnlockabledPhone", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -897,37 +941,35 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                     b.HasIndex("ModelNumber")
                         .IsUnique();
 
-                    b.ToTable("UnlockablePhone", (string)null);
+                    b.ToTable("UnlockabledPhone", (string)null);
                 });
 
-            modelBuilder.Entity("DealNotifier.Core.Domain.Entities.UnlockablePhonePhoneCarrier", b =>
+            modelBuilder.Entity("DealNotifier.Core.Domain.Entities.UnlockabledPhonePhoneCarrier", b =>
                 {
-                    b.Property<int>("UnlockablePhoneId")
+                    b.Property<int>("UnlockabledPhoneId")
                         .HasColumnType("int");
 
                     b.Property<int>("PhoneCarrierId")
                         .HasColumnType("int");
 
-                    b.HasKey("UnlockablePhoneId", "PhoneCarrierId");
+                    b.HasKey("UnlockabledPhoneId", "PhoneCarrierId");
 
                     b.HasIndex("PhoneCarrierId");
 
-                    b.ToTable("UnlockablePhonePhoneCarrier", (string)null);
+                    b.ToTable("UnlockabledPhonePhoneCarrier", (string)null);
                 });
 
-            modelBuilder.Entity("DealNotifier.Core.Domain.Entities.UnlockablePhoneUnlockTool", b =>
+            modelBuilder.Entity("DealNotifier.Core.Domain.Entities.UnlockabledPhoneUnlockTool", b =>
                 {
+                    b.Property<int>("PhoneUnlockToolId")
+                        .HasColumnType("int");
+
                     b.Property<int>("UnlockablePhoneId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UnlockToolId")
-                        .HasColumnType("int");
+                    b.HasKey("PhoneUnlockToolId", "UnlockablePhoneId");
 
-                    b.HasKey("UnlockablePhoneId", "UnlockToolId");
-
-                    b.HasIndex("UnlockToolId");
-
-                    b.ToTable("UnlockablePhoneUnlockTool", (string)null);
+                    b.ToTable("UnlockabledPhoneUnlockTool", (string)null);
                 });
 
             modelBuilder.Entity("DealNotifier.Core.Domain.Entities.UnlockProbability", b =>
@@ -987,72 +1029,6 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                         });
                 });
 
-            modelBuilder.Entity("DealNotifier.Core.Domain.Entities.UnlockTool", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("Created")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(max)")
-                        .HasDefaultValue("default");
-
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("VARCHAR(20)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("UnlockTool", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "T-Unlock"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "SamKey"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Global Unlocker"
-                        });
-                });
-
-            modelBuilder.Entity("DealNotifier.Core.Domain.Entities.ConditionsToNotify", b =>
-                {
-                    b.HasOne("DealNotifier.Core.Domain.Entities.Condition", "Condition")
-                        .WithMany("ConditionToNotifies")
-                        .HasForeignKey("ConditionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_ConditionsToModify_Condition");
-
-                    b.Navigation("Condition");
-                });
-
             modelBuilder.Entity("DealNotifier.Core.Domain.Entities.Item", b =>
                 {
                     b.HasOne("DealNotifier.Core.Domain.Entities.Brand", "Brand")
@@ -1083,14 +1059,14 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_Item_Shop");
 
-                    b.HasOne("DealNotifier.Core.Domain.Entities.Status", "Status")
+                    b.HasOne("DealNotifier.Core.Domain.Entities.StockStatus", "Status")
                         .WithMany("Items")
                         .HasForeignKey("StatusId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_Item_Status");
 
-                    b.HasOne("DealNotifier.Core.Domain.Entities.Type", "Type")
+                    b.HasOne("DealNotifier.Core.Domain.Entities.ItemType", "Type")
                         .WithMany("Items")
                         .HasForeignKey("TypeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1119,7 +1095,19 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                     b.Navigation("UnlockProbability");
                 });
 
-            modelBuilder.Entity("DealNotifier.Core.Domain.Entities.UnlockablePhone", b =>
+            modelBuilder.Entity("DealNotifier.Core.Domain.Entities.NotificationCriteria", b =>
+                {
+                    b.HasOne("DealNotifier.Core.Domain.Entities.Condition", "Condition")
+                        .WithMany("ConditionToNotifies")
+                        .HasForeignKey("ConditionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_ConditionsToModify_Condition");
+
+                    b.Navigation("Condition");
+                });
+
+            modelBuilder.Entity("DealNotifier.Core.Domain.Entities.UnlockabledPhone", b =>
                 {
                     b.HasOne("DealNotifier.Core.Domain.Entities.Brand", "Brand")
                         .WithMany("Supporteds")
@@ -1130,7 +1118,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                     b.Navigation("Brand");
                 });
 
-            modelBuilder.Entity("DealNotifier.Core.Domain.Entities.UnlockablePhonePhoneCarrier", b =>
+            modelBuilder.Entity("DealNotifier.Core.Domain.Entities.UnlockabledPhonePhoneCarrier", b =>
                 {
                     b.HasOne("DealNotifier.Core.Domain.Entities.PhoneCarrier", "PhoneCarrier")
                         .WithMany("UnlockablePhoneCarriers")
@@ -1138,34 +1126,34 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DealNotifier.Core.Domain.Entities.UnlockablePhone", "Unlockable")
+                    b.HasOne("DealNotifier.Core.Domain.Entities.UnlockabledPhone", "UnlockabledPhone")
                         .WithMany("UnlockablePhoneCarriers")
-                        .HasForeignKey("UnlockablePhoneId")
+                        .HasForeignKey("UnlockabledPhoneId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("PhoneCarrier");
 
-                    b.Navigation("Unlockable");
+                    b.Navigation("UnlockabledPhone");
                 });
 
-            modelBuilder.Entity("DealNotifier.Core.Domain.Entities.UnlockablePhoneUnlockTool", b =>
+            modelBuilder.Entity("DealNotifier.Core.Domain.Entities.UnlockabledPhoneUnlockTool", b =>
                 {
-                    b.HasOne("DealNotifier.Core.Domain.Entities.UnlockTool", "UnlockTool")
+                    b.HasOne("DealNotifier.Core.Domain.Entities.PhoneUnlockTool", "PhoneUnlockTool")
                         .WithMany("UnlockableUnlockTools")
-                        .HasForeignKey("UnlockToolId")
+                        .HasForeignKey("PhoneUnlockToolId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DealNotifier.Core.Domain.Entities.UnlockablePhone", "Unlockable")
+                    b.HasOne("DealNotifier.Core.Domain.Entities.UnlockabledPhone", "UnlockablePhone")
                         .WithMany("UnlockableUnlockTools")
-                        .HasForeignKey("UnlockablePhoneId")
+                        .HasForeignKey("PhoneUnlockToolId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("UnlockTool");
+                    b.Navigation("PhoneUnlockTool");
 
-                    b.Navigation("Unlockable");
+                    b.Navigation("UnlockablePhone");
                 });
 
             modelBuilder.Entity("DealNotifier.Core.Domain.Entities.Brand", b =>
@@ -1182,6 +1170,11 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                     b.Navigation("Items");
                 });
 
+            modelBuilder.Entity("DealNotifier.Core.Domain.Entities.ItemType", b =>
+                {
+                    b.Navigation("Items");
+                });
+
             modelBuilder.Entity("DealNotifier.Core.Domain.Entities.PhoneCarrier", b =>
                 {
                     b.Navigation("Items");
@@ -1189,22 +1182,22 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                     b.Navigation("UnlockablePhoneCarriers");
                 });
 
+            modelBuilder.Entity("DealNotifier.Core.Domain.Entities.PhoneUnlockTool", b =>
+                {
+                    b.Navigation("UnlockableUnlockTools");
+                });
+
             modelBuilder.Entity("DealNotifier.Core.Domain.Entities.Shop", b =>
                 {
                     b.Navigation("Items");
                 });
 
-            modelBuilder.Entity("DealNotifier.Core.Domain.Entities.Status", b =>
+            modelBuilder.Entity("DealNotifier.Core.Domain.Entities.StockStatus", b =>
                 {
                     b.Navigation("Items");
                 });
 
-            modelBuilder.Entity("DealNotifier.Core.Domain.Entities.Type", b =>
-                {
-                    b.Navigation("Items");
-                });
-
-            modelBuilder.Entity("DealNotifier.Core.Domain.Entities.UnlockablePhone", b =>
+            modelBuilder.Entity("DealNotifier.Core.Domain.Entities.UnlockabledPhone", b =>
                 {
                     b.Navigation("UnlockablePhoneCarriers");
 
@@ -1214,11 +1207,6 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("DealNotifier.Core.Domain.Entities.UnlockProbability", b =>
                 {
                     b.Navigation("Items");
-                });
-
-            modelBuilder.Entity("DealNotifier.Core.Domain.Entities.UnlockTool", b =>
-                {
-                    b.Navigation("UnlockableUnlockTools");
                 });
 #pragma warning restore 612, 618
         }

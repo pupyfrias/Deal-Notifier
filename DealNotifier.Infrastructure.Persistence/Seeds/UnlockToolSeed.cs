@@ -5,19 +5,19 @@ namespace DealNotifier.Infrastructure.Persistence.Seeds
 {
     public static class UnlockToolSeed
     {
-        public static List<UnlockTool> data { get; set; } = new List<UnlockTool>
+        public static List<PhoneUnlockTool> data { get; set; } = new List<PhoneUnlockTool>
         {
-            new UnlockTool
+            new PhoneUnlockTool
             {
                 Id= (int) Enums.UnlockTool.TUnlock,
                 Name= "T-Unlock"
             },
-            new UnlockTool
+            new PhoneUnlockTool
             {
                 Id= (int) Enums.UnlockTool.SamKey,
                 Name= "SamKey"
             },
-             new UnlockTool
+             new PhoneUnlockTool
              {
                 Id= (int) Enums.UnlockTool.GlobalUnlocker,
                 Name= "Global Unlocker"

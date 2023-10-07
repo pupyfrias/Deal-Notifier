@@ -62,6 +62,4 @@ namespace DealNotifier.Core.Application.Extensions
             }
         }
     }
-
-
 }

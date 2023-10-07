@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using DealNotifier.Core.Application.DTOs.Unlockable;
+using DealNotifier.Core.Application.ViewModels.V1.Unlockable;
 using DealNotifier.Core.Domain.Entities;
 
 namespace DealNotifier.Core.Application.Mappings
@@ -8,9 +8,8 @@ namespace DealNotifier.Core.Application.Mappings
     {
         public UnlockableMapperConfig()
         {
-            CreateMap<UnlockableCreateDto, UnlockablePhone>().ReverseMap();
-            CreateMap<UnlockableReadDto, UnlockablePhone>().ReverseMap();
-
+            CreateMap<UnlockableCreateDto, UnlockabledPhone>().ReverseMap();
+            CreateMap<UnlockableReadDto, UnlockabledPhone>().ReverseMap();
         }
     }
 }

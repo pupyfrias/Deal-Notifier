@@ -7,7 +7,7 @@ namespace DealNotifier.Infrastructure.Identity.Seeds
     {
         private static PasswordHasher<ApplicationUser> hasher = new PasswordHasher<ApplicationUser>();
 
-        public readonly static IReadOnlyList<ApplicationUser> data = new List<ApplicationUser>
+        public static readonly IReadOnlyList<ApplicationUser> data = new List<ApplicationUser>
         {
             new ApplicationUser
             {

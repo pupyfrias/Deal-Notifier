@@ -1,8 +1,8 @@
-﻿using DealNotifier.Infrastructure.Identity.Models;
+﻿using DealNotifier.Infrastructure.Identity.Configurations;
+using DealNotifier.Infrastructure.Identity.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using DealNotifier.Infrastructure.Identity.Configurations;
 
 namespace DealNotifier.Infrastructure.Identity.DbContext
 {

@@ -8,6 +8,6 @@ namespace DealNotifier.Core.Domain.Entities
         public string Name { get; set; }
         public string ShortName { get; set; }
         public ICollection<Item> Items { get; set; }
-        public List<UnlockablePhonePhoneCarrier> UnlockablePhoneCarriers { get; set; }
+        public List<UnlockabledPhonePhoneCarrier> UnlockablePhoneCarriers { get; set; }
     }
 }

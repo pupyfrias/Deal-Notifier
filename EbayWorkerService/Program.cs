@@ -1,26 +1,25 @@
+using DealNotifier.Core.Application.Interfaces.Services;
+using DealNotifier.Core.Application.Services;
+using DealNotifier.Core.Application.Setups;
+using DealNotifier.Infrastructure.Email;
+using DealNotifier.Infrastructure.Persistence.Models;
 using EbayWorkerService;
 using Serilog;
 using System.Reflection;
-using DealNotifier.Core.Application.Contracts.Services;
-using DealNotifier.Core.Application.SetupOptions;
-using DealNotifier.Infrastructure.Email;
-using DealNotifier.Infrastructure.Persistence.Models;
-using DealNotifier.Core.Application.Services;
 
 var environment = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT");
 
-if(environment != "Development")
+if (environment != "Development")
 {
     Environment.CurrentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 }
-
 
 IHost host = Host.CreateDefaultBuilder(args)
     .UseWindowsService(options =>
     {
         options.ServiceName = "ebay";
     })
-    .UseSerilog(SeriLog.Options)
+    .UseSerilog(SeriLogSetup.Configure)
     .ConfigureServices((hostContext, services) =>
     {
         services.AddHostedService<Worker>();
@@ -30,6 +29,5 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
     })
    .Build();
-
 
 await host.RunAsync();

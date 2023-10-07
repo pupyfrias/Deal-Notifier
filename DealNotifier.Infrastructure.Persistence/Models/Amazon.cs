@@ -1,18 +1,17 @@
-﻿using OpenQA.Selenium;
+﻿using DealNotifier.Core.Application.Extensions;
+using DealNotifier.Core.Application.Heplers;
+using DealNotifier.Core.Application.Utilities;
+using DealNotifier.Core.Application.ViewModels.V1.Item;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
 using Serilog;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
-using DealNotifier.Core.Application.Contracts.Services;
-using DealNotifier.Core.Application.DTOs.Item;
-using DealNotifier.Core.Application.Extensions;
-using DealNotifier.Core.Application.Heplers;
-using DealNotifier.Core.Domain.Entities;
 using Shop = DealNotifier.Core.Application.Enums.Shop;
 using Status = DealNotifier.Core.Application.Enums.Status;
-using Type = DealNotifier.Core.Application.Enums.Type;
-using DealNotifier.Core.Application.Utilities;
+using ItemType = DealNotifier.Core.Application.Enums.ItemType;
+using DealNotifier.Core.Application.Interfaces.Services;
 
 namespace DealNotifier.Infrastructure.Persistence.Models
 {
@@ -24,9 +23,9 @@ namespace DealNotifier.Infrastructure.Persistence.Models
 
         private static object[,] links =
         {
-            {"https://www.amazon.com/s?i=mobile&bbn=7072561011&rh=n%3A7072561011%2Cp_n_condition-type%3A6503240011%2Cp_36%3A-20000%2Cp_n_feature_twelve_browse-bin%3A14674909011%7C14674910011%7C14674911011%7C17352550011%2Cp_n_feature_nineteen_browse-bin%3A9521921011%2Cp_72%3A2491149011&dc&qid=1648600689&rnid=2491147011", Type.Phone},
-            {"https://www.amazon.com/s?keywords=Micro+SD+Memory+Cards&i=computers&rh=n%3A3015433011%2Cp_72%3A1248879011%2Cp_89%3ASAMSUNG%2Cp_n_condition-type%3A2224371011&dc&c=ts&qid=1648600035&rnid=2224369011&ts_id=3015433011",Type.Memory},
-            {"https://www.amazon.com/s?i=electronics&bbn=13447451&rh=n%3A13447451%2Cp_89%3AAmazon%2Cp_n_condition-type%3A2224371011%2Cp_36%3A-6000&dc&language=es&qid=1652512888&rnid=386442011",Type.Streaming},
+            {"https://www.amazon.com/s?i=mobile&bbn=7072561011&rh=n%3A7072561011%2Cp_n_condition-type%3A6503240011%2Cp_36%3A-20000%2Cp_n_feature_twelve_browse-bin%3A14674909011%7C14674910011%7C14674911011%7C17352550011%2Cp_n_feature_nineteen_browse-bin%3A9521921011%2Cp_72%3A2491149011&dc&qid=1648600689&rnid=2491147011", ItemType.Phone},
+            {"https://www.amazon.com/s?keywords=Micro+SD+Memory+Cards&i=computers&rh=n%3A3015433011%2Cp_72%3A1248879011%2Cp_89%3ASAMSUNG%2Cp_n_condition-type%3A2224371011&dc&c=ts&qid=1648600035&rnid=2224369011&ts_id=3015433011",ItemType.Memory},
+            {"https://www.amazon.com/s?i=electronics&bbn=13447451&rh=n%3A13447451%2Cp_89%3AAmazon%2Cp_n_condition-type%3A2224371011%2Cp_36%3A-6000&dc&language=es&qid=1652512888&rnid=386442011",ItemType.Streaming},
 
             /*{"https://www.amazon.com/s?k=Recording+Microphones+%26+Accessories&i=mi&rh=p_n_deal_type%3A23566064011%2Cp_n_specials_match%3A21213697011&dc&qid=1654485545&rnid=21213696011&ref=sr_nr_p_n_specials_match_1", Enums.Type.Microphone},
             {"https://www.amazon.com/s?k=Tripod+Accessories&i=photo&rh=n%3A502394%2Cp_n_deal_type%3A23566064011%2Cp_36%3A900-5000%2Cp_n_condition-type%3A2224371011%2Cp_n_specials_match%3A21213697011&dc&qid=1654485609&rnid=21213696011&ref=sr_nr_p_n_specials_match_1",Enums.Type.Accessory},
@@ -64,7 +63,7 @@ namespace DealNotifier.Infrastructure.Persistence.Models
 
                     WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
                     WebDriverWait wait2 = new WebDriverWait(driver, TimeSpan.FromSeconds(2));
-                    ConcurrentBag<ItemCreateDto> itemList = new ConcurrentBag<ItemCreateDto>();
+                    ConcurrentBag<ItemCreateRequest> itemList = new ConcurrentBag<ItemCreateRequest>();
 
                     while (true)
                     {
@@ -84,7 +83,7 @@ namespace DealNotifier.Infrastructure.Persistence.Models
                                     IWebElement ePriceWhole = element.FindElement(By.CssSelector("span[class='a-price-whole']"));
                                     IWebElement ePriceFraction = element.FindElement(By.ClassName("a-price-fraction"));
 
-                                    ItemCreateDto item = new ItemCreateDto();
+                                    ItemCreateRequest item = new ItemCreateRequest();
                                     item.Name = eName.Text.RemoveSpecialCharacters();
                                     item.Link = Helper.GetLocalPath(eLink.GetAttribute("href"));
                                     item.Image = eImage.GetAttribute("src").Replace("218", "320");

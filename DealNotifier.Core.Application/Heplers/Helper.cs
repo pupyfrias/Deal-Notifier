@@ -1,5 +1,6 @@
-﻿using DealNotifier.Core.Application.DTOs;
-using DealNotifier.Core.Application.DTOs.PhoneCarrier;
+﻿using DealNotifier.Core.Application.ViewModels.V1;
+using DealNotifier.Core.Application.ViewModels.V1.PhoneCarrier;
+using DealNotifier.Core.Domain.Entities;
 using System.Collections.Concurrent;
 
 namespace DealNotifier.Core.Application.Heplers
@@ -12,7 +13,7 @@ namespace DealNotifier.Core.Application.Heplers
         public static HashSet<BrandReadDto> BrandList { get; set; } = new HashSet<BrandReadDto>();
         public static HashSet<PhoneCarrierReadDto> PhoneCarrierList { get; set; } = new HashSet<PhoneCarrierReadDto>();
         public static string BasePath { get; } = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-        public static HashSet<BlackListDto> BlacklistedLinks { get; set; } = new HashSet<BlackListDto>();
+        public static HashSet<BanLinkResponse> BanLinkList { get; set; } = new HashSet<BanLinkResponse>();
         public static ConcurrentBag<string> CheckedList { get; set; } = new ConcurrentBag<string>();
 
         /// <summary>

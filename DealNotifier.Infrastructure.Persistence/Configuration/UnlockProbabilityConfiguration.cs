@@ -1,7 +1,7 @@
-﻿using DealNotifier.Infrastructure.Persistence.Seeds;
+﻿using DealNotifier.Core.Domain.Entities;
+using DealNotifier.Infrastructure.Persistence.Seeds;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using DealNotifier.Core.Domain.Entities;
 
 namespace DealNotifier.Infrastructure.Persistence.Configuration
 {
@@ -29,6 +29,7 @@ namespace DealNotifier.Infrastructure.Persistence.Configuration
             #region Keys
 
             builder.HasKey(x => x.Id);
+
             #endregion Keys
 
             #region Data Seeding

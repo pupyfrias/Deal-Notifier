@@ -1,21 +1,29 @@
-﻿using DealNotifier.Core.Application.Contracts;
+﻿using DealNotifier.Core.Application.Exceptions;
+using DealNotifier.Core.Application.Interfaces;
+using DealNotifier.Core.Domain.Contracts;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace DealNotifier.Core.Application.Specification
 {
-    public abstract class Specification<TEntity> : ISpecification<TEntity>
+    public abstract class Specification<TEntity> : ISpecification<TEntity> where TEntity : IAuditableEntity
     {
+        protected Specification(IPaginationBase pagination)
+        {
+            Skip = pagination.Offset;
+            Take = pagination.Limit;
+            Descending = pagination?.Descending ?? false;
+            ApplyOrderBy(pagination?.OrderBy ?? "Created");
+        }
+
         public Expression<Func<TEntity, bool>> Criteria { get; protected set; }
+        public bool Descending { get; private set; }
         public List<Expression<Func<TEntity, object>>> Includes { get; } = new List<Expression<Func<TEntity, object>>>();
         public List<string> IncludeStrings { get; } = new List<string>();
         public Expression<Func<TEntity, object>> OrderBy { get; set; }
 
         public int Skip { get; private set; }
         public int Take { get; private set; }
-        public bool IsPagingEnabled { get; private set; }
-        public bool Descending { get; set; }
-
-
 
         protected virtual void AddInclude(Expression<Func<TEntity, object>> includeExpression)
         {
@@ -27,16 +35,22 @@ namespace DealNotifier.Core.Application.Specification
             IncludeStrings.Add(includeString);
         }
 
-        public void ApplyOrderBy(Expression<Func<TEntity, object>> orderByExpression)
-        {
-            OrderBy = orderByExpression;
-        }
 
-        public void ApplyPaging(int skip, int take)
+        public void ApplyOrderBy(string propertyName)
         {
-            Skip = skip;
-            Take = take;
-            IsPagingEnabled = true;
+            var parameter = Expression.Parameter(typeof(TEntity), "p");
+            var propertyInfo = typeof(TEntity).GetProperty(propertyName, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+
+            if (propertyInfo == null)
+            {
+                throw new BadRequestException($"Could not find {propertyName} on {typeof(TEntity).Name}");
+            }
+
+            var property = Expression.Property(parameter, propertyInfo);
+            var conversion = Expression.Convert(property, typeof(object));
+            var lambda = Expression.Lambda<Func<TEntity, object>>(conversion, parameter);
+
+            OrderBy = lambda;
         }
     }
 }

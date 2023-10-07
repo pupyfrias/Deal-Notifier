@@ -1,8 +1,7 @@
-﻿using DealNotifier.Infrastructure.Persistence.Seeds;
+﻿using DealNotifier.Core.Domain.Entities;
+using DealNotifier.Infrastructure.Persistence.Seeds;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using DealNotifier.Core.Application.DTOs;
-using DealNotifier.Core.Domain.Entities;
 
 namespace DealNotifier.Infrastructure.Persistence.Configuration
 {
@@ -25,16 +24,20 @@ namespace DealNotifier.Infrastructure.Persistence.Configuration
             builder.Property(x => x.ShortName)
                     .HasColumnType("VARCHAR(5)")
                     .IsRequired();
+
             #endregion Properties
 
             #region Keys
+
             builder.HasKey(x => x.Id);
+
             #endregion Keys
 
-
             #region Index
+
             builder.HasIndex(x => x.ShortName)
             .IsUnique();
+
             #endregion Index
 
             #region Data Seeding
