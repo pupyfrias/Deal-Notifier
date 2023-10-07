@@ -31,7 +31,7 @@ namespace DealNotifier.Infrastructure.Persistence.Configuration
 
             #region Data Seeding
 
-            builder.HasData(BrandSeed.data);
+            builder.HasData(BrandSeed.Data);
 
             #endregion Data Seeding
 
