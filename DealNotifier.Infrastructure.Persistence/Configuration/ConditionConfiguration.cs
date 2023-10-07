@@ -21,9 +21,6 @@ namespace DealNotifier.Infrastructure.Persistence.Configuration
                    .HasColumnType("VARCHAR(15)")
                    .IsRequired();
 
-            builder.Property(x => x.Id)
-                .ValueGeneratedNever();
-
             #endregion Properties
 
             #region Keys
@@ -34,7 +31,7 @@ namespace DealNotifier.Infrastructure.Persistence.Configuration
 
             #region Data Seeding
 
-            builder.HasData(ConditionSeed.data);
+            builder.HasData(ConditionSeed.Data);
 
             #endregion Data Seeding
 
