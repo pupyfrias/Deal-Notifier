@@ -5,13 +5,13 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DealNotifier.Infrastructure.Persistence.Configuration
 {
-    public class ShopConfiguration : AuditableEntityConfiguration<Shop, int>
+    public class OnlineStoreConfiguration : AuditableEntityConfiguration<OnlineStore, int>
     {
-        public override void Configure(EntityTypeBuilder<Shop> builder)
+        public override void Configure(EntityTypeBuilder<OnlineStore> builder)
         {
             #region Table
 
-            builder.ToTable("Shop");
+            builder.ToTable("OnlineStore");
 
             #endregion Table
 
@@ -31,7 +31,7 @@ namespace DealNotifier.Infrastructure.Persistence.Configuration
 
             #region Data Seeding
 
-            builder.HasData(ShopSeed.Data);
+            builder.HasData(OnlineStoreSeed.Data);
 
             #endregion Data Seeding
 

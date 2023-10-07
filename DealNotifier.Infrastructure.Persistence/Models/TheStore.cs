@@ -9,7 +9,7 @@ using Serilog;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using Condition = DealNotifier.Core.Application.Enums.Condition;
-using Shop = DealNotifier.Core.Application.Enums.Shop;
+using OnlineStore = DealNotifier.Core.Application.Enums.OnlineStore;
 using Status = DealNotifier.Core.Application.Enums.Status;
 using ItemType = DealNotifier.Core.Application.Enums.ItemType;
 using DealNotifier.Core.Application.Interfaces.Services;
@@ -69,7 +69,7 @@ namespace DealNotifier.Infrastructure.Persistence.Models
                                 item.Link = Helper.GetLocalPath(eLink.GetAttribute("href"));
                                 item.Image = "https://thestore.com" + eImage.GetAttribute("data-src").Replace("height=300", "height=400");
                                 item.Price = decimal.Parse(ePriceWhole.Text.Replace("$", ""));
-                                item.ShopId = (int)Shop.TheStore;
+                                item.ShopId = (int)OnlineStore.TheStore;
                                 item.TypeId = (int)links[0, 1];
                                 item.ConditionId = (int)Condition.New;
                                 item.StatusId = (int)Status.InStock;

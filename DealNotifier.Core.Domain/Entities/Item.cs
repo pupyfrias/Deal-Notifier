@@ -27,7 +27,7 @@ namespace DealNotifier.Core.Domain.Entities
         public DateTime? ItemEndDate { get; set; }
         public DateTime? Notified { get; set; }
         public Condition Condition { get; set; }
-        public Shop Shop { get; set; }
+        public OnlineStore OnlineStore { get; set; }
         public StockStatus Status { get; set; }
         public ItemType Type { get; set; }
         public Brand Brand { get; set; }

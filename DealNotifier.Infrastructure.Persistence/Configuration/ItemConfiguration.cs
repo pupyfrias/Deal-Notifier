@@ -104,7 +104,7 @@ namespace DealNotifier.Infrastructure.Persistence.Configuration
             .HasForeignKey(x => x.TypeId)
             .HasConstraintName("FK_Item_Type");
 
-            builder.HasOne(x => x.Shop)
+            builder.HasOne(x => x.OnlineStore)
             .WithMany(x => x.Items)
             .HasForeignKey(x => x.ShopId)
             .HasConstraintName("FK_Item_Shop");

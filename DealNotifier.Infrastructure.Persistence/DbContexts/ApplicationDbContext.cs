@@ -36,7 +36,7 @@ namespace DealNotifier.Infrastructure.Persistence.DbContexts
         public DbSet<NotificationCriteria> NotificationCriteria { get; set; }
         public DbSet<Item> Items { get; set; }
         public DbSet<PhoneCarrier> PhoneCarriers { get; set; }
-        public DbSet<Shop> Shops { get; set; }
+        public DbSet<OnlineStore> Shops { get; set; }
         public DbSet<StockStatus> StockStatuses { get; set; }
         public DbSet<ItemType> Types { get; set; }
         public DbSet<UnlockabledPhonePhoneCarrier> UnlockabledPhonePhoneCarriers { get; set; }
@@ -78,7 +78,7 @@ namespace DealNotifier.Infrastructure.Persistence.DbContexts
             modelBuilder.ApplyConfiguration(new NotificationCriteriaConfiguration());
             modelBuilder.ApplyConfiguration(new PhoneCarrierConfiguration());
             modelBuilder.ApplyConfiguration(new PhoneUnlockToolConfiguration());
-            modelBuilder.ApplyConfiguration(new ShopConfiguration());
+            modelBuilder.ApplyConfiguration(new OnlineStoreConfiguration());
             modelBuilder.ApplyConfiguration(new StockStatusConfiguration());
             modelBuilder.ApplyConfiguration(new ItemTypeConfiguration());
             modelBuilder.ApplyConfiguration(new UnlockabledPhoneConfiguration());

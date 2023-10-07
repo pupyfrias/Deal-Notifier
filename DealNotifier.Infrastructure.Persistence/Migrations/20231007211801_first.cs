@@ -115,6 +115,23 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "OnlineStore",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "VARCHAR(15)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "default"),
+                    Created = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModified = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OnlineStore", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "PhoneCarrier",
                 columns: table => new
                 {
@@ -147,23 +164,6 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PhoneUnlockTool", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Shop",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "VARCHAR(15)", nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "default"),
-                    Created = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastModified = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Shop", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -306,7 +306,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                     table.ForeignKey(
                         name: "FK_Item_Shop",
                         column: x => x.ShopId,
-                        principalTable: "Shop",
+                        principalTable: "OnlineStore",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -418,6 +418,16 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "OnlineStore",
+                columns: new[] { "Id", "LastModified", "LastModifiedBy", "Name" },
+                values: new object[,]
+                {
+                    { 1, null, null, "Amazon" },
+                    { 2, null, null, "eBay" },
+                    { 3, null, null, "TheStore" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "PhoneCarrier",
                 columns: new[] { "Id", "LastModified", "LastModifiedBy", "Name", "ShortName" },
                 values: new object[,]
@@ -441,10 +451,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                     { 17, null, null, "Straight Talk", "STK" },
                     { 18, null, null, "Virgin Mobile|Virgin", "VMU" },
                     { 19, null, null, "Total Wireless", "TWL" },
-                    { 20, null, null, "Google Fi", "GFI" },
-                    { 21, null, null, "Mint Mobile|Mint", "MNT" },
-                    { 22, null, null, "Ting", "TNG" },
-                    { 23, null, null, "Consumer Cellular", "CCU" }
+                    { 20, null, null, "Google Fi", "GFI" }
                 });
 
             migrationBuilder.InsertData(
@@ -452,6 +459,9 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                 columns: new[] { "Id", "LastModified", "LastModifiedBy", "Name", "ShortName" },
                 values: new object[,]
                 {
+                    { 21, null, null, "Mint Mobile|Mint", "MNT" },
+                    { 22, null, null, "Ting", "TNG" },
+                    { 23, null, null, "Consumer Cellular", "CCU" },
                     { 24, null, null, "Credo Mobile", "CRD" },
                     { 25, null, null, "FreedomPop", "FDM" },
                     { 26, null, null, "Net10 Wireless|Net10", "NTW" },
@@ -466,16 +476,6 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                     { 1, null, null, "T-Unlock" },
                     { 2, null, null, "SamKey" },
                     { 3, null, null, "Global Unlocker" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Shop",
-                columns: new[] { "Id", "LastModified", "LastModifiedBy", "Name" },
-                values: new object[,]
-                {
-                    { 1, null, null, "Amazon" },
-                    { 2, null, null, "eBay" },
-                    { 3, null, null, "TheStore" }
                 });
 
             migrationBuilder.InsertData(
@@ -591,7 +591,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                 name: "UnlockabledPhoneUnlockTool");
 
             migrationBuilder.DropTable(
-                name: "Shop");
+                name: "OnlineStore");
 
             migrationBuilder.DropTable(
                 name: "StockStatus");

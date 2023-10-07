@@ -2,7 +2,7 @@
 
 namespace DealNotifier.Core.Domain.Entities
 {
-    public class Shop : AuditableEntity<int>
+    public class OnlineStore : AuditableEntity<int>
     {
         public override int Id { get; set; }
         public string Name { get; set; }

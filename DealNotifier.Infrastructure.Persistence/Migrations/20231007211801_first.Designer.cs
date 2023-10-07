@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DealNotifier.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231007132435_first")]
+    [Migration("20231007211801_first")]
     partial class first
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -515,6 +515,60 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                     b.ToTable("NotificationCriteria", (string)null);
                 });
 
+            modelBuilder.Entity("DealNotifier.Core.Domain.Entities.OnlineStore", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("Created")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(max)")
+                        .HasDefaultValue("default");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(15)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OnlineStore", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Amazon"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "eBay"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "TheStore"
+                        });
+                });
+
             modelBuilder.Entity("DealNotifier.Core.Domain.Entities.PhoneCarrier", b =>
                 {
                     b.Property<int>("Id")
@@ -801,60 +855,6 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                         });
                 });
 
-            modelBuilder.Entity("DealNotifier.Core.Domain.Entities.Shop", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("Created")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(max)")
-                        .HasDefaultValue("default");
-
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("VARCHAR(15)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Shop", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Amazon"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "eBay"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "TheStore"
-                        });
-                });
-
             modelBuilder.Entity("DealNotifier.Core.Domain.Entities.StockStatus", b =>
                 {
                     b.Property<int>("Id")
@@ -1063,7 +1063,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_Item_PhoneCarrier");
 
-                    b.HasOne("DealNotifier.Core.Domain.Entities.Shop", "Shop")
+                    b.HasOne("DealNotifier.Core.Domain.Entities.OnlineStore", "OnlineStore")
                         .WithMany("Items")
                         .HasForeignKey("ShopId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1095,9 +1095,9 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
 
                     b.Navigation("Condition");
 
-                    b.Navigation("PhoneCarrier");
+                    b.Navigation("OnlineStore");
 
-                    b.Navigation("Shop");
+                    b.Navigation("PhoneCarrier");
 
                     b.Navigation("Status");
 
@@ -1186,6 +1186,11 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                     b.Navigation("Items");
                 });
 
+            modelBuilder.Entity("DealNotifier.Core.Domain.Entities.OnlineStore", b =>
+                {
+                    b.Navigation("Items");
+                });
+
             modelBuilder.Entity("DealNotifier.Core.Domain.Entities.PhoneCarrier", b =>
                 {
                     b.Navigation("Items");
@@ -1196,11 +1201,6 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("DealNotifier.Core.Domain.Entities.PhoneUnlockTool", b =>
                 {
                     b.Navigation("UnlockableUnlockTools");
-                });
-
-            modelBuilder.Entity("DealNotifier.Core.Domain.Entities.Shop", b =>
-                {
-                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("DealNotifier.Core.Domain.Entities.StockStatus", b =>

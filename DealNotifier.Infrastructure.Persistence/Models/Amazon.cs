@@ -8,7 +8,7 @@ using SeleniumExtras.WaitHelpers;
 using Serilog;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
-using Shop = DealNotifier.Core.Application.Enums.Shop;
+using OnlineStore = DealNotifier.Core.Application.Enums.OnlineStore;
 using Status = DealNotifier.Core.Application.Enums.Status;
 using ItemType = DealNotifier.Core.Application.Enums.ItemType;
 using DealNotifier.Core.Application.Interfaces.Services;
@@ -88,7 +88,7 @@ namespace DealNotifier.Infrastructure.Persistence.Models
                                     item.Link = Helper.GetLocalPath(eLink.GetAttribute("href"));
                                     item.Image = eImage.GetAttribute("src").Replace("218", "320");
                                     item.Price = decimal.Parse(ePriceWhole.Text.Replace(",", "") + "." + ePriceFraction.Text);
-                                    item.ShopId = (int)Shop.Amazon;
+                                    item.ShopId = (int)OnlineStore.Amazon;
                                     item.TypeId = (int)links[i, 1];
                                     item.StatusId = (int)Status.InStock;
 
