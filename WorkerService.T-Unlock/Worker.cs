@@ -17,7 +17,7 @@ namespace WorkerService.T_Unlock_WebScraping
         private readonly IUnlockableServiceAsync _unlockableServiceAsync;
         private readonly IPhoneCarrierServiceAsync _phoneCarrierServiceAsync;
         private readonly IUnlockabledPhonePhoneUnlockToolServiceAsync _unlockableUnlockToolServiceAsync;
-        private readonly IUnlockablePhoneCarrierServiceAsync _unlockablePhoneCarrierServiceAsync;
+        private readonly IUnlockabledPhonePhoneCarrierServiceAsync _unlockablePhoneCarrierServiceAsync;
         private Timer _timer;
         private List<PhoneCarrierReadDto> phoneCarrierList = new List<PhoneCarrierReadDto>();
         private readonly TUnlockUrlConfig _tUnlockUrlConfig;
@@ -25,7 +25,7 @@ namespace WorkerService.T_Unlock_WebScraping
         public Worker(ILogger logger, IUnlockableServiceAsync unlockableServiceAsync,
             IPhoneCarrierServiceAsync phoneCarrierServiceAsync,
             IUnlockabledPhonePhoneUnlockToolServiceAsync unlockableUnlockToolServiceAsync,
-            IUnlockablePhoneCarrierServiceAsync unlockablePhoneCarrierServiceAsync,
+            IUnlockabledPhonePhoneCarrierServiceAsync unlockablePhoneCarrierServiceAsync,
             IOptions<TUnlockUrlConfig> tUnlockUrlConfig
             )
         {

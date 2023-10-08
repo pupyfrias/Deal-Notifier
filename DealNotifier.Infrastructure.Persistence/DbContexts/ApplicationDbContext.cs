@@ -41,7 +41,7 @@ namespace DealNotifier.Infrastructure.Persistence.DbContexts
         public DbSet<ItemType> Types { get; set; }
         public DbSet<UnlockabledPhonePhoneCarrier> UnlockabledPhonePhoneCarriers { get; set; }
         public DbSet<UnlockabledPhone> UnlockabledPhones { get; set; }
-        public DbSet<UnlockabledPhonePhoneUnlockTool> UnlockablePhoneUnlockTools { get; set; }
+        public DbSet<UnlockabledPhonePhoneUnlockTool> UnlockabledPhoneUnlockTools { get; set; }
         public DbSet<UnlockProbability> UnlockProbability { get; set; }
 
         #endregion DbSets

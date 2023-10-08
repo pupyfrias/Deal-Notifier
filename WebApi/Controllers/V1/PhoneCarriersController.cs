@@ -4,6 +4,7 @@ using DealNotifier.Core.Application.Specification;
 using DealNotifier.Core.Application.ViewModels.Common;
 using DealNotifier.Core.Application.ViewModels.V1;
 using DealNotifier.Core.Application.ViewModels.V1.PhoneCarrier;
+using DealNotifier.Core.Application.ViewModels.V1.PhoneUnlockTool;
 using DealNotifier.Core.Application.Wrappers;
 using DealNotifier.Core.Domain.Entities;
 using DealNotifier.Infrastructure.Persistence.DbContexts;
@@ -19,10 +20,12 @@ namespace WebApi.Controllers.V1
     public class PhoneCarriersController : ControllerBase
     {
         private readonly IPhoneCarrierServiceAsync _phoneCarrierServiceAsync;
+        private readonly IUnlockabledPhonePhoneCarrierServiceAsync _unlockabledPhonePhoneCarrierServiceAsync;
 
-        public PhoneCarriersController(IPhoneCarrierServiceAsync phoneCarrierServiceAsync)
+        public PhoneCarriersController(IPhoneCarrierServiceAsync phoneCarrierServiceAsync, IUnlockabledPhonePhoneCarrierServiceAsync unlockabledPhonePhoneCarrierServiceAsync)
         {
             _phoneCarrierServiceAsync = phoneCarrierServiceAsync;
+            _unlockabledPhonePhoneCarrierServiceAsync = unlockabledPhonePhoneCarrierServiceAsync;
         }
 
         [HttpGet]
@@ -58,6 +61,16 @@ namespace WebApi.Controllers.V1
             var response = new ApiResponse<PhoneCarrier>(createdPhoneCarrier);
             return CreatedAtAction("GetPhoneCarrier", new { id = createdPhoneCarrier.Id }, response);
         }
+
+        // POST: api/PhoneCarriers/1/UnlockabledPhone
+        [HttpPost("{PhoneCarrierId}/UnlockabledPhone")]
+        public async Task<ActionResult<PhoneUnlockTool>> PostPhoneCarrierUnlockablePhone(int PhoneCarrierId, PhoneCarrierUnlockabledPhoneCreateRequest request)
+        {
+            await _unlockabledPhonePhoneCarrierServiceAsync.CreateRangeAsync(PhoneCarrierId, request);
+            return NoContent();
+        }
+
+
 
         // DELETE: api/PhoneCarriers/5
         [HttpDelete("{id}")]

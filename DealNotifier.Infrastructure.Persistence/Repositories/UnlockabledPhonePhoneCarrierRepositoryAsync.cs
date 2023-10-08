@@ -34,6 +34,12 @@ namespace DealNotifier.Infrastructure.Persistence.Repositories
                               x.UnlockabledPhoneId == entity.UnlockabledPhoneId);
         }
 
+        public async Task CreateRangeAsync(IEnumerable<UnlockabledPhonePhoneCarrier> entities)
+        {
+            await _context.UnlockabledPhonePhoneCarriers.AddRangeAsync(entities);
+            await _context.SaveChangesAsync();
+        }
+
         #endregion Constructor
     }
 }

@@ -5,6 +5,6 @@ namespace DealNotifier.Core.Application.ViewModels.V1.PhoneUnlockTool
     public class PhoneUnlockToolUnlockablePhoneCreateRequest
     {
         [Required]
-        public string UnlockablePhone { get; set; }
+        public string UnlockablePhones { get; set; }
     }
 }

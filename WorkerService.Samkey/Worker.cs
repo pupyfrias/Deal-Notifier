@@ -17,7 +17,7 @@ namespace WorkerService.Samkey
         private readonly ILogger _logger;
         private readonly IPhoneCarrierServiceAsync _phoneCarrierServiceAsync;
         private readonly SamkeyUrlConfig _samkeyUrlConfig;
-        private readonly IUnlockablePhoneCarrierServiceAsync _unlockablePhoneCarrierServiceAsync;
+        private readonly IUnlockabledPhonePhoneCarrierServiceAsync _unlockablePhoneCarrierServiceAsync;
         private readonly IUnlockableServiceAsync _unlockableServiceAsync;
         private readonly IUnlockabledPhonePhoneUnlockToolServiceAsync _unlockableUnlockToolServiceAsync;
         private Timer _timer;
@@ -26,7 +26,7 @@ namespace WorkerService.Samkey
         public Worker(ILogger logger, IUnlockableServiceAsync unlockableServiceAsync,
             IPhoneCarrierServiceAsync phoneCarrierServiceAsync,
             IUnlockabledPhonePhoneUnlockToolServiceAsync unlockableUnlockToolServiceAsync,
-            IUnlockablePhoneCarrierServiceAsync unlockablePhoneCarrierServiceAsync,
+            IUnlockabledPhonePhoneCarrierServiceAsync unlockablePhoneCarrierServiceAsync,
             IOptions<SamkeyUrlConfig> samkeyUrlConfig
             )
         {

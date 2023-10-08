@@ -42,7 +42,7 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddSingleton<IUnlockableServiceAsync, UnlockableServiceAsync>();
         services.AddSingleton<IPhoneCarrierServiceAsync, PhoneCarrierServiceAsync>();
         services.AddSingleton<IUnlockabledPhonePhoneUnlockToolServiceAsync, UnlockabledPhonePhoneUnlockToolServiceAsync>();
-        services.AddSingleton<IUnlockablePhoneCarrierServiceAsync, UnlockablePhoneCarrierServiceAsync>();
+        services.AddSingleton<IUnlockabledPhonePhoneCarrierServiceAsync, UnlockabledPhonePhoneCarrierServiceAsync>();
 
         #endregion Services
 

@@ -22,9 +22,7 @@ namespace DealNotifier.Core.Application.Services
 
         public async Task CreateRangeAsync(int PhoneUnlockToolId, PhoneUnlockToolUnlockablePhoneCreateRequest request)
         {
-            var unlockedPhoneList = request.UnlockablePhone.Split(',')
-                                               .Select(s => int.Parse(s))
-                                               .ToList();
+            var unlockedPhoneList = request.UnlockablePhones.Split(',').Select(s => int.Parse(s));
             var phoneUnlockToolUnlockablePhoneList = unlockedPhoneList.Select(unlockedPhoneId =>
             {
                 return new UnlockabledPhonePhoneUnlockTool
@@ -33,8 +31,7 @@ namespace DealNotifier.Core.Application.Services
                     PhoneUnlockToolId = PhoneUnlockToolId
                 };
 
-            }).ToList();
-
+            });
 
             await _repository.CreateRangeAsync(phoneUnlockToolUnlockablePhoneList);
         }

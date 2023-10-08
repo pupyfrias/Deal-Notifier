@@ -21,7 +21,7 @@ namespace DealNotifier.Infrastructure.Persistence.Repositories
 
         public async Task CreateRangeAsync(IEnumerable<UnlockabledPhonePhoneUnlockTool> entities)
         {
-            await _context.UnlockablePhoneUnlockTools.AddRangeAsync(entities);
+            await _context.UnlockabledPhoneUnlockTools.AddRangeAsync(entities);
             await _context.SaveChangesAsync();
         }
 
