@@ -1,9 +1,9 @@
 ﻿using DealNotifier.Core.Application.Interfaces;
 using System.ComponentModel.DataAnnotations;
 
-namespace WebApi.Controllers.V1
+namespace DealNotifier.Core.Application.ViewModels.V1.PhoneCarrier
 {
-    public class PhoneCarrierUpdateRequest: IHasId<int>
+    public class PhoneCarrierUpdateRequest : IHasId<int>
     {
         [Required]
         public int Id { get; set; }

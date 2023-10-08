@@ -38,6 +38,7 @@ namespace DealNotifier.Infrastructure.Persistence
             services.AddScoped<IPhoneUnlockToolRepositoryAsync, PhoneUnlockToolRepositoryAsync>();
             services.AddScoped<IOnlineStoreRepositoryAsync, OnlineStoreRepositoryAsync>();
             services.AddScoped<IStockStatusRepositoryAsync, StockStatusRepositoryAsync>();
+            services.AddScoped<IUnlockabledPhoneRepositoryAsync, UnlockabledPhoneRepositoryAsync>();
 
             #endregion Dependency Injection
         }

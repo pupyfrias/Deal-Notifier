@@ -1,12 +1,12 @@
 ﻿using DealNotifier.Core.Application.Interfaces;
 using System.ComponentModel.DataAnnotations;
 
-namespace WebApi.Controllers.V1
+namespace DealNotifier.Core.Application.ViewModels.V1.OnlineStore
 {
-    public class OnlineStoreUpdateRequest: IHasId<int>
+    public class OnlineStoreUpdateRequest : IHasId<int>
     {
         [Required]
-        public  int Id { get; set; }
+        public int Id { get; set; }
         [Required]
         public string Name { get; set; }
     }

@@ -1,13 +1,13 @@
 ﻿using DealNotifier.Core.Application.Extensions;
-using DealNotifier.Core.Application.Specification;
+using DealNotifier.Core.Application.ViewModels.V1.OnlineStore;
 using DealNotifier.Core.Domain.Entities;
 using System.Linq.Expressions;
 
-namespace WebApi.Controllers.V1
+namespace DealNotifier.Core.Application.Specification
 {
-    public class OnlineStoreSpecification: Specification<OnlineStore>
+    public class OnlineStoreSpecification : Specification<OnlineStore>
     {
-        public OnlineStoreSpecification(OnlineStoreFilterAndPaginationRequest request) :base(request)
+        public OnlineStoreSpecification(OnlineStoreFilterAndPaginationRequest request) : base(request)
         {
             #region Name
             if (request.Name != null)

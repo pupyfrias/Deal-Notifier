@@ -1,9 +1,8 @@
-﻿using DealNotifier.Core.Application.Interfaces.Services;
-using DealNotifier.Core.Domain.Entities;
+﻿using DealNotifier.Core.Domain.Entities;
 
-namespace WebApi.Controllers.V1
+namespace DealNotifier.Core.Application.Interfaces.Services
 {
-    public interface IPhoneUnlockToolServiceAsync: IGenericServiceAsync<PhoneUnlockTool, int>
+    public interface IPhoneUnlockToolServiceAsync : IGenericServiceAsync<PhoneUnlockTool, int>
     {
     }
 }

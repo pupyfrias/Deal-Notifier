@@ -23,7 +23,7 @@ namespace DealNotifier.Infrastructure.Persistence.Configuration
                 .HasForeignKey(x => x.PhoneCarrierId);
 
             builder.HasOne(x => x.UnlockabledPhone)
-                .WithMany(x => x.UnlockablePhoneCarriers)
+                .WithMany(x => x.UnlockabledPhonePhoneCarrier)
                 .HasForeignKey(x => x.UnlockabledPhoneId);
 
             #endregion Keys

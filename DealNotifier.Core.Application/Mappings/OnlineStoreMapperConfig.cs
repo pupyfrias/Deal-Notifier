@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using DealNotifier.Core.Application.Extensions;
+using DealNotifier.Core.Application.ViewModels.V1.OnlineStore;
 using DealNotifier.Core.Domain.Entities;
-using WebApi.Controllers.V1;
 
 namespace DealNotifier.Core.Application.Mappings
 {

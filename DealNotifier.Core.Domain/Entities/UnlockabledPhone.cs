@@ -10,7 +10,7 @@ namespace DealNotifier.Core.Domain.Entities
         public string ModelName { get; set; }
         public string ModelNumber { get; set; }
         public Brand Brand { get; set; }
-        public List<UnlockabledPhonePhoneCarrier> UnlockablePhoneCarriers { get; set; }
-        public List<UnlockabledPhoneUnlockTool> UnlockableUnlockTools { get; set; }
+        public List<UnlockabledPhonePhoneCarrier> UnlockabledPhonePhoneCarrier { get; set; }
+        public List<UnlockabledPhoneUnlockTool> UnlockabledPhoneUnlockTool { get; set; }
     }
 }

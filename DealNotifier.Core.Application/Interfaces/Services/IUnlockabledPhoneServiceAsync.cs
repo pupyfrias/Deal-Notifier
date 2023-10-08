@@ -2,7 +2,7 @@
 
 namespace DealNotifier.Core.Application.Interfaces.Services
 {
-    public interface IOnlineStoreServiceAsync : IGenericServiceAsync<OnlineStore, int>
+    public interface IUnlockabledPhoneServiceAsync : IGenericServiceAsync<UnlockabledPhone, int>
     {
     }
 }

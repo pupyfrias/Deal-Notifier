@@ -1,4 +1,7 @@
-﻿using DealNotifier.Core.Application.ViewModels.Common;
+﻿using DealNotifier.Core.Application.Interfaces.Services;
+using DealNotifier.Core.Application.Specification;
+using DealNotifier.Core.Application.ViewModels.Common;
+using DealNotifier.Core.Application.ViewModels.V1.OnlineStore;
 using DealNotifier.Core.Application.Wrappers;
 using DealNotifier.Core.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;

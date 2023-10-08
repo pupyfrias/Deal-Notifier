@@ -1,8 +1,8 @@
 ﻿using DealNotifier.Core.Application.ViewModels.Common;
 
-namespace WebApi.Controllers.V1
+namespace DealNotifier.Core.Application.ViewModels.V1.PhoneUnlockTool
 {
-    public class PhoneUnlockToolFilterAndPaginationRequest: PaginationBase
+    public class PhoneUnlockToolFilterAndPaginationRequest : PaginationBase
     {
         public string? Name { get; set; }
     }

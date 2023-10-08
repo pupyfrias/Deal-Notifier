@@ -1,4 +1,4 @@
-﻿namespace WebApi.Controllers.V1
+﻿namespace DealNotifier.Core.Application.ViewModels.V1.PhoneCarrier
 {
     public class PhoneCarrierResponse
     {

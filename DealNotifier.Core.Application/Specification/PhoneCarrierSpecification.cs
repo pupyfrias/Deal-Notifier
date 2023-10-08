@@ -1,13 +1,13 @@
 ﻿using DealNotifier.Core.Application.Extensions;
-using DealNotifier.Core.Application.Specification;
+using DealNotifier.Core.Application.ViewModels.V1.PhoneCarrier;
 using DealNotifier.Core.Domain.Entities;
 using System.Linq.Expressions;
 
-namespace WebApi.Controllers.V1
+namespace DealNotifier.Core.Application.Specification
 {
-    public class PhoneCarrierSpecification: Specification<PhoneCarrier>
+    public class PhoneCarrierSpecification : Specification<PhoneCarrier>
     {
-        public PhoneCarrierSpecification(PhoneCarrierFilterAndPaginationRequest request): base(request)
+        public PhoneCarrierSpecification(PhoneCarrierFilterAndPaginationRequest request) : base(request)
         {
             #region Name
             if (request.Name != null)

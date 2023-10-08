@@ -7,9 +7,9 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace DealNotifier.Core.Application.Services
 {
-    public class OnlineStoreServiceAsync : GenericServiceAsync<OnlineStore, int>, IOnlineStoreServiceAsync
+    public class UnlockabledPhoneServiceAsync : GenericServiceAsync<UnlockabledPhone, int>, IUnlockabledPhoneServiceAsync
     {
-        public OnlineStoreServiceAsync(IOnlineStoreRepositoryAsync repository, IMapper mapper, IHttpContextAccessor httpContext, IMemoryCache cache) : base(repository, mapper, httpContext, cache)
+        public UnlockabledPhoneServiceAsync(IUnlockabledPhoneRepositoryAsync repository, IMapper mapper, IHttpContextAccessor httpContext, IMemoryCache cache) : base(repository, mapper, httpContext, cache)
         {
         }
     }

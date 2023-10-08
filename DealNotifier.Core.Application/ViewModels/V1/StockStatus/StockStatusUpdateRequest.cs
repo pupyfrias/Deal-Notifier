@@ -1,9 +1,9 @@
 ﻿using DealNotifier.Core.Application.Interfaces;
 using System.ComponentModel.DataAnnotations;
 
-namespace WebApi.Controllers.V1
+namespace DealNotifier.Core.Application.ViewModels.V1.StockStatus
 {
-    public class StockStatusUpdateRequest: IHasId<int>
+    public class StockStatusUpdateRequest : IHasId<int>
     {
         [Required]
         public int Id { get; set; }

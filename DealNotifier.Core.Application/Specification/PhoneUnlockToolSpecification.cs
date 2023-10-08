@@ -1,13 +1,13 @@
 ﻿using DealNotifier.Core.Application.Extensions;
-using DealNotifier.Core.Application.Specification;
+using DealNotifier.Core.Application.ViewModels.V1.PhoneUnlockTool;
 using DealNotifier.Core.Domain.Entities;
 using System.Linq.Expressions;
 
-namespace WebApi.Controllers.V1
+namespace DealNotifier.Core.Application.Specification
 {
-    public class PhoneUnlockToolSpecification: Specification<PhoneUnlockTool>
+    public class PhoneUnlockToolSpecification : Specification<PhoneUnlockTool>
     {
-        public PhoneUnlockToolSpecification(PhoneUnlockToolFilterAndPaginationRequest request): base(request)
+        public PhoneUnlockToolSpecification(PhoneUnlockToolFilterAndPaginationRequest request) : base(request)
         {
             #region Name
             if (request.Name != null)
