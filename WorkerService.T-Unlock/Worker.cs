@@ -16,7 +16,7 @@ namespace WorkerService.T_Unlock_WebScraping
         private readonly ILogger _logger;
         private readonly IUnlockableServiceAsync _unlockableServiceAsync;
         private readonly IPhoneCarrierServiceAsync _phoneCarrierServiceAsync;
-        private readonly IUnlockableUnlockToolServiceAsync _unlockableUnlockToolServiceAsync;
+        private readonly IUnlockabledPhonePhoneUnlockToolServiceAsync _unlockableUnlockToolServiceAsync;
         private readonly IUnlockablePhoneCarrierServiceAsync _unlockablePhoneCarrierServiceAsync;
         private Timer _timer;
         private List<PhoneCarrierReadDto> phoneCarrierList = new List<PhoneCarrierReadDto>();
@@ -24,7 +24,7 @@ namespace WorkerService.T_Unlock_WebScraping
 
         public Worker(ILogger logger, IUnlockableServiceAsync unlockableServiceAsync,
             IPhoneCarrierServiceAsync phoneCarrierServiceAsync,
-            IUnlockableUnlockToolServiceAsync unlockableUnlockToolServiceAsync,
+            IUnlockabledPhonePhoneUnlockToolServiceAsync unlockableUnlockToolServiceAsync,
             IUnlockablePhoneCarrierServiceAsync unlockablePhoneCarrierServiceAsync,
             IOptions<TUnlockUrlConfig> tUnlockUrlConfig
             )
@@ -154,12 +154,12 @@ namespace WorkerService.T_Unlock_WebScraping
 
                         var model = await _unlockableServiceAsync.CreateAsync<UnlockableCreateDto>(unlockableCreateDto);
 
-                        var unlockableUnlockTool = new UnlockabledPhoneUnlockTool
+                        var unlockableUnlockTool = new UnlockabledPhonePhoneUnlockTool
                         {
-                            UnlockablePhoneId= model.Id,
+                            UnlockabledPhoneId= model.Id,
                             PhoneUnlockToolId = (int)Enums.UnlockTool.TUnlock
                         };
-                        await _unlockableUnlockToolServiceAsync.CreateAsync(unlockableUnlockTool);
+                        //await _unlockableUnlockToolServiceAsync.CreateAsync(unlockableUnlockTool);
 
                         foreach (var carrier in carrierList)
                         {

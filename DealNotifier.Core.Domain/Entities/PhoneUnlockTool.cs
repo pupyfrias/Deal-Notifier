@@ -6,6 +6,6 @@ namespace DealNotifier.Core.Domain.Entities
     {
         public override int Id { get; set; }
         public string Name { get; set; }
-        public List<UnlockabledPhoneUnlockTool> UnlockableUnlockTools { get; set; }
+        public List<UnlockabledPhonePhoneUnlockTool> UnlockableUnlockTools { get; set; }
     }
 }

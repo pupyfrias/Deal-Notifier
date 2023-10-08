@@ -2,8 +2,8 @@
 
 namespace DealNotifier.Core.Application.Interfaces.Repositories
 {
-    public interface IUnlockableUnlockToolRepositoryAsync
+    public interface IUnlockabledPhonePhoneUnlockToolRepositoryAsync
     {
-        Task<UnlockabledPhoneUnlockTool> CreateAsync(UnlockabledPhoneUnlockTool entity);
+        Task CreateRangeAsync(IEnumerable<UnlockabledPhonePhoneUnlockTool> entities);
     }
 }

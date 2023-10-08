@@ -354,24 +354,24 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UnlockabledPhoneUnlockTool",
+                name: "UnlockabledPhonePhoneUnlockTool",
                 columns: table => new
                 {
-                    UnlockablePhoneId = table.Column<int>(type: "int", nullable: false),
+                    UnlockabledPhoneId = table.Column<int>(type: "int", nullable: false),
                     PhoneUnlockToolId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UnlockabledPhoneUnlockTool", x => new { x.PhoneUnlockToolId, x.UnlockablePhoneId });
+                    table.PrimaryKey("PK_UnlockabledPhonePhoneUnlockTool", x => new { x.PhoneUnlockToolId, x.UnlockabledPhoneId });
                     table.ForeignKey(
-                        name: "FK_UnlockabledPhoneUnlockTool_PhoneUnlockTool_PhoneUnlockToolId",
+                        name: "FK_UnlockabledPhonePhoneUnlockTool_PhoneUnlockTool_PhoneUnlockToolId",
                         column: x => x.PhoneUnlockToolId,
                         principalTable: "PhoneUnlockTool",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UnlockabledPhoneUnlockTool_UnlockabledPhone_PhoneUnlockToolId",
-                        column: x => x.PhoneUnlockToolId,
+                        name: "FK_UnlockabledPhonePhoneUnlockTool_UnlockabledPhone_UnlockabledPhoneId",
+                        column: x => x.UnlockabledPhoneId,
                         principalTable: "UnlockabledPhone",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -565,6 +565,11 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                 name: "IX_UnlockabledPhonePhoneCarrier_PhoneCarrierId",
                 table: "UnlockabledPhonePhoneCarrier",
                 column: "PhoneCarrierId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UnlockabledPhonePhoneUnlockTool_UnlockabledPhoneId",
+                table: "UnlockabledPhonePhoneUnlockTool",
+                column: "UnlockabledPhoneId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -588,7 +593,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                 name: "UnlockabledPhonePhoneCarrier");
 
             migrationBuilder.DropTable(
-                name: "UnlockabledPhoneUnlockTool");
+                name: "UnlockabledPhonePhoneUnlockTool");
 
             migrationBuilder.DropTable(
                 name: "OnlineStore");

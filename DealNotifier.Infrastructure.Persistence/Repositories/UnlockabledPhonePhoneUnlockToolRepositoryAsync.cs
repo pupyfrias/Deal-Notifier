@@ -4,7 +4,7 @@ using DealNotifier.Infrastructure.Persistence.DbContexts;
 
 namespace DealNotifier.Infrastructure.Persistence.Repositories
 {
-    public class UnlockableUnlockToolRepositoryAsync : IUnlockableUnlockToolRepositoryAsync
+    public class UnlockabledPhonePhoneUnlockToolRepositoryAsync : IUnlockabledPhonePhoneUnlockToolRepositoryAsync
     {
         #region Private Variable
 
@@ -14,16 +14,15 @@ namespace DealNotifier.Infrastructure.Persistence.Repositories
 
         #region Constructor
 
-        public UnlockableUnlockToolRepositoryAsync(ApplicationDbContext context)
+        public UnlockabledPhonePhoneUnlockToolRepositoryAsync(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        public async Task<UnlockabledPhoneUnlockTool> CreateAsync(UnlockabledPhoneUnlockTool entity)
+        public async Task CreateRangeAsync(IEnumerable<UnlockabledPhonePhoneUnlockTool> entities)
         {
-            await _context.AddAsync(entity);
+            await _context.UnlockablePhoneUnlockTools.AddRangeAsync(entities);
             await _context.SaveChangesAsync();
-            return entity;
         }
 
         #endregion Constructor

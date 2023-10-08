@@ -27,18 +27,19 @@ namespace DealNotifier.Infrastructure.Persistence
             #region Dependency Injection
 
             services.AddScoped(typeof(IGenericRepositoryAsync<,>), typeof(GenericRepositoryAsync<,>));
-            services.AddScoped<IItemRepositoryAsync, ItemRepositoryAsync>();
             services.AddScoped<IBanKeywordRepositoryAsync, BanKeywordRepositoryAsync>();
             services.AddScoped<IBanLinkRepositoryAsync, BanLinkRepositoryAsync>();
             services.AddScoped<IBrandRepositoryAsync, BrandRepositoryAsync>();
             services.AddScoped<IConditionRepositoryAsync, ConditionRepositoryAsync>();
+            services.AddScoped<IItemRepositoryAsync, ItemRepositoryAsync>();
             services.AddScoped<IItemTypeRepositoryAsync, ItemTypeRepositoryAsync>();
             services.AddScoped<INotificationCriteriaRepositoryAsync, NotificationCriteriaRepositoryAsync>();
+            services.AddScoped<IOnlineStoreRepositoryAsync, OnlineStoreRepositoryAsync>();
             services.AddScoped<IPhoneCarrierRepositoryAsync, PhoneCarrierRepositoryAsync>();
             services.AddScoped<IPhoneUnlockToolRepositoryAsync, PhoneUnlockToolRepositoryAsync>();
-            services.AddScoped<IOnlineStoreRepositoryAsync, OnlineStoreRepositoryAsync>();
             services.AddScoped<IStockStatusRepositoryAsync, StockStatusRepositoryAsync>();
             services.AddScoped<IUnlockabledPhoneRepositoryAsync, UnlockabledPhoneRepositoryAsync>();
+            services.AddScoped<IUnlockabledPhonePhoneUnlockToolRepositoryAsync, UnlockabledPhonePhoneUnlockToolRepositoryAsync>();
 
             #endregion Dependency Injection
         }

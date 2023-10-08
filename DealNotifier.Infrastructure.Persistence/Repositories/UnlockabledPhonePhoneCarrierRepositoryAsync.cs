@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DealNotifier.Infrastructure.Persistence.Repositories
 {
-    public class UnlockablePhoneCarrierRepositoryAsync : IUnlockablePhoneCarrierRepositoryAsync
+    public class UnlockabledPhonePhoneCarrierRepositoryAsync : IUnlockabledPhonePhoneCarrierRepositoryAsync
     {
         #region Private Variable
 
@@ -15,7 +15,7 @@ namespace DealNotifier.Infrastructure.Persistence.Repositories
 
         #region Constructor
 
-        public UnlockablePhoneCarrierRepositoryAsync(ApplicationDbContext context)
+        public UnlockabledPhonePhoneCarrierRepositoryAsync(ApplicationDbContext context)
         {
             _context = context;
         }

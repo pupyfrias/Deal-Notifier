@@ -965,17 +965,19 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                     b.ToTable("UnlockabledPhonePhoneCarrier", (string)null);
                 });
 
-            modelBuilder.Entity("DealNotifier.Core.Domain.Entities.UnlockabledPhoneUnlockTool", b =>
+            modelBuilder.Entity("DealNotifier.Core.Domain.Entities.UnlockabledPhonePhoneUnlockTool", b =>
                 {
                     b.Property<int>("PhoneUnlockToolId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UnlockablePhoneId")
+                    b.Property<int>("UnlockabledPhoneId")
                         .HasColumnType("int");
 
-                    b.HasKey("PhoneUnlockToolId", "UnlockablePhoneId");
+                    b.HasKey("PhoneUnlockToolId", "UnlockabledPhoneId");
 
-                    b.ToTable("UnlockabledPhoneUnlockTool", (string)null);
+                    b.HasIndex("UnlockabledPhoneId");
+
+                    b.ToTable("UnlockabledPhonePhoneUnlockTool", (string)null);
                 });
 
             modelBuilder.Entity("DealNotifier.Core.Domain.Entities.UnlockProbability", b =>
@@ -1136,7 +1138,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                         .IsRequired();
 
                     b.HasOne("DealNotifier.Core.Domain.Entities.UnlockabledPhone", "UnlockabledPhone")
-                        .WithMany("UnlockablePhoneCarriers")
+                        .WithMany("UnlockabledPhonePhoneCarrier")
                         .HasForeignKey("UnlockabledPhoneId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1146,7 +1148,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                     b.Navigation("UnlockabledPhone");
                 });
 
-            modelBuilder.Entity("DealNotifier.Core.Domain.Entities.UnlockabledPhoneUnlockTool", b =>
+            modelBuilder.Entity("DealNotifier.Core.Domain.Entities.UnlockabledPhonePhoneUnlockTool", b =>
                 {
                     b.HasOne("DealNotifier.Core.Domain.Entities.PhoneUnlockTool", "PhoneUnlockTool")
                         .WithMany("UnlockableUnlockTools")
@@ -1154,15 +1156,15 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DealNotifier.Core.Domain.Entities.UnlockabledPhone", "UnlockablePhone")
-                        .WithMany("UnlockableUnlockTools")
-                        .HasForeignKey("PhoneUnlockToolId")
+                    b.HasOne("DealNotifier.Core.Domain.Entities.UnlockabledPhone", "UnlockabledPhone")
+                        .WithMany("UnlockabledPhoneUnlockTool")
+                        .HasForeignKey("UnlockabledPhoneId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("PhoneUnlockTool");
 
-                    b.Navigation("UnlockablePhone");
+                    b.Navigation("UnlockabledPhone");
                 });
 
             modelBuilder.Entity("DealNotifier.Core.Domain.Entities.Brand", b =>
@@ -1208,9 +1210,9 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("DealNotifier.Core.Domain.Entities.UnlockabledPhone", b =>
                 {
-                    b.Navigation("UnlockablePhoneCarriers");
+                    b.Navigation("UnlockabledPhonePhoneCarrier");
 
-                    b.Navigation("UnlockableUnlockTools");
+                    b.Navigation("UnlockabledPhoneUnlockTool");
                 });
 
             modelBuilder.Entity("DealNotifier.Core.Domain.Entities.UnlockProbability", b =>

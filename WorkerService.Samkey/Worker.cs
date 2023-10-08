@@ -19,13 +19,13 @@ namespace WorkerService.Samkey
         private readonly SamkeyUrlConfig _samkeyUrlConfig;
         private readonly IUnlockablePhoneCarrierServiceAsync _unlockablePhoneCarrierServiceAsync;
         private readonly IUnlockableServiceAsync _unlockableServiceAsync;
-        private readonly IUnlockableUnlockToolServiceAsync _unlockableUnlockToolServiceAsync;
+        private readonly IUnlockabledPhonePhoneUnlockToolServiceAsync _unlockableUnlockToolServiceAsync;
         private Timer _timer;
         private List<PhoneCarrierReadDto> phoneCarrierList = new List<PhoneCarrierReadDto>();
 
         public Worker(ILogger logger, IUnlockableServiceAsync unlockableServiceAsync,
             IPhoneCarrierServiceAsync phoneCarrierServiceAsync,
-            IUnlockableUnlockToolServiceAsync unlockableUnlockToolServiceAsync,
+            IUnlockabledPhonePhoneUnlockToolServiceAsync unlockableUnlockToolServiceAsync,
             IUnlockablePhoneCarrierServiceAsync unlockablePhoneCarrierServiceAsync,
             IOptions<SamkeyUrlConfig> samkeyUrlConfig
             )
@@ -138,12 +138,12 @@ namespace WorkerService.Samkey
 
                         var model = await _unlockableServiceAsync.CreateAsync<UnlockableCreateDto>(unlockableCreateDto);
 
-                        var unlockableUnlockTool = new UnlockabledPhoneUnlockTool
+                        var unlockableUnlockTool = new UnlockabledPhonePhoneUnlockTool
                         {
-                            UnlockablePhoneId = model.Id,
+                            UnlockabledPhoneId = model.Id,
                             PhoneUnlockToolId = (int)Enums.UnlockTool.SamKey
                         };
-                        await _unlockableUnlockToolServiceAsync.CreateAsync(unlockableUnlockTool);
+                        //await _unlockableUnlockToolServiceAsync.CreateAsync(unlockableUnlockTool);
 
                         foreach (var carrier in carrierList)
                         {

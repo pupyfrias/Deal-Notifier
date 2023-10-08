@@ -31,8 +31,8 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddSingleton(typeof(IGenericRepositoryAsync<,>), typeof(GenericRepositoryAsync<,>));
         services.AddSingleton<IUnlockableRepositoryAsync, UnlockableRepositoryAsync>();
         services.AddSingleton<IPhoneCarrierRepositoryAsync, PhoneCarrierRepositoryAsync>();
-        services.AddSingleton<IUnlockableUnlockToolRepositoryAsync, UnlockableUnlockToolRepositoryAsync>();
-        services.AddSingleton<IUnlockablePhoneCarrierRepositoryAsync, UnlockablePhoneCarrierRepositoryAsync>();
+        services.AddSingleton<IUnlockabledPhonePhoneUnlockToolRepositoryAsync, UnlockabledPhonePhoneUnlockToolRepositoryAsync>();
+        services.AddSingleton<IUnlockabledPhonePhoneCarrierRepositoryAsync, UnlockabledPhonePhoneCarrierRepositoryAsync>();
 
         #endregion Repositories
 
@@ -41,7 +41,7 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddSingleton(typeof(IGenericServiceAsync<,>), typeof(GenericServiceAsync<,>));
         services.AddSingleton<IUnlockableServiceAsync, UnlockableServiceAsync>();
         services.AddSingleton<IPhoneCarrierServiceAsync, PhoneCarrierServiceAsync>();
-        services.AddSingleton<IUnlockableUnlockToolServiceAsync, UnlockableUnlockToolServiceAsync>();
+        services.AddSingleton<IUnlockabledPhonePhoneUnlockToolServiceAsync, UnlockabledPhonePhoneUnlockToolServiceAsync>();
         services.AddSingleton<IUnlockablePhoneCarrierServiceAsync, UnlockablePhoneCarrierServiceAsync>();
 
         #endregion Services

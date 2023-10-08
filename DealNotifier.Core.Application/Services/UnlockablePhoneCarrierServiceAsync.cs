@@ -8,11 +8,11 @@ namespace DealNotifier.Core.Application.Services
     {
         #region Private Variable
 
-        private readonly IUnlockablePhoneCarrierRepositoryAsync _repository;
+        private readonly IUnlockabledPhonePhoneCarrierRepositoryAsync _repository;
 
         #endregion Private Variable
 
-        public UnlockablePhoneCarrierServiceAsync(IUnlockablePhoneCarrierRepositoryAsync repository)
+        public UnlockablePhoneCarrierServiceAsync(IUnlockabledPhonePhoneCarrierRepositoryAsync repository)
         {
             _repository = repository;
         }

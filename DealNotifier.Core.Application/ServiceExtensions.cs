@@ -1,4 +1,5 @@
-﻿using DealNotifier.Core.Application.Interfaces.Services;
+﻿using DealNotifier.Core.Application.Interfaces.Repositories;
+using DealNotifier.Core.Application.Interfaces.Services;
 using DealNotifier.Core.Application.Services;
 using DealNotifier.Core.Application.Setups;
 using DealNotifier.Core.Application.Setups.Swagger;
@@ -42,6 +43,7 @@ namespace DealNotifier.Core.Application
             services.AddScoped<IOnlineStoreServiceAsync, OnlineStoreServiceAsync>();
             services.AddScoped<IStockStatusServiceAsync, StockStatusServiceAsync>();
             services.AddScoped<IUnlockabledPhoneServiceAsync, UnlockabledPhoneServiceAsync>();
+            services.AddScoped<IUnlockabledPhonePhoneUnlockToolServiceAsync, UnlockabledPhonePhoneUnlockToolServiceAsync>();
 
 
             #endregion Dependency Injection

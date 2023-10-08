@@ -1,4 +1,6 @@
-﻿using DealNotifier.Core.Application.Interfaces.Services;
+﻿using DealNotifier.Core.Application.Interfaces.Repositories;
+using DealNotifier.Core.Application.Interfaces.Services;
+using DealNotifier.Core.Application.Services;
 using DealNotifier.Core.Application.Specification;
 using DealNotifier.Core.Application.ViewModels.Common;
 using DealNotifier.Core.Application.ViewModels.V1.PhoneUnlockTool;
@@ -16,10 +18,12 @@ namespace WebApi.Controllers.V1
     public class PhoneUnlockToolsController : ControllerBase
     {
         private readonly IPhoneUnlockToolServiceAsync _phoneUnlockToolServiceAsync;
+        private readonly IUnlockabledPhonePhoneUnlockToolServiceAsync _unlockabledPhoneUnlockToolServiceAsync;
 
-        public PhoneUnlockToolsController(IPhoneUnlockToolServiceAsync phoneUnlockToolServiceAsync)
+        public PhoneUnlockToolsController(IPhoneUnlockToolServiceAsync phoneUnlockToolServiceAsync, IUnlockabledPhonePhoneUnlockToolServiceAsync unlockabledPhoneUnlockToolServiceAsync)
         {
             _phoneUnlockToolServiceAsync = phoneUnlockToolServiceAsync;
+            _unlockabledPhoneUnlockToolServiceAsync = unlockabledPhoneUnlockToolServiceAsync;
         }
 
         [HttpGet]
@@ -55,6 +59,15 @@ namespace WebApi.Controllers.V1
             var response = new ApiResponse<PhoneUnlockTool>(createdPhoneUnlockTool);
             return CreatedAtAction("GetPhoneUnlockTool", new { id = createdPhoneUnlockTool.Id }, response);
         }
+
+        // POST: api/PhoneUnlockTools
+        [HttpPost("{PhoneUnlockToolId}/UnlockabledPhone")]
+        public async Task<ActionResult<PhoneUnlockTool>> PostPhoneUnlockToolUnlockablePhone(int PhoneUnlockToolId, PhoneUnlockToolUnlockablePhoneCreateRequest request)
+        {
+            await _unlockabledPhoneUnlockToolServiceAsync.CreateRangeAsync(PhoneUnlockToolId, request);
+            return NoContent();
+        }
+
 
         // DELETE: api/PhoneUnlockTools/5
         [HttpDelete("{id}")]
