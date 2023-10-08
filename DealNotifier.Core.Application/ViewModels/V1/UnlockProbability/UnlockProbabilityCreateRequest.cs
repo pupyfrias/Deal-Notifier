@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace DealNotifier.Core.Application.ViewModels.V1.Brand
+namespace DealNotifier.Core.Application.ViewModels.V1.UnlockProbability
 {
-    public class BrandCreateRequest
+    public class UnlockProbabilityCreateRequest
     {
         [Required]
         public string Name { get; set; }

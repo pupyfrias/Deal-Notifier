@@ -2,11 +2,11 @@
 {
     public class ItemResponse
     {
+        public string Id { get; set; }
         public int BidCount { get; set; }
         public int BrandId { get; set; }
         public int ConditionId { get; set; }
         public string ConditionName { get; set; }
-        public string Id { get; set; }
         public string Image { get; set; }
         public bool IsAuction { get; set; }
         public DateTime? ItemEndDate { get; set; }

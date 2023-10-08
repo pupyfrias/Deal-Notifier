@@ -1,19 +1,26 @@
 ﻿using DealNotifier.Core.Application.Interfaces;
+using System.ComponentModel.DataAnnotations;
 
 namespace DealNotifier.Core.Application.ViewModels.V1.Item
 {
     public class ItemUpdateRequest: IHasId<Guid>
     {
         public int BidCount { get; set; }
-        public int BrandId { get; set; }
-        public int ConditionId { get; set; }
+        [Required]
+        public int? BrandId { get; set; }
+        [Required]
+        public int? ConditionId { get; set; }
+        [Required]
         public Guid Id { get; set; }
+        [Required]
         public string Image { get; set; }
         public bool IsAuction { get; set; }
         public DateTime? ItemEndDate { get; set; }
+        [Required]
         public string Link { get; set; }
         public string ModelName { get; set; }
         public string ModelNumber { get; set; }
+        [Required]
         public string Name { get; set; }
         public bool Notify { get; set; }
         public decimal OldPrice { get; set; }
@@ -21,9 +28,13 @@ namespace DealNotifier.Core.Application.ViewModels.V1.Item
         public decimal Price { get; set; }
         public decimal Saving { get; set; }
         public decimal SavingsPercentage { get; set; }
-        public int ShopId { get; set; }
-        public int StatusId { get; set; }
-        public int TypeId { get; set; }
-        public int UnlockProbabilityId { get; set; }
+        [Required]
+        public int? OnlineStoreId { get; set; }
+        [Required]
+        public int? StockStatusId { get; set; }
+        [Required]
+        public int? ItemTypeId { get; set; }
+        [Required]
+        public int? UnlockProbabilityId { get; set; }
     }
 }
