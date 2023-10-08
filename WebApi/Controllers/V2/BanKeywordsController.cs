@@ -47,10 +47,10 @@ namespace WebApi.Controllers.V2
 
         // POST: api/BanKeywords
         [HttpPost]
-        public async Task<ActionResult<BanKeyword>> PostBanKeyword(BanKeywordCreateRequest banKeyword)
+        public async Task<ActionResult<BanKeywordResponse>> PostBanKeyword(BanKeywordCreateRequest banKeyword)
         {
-            var createdBanKeyword = await _banKeywordServiceAsync.CreateAsync(banKeyword);
-            var response = new ApiResponse<BanKeyword>(createdBanKeyword);
+            var createdBanKeyword = await _banKeywordServiceAsync.CreateAsync<BanKeywordCreateRequest, BanKeywordResponse>(banKeyword);
+            var response = new ApiResponse<BanKeywordResponse>(createdBanKeyword);
             return CreatedAtAction("GetBanKeyword", new { id = createdBanKeyword.Id }, response);
         }
 

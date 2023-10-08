@@ -53,10 +53,10 @@ namespace WebApi.Controllers.V1
 
         // POST: api/PhoneUnlockTools
         [HttpPost]
-        public async Task<ActionResult<PhoneUnlockTool>> PostPhoneUnlockTool(PhoneUnlockToolCreateRequest request)
+        public async Task<ActionResult<PhoneUnlockToolResponse>> PostPhoneUnlockTool(PhoneUnlockToolCreateRequest request)
         {
-            var createdPhoneUnlockTool = await _phoneUnlockToolServiceAsync.CreateAsync(request);
-            var response = new ApiResponse<PhoneUnlockTool>(createdPhoneUnlockTool);
+            var createdPhoneUnlockTool = await _phoneUnlockToolServiceAsync.CreateAsync<PhoneUnlockToolCreateRequest, PhoneUnlockToolResponse>(request);
+            var response = new ApiResponse<PhoneUnlockToolResponse>(createdPhoneUnlockTool);
             return CreatedAtAction("GetPhoneUnlockTool", new { id = createdPhoneUnlockTool.Id }, response);
         }
 

@@ -136,13 +136,13 @@ namespace WorkerService.Samkey
                             ModelNumber = modelNumber
                         };
 
-                        var model = await _unlockableServiceAsync.CreateAsync<UnlockableCreateDto>(unlockableCreateDto);
+                        //var model = await _unlockableServiceAsync.CreateAsync<UnlockableCreateDto>(unlockableCreateDto);
 
-                        var unlockableUnlockTool = new UnlockabledPhonePhoneUnlockTool
+/*                        var unlockableUnlockTool = new UnlockabledPhonePhoneUnlockTool
                         {
                             UnlockabledPhoneId = model.Id,
                             PhoneUnlockToolId = (int)Enums.UnlockTool.SamKey
-                        };
+                        };*/
                         //await _unlockableUnlockToolServiceAsync.CreateAsync(unlockableUnlockTool);
 
                         foreach (var carrier in carrierList)
@@ -152,13 +152,13 @@ namespace WorkerService.Samkey
                                 pc.ShortName.Contains(carrier.Trim(), StringComparison.OrdinalIgnoreCase));
                             if (phoneCarrier != null)
                             {
-                                var unlockablePhoneCarrier = new UnlockabledPhonePhoneCarrier
+                                /*var unlockablePhoneCarrier = new UnlockabledPhonePhoneCarrier
                                 {
                                     UnlockabledPhoneId = model.Id,
                                     PhoneCarrierId = phoneCarrier.Id,
                                 };
 
-                                await _unlockablePhoneCarrierServiceAsync.CreateAsync(unlockablePhoneCarrier);
+                                await _unlockablePhoneCarrierServiceAsync.CreateAsync(unlockablePhoneCarrier);*/
                             }
                         }
                     }

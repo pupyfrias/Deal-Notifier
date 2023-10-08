@@ -52,10 +52,10 @@ namespace WebApi.Controllers.V1
 
         // POST: api/Conditions
         [HttpPost]
-        public async Task<ActionResult<Condition>> PostCondition(ConditionCreateRequest request)
+        public async Task<ActionResult<ConditionResponse>> PostCondition(ConditionCreateRequest request)
         {
-            var createdCondition = await _conditionServiceAsync.CreateAsync(request);
-            var response = new ApiResponse<Condition>(createdCondition);
+            var createdCondition = await _conditionServiceAsync.CreateAsync<ConditionCreateRequest, ConditionResponse>(request);
+            var response = new ApiResponse<ConditionResponse>(createdCondition);
             return CreatedAtAction("GetCondition", new { id = createdCondition.Id }, response);
         }
 

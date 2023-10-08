@@ -37,12 +37,13 @@ namespace DealNotifier.Core.Application.Services
 
         #region Public Methods
 
-        public virtual async Task<TEntity> CreateAsync<TSource>(TSource source)
+        public virtual async Task<TDestination> CreateAsync<TSource, TDestination>(TSource source)
         {
             var entity = _mapper.Map<TEntity>(source);
             var createdEntity = await _repository.CreateAsync(entity);
+            var mappedEntity = _mapper.Map<TDestination>(createdEntity);
             CacheUtility.InvalidateCache<TEntity>(_cache);
-            return createdEntity;
+            return mappedEntity;
         }
 
         public virtual async Task DeleteAsync(TKey id)

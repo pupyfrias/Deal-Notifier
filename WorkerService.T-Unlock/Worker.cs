@@ -152,17 +152,17 @@ namespace WorkerService.T_Unlock_WebScraping
                             ModelNumber = modelNumbre
                         };
 
-                        var model = await _unlockableServiceAsync.CreateAsync<UnlockableCreateDto>(unlockableCreateDto);
+                        /*var model = await _unlockableServiceAsync.CreateAsync<UnlockableCreateDto>(unlockableCreateDto);*/
 
-                        var unlockableUnlockTool = new UnlockabledPhonePhoneUnlockTool
+                       /* var unlockableUnlockTool = new UnlockabledPhonePhoneUnlockTool
                         {
                             UnlockabledPhoneId= model.Id,
                             PhoneUnlockToolId = (int)Enums.UnlockTool.TUnlock
-                        };
+                        };*/
                         //await _unlockableUnlockToolServiceAsync.CreateAsync(unlockableUnlockTool);
 
                         foreach (var carrier in carrierList)
-                        {
+                        {/*
                             var phoneCarrier = phoneCarrierList.FirstOrDefault(pc => pc.Name.Contains(carrier.Trim(), StringComparison.OrdinalIgnoreCase));
                             if (phoneCarrier != null)
                             {
@@ -173,7 +173,7 @@ namespace WorkerService.T_Unlock_WebScraping
                                 };
 
                                 await _unlockablePhoneCarrierServiceAsync.CreateAsync(unlockablePhoneCarrier);
-                            }
+                            }*/
                         }
                     }
                     else

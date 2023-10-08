@@ -53,10 +53,10 @@ namespace WebApi.Controllers.V1
 
         // POST: api/Items
         [HttpPost]
-        public async Task<ActionResult<Item>> PostItem(ItemCreateRequest item)
+        public async Task<ActionResult<ItemResponse>> PostItem(ItemCreateRequest item)
         {
-            var createdItem = await _itemServiceAsync.CreateAsync(item);
-            var response = new ApiResponse<Item>(createdItem);
+            var createdItem = await _itemServiceAsync.CreateAsync<ItemCreateRequest, ItemResponse>(item);
+            var response = new ApiResponse<ItemResponse>(createdItem);
             return CreatedAtAction("GetItem", new { id = createdItem.Id }, response);
         }
 

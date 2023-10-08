@@ -69,10 +69,10 @@ namespace DealNotifier.Infrastructure.Persistence.Models
                                 item.Link = Helper.GetLocalPath(eLink.GetAttribute("href"));
                                 item.Image = "https://thestore.com" + eImage.GetAttribute("data-src").Replace("height=300", "height=400");
                                 item.Price = decimal.Parse(ePriceWhole.Text.Replace("$", ""));
-                                item.ShopId = (int)OnlineStore.TheStore;
-                                item.TypeId = (int)links[0, 1];
+                                item.OnlineStoreId = (int)OnlineStore.TheStore;
+                                item.ItemTypeId = (int)links[0, 1];
                                 item.ConditionId = (int)Condition.New;
-                                item.StatusId = (int)Status.InStock;
+                                item.StockStatusId = (int)Status.InStock;
 
                                 if (await item.CanBeSaved())
                                 {

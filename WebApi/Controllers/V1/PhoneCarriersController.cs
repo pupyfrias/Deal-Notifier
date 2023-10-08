@@ -55,10 +55,10 @@ namespace WebApi.Controllers.V1
 
         // POST: api/PhoneCarriers
         [HttpPost]
-        public async Task<ActionResult<PhoneCarrier>> PostPhoneCarrier(PhoneCarrierCreateRequest request)
+        public async Task<ActionResult<PhoneCarrierResponse>> PostPhoneCarrier(PhoneCarrierCreateRequest request)
         {
-            var createdPhoneCarrier = await _phoneCarrierServiceAsync.CreateAsync(request);
-            var response = new ApiResponse<PhoneCarrier>(createdPhoneCarrier);
+            var createdPhoneCarrier = await _phoneCarrierServiceAsync.CreateAsync<PhoneCarrierCreateRequest, PhoneCarrierResponse>(request);
+            var response = new ApiResponse<PhoneCarrierResponse>(createdPhoneCarrier);
             return CreatedAtAction("GetPhoneCarrier", new { id = createdPhoneCarrier.Id }, response);
         }
 

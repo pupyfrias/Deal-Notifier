@@ -49,10 +49,10 @@ namespace WebApi.Controllers.V1
 
         // POST: api/StockStatuss
         [HttpPost]
-        public async Task<ActionResult<StockStatus>> PostStockStatus(StockStatusCreateRequest request)
+        public async Task<ActionResult<StockStatusResponse>> PostStockStatus(StockStatusCreateRequest request)
         {
-            var createdStockStatus = await _stockStatusServiceAsync.CreateAsync(request);
-            var response = new ApiResponse<StockStatus>(createdStockStatus);
+            var createdStockStatus = await _stockStatusServiceAsync.CreateAsync<StockStatusCreateRequest, StockStatusResponse>(request);
+            var response = new ApiResponse<StockStatusResponse>(createdStockStatus);
             return CreatedAtAction("GetStockStatus", new { id = createdStockStatus.Id }, response);
         }
 

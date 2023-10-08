@@ -52,10 +52,10 @@ namespace WebApi.Controllers.V1
 
         // POST: api/NotificationCriterias
         [HttpPost]
-        public async Task<ActionResult<NotificationCriteria>> PostNotificationCriteria(NotificationCriteriaCreateRequest request)
+        public async Task<ActionResult<NotificationCriteriaResponse>> PostNotificationCriteria(NotificationCriteriaCreateRequest request)
         {
-            var createdNotificationCriteria = await _notificationCriteriaServiceAsync.CreateAsync(request);
-            var response = new ApiResponse<NotificationCriteria>(createdNotificationCriteria);
+            var createdNotificationCriteria = await _notificationCriteriaServiceAsync.CreateAsync<NotificationCriteriaCreateRequest, NotificationCriteriaResponse>(request);
+            var response = new ApiResponse<NotificationCriteriaResponse>(createdNotificationCriteria);
             return CreatedAtAction("GetNotificationCriteria", new { id = createdNotificationCriteria.Id }, response);
         }
 

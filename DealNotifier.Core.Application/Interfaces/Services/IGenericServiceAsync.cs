@@ -4,7 +4,7 @@ namespace DealNotifier.Core.Application.Interfaces.Services
 {
     public interface IGenericServiceAsync<TEntity, TKey>
     {
-        Task<TEntity> CreateAsync<TSource>(TSource source);
+        Task<TDestination> CreateAsync<TSource, TDestination>(TSource source);
 
         Task DeleteAsync(TKey id);
 

@@ -148,9 +148,9 @@ namespace DealNotifier.Infrastructure.Persistence.Models
 
                             item.Image = element?.ThumbnailImages?[0]?.ImageUrl ?? element?.Image?.ImageUrl ?? string.Empty;
                             item.Price = price;
-                            item.ShopId = (int)Enums.OnlineStore.eBay;
-                            item.TypeId = (int)Enums.ItemType.Phone;
-                            item.StatusId = (int)Enums.Status.InStock;
+                            item.OnlineStoreId = (int)Enums.OnlineStore.eBay;
+                            item.ItemTypeId = (int)Enums.ItemType.Phone;
+                            item.StockStatusId = (int)Enums.Status.InStock;
                             item.ConditionId = element?.Condition == "New" ? (int)Enums.Condition.New : (int)Enums.Condition.Used;
                             item.ItemEndDate = element?.ItemEndDate?.AddHours(-4);
                             item.SetPhoneCarrier();

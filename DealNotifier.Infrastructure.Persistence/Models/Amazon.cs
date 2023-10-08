@@ -88,9 +88,9 @@ namespace DealNotifier.Infrastructure.Persistence.Models
                                     item.Link = Helper.GetLocalPath(eLink.GetAttribute("href"));
                                     item.Image = eImage.GetAttribute("src").Replace("218", "320");
                                     item.Price = decimal.Parse(ePriceWhole.Text.Replace(",", "") + "." + ePriceFraction.Text);
-                                    item.ShopId = (int)OnlineStore.Amazon;
-                                    item.TypeId = (int)links[i, 1];
-                                    item.StatusId = (int)Status.InStock;
+                                    item.OnlineStoreId = (int)OnlineStore.Amazon;
+                                    item.ItemTypeId = (int)links[i, 1];
+                                    item.StockStatusId = (int)Status.InStock;
 
                                     if (await item.CanBeSaved())
                                     {

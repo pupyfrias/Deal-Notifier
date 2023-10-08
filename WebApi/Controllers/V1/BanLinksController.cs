@@ -52,10 +52,10 @@ namespace WebApi.Controllers.V1
 
         // POST: api/BanLinks
         [HttpPost]
-        public async Task<ActionResult<BanLink>> PostBanLink(BanLinkCreateRequest request)
+        public async Task<ActionResult<BanLinkResponse>> PostBanLink(BanLinkCreateRequest request)
         {
-            var createdBanLink = await _banLinkServiceAsync.CreateAsync(request);
-            var response = new ApiResponse<BanLink>(createdBanLink);
+            var createdBanLink = await _banLinkServiceAsync.CreateAsync<BanLinkCreateRequest, BanLinkResponse>(request);
+            var response = new ApiResponse<BanLinkResponse>(createdBanLink);
             return CreatedAtAction("GetBanLink", new { id = createdBanLink.Id }, response);
         }
 

@@ -52,10 +52,10 @@ namespace WebApi.Controllers.V1
 
         // POST: api/Brands
         [HttpPost]
-        public async Task<ActionResult<Brand>> PostBrand(BrandCreateRequest request)
+        public async Task<ActionResult<BrandResponse>> PostBrand(BrandCreateRequest request)
         {
-            var createdBrand = await _brandServiceAsync.CreateAsync(request);
-            var response = new ApiResponse<Brand>(createdBrand);
+            var createdBrand = await _brandServiceAsync.CreateAsync<BrandCreateRequest, BrandResponse>(request);
+            var response = new ApiResponse<BrandResponse>(createdBrand);
             return CreatedAtAction("GetBrand", new { id = createdBrand.Id }, response);
         }
 

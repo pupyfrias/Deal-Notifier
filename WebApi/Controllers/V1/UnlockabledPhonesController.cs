@@ -49,10 +49,10 @@ namespace WebApi.Controllers.V1
 
         // POST: api/UnlockabledPhones
         [HttpPost]
-        public async Task<ActionResult<UnlockabledPhone>> PostUnlockabledPhone(UnlockabledPhoneCreateRequest request)
+        public async Task<ActionResult<UnlockabledPhoneResponse>> PostUnlockabledPhone(UnlockabledPhoneCreateRequest request)
         {
-            var createdUnlockabledPhone = await _unlockabledPhoneServiceAsync.CreateAsync(request);
-            var response = new ApiResponse<UnlockabledPhone>(createdUnlockabledPhone);
+            var createdUnlockabledPhone = await _unlockabledPhoneServiceAsync.CreateAsync<UnlockabledPhoneCreateRequest, UnlockabledPhoneResponse>(request);
+            var response = new ApiResponse<UnlockabledPhoneResponse>(createdUnlockabledPhone);
             return CreatedAtAction("GetUnlockabledPhone", new { id = createdUnlockabledPhone.Id }, response);
         }
 

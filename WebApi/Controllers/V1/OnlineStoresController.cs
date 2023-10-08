@@ -49,10 +49,10 @@ namespace WebApi.Controllers.V1
 
         // POST: api/OnlineStores
         [HttpPost]
-        public async Task<ActionResult<OnlineStore>> PostOnlineStore(OnlineStoreCreateRequest request)
+        public async Task<ActionResult<OnlineStoreResponse>> PostOnlineStore(OnlineStoreCreateRequest request)
         {
-            var createdOnlineStore = await _onlineStoreServiceAsync.CreateAsync(request);
-            var response = new ApiResponse<OnlineStore>(createdOnlineStore);
+            var createdOnlineStore = await _onlineStoreServiceAsync.CreateAsync<OnlineStoreCreateRequest, OnlineStoreResponse>(request);
+            var response = new ApiResponse<OnlineStoreResponse>(createdOnlineStore);
             return CreatedAtAction("GetOnlineStore", new { id = createdOnlineStore.Id }, response);
         }
 
