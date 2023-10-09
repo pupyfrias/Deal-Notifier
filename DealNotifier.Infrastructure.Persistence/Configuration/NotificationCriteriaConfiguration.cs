@@ -17,7 +17,7 @@ namespace DealNotifier.Infrastructure.Persistence.Configuration
             #region Properties
 
             builder.Property(x => x.Keywords)
-                   .HasColumnType("VARCHAR(MAX)")
+                   .HasColumnType("nvarchar(MAX)")
                    .IsRequired();
 
             builder.Property(x => x.ConditionId)
@@ -25,7 +25,7 @@ namespace DealNotifier.Infrastructure.Persistence.Configuration
                   .IsRequired();
 
             builder.Property(x => x.MaxPrice)
-                  .HasColumnType("DECIMAL(13,2)")
+                  .HasColumnType("decimal(13,2)")
                   .IsRequired();
 
             #endregion Properties

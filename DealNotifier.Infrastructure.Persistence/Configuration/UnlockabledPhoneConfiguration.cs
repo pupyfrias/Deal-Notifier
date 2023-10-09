@@ -17,15 +17,15 @@ namespace DealNotifier.Infrastructure.Persistence.Configuration
             #region Properties
 
             builder.Property(x => x.ModelName)
-                   .HasColumnType("VARCHAR(50)")
+                   .HasColumnType("nvarchar(50)")
                    .IsRequired();
 
             builder.Property(x => x.ModelNumber)
-                .HasColumnType("VARCHAR(15)")
+                .HasColumnType("nvarchar(15)")
                 .IsRequired();
 
             builder.Property(x => x.Comment)
-                .HasColumnType("VARCHAR(50)")
+                .HasColumnType("nvarchar(50)")
                 .IsRequired(false);
 
             #endregion Properties

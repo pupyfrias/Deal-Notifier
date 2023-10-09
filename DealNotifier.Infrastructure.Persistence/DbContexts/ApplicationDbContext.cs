@@ -58,16 +58,6 @@ namespace DealNotifier.Infrastructure.Persistence.DbContexts
             return base.SaveChangesAsync(cancellationToken);
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            var config = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json").Build();
-
-            optionsBuilder.UseSqlServer(config.GetConnectionString("DealNotifierConnection"));
-            //optionsBuilder.LogTo(Console.WriteLine, new[] { DbLoggerCategory.Database.Command.Name }, LogLevel.Information);
-            base.OnConfiguring(optionsBuilder);
-        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new BanKeywordConfiguration());

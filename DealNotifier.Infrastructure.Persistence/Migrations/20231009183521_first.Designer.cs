@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DealNotifier.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231008170032_first")]
+    [Migration("20231009183521_first")]
     partial class first
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -82,7 +82,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Keyword")
                         .IsRequired()
-                        .HasColumnType("VARCHAR(50)");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<DateTime?>("LastModified")
                         .HasColumnType("datetime2");
@@ -118,7 +118,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Link")
                         .IsRequired()
-                        .HasColumnType("VARCHAR(max)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -152,7 +152,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("VARCHAR(30)");
+                        .HasColumnType("nvarchar(30)");
 
                     b.HasKey("Id");
 
@@ -242,7 +242,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("VARCHAR(15)");
+                        .HasColumnType("nvarchar(15)");
 
                     b.HasKey("Id");
 
@@ -294,7 +294,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Image")
                         .IsRequired()
-                        .HasColumnType("varchar(MAX)");
+                        .HasColumnType("nvarchar(MAX)");
 
                     b.Property<bool>("IsAuction")
                         .ValueGeneratedOnAdd()
@@ -304,6 +304,9 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                     b.Property<DateTime?>("ItemEndDate")
                         .HasColumnType("DateTime");
 
+                    b.Property<int>("ItemTypeId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("LastModified")
                         .HasColumnType("datetime2");
 
@@ -312,17 +315,17 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Link")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(254)");
 
                     b.Property<string>("ModelName")
-                        .HasColumnType("varchar(25)");
+                        .HasColumnType("nvarchar(25)");
 
                     b.Property<string>("ModelNumber")
-                        .HasColumnType("varchar(25)");
+                        .HasColumnType("nvarchar(25)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("VARCHAR(max)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("Notified")
                         .HasColumnType("datetime2");
@@ -334,37 +337,32 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
 
                     b.Property<decimal>("OldPrice")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("DECIMAL(13,2)")
+                        .HasColumnType("decimal(13,2)")
                         .HasDefaultValueSql("0");
 
-                    b.Property<int>("PhoneCarrierId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValueSql("1");
+                    b.Property<int>("OnlineStoreId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PhoneCarrierId")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("DECIMAL(13,2)");
+                        .HasColumnType("decimal(13,2)");
 
                     b.Property<decimal>("Saving")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("DECIMAL(13,2)")
+                        .HasColumnType("decimal(13,2)")
                         .HasDefaultValueSql("0");
 
                     b.Property<decimal>("SavingsPercentage")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("DECIMAL(13,2)")
+                        .HasColumnType("decimal(13,2)")
                         .HasDefaultValueSql("0");
 
-                    b.Property<int>("ShopId")
+                    b.Property<int>("StockStatusId")
                         .HasColumnType("int");
 
-                    b.Property<int>("StatusId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TypeId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UnlockProbabilityId")
+                    b.Property<int?>("UnlockProbabilityId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -373,16 +371,16 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("ConditionId");
 
+                    b.HasIndex("ItemTypeId");
+
                     b.HasIndex("Link")
                         .IsUnique();
 
+                    b.HasIndex("OnlineStoreId");
+
                     b.HasIndex("PhoneCarrierId");
 
-                    b.HasIndex("ShopId");
-
-                    b.HasIndex("StatusId");
-
-                    b.HasIndex("TypeId");
+                    b.HasIndex("StockStatusId");
 
                     b.HasIndex("UnlockProbabilityId");
 
@@ -416,7 +414,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("VARCHAR(20)");
+                        .HasColumnType("nvarchar(20)");
 
                     b.HasKey("Id");
 
@@ -497,7 +495,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Keywords")
                         .IsRequired()
-                        .HasColumnType("VARCHAR(MAX)");
+                        .HasColumnType("nvarchar(MAX)");
 
                     b.Property<DateTime?>("LastModified")
                         .HasColumnType("datetime2");
@@ -506,7 +504,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("MaxPrice")
-                        .HasColumnType("DECIMAL(13,2)");
+                        .HasColumnType("decimal(13,2)");
 
                     b.HasKey("Id");
 
@@ -542,7 +540,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("VARCHAR(15)");
+                        .HasColumnType("nvarchar(15)");
 
                     b.HasKey("Id");
 
@@ -596,11 +594,11 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("VARCHAR(30)");
+                        .HasColumnType("nvarchar(30)");
 
                     b.Property<string>("ShortName")
                         .IsRequired()
-                        .HasColumnType("VARCHAR(5)");
+                        .HasColumnType("nvarchar(5)");
 
                     b.HasKey("Id");
 
@@ -828,7 +826,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("VARCHAR(20)");
+                        .HasColumnType("nvarchar(20)");
 
                     b.HasKey("Id");
 
@@ -882,7 +880,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("VARCHAR(20)");
+                        .HasColumnType("nvarchar(20)");
 
                     b.HasKey("Id");
 
@@ -915,7 +913,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Comment")
-                        .HasColumnType("VARCHAR(50)");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<DateTime>("Created")
                         .ValueGeneratedOnAdd()
@@ -936,11 +934,11 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("ModelName")
                         .IsRequired()
-                        .HasColumnType("VARCHAR(50)");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("ModelNumber")
                         .IsRequired()
-                        .HasColumnType("VARCHAR(15)");
+                        .HasColumnType("nvarchar(15)");
 
                     b.HasKey("Id");
 
@@ -1009,7 +1007,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("VARCHAR(15)");
+                        .HasColumnType("nvarchar(15)");
 
                     b.HasKey("Id");
 
@@ -1058,6 +1056,20 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_Item_Condition");
 
+                    b.HasOne("DealNotifier.Core.Domain.Entities.ItemType", "ItemType")
+                        .WithMany("Items")
+                        .HasForeignKey("ItemTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_Item_ItemType");
+
+                    b.HasOne("DealNotifier.Core.Domain.Entities.OnlineStore", "OnlineStore")
+                        .WithMany("Items")
+                        .HasForeignKey("OnlineStoreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_Item_OnlineStore");
+
                     b.HasOne("DealNotifier.Core.Domain.Entities.PhoneCarrier", "PhoneCarrier")
                         .WithMany("Items")
                         .HasForeignKey("PhoneCarrierId")
@@ -1065,26 +1077,12 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_Item_PhoneCarrier");
 
-                    b.HasOne("DealNotifier.Core.Domain.Entities.OnlineStore", "OnlineStore")
+                    b.HasOne("DealNotifier.Core.Domain.Entities.StockStatus", "StockStatus")
                         .WithMany("Items")
-                        .HasForeignKey("ShopId")
+                        .HasForeignKey("StockStatusId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK_Item_Shop");
-
-                    b.HasOne("DealNotifier.Core.Domain.Entities.StockStatus", "Status")
-                        .WithMany("Items")
-                        .HasForeignKey("StatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_Item_Status");
-
-                    b.HasOne("DealNotifier.Core.Domain.Entities.ItemType", "Type")
-                        .WithMany("Items")
-                        .HasForeignKey("TypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_Item_Type");
+                        .HasConstraintName("FK_Item_StockStatus");
 
                     b.HasOne("DealNotifier.Core.Domain.Entities.UnlockProbability", "UnlockProbability")
                         .WithMany("Items")
@@ -1097,13 +1095,13 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
 
                     b.Navigation("Condition");
 
+                    b.Navigation("ItemType");
+
                     b.Navigation("OnlineStore");
 
                     b.Navigation("PhoneCarrier");
 
-                    b.Navigation("Status");
-
-                    b.Navigation("Type");
+                    b.Navigation("StockStatus");
 
                     b.Navigation("UnlockProbability");
                 });

@@ -20,21 +20,22 @@ namespace DealNotifier.Infrastructure.Persistence.Models
         private ConcurrentBag<ItemCreateRequest> itemList = new ConcurrentBag<ItemCreateRequest>();
         private ConcurrentBag<string> checkedList = new ConcurrentBag<string>();
         private DateTime expiresAt;
-        private readonly IItemServiceAsync _itemService;
+        private readonly IItemSyncService _itemSyncService;
         private readonly ILogger _logger;
         private readonly string baseUrl = @"https://api.ebay.com/buy/browse/v1/item_summary/search?filter=price:[20..100],priceCurrency:USD,conditionIds:{1000|3000},itemLocationCountry:US&sort=price&limit=200&aspect_filter=categoryId:9355,Operating System:{Android},Storage Capacity:{512 GB|256 GB|64 GB|32 GB|128 GB}&q=(LG,Motorola,Samsung)&category_ids=9355";
         private string accessToken = string.Empty;
         private string? currentUrl = string.Empty;
 
-        public EbayService(ILogger logger, IItemServiceAsync itemService, IEmailServiceAsync emailService)
+
+        public EbayService(ILogger logger, IItemSyncService itemService, IEmailService emailService)
         {
             _logger = logger;
-            _itemService = itemService;
+            _itemSyncService = itemService;
         }
 
         public async Task Init()
         {
-            await _itemService.LoadData();
+            await _itemSyncService.LoadData();
             await RunAsync(baseUrl);
         }
 
@@ -50,7 +51,7 @@ namespace DealNotifier.Infrastructure.Persistence.Models
             {
                 var content = await response.Content.ReadFromJsonAsync<eBayResponse>();
                 Mapping(content?.ItemSummaries);
-                _itemService.SaveOrUpdate(in itemList);
+                await _itemSyncService.SaveOrUpdate(itemList);
 
                 _logger.Information($"Total: {content?.Total}");
                 _logger.Information($"1\t| {counter}\t| {itemList.Count}");
@@ -77,7 +78,7 @@ namespace DealNotifier.Infrastructure.Persistence.Models
                             Mapping(data?.ItemSummaries);
                             currentUrl = data?.Next;
 
-                            _itemService.SaveOrUpdate(in itemList);
+                            await _itemSyncService.SaveOrUpdate(itemList);
                             _logger.Information($"1\t| {counter}\t| {itemList.Count}");
                             counter++;
                             itemList.Clear();
@@ -97,8 +98,8 @@ namespace DealNotifier.Infrastructure.Persistence.Models
                     }
                 }
 
-                _itemService.UpdateStatus(ref checkedList);
-                await _itemService.NotifyByEmail();
+                _itemSyncService.UpdateStatus(ref checkedList);
+                //await _itemSyncService.NotifyByEmail();
             }
             else if (response.StatusCode == HttpStatusCode.Unauthorized || accessToken.IsNullOrEmpty())
             {
@@ -154,11 +155,11 @@ namespace DealNotifier.Infrastructure.Persistence.Models
                             item.ConditionId = element?.Condition == "New" ? (int)Enums.Condition.New : (int)Enums.Condition.Used;
                             item.ItemEndDate = element?.ItemEndDate?.AddHours(-4);
                             item.SetPhoneCarrier();
-                            _itemService.TrySetModelNumberModelNameAndBrand(ref item);
+                            _itemSyncService.TrySetModelNumberModelNameAndBrand(ref item);
                             item.BidCount = element?.BidCount ?? 0;
                             item.IsAuction = isAuction;
 
-                            _itemService.SetUnlockProbability(ref item);
+                            _itemSyncService.SetUnlockProbability(ref item);
                             itemList.Add(item);
                             checkedList.Add(item.Link);
                         }

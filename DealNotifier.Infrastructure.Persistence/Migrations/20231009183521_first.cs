@@ -35,7 +35,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Keyword = table.Column<string>(type: "VARCHAR(50)", nullable: false),
+                    Keyword = table.Column<string>(type: "nvarchar(50)", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -52,7 +52,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Link = table.Column<string>(type: "VARCHAR(max)", nullable: false),
+                    Link = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -69,7 +69,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "VARCHAR(30)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(30)", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "default"),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -86,7 +86,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "VARCHAR(15)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(15)", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "default"),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -103,7 +103,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "VARCHAR(20)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(20)", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "default"),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -120,7 +120,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "VARCHAR(15)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(15)", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "default"),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -137,8 +137,8 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "VARCHAR(30)", nullable: false),
-                    ShortName = table.Column<string>(type: "VARCHAR(5)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(30)", nullable: false),
+                    ShortName = table.Column<string>(type: "nvarchar(5)", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "default"),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -155,7 +155,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "VARCHAR(20)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(20)", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "default"),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -172,7 +172,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "VARCHAR(20)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(20)", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "default"),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -189,7 +189,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "VARCHAR(15)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(15)", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "default"),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -207,9 +207,9 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     BrandId = table.Column<int>(type: "int", nullable: false),
-                    Comment = table.Column<string>(type: "VARCHAR(50)", nullable: true),
-                    ModelName = table.Column<string>(type: "VARCHAR(50)", nullable: false),
-                    ModelNumber = table.Column<string>(type: "VARCHAR(15)", nullable: false),
+                    Comment = table.Column<string>(type: "nvarchar(50)", nullable: true),
+                    ModelName = table.Column<string>(type: "nvarchar(50)", nullable: false),
+                    ModelNumber = table.Column<string>(type: "nvarchar(15)", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "default"),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -232,8 +232,8 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Keywords = table.Column<string>(type: "VARCHAR(MAX)", nullable: false),
-                    MaxPrice = table.Column<decimal>(type: "DECIMAL(13,2)", nullable: false),
+                    Keywords = table.Column<string>(type: "nvarchar(MAX)", nullable: false),
+                    MaxPrice = table.Column<decimal>(type: "decimal(13,2)", nullable: false),
                     ConditionId = table.Column<int>(type: "INT", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "default"),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
@@ -256,25 +256,25 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
-                    OldPrice = table.Column<decimal>(type: "DECIMAL(13,2)", nullable: false, defaultValueSql: "0"),
-                    Price = table.Column<decimal>(type: "DECIMAL(13,2)", nullable: false),
-                    Saving = table.Column<decimal>(type: "DECIMAL(13,2)", nullable: false, defaultValueSql: "0"),
-                    SavingsPercentage = table.Column<decimal>(type: "DECIMAL(13,2)", nullable: false, defaultValueSql: "0"),
+                    OldPrice = table.Column<decimal>(type: "decimal(13,2)", nullable: false, defaultValueSql: "0"),
+                    Price = table.Column<decimal>(type: "decimal(13,2)", nullable: false),
+                    Saving = table.Column<decimal>(type: "decimal(13,2)", nullable: false, defaultValueSql: "0"),
+                    SavingsPercentage = table.Column<decimal>(type: "decimal(13,2)", nullable: false, defaultValueSql: "0"),
                     ConditionId = table.Column<int>(type: "int", nullable: false),
-                    ShopId = table.Column<int>(type: "int", nullable: false),
-                    StatusId = table.Column<int>(type: "int", nullable: false),
-                    TypeId = table.Column<int>(type: "int", nullable: false),
-                    Image = table.Column<string>(type: "varchar(MAX)", nullable: false),
-                    Link = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "VARCHAR(max)", nullable: false),
+                    OnlineStoreId = table.Column<int>(type: "int", nullable: false),
+                    StockStatusId = table.Column<int>(type: "int", nullable: false),
+                    ItemTypeId = table.Column<int>(type: "int", nullable: false),
+                    Image = table.Column<string>(type: "nvarchar(MAX)", nullable: false),
+                    Link = table.Column<string>(type: "nvarchar(254)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BrandId = table.Column<int>(type: "int", nullable: false, defaultValueSql: "1"),
-                    PhoneCarrierId = table.Column<int>(type: "int", nullable: false, defaultValueSql: "1"),
-                    ModelNumber = table.Column<string>(type: "varchar(25)", nullable: true),
-                    ModelName = table.Column<string>(type: "varchar(25)", nullable: true),
+                    PhoneCarrierId = table.Column<int>(type: "int", nullable: true),
+                    ModelNumber = table.Column<string>(type: "nvarchar(25)", nullable: true),
+                    ModelName = table.Column<string>(type: "nvarchar(25)", nullable: true),
                     Notify = table.Column<bool>(type: "BIT", nullable: false, defaultValueSql: "1"),
                     IsAuction = table.Column<bool>(type: "BIT", nullable: false, defaultValueSql: "0"),
                     BidCount = table.Column<int>(type: "Int", nullable: false),
-                    UnlockProbabilityId = table.Column<int>(type: "int", nullable: false),
+                    UnlockProbabilityId = table.Column<int>(type: "int", nullable: true),
                     ItemEndDate = table.Column<DateTime>(type: "DateTime", nullable: true),
                     Notified = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "default"),
@@ -298,27 +298,27 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
+                        name: "FK_Item_ItemType",
+                        column: x => x.ItemTypeId,
+                        principalTable: "ItemType",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Item_OnlineStore",
+                        column: x => x.OnlineStoreId,
+                        principalTable: "OnlineStore",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_Item_PhoneCarrier",
                         column: x => x.PhoneCarrierId,
                         principalTable: "PhoneCarrier",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Item_Shop",
-                        column: x => x.ShopId,
-                        principalTable: "OnlineStore",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Item_Status",
-                        column: x => x.StatusId,
+                        name: "FK_Item_StockStatus",
+                        column: x => x.StockStatusId,
                         principalTable: "StockStatus",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Item_Type",
-                        column: x => x.TypeId,
-                        principalTable: "ItemType",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -509,10 +509,20 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                 column: "ConditionId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Item_ItemTypeId",
+                table: "Item",
+                column: "ItemTypeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Item_Link",
                 table: "Item",
                 column: "Link",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Item_OnlineStoreId",
+                table: "Item",
+                column: "OnlineStoreId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Item_PhoneCarrierId",
@@ -520,19 +530,9 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                 column: "PhoneCarrierId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Item_ShopId",
+                name: "IX_Item_StockStatusId",
                 table: "Item",
-                column: "ShopId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Item_StatusId",
-                table: "Item",
-                column: "StatusId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Item_TypeId",
-                table: "Item",
-                column: "TypeId");
+                column: "StockStatusId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Item_UnlockProbabilityId",
@@ -596,13 +596,13 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                 name: "UnlockabledPhonePhoneUnlockTool");
 
             migrationBuilder.DropTable(
+                name: "ItemType");
+
+            migrationBuilder.DropTable(
                 name: "OnlineStore");
 
             migrationBuilder.DropTable(
                 name: "StockStatus");
-
-            migrationBuilder.DropTable(
-                name: "ItemType");
 
             migrationBuilder.DropTable(
                 name: "UnlockProbability");

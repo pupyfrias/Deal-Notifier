@@ -19,12 +19,12 @@ namespace DealNotifier.Infrastructure.Persistence.Models
     public class TheStore
     {
         private static ILogger _logger;
-        private IItemServiceAsync _itemService;
+        private IItemSyncService _itemSyncService;
         private static object[,] links = { { "https://thestore.com/c/refurbished-cell-phones-58?condition=Brand%20New&showMore=0", ItemType.Phone } };
 
-        public TheStore(ILogger logger, IItemServiceAsync itemService)
+        public TheStore(ILogger logger, IItemSyncService itemSyncService)
         {
-            _itemService = itemService;
+            _itemSyncService = itemSyncService;
         }
 
         public void Run()
@@ -113,7 +113,7 @@ namespace DealNotifier.Infrastructure.Persistence.Models
                     }
                 }
 
-                _itemService.SaveOrUpdate(in itemList);
+               _itemSyncService.SaveOrUpdate(itemList);
             }
         }
     }

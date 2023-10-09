@@ -18,11 +18,11 @@ namespace DealNotifier.Infrastructure.Persistence.Configuration
             #region Properties
 
             builder.Property(x => x.Name)
-                    .HasColumnType("VARCHAR(30)")
+                    .HasColumnType("nvarchar(30)")
                     .IsRequired();
 
             builder.Property(x => x.ShortName)
-                    .HasColumnType("VARCHAR(5)")
+                    .HasColumnType("nvarchar(5)")
                     .IsRequired();
 
             #endregion Properties

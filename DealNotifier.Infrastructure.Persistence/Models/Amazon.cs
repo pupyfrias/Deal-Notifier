@@ -18,7 +18,7 @@ namespace DealNotifier.Infrastructure.Persistence.Models
     public class Amazon
     {
         private static ILogger _logger;
-        private IItemServiceAsync _itemService;
+        private readonly IItemSyncService _itemSyncService;
         private static string error;
 
         private static object[,] links =
@@ -45,9 +45,9 @@ namespace DealNotifier.Infrastructure.Persistence.Models
             {"https://www.amazon.com/s?k=memory+usb+samsung&i=computers&bbn=3151491&rh=n%3A3151491&dc&language=es&__mk_es_US=%C3%85M%C3%85%C5%BD%C3%95%C3%91&qid=1652323252&rnid=2528832011&ref=sr_nr_p_89_1",  Enums.Type.Memory}*/
         };
 
-        public Amazon(ILogger logger, IItemServiceAsync itemService)
+        public Amazon(ILogger logger, IItemSyncService itemSyncService)
         {
-            _itemService = itemService;
+            _itemSyncService = itemSyncService;
         }
 
         public void Run()
@@ -132,7 +132,7 @@ namespace DealNotifier.Infrastructure.Persistence.Models
                         counter++;
                     }
 
-                    _itemService.SaveOrUpdate(in itemList);
+                    _itemSyncService.SaveOrUpdate(itemList);
                 }
                 driver.Quit();
             }

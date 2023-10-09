@@ -18,7 +18,7 @@ namespace DealNotifier.Infrastructure.Persistence.Configuration
             #region Properties
 
             builder.Property(x => x.Name)
-                    .HasColumnType("VARCHAR(20)")
+                    .HasColumnType("nvarchar(20)")
                     .IsRequired();
 
             #endregion Properties

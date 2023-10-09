@@ -41,6 +41,11 @@ namespace DealNotifier.Infrastructure.Persistence.Repositories
             await _dbContext.SaveChangesAsync();
         }
 
+        public bool Exists(UnlockabledPhonePhoneCarrier entity)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion Constructor
     }
 }

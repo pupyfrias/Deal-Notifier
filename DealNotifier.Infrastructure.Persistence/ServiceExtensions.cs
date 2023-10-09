@@ -1,5 +1,6 @@
 ﻿using DealNotifier.Core.Application.Interfaces.Repositories;
 using DealNotifier.Core.Application.Interfaces.Services;
+using DealNotifier.Core.Application.Setups;
 using DealNotifier.Infrastructure.Persistence.DbContexts;
 using DealNotifier.Infrastructure.Persistence.Repositories;
 using Microsoft.Extensions.Configuration;
@@ -26,22 +27,22 @@ namespace DealNotifier.Infrastructure.Persistence
 
             #region Dependency Injection
 
-            services.AddScoped(typeof(IGenericRepositoryAsync<,>), typeof(GenericRepositoryAsync<,>));
-            services.AddScoped<IBanKeywordRepositoryAsync, BanKeywordRepositoryAsync>();
-            services.AddScoped<IBanLinkRepositoryAsync, BanLinkRepositoryAsync>();
-            services.AddScoped<IBrandRepositoryAsync, BrandRepositoryAsync>();
-            services.AddScoped<IConditionRepositoryAsync, ConditionRepositoryAsync>();
-            services.AddScoped<IItemRepositoryAsync, ItemRepositoryAsync>();
-            services.AddScoped<IItemTypeRepositoryAsync, ItemTypeRepositoryAsync>();
-            services.AddScoped<INotificationCriteriaRepositoryAsync, NotificationCriteriaRepositoryAsync>();
-            services.AddScoped<IOnlineStoreRepositoryAsync, OnlineStoreRepositoryAsync>();
-            services.AddScoped<IPhoneCarrierRepositoryAsync, PhoneCarrierRepositoryAsync>();
-            services.AddScoped<IPhoneUnlockToolRepositoryAsync, PhoneUnlockToolRepositoryAsync>();
-            services.AddScoped<IStockStatusRepositoryAsync, StockStatusRepositoryAsync>();
-            services.AddScoped<IUnlockabledPhoneRepositoryAsync, UnlockabledPhoneRepositoryAsync>();
-            services.AddScoped<IUnlockabledPhonePhoneUnlockToolRepositoryAsync, UnlockabledPhonePhoneUnlockToolRepositoryAsync>();
-            services.AddScoped<IUnlockabledPhonePhoneCarrierRepositoryAsync, UnlockabledPhonePhoneCarrierRepositoryAsync>();
-            services.AddScoped<IUnlockProbabilityRepositoryAsync, UnlockProbabilityRepositoryAsync>();
+            services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
+            services.AddScoped<IBanKeywordRepository, BanKeywordRepository>();
+            services.AddScoped<IBanLinkRepository, BanLinkRepository>();
+            services.AddScoped<IBrandRepository, BrandRepository>();
+            services.AddScoped<IConditionRepository, ConditionRepository>();
+            services.AddScoped<IItemRepository, ItemRepository>();
+            services.AddScoped<IItemTypeRepository, ItemTypeRepository>();
+            services.AddScoped<INotificationCriteriaRepository, NotificationCriteriaRepository>();
+            services.AddScoped<IOnlineStoreRepository, OnlineStoreRepository>();
+            services.AddScoped<IPhoneCarrierRepository, PhoneCarrierRepository>();
+            services.AddScoped<IPhoneUnlockToolRepository, PhoneUnlockToolRepository>();
+            services.AddScoped<IStockStatusRepository, StockStatusRepository>();
+            services.AddScoped<IUnlockabledPhoneRepository, UnlockabledPhoneRepository>();
+            services.AddScoped<IUnlockabledPhonePhoneUnlockToolRepository, UnlockabledPhonePhoneUnlockToolRepository>();
+            services.AddScoped<IUnlockabledPhonePhoneCarrierRepository, UnlockabledPhonePhoneCarrierRepository>();
+            services.AddScoped<IUnlockProbabilityRepository, UnlockProbabilityRepository>();
 
             #endregion Dependency Injection
         }

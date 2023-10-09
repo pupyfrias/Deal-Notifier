@@ -20,33 +20,33 @@ namespace DealNotifier.Infrastructure.Persistence.Configuration
                    .HasDefaultValueSql("NEWID()");
 
             builder.Property(x => x.Name)
-                    .HasColumnType("VARCHAR(max)")
+                    .HasColumnType("nvarchar(max)")
                     .IsRequired();
 
             builder.Property(x => x.Price)
-                .HasColumnType("DECIMAL(13,2)")
+                .HasColumnType("decimal(13,2)")
                 .IsRequired();
 
             builder.Property(x => x.Image)
-                .HasColumnType("varchar(MAX)")
+                .HasColumnType("nvarchar(MAX)")
                 .IsRequired();
 
             builder.Property(x => x.Link)
-                .HasColumnType("nvarchar(450)")
+                .HasColumnType("nvarchar(254)")
                 .IsRequired();
 
             builder.Property(x => x.OldPrice)
-                .HasColumnType("DECIMAL(13,2)")
+                .HasColumnType("decimal(13,2)")
                 .HasDefaultValueSql("0")
                 .IsRequired();
 
             builder.Property(x => x.Saving)
-                .HasColumnType("DECIMAL(13,2)")
+                .HasColumnType("decimal(13,2)")
                 .HasDefaultValueSql("0")
                 .IsRequired();
 
             builder.Property(x => x.SavingsPercentage)
-                .HasColumnType("DECIMAL(13,2)")
+                .HasColumnType("decimal(13,2)")
                 .HasDefaultValueSql("0")
                 .IsRequired();
 
@@ -64,10 +64,10 @@ namespace DealNotifier.Infrastructure.Persistence.Configuration
                 .IsRequired(false);
 
             builder.Property(x => x.ModelNumber)
-            .HasColumnType("varchar(25)");
+            .HasColumnType("nvarchar(25)");
 
             builder.Property(x => x.ModelName)
-           .HasColumnType("varchar(25)");
+           .HasColumnType("nvarchar(25)");
 
             builder.Property(x => x.ItemEndDate)
             .HasColumnType("DateTime")
@@ -78,7 +78,10 @@ namespace DealNotifier.Infrastructure.Persistence.Configuration
            .IsRequired();
 
             builder.Property(x => x.PhoneCarrierId)
-           .HasDefaultValueSql("1");
+            .IsRequired(false);
+
+            builder.Property(x => x.UnlockProbabilityId)
+            .IsRequired(false);
 
             builder.Property(x => x.BidCount)
            .HasColumnType("Int");
@@ -89,25 +92,25 @@ namespace DealNotifier.Infrastructure.Persistence.Configuration
 
             builder.HasKey(x => x.Id);
 
-            builder.HasOne(x => x.Status)
+            builder.HasOne(x => x.StockStatus)
             .WithMany(x => x.Items)
-            .HasForeignKey(x => x.StatusId)
-            .HasConstraintName("FK_Item_Status");
+            .HasForeignKey(x => x.StockStatusId)
+            .HasConstraintName("FK_Item_StockStatus");
 
             builder.HasOne(x => x.Condition)
             .WithMany(x => x.Items)
             .HasForeignKey(x => x.ConditionId)
             .HasConstraintName("FK_Item_Condition");
 
-            builder.HasOne(x => x.Type)
+            builder.HasOne(x => x.ItemType)
             .WithMany(x => x.Items)
-            .HasForeignKey(x => x.TypeId)
-            .HasConstraintName("FK_Item_Type");
+            .HasForeignKey(x => x.ItemTypeId)
+            .HasConstraintName("FK_Item_ItemType");
 
             builder.HasOne(x => x.OnlineStore)
             .WithMany(x => x.Items)
-            .HasForeignKey(x => x.ShopId)
-            .HasConstraintName("FK_Item_Shop");
+            .HasForeignKey(x => x.OnlineStoreId)
+            .HasConstraintName("FK_Item_OnlineStore");
 
             builder.HasOne(x => x.Brand)
             .WithMany(x => x.Items)
