@@ -14,8 +14,8 @@ namespace DealNotifier.Core.Application.Interfaces.Services
 
         void UpdateStatus(ref ConcurrentBag<string> checkedList);
 
-        void TrySetModelNumberModelNameAndBrand(ref ItemCreateRequest item);
+        void TrySetModelNumberModelNameAndBrand(ref ItemCreateRequest itemCreate);
 
-        void SetUnlockProbability(ref ItemCreateRequest item);
+        void SetUnlockProbability(ref ItemCreateRequest itemCreate);
     }
 }

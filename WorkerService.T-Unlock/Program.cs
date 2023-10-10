@@ -28,21 +28,21 @@ IHost host = Host.CreateDefaultBuilder(args)
 
         #region Repositories
 
-        services.AddSingleton(typeof(IGenericRepositoryAsync<,>), typeof(GenericRepositoryAsync<,>));
-        services.AddSingleton<IUnlockableRepositoryAsync, UnlockableRepositoryAsync>();
-        services.AddSingleton<IPhoneCarrierRepositoryAsync, PhoneCarrierRepositoryAsync>();
-        services.AddSingleton<IUnlockabledPhonePhoneUnlockToolRepositoryAsync, UnlockabledPhonePhoneUnlockToolRepositoryAsync>();
-        services.AddSingleton<IUnlockabledPhonePhoneCarrierRepositoryAsync, UnlockabledPhonePhoneCarrierRepositoryAsync>();
+        services.AddSingleton(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
+        services.AddSingleton<IUnlockableRepository, UnlockableRepository>();
+        services.AddSingleton<IPhoneCarrierRepository, PhoneCarrierRepository>();
+        services.AddSingleton<IUnlockabledPhonePhoneUnlockToolRepository, UnlockabledPhonePhoneUnlockToolRepository>();
+        services.AddSingleton<IUnlockabledPhonePhoneCarrierRepository, UnlockabledPhonePhoneCarrierRepository>();
 
         #endregion Repositories
 
         #region Services
 
-        services.AddSingleton(typeof(IGenericServiceAsync<,>), typeof(GenericServiceAsync<,>));
-        services.AddSingleton<IUnlockableServiceAsync, UnlockableServiceAsync>();
-        services.AddSingleton<IPhoneCarrierServiceAsync, PhoneCarrierServiceAsync>();
-        services.AddSingleton<IUnlockabledPhonePhoneUnlockToolServiceAsync, UnlockabledPhonePhoneUnlockToolServiceAsync>();
-        services.AddSingleton<IUnlockabledPhonePhoneCarrierServiceAsync, UnlockabledPhonePhoneCarrierServiceAsync>();
+        services.AddSingleton(typeof(IGenericService<,>), typeof(GenericService<,>));
+        services.AddSingleton<IUnlockableService, UnlockableService>();
+        services.AddSingleton<IPhoneCarrierService, PhoneCarrierService>();
+        services.AddSingleton<IUnlockabledPhonePhoneUnlockToolService, UnlockabledPhonePhoneUnlockToolService>();
+        services.AddSingleton<IUnlockabledPhonePhoneCarrierService, UnlockabledPhonePhoneCarrierService>();
 
         #endregion Services
 

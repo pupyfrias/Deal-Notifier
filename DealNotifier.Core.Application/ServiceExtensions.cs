@@ -30,22 +30,22 @@ namespace DealNotifier.Core.Application
             #region Dependency Injection
 
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
-            services.AddScoped(typeof(IGenericServiceAsync<,>), typeof(GenericServiceAsync<,>));
-            services.AddScoped<IItemServiceAsync, ItemServiceAsync>();
-            services.AddScoped<IBanKeywordServiceAsync, BanKeywordServiceAsync>();
-            services.AddScoped<IBanLinkServiceAsync, BanLinkServiceAsync>();
-            services.AddScoped<IBrandServiceAsync, BrandServiceAsync>();
-            services.AddScoped<IConditionServiceAsync, ConditionServiceAsync>();
-            services.AddScoped<IItemTypeServiceAsync, ItemTypeServiceAsync>();
-            services.AddScoped<INotificationCriteriaServiceAsync, NotificationCriteriaServiceAsync>();
-            services.AddScoped<IPhoneCarrierServiceAsync, PhoneCarrierServiceAsync>();
-            services.AddScoped<IPhoneUnlockToolServiceAsync, PhoneUnlockToolServiceAsync>();
-            services.AddScoped<IOnlineStoreServiceAsync, OnlineStoreServiceAsync>();
-            services.AddScoped<IStockStatusServiceAsync, StockStatusServiceAsync>();
-            services.AddScoped<IUnlockabledPhoneServiceAsync, UnlockabledPhoneServiceAsync>();
-            services.AddScoped<IUnlockabledPhonePhoneUnlockToolServiceAsync, UnlockabledPhonePhoneUnlockToolServiceAsync>();
-            services.AddScoped<IUnlockabledPhonePhoneCarrierServiceAsync, UnlockabledPhonePhoneCarrierServiceAsync>();
-            services.AddScoped<IUnlockProbabilityServiceAsync, UnlockProbabilityServiceAsync>();
+            services.AddScoped(typeof(IGenericService<,>), typeof(GenericService<,>));
+            services.AddScoped<IItemService, ItemService>();
+            services.AddScoped<IBanKeywordService, BanKeywordService>();
+            services.AddScoped<IBanLinkService, BanLinkService>();
+            services.AddScoped<IBrandService, BrandService>();
+            services.AddScoped<IConditionService, ConditionService>();
+            services.AddScoped<IItemTypeService, ItemTypeService>();
+            services.AddScoped<INotificationCriteriaService, NotificationCriteriaService>();
+            services.AddScoped<IPhoneCarrierService, PhoneCarrierService>();
+            services.AddScoped<IPhoneUnlockToolService, PhoneUnlockToolService>();
+            services.AddScoped<IOnlineStoreService, OnlineStoreService>();
+            services.AddScoped<IStockStatusService, StockStatusService>();
+            services.AddScoped<IUnlockabledPhoneService, UnlockabledPhoneService>();
+            services.AddScoped<IUnlockabledPhonePhoneUnlockToolService, UnlockabledPhonePhoneUnlockToolService>();
+            services.AddScoped<IUnlockabledPhonePhoneCarrierService, UnlockabledPhonePhoneCarrierService>();
+            services.AddScoped<IUnlockProbabilityService, UnlockProbabilityService>();
 
 
             #endregion Dependency Injection

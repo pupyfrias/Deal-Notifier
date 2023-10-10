@@ -1,9 +1,12 @@
+using DealNotifier.Core.Application.Interfaces.Repositories;
 using DealNotifier.Core.Application.Interfaces.Services;
 using DealNotifier.Core.Application.Services;
 using DealNotifier.Core.Application.Setups;
 using DealNotifier.Infrastructure.Email;
+using DealNotifier.Infrastructure.Persistence.DbContexts;
 using DealNotifier.Infrastructure.Persistence.Models;
-using EbayWorkerService;
+using DealNotifier.Infrastructure.Persistence.Repositories;
+using EbayDataSyncWorker;
 using Serilog;
 using System.Reflection;
 
@@ -17,16 +20,17 @@ if (environment != "Development")
 IHost host = Host.CreateDefaultBuilder(args)
     .UseWindowsService(options =>
     {
-        options.ServiceName = "ebay";
+        options.ServiceName = "eBayDataSync";
     })
     .UseSerilog(SeriLogSetup.Configure)
     .ConfigureServices((hostContext, services) =>
     {
         services.AddHostedService<Worker>();
-        services.AddSingleton<IItemServiceAsync, ItemServiceAsync>();
-        services.AddSingleton<IEbayService, EbayService>();
-        services.AddInfrastructureEmail(hostContext.Configuration);
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+        services.AddInfrastructureEmail(hostContext.Configuration);
+        services.AddSingleton<IEbayService, EbayService>();
+        services.AddSingleton<IItemSyncService, ItemSyncService>();
+        services.AddSingleton<IBanKeywordRepository, BanKeywordRepository>();
     })
    .Build();
 

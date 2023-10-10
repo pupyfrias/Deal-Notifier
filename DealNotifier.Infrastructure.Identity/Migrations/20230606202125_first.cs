@@ -12,10 +12,10 @@ namespace DealNotifier.Infrastructure.Identity.Migrations
                 name: "Roles",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Id = table.Column<string>(type: "nnvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nnvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedName = table.Column<string>(type: "nnvarchar(256)", maxLength: 256, nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "nnvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -26,18 +26,18 @@ namespace DealNotifier.Infrastructure.Identity.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Id = table.Column<string>(type: "nnvarchar(450)", nullable: false),
+                    FirstName = table.Column<string>(type: "nnvarchar(max)", nullable: false),
+                    LastName = table.Column<string>(type: "nnvarchar(max)", nullable: false),
+                    UserName = table.Column<string>(type: "nnvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column<string>(type: "nnvarchar(256)", maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "nnvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedEmail = table.Column<string>(type: "nnvarchar(256)", maxLength: 256, nullable: true),
                     EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PasswordHash = table.Column<string>(type: "nnvarchar(max)", nullable: true),
+                    SecurityStamp = table.Column<string>(type: "nnvarchar(max)", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "nnvarchar(max)", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nnvarchar(max)", nullable: true),
                     PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
                     TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
                     LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
@@ -55,9 +55,9 @@ namespace DealNotifier.Infrastructure.Identity.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    RoleId = table.Column<string>(type: "nnvarchar(450)", nullable: false),
+                    ClaimType = table.Column<string>(type: "nnvarchar(max)", nullable: true),
+                    ClaimValue = table.Column<string>(type: "nnvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -76,9 +76,9 @@ namespace DealNotifier.Infrastructure.Identity.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    UserId = table.Column<string>(type: "nnvarchar(450)", nullable: false),
+                    ClaimType = table.Column<string>(type: "nnvarchar(max)", nullable: true),
+                    ClaimValue = table.Column<string>(type: "nnvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -95,10 +95,10 @@ namespace DealNotifier.Infrastructure.Identity.Migrations
                 name: "UserLogins",
                 columns: table => new
                 {
-                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ProviderKey = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ProviderDisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    LoginProvider = table.Column<string>(type: "nnvarchar(450)", nullable: false),
+                    ProviderKey = table.Column<string>(type: "nnvarchar(450)", nullable: false),
+                    ProviderDisplayName = table.Column<string>(type: "nnvarchar(max)", nullable: true),
+                    UserId = table.Column<string>(type: "nnvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -115,8 +115,8 @@ namespace DealNotifier.Infrastructure.Identity.Migrations
                 name: "UserRoles",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    UserId = table.Column<string>(type: "nnvarchar(450)", nullable: false),
+                    RoleId = table.Column<string>(type: "nnvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -139,10 +139,10 @@ namespace DealNotifier.Infrastructure.Identity.Migrations
                 name: "UserTokens",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    UserId = table.Column<string>(type: "nnvarchar(450)", nullable: false),
+                    LoginProvider = table.Column<string>(type: "nnvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nnvarchar(450)", nullable: false),
+                    Value = table.Column<string>(type: "nnvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {

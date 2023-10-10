@@ -2,7 +2,7 @@ using DealNotifier.Core.Application.Interfaces.Services;
 using ILogger = Serilog.ILogger;
 using Timer = System.Threading.Timer;
 
-namespace EbayWorkerService
+namespace EbayDataSyncWorker
 {
     public class Worker : BackgroundService
     {

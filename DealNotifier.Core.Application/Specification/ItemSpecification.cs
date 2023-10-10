@@ -2,6 +2,7 @@
 using DealNotifier.Core.Application.Extensions;
 using DealNotifier.Core.Application.ViewModels.V1.Item;
 using DealNotifier.Core.Domain.Entities;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace DealNotifier.Core.Application.Specification
@@ -42,7 +43,7 @@ namespace DealNotifier.Core.Application.Specification
             if (request.Shops != null)
             {
                 var shopList = request.Shops.Split(",").Select(int.Parse);
-                Expression<Func<Item, bool>> expression = item => shopList.Contains(item.ShopId);
+                Expression<Func<Item, bool>> expression = item => shopList.Contains(item.OnlineStoreId);
 
                 Criteria = Criteria is null ? expression : Criteria.And(expression);
             }
@@ -66,7 +67,7 @@ namespace DealNotifier.Core.Application.Specification
             if (request.Types != null)
             {
                 var typeList = request.Types.Split(",").Select(int.Parse);
-                Expression<Func<Item, bool>> expression = item => typeList.Contains(item.TypeId);
+                Expression<Func<Item, bool>> expression = item => typeList.Contains(item.ItemTypeId);
 
                 Criteria = Criteria is null ? expression : Criteria.And(expression);
             }
@@ -90,7 +91,7 @@ namespace DealNotifier.Core.Application.Specification
             if (request.PhoneCarriers != null)
             {
                 var phoneCarrierList = request.PhoneCarriers.Split(",").Select(int.Parse);
-                Expression<Func<Item, bool>> expression = item => phoneCarrierList.Contains(item.PhoneCarrierId);
+                Expression<Func<Item, bool>> expression = item => phoneCarrierList.Equals(item.PhoneCarrierId);
 
                 Criteria = Criteria is null ? expression : Criteria.And(expression);
             }
@@ -102,7 +103,7 @@ namespace DealNotifier.Core.Application.Specification
             if (request.UnlockProbabilities != null)
             {
                 var phoneCarrierList = request.UnlockProbabilities.Split(",").Select(int.Parse);
-                Expression<Func<Item, bool>> expression = item => phoneCarrierList.Contains(item.UnlockProbabilityId);
+                Expression<Func<Item, bool>> expression = item => phoneCarrierList.Equals(item.UnlockProbabilityId);
 
                 Criteria = Criteria is null ? expression : Criteria.And(expression);
             }

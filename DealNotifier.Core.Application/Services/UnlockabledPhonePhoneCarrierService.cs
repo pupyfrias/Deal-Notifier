@@ -26,6 +26,9 @@ namespace DealNotifier.Core.Application.Services
             _mapper = mapper;
         }
 
+
+
+        #region Async
         public async Task<UnlockabledPhonePhoneCarrier> CreateAsync(UnlockabledPhonePhoneCarrierCreateRequest entity)
         {
             var mappedEntity = _mapper.Map<UnlockabledPhonePhoneCarrier>(entity);
@@ -54,5 +57,18 @@ namespace DealNotifier.Core.Application.Services
             var mappedEntity = _mapper.Map<UnlockabledPhonePhoneCarrier>(entity);
             return await _repository.ExistsAsync(mappedEntity);
         }
+        #endregion Async
+
+        #region Sync
+        public bool Exists(UnlockabledPhonePhoneCarrierDto entity)
+        {
+            var mappedEntity = _mapper.Map<UnlockabledPhonePhoneCarrier>(entity);
+            return _repository.Exists(mappedEntity);
+        }
+        #endregion Sync
+
+
+
+
     }
 }

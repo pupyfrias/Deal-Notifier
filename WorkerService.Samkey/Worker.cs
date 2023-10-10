@@ -1,6 +1,9 @@
+using AutoMapper;
 using DealNotifier.Core.Application.Interfaces.Services;
+using DealNotifier.Core.Application.ViewModels.V1;
 using DealNotifier.Core.Application.ViewModels.V1.PhoneCarrier;
 using DealNotifier.Core.Application.ViewModels.V1.Unlockable;
+using DealNotifier.Core.Application.ViewModels.V1.UnlockabledPhonePhoneCarrier;
 using DealNotifier.Core.Domain.Configs;
 using DealNotifier.Core.Domain.Entities;
 using Microsoft.Extensions.Options;
@@ -15,27 +18,30 @@ namespace WorkerService.Samkey
     public class Worker : BackgroundService
     {
         private readonly ILogger _logger;
-        private readonly IPhoneCarrierServiceAsync _phoneCarrierServiceAsync;
+        private readonly IMapper _mapper;
+        private readonly IPhoneCarrierService _phoneCarrierService;
         private readonly SamkeyUrlConfig _samkeyUrlConfig;
-        private readonly IUnlockabledPhonePhoneCarrierServiceAsync _unlockablePhoneCarrierServiceAsync;
-        private readonly IUnlockableServiceAsync _unlockableServiceAsync;
-        private readonly IUnlockabledPhonePhoneUnlockToolServiceAsync _unlockableUnlockToolServiceAsync;
+        private readonly IUnlockabledPhonePhoneCarrierService _unlockablePhoneCarrierService;
+        private readonly IUnlockableService _unlockableService;
+        private readonly IUnlockabledPhonePhoneUnlockToolService _unlockableUnlockToolService;
         private Timer _timer;
-        private List<PhoneCarrierReadDto> phoneCarrierList = new List<PhoneCarrierReadDto>();
+        private List<PhoneCarrierDto> phoneCarrierList = new List<PhoneCarrierDto>();
 
-        public Worker(ILogger logger, IUnlockableServiceAsync unlockableServiceAsync,
-            IPhoneCarrierServiceAsync phoneCarrierServiceAsync,
-            IUnlockabledPhonePhoneUnlockToolServiceAsync unlockableUnlockToolServiceAsync,
-            IUnlockabledPhonePhoneCarrierServiceAsync unlockablePhoneCarrierServiceAsync,
-            IOptions<SamkeyUrlConfig> samkeyUrlConfig
+        public Worker(ILogger logger, IUnlockableService unlockableService,
+            IPhoneCarrierService phoneCarrierService,
+            IUnlockabledPhonePhoneUnlockToolService unlockableUnlockToolService,
+            IUnlockabledPhonePhoneCarrierService unlockablePhoneCarrierService,
+            IOptions<SamkeyUrlConfig> samkeyUrlConfig,
+            IMapper mapper
             )
         {
             _logger = logger;
-            _unlockableServiceAsync = unlockableServiceAsync;
-            _phoneCarrierServiceAsync = phoneCarrierServiceAsync;
-            _unlockableUnlockToolServiceAsync = unlockableUnlockToolServiceAsync;
-            _unlockablePhoneCarrierServiceAsync = unlockablePhoneCarrierServiceAsync;
+            _unlockableService = unlockableService;
+            _phoneCarrierService = phoneCarrierService;
+            _unlockableUnlockToolService = unlockableUnlockToolService;
+            _unlockablePhoneCarrierService = unlockablePhoneCarrierService;
             _samkeyUrlConfig = samkeyUrlConfig.Value;
+            _mapper = mapper;
         }
 
         public override Task StopAsync(CancellationToken cancellationToken)
@@ -125,7 +131,7 @@ namespace WorkerService.Samkey
                     var carrierList = Regex.Replace(carriers, "[\\(\\),: }]+", "|", RegexOptions.IgnoreCase)
                         .Split("|");
 
-                    var possibleUnlockable = await _unlockableServiceAsync.GetByModelNumberAsync(modelNumber);
+                    var possibleUnlockable = await _unlockableService.GetByModelNumberAsync(modelNumber);
 
                     if (possibleUnlockable == null)
                     {
@@ -136,14 +142,14 @@ namespace WorkerService.Samkey
                             ModelNumber = modelNumber
                         };
 
-                        //var model = await _unlockableServiceAsync.CreateAsync<UnlockableCreateDto>(unlockableCreateDto);
+                        //var model = await _unlockableService.CreateAsync<UnlockableCreateDto>(unlockableCreateDto);
 
 /*                        var unlockableUnlockTool = new UnlockabledPhonePhoneUnlockTool
                         {
                             UnlockabledPhoneId = model.Id,
                             PhoneUnlockToolId = (int)Enums.UnlockTool.SamKey
                         };*/
-                        //await _unlockableUnlockToolServiceAsync.CreateAsync(unlockableUnlockTool);
+                        //await _unlockableUnlockToolService.CreateAsync(unlockableUnlockTool);
 
                         foreach (var carrier in carrierList)
                         {
@@ -158,7 +164,7 @@ namespace WorkerService.Samkey
                                     PhoneCarrierId = phoneCarrier.Id,
                                 };
 
-                                await _unlockablePhoneCarrierServiceAsync.CreateAsync(unlockablePhoneCarrier);*/
+                                await _unlockablePhoneCarrierService.CreateAsync(unlockablePhoneCarrier);*/
                             }
                         }
                     }
@@ -171,17 +177,18 @@ namespace WorkerService.Samkey
                                 pc.ShortName.Contains(carrier.Trim(), StringComparison.OrdinalIgnoreCase));
                             if (phoneCarrier != null)
                             {
-                                var unlockablePhoneCarrier = new UnlockabledPhonePhoneCarrier
+                                var unlockablePhoneCarrierDto = new UnlockabledPhonePhoneCarrierDto
                                 {
                                     UnlockabledPhoneId = possibleUnlockable.Id,
                                     PhoneCarrierId = phoneCarrier.Id,
                                 };
 
-                                bool exists = await _unlockablePhoneCarrierServiceAsync.ExistsAsync(unlockablePhoneCarrier);
+                                bool exists = await _unlockablePhoneCarrierService.ExistsAsync(unlockablePhoneCarrierDto);
 
                                 if (!exists)
                                 {
-                                    await _unlockablePhoneCarrierServiceAsync.CreateAsync(unlockablePhoneCarrier);
+                                    var unlockablePhoneCarrierCreate = _mapper.Map<UnlockabledPhonePhoneCarrierCreateRequest>(unlockablePhoneCarrierDto);
+                                    await _unlockablePhoneCarrierService.CreateAsync(unlockablePhoneCarrierCreate);
                                 }
                             }
                             else
@@ -232,7 +239,7 @@ namespace WorkerService.Samkey
             {
                 _logger.Information($"Timer elapsed. Running Samkey Scraping Service Init. {DateTime.Now}");
 
-                phoneCarrierList = await _phoneCarrierServiceAsync.GetAllAsync<PhoneCarrierReadDto>();
+                phoneCarrierList = (List<PhoneCarrierDto>)await _phoneCarrierService.GetAllAsync<PhoneCarrierDto>();
                 await Scrapping();
                 _logger.Information("Samkey Scraping Service completed.");
             }

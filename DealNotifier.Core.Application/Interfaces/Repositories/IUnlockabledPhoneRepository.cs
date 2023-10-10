@@ -5,6 +5,5 @@ namespace DealNotifier.Core.Application.Interfaces.Repositories
 {
     public interface IUnlockabledPhoneRepository : IGenericRepository<UnlockabledPhone, int>
     {
-       Task<UnlockabledPhone?> FirstOrDefaultAsync(Expression<Func<UnlockabledPhone, bool>> predicate);
     }
 }
