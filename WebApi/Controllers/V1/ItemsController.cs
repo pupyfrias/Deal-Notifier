@@ -17,19 +17,19 @@ namespace WebApi.Controllers.V1
     [ApiController]
     public class ItemsController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
-        private readonly IItemServiceAsync _itemServiceAsync;
+        private readonly ApplicationDbContext _dbContext;
+        private readonly IItemService _itemService;
 
-        public ItemsController(ApplicationDbContext context, IItemServiceAsync itemServiceAsync)
+        public ItemsController(ApplicationDbContext context, IItemService itemService)
         {
-            _context = context;
-            _itemServiceAsync = itemServiceAsync;
+            _dbContext = context;
+            _itemService = itemService;
         }
 
         [HttpGet]
         public async Task<ActionResult<ApiResponse<PagedCollection<ItemResponse>>>> GetAllItemsAsync([FromQuery] ItemFilterAndPaginationRequest request)
         {
-            var pagedItems = await _itemServiceAsync.GetAllWithPaginationAsync<ItemResponse, ItemSpecification>(request);
+            var pagedItems = await _itemService.GetAllWithPaginationAsync<ItemResponse, ItemSpecification>(request);
             var response = new ApiResponse<PagedCollection<ItemResponse>>(pagedItems);
             return Ok(response);
         }
@@ -38,7 +38,7 @@ namespace WebApi.Controllers.V1
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<ItemResponse>>> GetItem(Guid id)
         {
-            var data = await _itemServiceAsync.GetByIdProjectedAsync<ItemResponse>(id);
+            var data = await _itemService.GetByIdProjectedAsync<ItemResponse>(id);
             var response = new ApiResponse<ItemResponse>(data);
             return Ok(response);
         }
@@ -47,7 +47,7 @@ namespace WebApi.Controllers.V1
         [HttpPut("{id}")]
         public async Task<IActionResult> PutItem(Guid id, ItemUpdateRequest request)
         {
-            await _itemServiceAsync.UpdateAsync(id, request);
+            await _itemService.UpdateAsync(id, request);
             return NoContent();
         }
 
@@ -55,7 +55,7 @@ namespace WebApi.Controllers.V1
         [HttpPost]
         public async Task<ActionResult<ItemResponse>> PostItem(ItemCreateRequest item)
         {
-            var createdItem = await _itemServiceAsync.CreateAsync<ItemCreateRequest, ItemResponse>(item);
+            var createdItem = await _itemService.CreateAsync<ItemCreateRequest, ItemResponse>(item);
             var response = new ApiResponse<ItemResponse>(createdItem);
             return CreatedAtAction("GetItem", new { id = createdItem.Id }, response);
         }
@@ -64,7 +64,7 @@ namespace WebApi.Controllers.V1
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteItem(Guid id)
         {
-            await _itemServiceAsync.DeleteAsync(id);
+            await _itemService.DeleteAsync(id);
             return NoContent();
         }
 
@@ -73,7 +73,7 @@ namespace WebApi.Controllers.V1
         [HttpGet("{id}/cancel-notification")]
         public async Task<ActionResult> CancelNotification(Guid id)
         {
-            var item = await _context.Items.FindAsync(id);
+            var item = await _dbContext.Items.FindAsync(id);
 
             if (item == null)
             {
@@ -81,7 +81,7 @@ namespace WebApi.Controllers.V1
             }
 
             item.Notify = false;
-            await _context.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
 
             return Ok(new { success = true });
         }

@@ -15,17 +15,17 @@ namespace WebApi.Controllers.V1
     [ApiController]
     public class UnlockabledPhonesController : ControllerBase
     {
-        private readonly IUnlockabledPhoneServiceAsync _unlockabledPhoneServiceAsync;
+        private readonly IUnlockabledPhoneService _unlockabledPhoneService;
 
-        public UnlockabledPhonesController(IUnlockabledPhoneServiceAsync unlockabledPhoneServiceAsync)
+        public UnlockabledPhonesController(IUnlockabledPhoneService unlockabledPhoneService)
         {
-            _unlockabledPhoneServiceAsync = unlockabledPhoneServiceAsync;
+            _unlockabledPhoneService = unlockabledPhoneService;
         }
 
         [HttpGet]
         public async Task<ActionResult<ApiResponse<PagedCollection<UnlockabledPhoneResponse>>>> GetAllUnlockabledPhonesAsync([FromQuery] UnlockabledPhoneFilterAndPaginationRequest request)
         {
-            var pagedUnlockabledPhones = await _unlockabledPhoneServiceAsync.GetAllWithPaginationAsync<UnlockabledPhoneResponse, UnlockabledPhoneSpecification>(request);
+            var pagedUnlockabledPhones = await _unlockabledPhoneService.GetAllWithPaginationAsync<UnlockabledPhoneResponse, UnlockabledPhoneSpecification>(request);
             var response = new ApiResponse<PagedCollection<UnlockabledPhoneResponse>>(pagedUnlockabledPhones);
             return Ok(response);
         }
@@ -34,7 +34,7 @@ namespace WebApi.Controllers.V1
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<UnlockabledPhoneResponse>>> GetUnlockabledPhone(int id)
         {
-            var data = await _unlockabledPhoneServiceAsync.GetByIdProjectedAsync<UnlockabledPhoneResponse>(id);
+            var data = await _unlockabledPhoneService.GetByIdProjectedAsync<UnlockabledPhoneResponse>(id);
             var response = new ApiResponse<UnlockabledPhoneResponse>(data);
             return Ok(response);
         }
@@ -43,7 +43,7 @@ namespace WebApi.Controllers.V1
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUnlockabledPhone(int id, UnlockabledPhoneUpdateRequest request)
         {
-            await _unlockabledPhoneServiceAsync.UpdateAsync(id, request);
+            await _unlockabledPhoneService.UpdateAsync(id, request);
             return NoContent();
         }
 
@@ -51,7 +51,7 @@ namespace WebApi.Controllers.V1
         [HttpPost]
         public async Task<ActionResult<UnlockabledPhoneResponse>> PostUnlockabledPhone(UnlockabledPhoneCreateRequest request)
         {
-            var createdUnlockabledPhone = await _unlockabledPhoneServiceAsync.CreateAsync<UnlockabledPhoneCreateRequest, UnlockabledPhoneResponse>(request);
+            var createdUnlockabledPhone = await _unlockabledPhoneService.CreateAsync<UnlockabledPhoneCreateRequest, UnlockabledPhoneResponse>(request);
             var response = new ApiResponse<UnlockabledPhoneResponse>(createdUnlockabledPhone);
             return CreatedAtAction("GetUnlockabledPhone", new { id = createdUnlockabledPhone.Id }, response);
         }
@@ -60,7 +60,7 @@ namespace WebApi.Controllers.V1
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteUnlockabledPhone(int id)
         {
-            await _unlockabledPhoneServiceAsync.DeleteAsync(id);
+            await _unlockabledPhoneService.DeleteAsync(id);
             return NoContent();
         }
 

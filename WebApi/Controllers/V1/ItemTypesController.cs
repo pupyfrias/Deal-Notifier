@@ -15,17 +15,17 @@ namespace WebApi.Controllers.V1
     [ApiController]
     public class ItemTypesController : ControllerBase
     {
-        private readonly IItemTypeServiceAsync _itemTypeServiceAsync;
+        private readonly IItemTypeService _itemTypeService;
 
-        public ItemTypesController(IItemTypeServiceAsync itemTypeServiceAsync)
+        public ItemTypesController(IItemTypeService itemTypeService)
         {
-            _itemTypeServiceAsync = itemTypeServiceAsync;
+            _itemTypeService = itemTypeService;
         }
 
         [HttpGet]
         public async Task<ActionResult<ApiResponse<PagedCollection<ItemTypeResponse>>>> GetAllItemTypesAsync([FromQuery] ItemTypeFilterAndPaginationRequest request)
         {
-            var pagedItemTypes = await _itemTypeServiceAsync.GetAllWithPaginationAsync<ItemTypeResponse, ItemTypeSpecification>(request);
+            var pagedItemTypes = await _itemTypeService.GetAllWithPaginationAsync<ItemTypeResponse, ItemTypeSpecification>(request);
             var response = new ApiResponse<PagedCollection<ItemTypeResponse>>(pagedItemTypes);
             return Ok(response);
         }
@@ -34,7 +34,7 @@ namespace WebApi.Controllers.V1
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<ItemTypeResponse>>> GetItemType(int id)
         {
-            var data = await _itemTypeServiceAsync.GetByIdProjectedAsync<ItemTypeResponse>(id);
+            var data = await _itemTypeService.GetByIdProjectedAsync<ItemTypeResponse>(id);
             var response = new ApiResponse<ItemTypeResponse>(data);
             return Ok(response);
         }
@@ -43,7 +43,7 @@ namespace WebApi.Controllers.V1
         [HttpPut("{id}")]
         public async Task<IActionResult> PutItemType(int id, ItemTypeUpdateRequest request)
         {
-            await _itemTypeServiceAsync.UpdateAsync(id, request);
+            await _itemTypeService.UpdateAsync(id, request);
             return NoContent();
         }
 
@@ -51,7 +51,7 @@ namespace WebApi.Controllers.V1
         [HttpPost]
         public async Task<ActionResult<ItemTypeResponse>> PostItemType(ItemTypeCreateRequest request)
         {
-            var createdItemType = await _itemTypeServiceAsync.CreateAsync<ItemTypeCreateRequest, ItemTypeResponse>(request);
+            var createdItemType = await _itemTypeService.CreateAsync<ItemTypeCreateRequest, ItemTypeResponse>(request);
             var response = new ApiResponse<ItemTypeResponse>(createdItemType);
             return CreatedAtAction("GetItemType", new { id = createdItemType.Id }, response);
         }
@@ -60,7 +60,7 @@ namespace WebApi.Controllers.V1
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteItemType(int id)
         {
-            await _itemTypeServiceAsync.DeleteAsync(id);
+            await _itemTypeService.DeleteAsync(id);
             return NoContent();
         }
 

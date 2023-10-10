@@ -13,17 +13,17 @@ namespace WebApi.Controllers.V2
     [ApiController]
     public class BanKeywordsController : ControllerBase
     {
-        private readonly IBanKeywordServiceAsync _banKeywordServiceAsync;
+        private readonly IBanKeywordService _banKeywordService;
 
-        public BanKeywordsController(IBanKeywordServiceAsync banKeywordServiceAsync)
+        public BanKeywordsController(IBanKeywordService banKeywordService)
         {
-            _banKeywordServiceAsync = banKeywordServiceAsync;
+            _banKeywordService = banKeywordService;
         }
 
         [HttpGet]
         public async Task<ActionResult<ApiResponse<PagedCollection<BanKeywordResponse>>>> GetAllBanKeywordsAsync([FromQuery] BanKeywordFilterAndPaginationRequest request)
         {
-            var pagedBanKeywords = await _banKeywordServiceAsync.GetAllWithPaginationAsync<BanKeywordResponse, BanKeywordSpecification>(request);
+            var pagedBanKeywords = await _banKeywordService.GetAllWithPaginationAsync<BanKeywordResponse, BanKeywordSpecification>(request);
             var response = new ApiResponse<PagedCollection<BanKeywordResponse>>(pagedBanKeywords);
             return Ok(response);
         }
@@ -32,7 +32,7 @@ namespace WebApi.Controllers.V2
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<BanKeywordResponse>>> GetBanKeyword(int id)
         {
-            var data = await _banKeywordServiceAsync.GetByIdProjectedAsync<BanKeywordResponse>(id);
+            var data = await _banKeywordService.GetByIdProjectedAsync<BanKeywordResponse>(id);
             var response = new ApiResponse<BanKeywordResponse>(data);
             return Ok(response);
         }
@@ -41,7 +41,7 @@ namespace WebApi.Controllers.V2
         [HttpPut("{id}")]
         public async Task<IActionResult> PutBanKeyword(int id, BanKeywordUpdateRequest banKeyword)
         {
-            await _banKeywordServiceAsync.UpdateAsync(id, banKeyword);
+            await _banKeywordService.UpdateAsync(id, banKeyword);
             return NoContent();
         }
 
@@ -49,7 +49,7 @@ namespace WebApi.Controllers.V2
         [HttpPost]
         public async Task<ActionResult<BanKeywordResponse>> PostBanKeyword(BanKeywordCreateRequest banKeyword)
         {
-            var createdBanKeyword = await _banKeywordServiceAsync.CreateAsync<BanKeywordCreateRequest, BanKeywordResponse>(banKeyword);
+            var createdBanKeyword = await _banKeywordService.CreateAsync<BanKeywordCreateRequest, BanKeywordResponse>(banKeyword);
             var response = new ApiResponse<BanKeywordResponse>(createdBanKeyword);
             return CreatedAtAction("GetBanKeyword", new { id = createdBanKeyword.Id }, response);
         }
@@ -58,7 +58,7 @@ namespace WebApi.Controllers.V2
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteBanKeyword(int id)
         {
-            await _banKeywordServiceAsync.DeleteAsync(id);
+            await _banKeywordService.DeleteAsync(id);
             return NoContent();
         }
     }

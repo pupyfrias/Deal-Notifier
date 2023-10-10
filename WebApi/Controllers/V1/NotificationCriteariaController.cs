@@ -18,17 +18,17 @@ namespace WebApi.Controllers.V1
     [ApiController]
     public class NotificationCriteriaController : ControllerBase
     {
-        private readonly INotificationCriteriaServiceAsync _notificationCriteriaServiceAsync;
+        private readonly INotificationCriteriaService _notificationCriteriaService;
 
-        public NotificationCriteriaController(INotificationCriteriaServiceAsync notificationCriteriaServiceAsync)
+        public NotificationCriteriaController(INotificationCriteriaService notificationCriteriaService)
         {
-            _notificationCriteriaServiceAsync = notificationCriteriaServiceAsync;
+            _notificationCriteriaService = notificationCriteriaService;
         }
 
         [HttpGet]
         public async Task<ActionResult<ApiResponse<PagedCollection<NotificationCriteriaResponse>>>> GetAllNotificationCriteriasAsync([FromQuery] NotificationCriteriaFilterAndPaginationRequest request)
         {
-            var pagedNotificationCriterias = await _notificationCriteriaServiceAsync.GetAllWithPaginationAsync<NotificationCriteriaResponse, NotificationCriteriaSpecification>(request);
+            var pagedNotificationCriterias = await _notificationCriteriaService.GetAllWithPaginationAsync<NotificationCriteriaResponse, NotificationCriteriaSpecification>(request);
             var response = new ApiResponse<PagedCollection<NotificationCriteriaResponse>>(pagedNotificationCriterias);
             return Ok(response);
         }
@@ -37,7 +37,7 @@ namespace WebApi.Controllers.V1
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<NotificationCriteriaResponse>>> GetNotificationCriteria(int id)
         {
-            var data = await _notificationCriteriaServiceAsync.GetByIdProjectedAsync<NotificationCriteriaResponse>(id);
+            var data = await _notificationCriteriaService.GetByIdProjectedAsync<NotificationCriteriaResponse>(id);
             var response = new ApiResponse<NotificationCriteriaResponse>(data);
             return Ok(response);
         }
@@ -46,7 +46,7 @@ namespace WebApi.Controllers.V1
         [HttpPut("{id}")]
         public async Task<IActionResult> PutNotificationCriteria(int id, NotificationCriteriaUpdateRequest request)
         {
-            await _notificationCriteriaServiceAsync.UpdateAsync(id, request);
+            await _notificationCriteriaService.UpdateAsync(id, request);
             return NoContent();
         }
 
@@ -54,7 +54,7 @@ namespace WebApi.Controllers.V1
         [HttpPost]
         public async Task<ActionResult<NotificationCriteriaResponse>> PostNotificationCriteria(NotificationCriteriaCreateRequest request)
         {
-            var createdNotificationCriteria = await _notificationCriteriaServiceAsync.CreateAsync<NotificationCriteriaCreateRequest, NotificationCriteriaResponse>(request);
+            var createdNotificationCriteria = await _notificationCriteriaService.CreateAsync<NotificationCriteriaCreateRequest, NotificationCriteriaResponse>(request);
             var response = new ApiResponse<NotificationCriteriaResponse>(createdNotificationCriteria);
             return CreatedAtAction("GetNotificationCriteria", new { id = createdNotificationCriteria.Id }, response);
         }
@@ -63,7 +63,7 @@ namespace WebApi.Controllers.V1
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteNotificationCriteria(int id)
         {
-            await _notificationCriteriaServiceAsync.DeleteAsync(id);
+            await _notificationCriteriaService.DeleteAsync(id);
             return NoContent();
         }
 

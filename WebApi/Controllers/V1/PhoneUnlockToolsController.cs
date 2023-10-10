@@ -17,19 +17,19 @@ namespace WebApi.Controllers.V1
     [ApiController]
     public class PhoneUnlockToolsController : ControllerBase
     {
-        private readonly IPhoneUnlockToolServiceAsync _phoneUnlockToolServiceAsync;
-        private readonly IUnlockabledPhonePhoneUnlockToolServiceAsync _unlockabledPhoneUnlockToolServiceAsync;
+        private readonly IPhoneUnlockToolService _phoneUnlockToolService;
+        private readonly IUnlockabledPhonePhoneUnlockToolService _unlockabledPhoneUnlockToolService;
 
-        public PhoneUnlockToolsController(IPhoneUnlockToolServiceAsync phoneUnlockToolServiceAsync, IUnlockabledPhonePhoneUnlockToolServiceAsync unlockabledPhoneUnlockToolServiceAsync)
+        public PhoneUnlockToolsController(IPhoneUnlockToolService phoneUnlockToolService, IUnlockabledPhonePhoneUnlockToolService unlockabledPhoneUnlockToolService)
         {
-            _phoneUnlockToolServiceAsync = phoneUnlockToolServiceAsync;
-            _unlockabledPhoneUnlockToolServiceAsync = unlockabledPhoneUnlockToolServiceAsync;
+            _phoneUnlockToolService = phoneUnlockToolService;
+            _unlockabledPhoneUnlockToolService = unlockabledPhoneUnlockToolService;
         }
 
         [HttpGet]
         public async Task<ActionResult<ApiResponse<PagedCollection<PhoneUnlockToolResponse>>>> GetAllPhoneUnlockToolsAsync([FromQuery] PhoneUnlockToolFilterAndPaginationRequest request)
         {
-            var pagedPhoneUnlockTools = await _phoneUnlockToolServiceAsync.GetAllWithPaginationAsync<PhoneUnlockToolResponse, PhoneUnlockToolSpecification>(request);
+            var pagedPhoneUnlockTools = await _phoneUnlockToolService.GetAllWithPaginationAsync<PhoneUnlockToolResponse, PhoneUnlockToolSpecification>(request);
             var response = new ApiResponse<PagedCollection<PhoneUnlockToolResponse>>(pagedPhoneUnlockTools);
             return Ok(response);
         }
@@ -38,7 +38,7 @@ namespace WebApi.Controllers.V1
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<PhoneUnlockToolResponse>>> GetPhoneUnlockTool(int id)
         {
-            var data = await _phoneUnlockToolServiceAsync.GetByIdProjectedAsync<PhoneUnlockToolResponse>(id);
+            var data = await _phoneUnlockToolService.GetByIdProjectedAsync<PhoneUnlockToolResponse>(id);
             var response = new ApiResponse<PhoneUnlockToolResponse>(data);
             return Ok(response);
         }
@@ -47,7 +47,7 @@ namespace WebApi.Controllers.V1
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPhoneUnlockTool(int id, PhoneUnlockToolUpdateRequest request)
         {
-            await _phoneUnlockToolServiceAsync.UpdateAsync(id, request);
+            await _phoneUnlockToolService.UpdateAsync(id, request);
             return NoContent();
         }
 
@@ -55,7 +55,7 @@ namespace WebApi.Controllers.V1
         [HttpPost]
         public async Task<ActionResult<PhoneUnlockToolResponse>> PostPhoneUnlockTool(PhoneUnlockToolCreateRequest request)
         {
-            var createdPhoneUnlockTool = await _phoneUnlockToolServiceAsync.CreateAsync<PhoneUnlockToolCreateRequest, PhoneUnlockToolResponse>(request);
+            var createdPhoneUnlockTool = await _phoneUnlockToolService.CreateAsync<PhoneUnlockToolCreateRequest, PhoneUnlockToolResponse>(request);
             var response = new ApiResponse<PhoneUnlockToolResponse>(createdPhoneUnlockTool);
             return CreatedAtAction("GetPhoneUnlockTool", new { id = createdPhoneUnlockTool.Id }, response);
         }
@@ -64,7 +64,7 @@ namespace WebApi.Controllers.V1
         [HttpPost("{PhoneUnlockToolId}/UnlockabledPhone")]
         public async Task<ActionResult<PhoneUnlockTool>> PostPhoneUnlockToolUnlockablePhone(int PhoneUnlockToolId, PhoneUnlockToolUnlockablePhoneCreateRequest request)
         {
-            await _unlockabledPhoneUnlockToolServiceAsync.CreateRangeAsync(PhoneUnlockToolId, request);
+            await _unlockabledPhoneUnlockToolService.CreateRangeAsync(PhoneUnlockToolId, request);
             return NoContent();
         }
 
@@ -73,7 +73,7 @@ namespace WebApi.Controllers.V1
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeletePhoneUnlockTool(int id)
         {
-            await _phoneUnlockToolServiceAsync.DeleteAsync(id);
+            await _phoneUnlockToolService.DeleteAsync(id);
             return NoContent();
         }
 

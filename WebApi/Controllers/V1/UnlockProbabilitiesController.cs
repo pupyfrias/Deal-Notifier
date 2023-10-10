@@ -15,17 +15,17 @@ namespace WebApi.Controllers.V1
     [ApiController]
     public class UnlockProbabilitiesController : ControllerBase
     {
-        private readonly IUnlockProbabilityServiceAsync _unlockUnlockProbabilityServiceAsync;
+        private readonly IUnlockProbabilityService _unlockUnlockProbabilityService;
 
-        public UnlockProbabilitiesController(IUnlockProbabilityServiceAsync unlockUnlockProbabilityServiceAsync)
+        public UnlockProbabilitiesController(IUnlockProbabilityService unlockUnlockProbabilityService)
         {
-            _unlockUnlockProbabilityServiceAsync = unlockUnlockProbabilityServiceAsync;
+            _unlockUnlockProbabilityService = unlockUnlockProbabilityService;
         }
 
         [HttpGet]
         public async Task<ActionResult<ApiResponse<PagedCollection<UnlockProbabilityResponse>>>> GetAllUnlockProbabilitiesAsync([FromQuery] UnlockProbabilityFilterAndPaginationRequest request)
         {
-            var pagedUnlockProbabilities = await _unlockUnlockProbabilityServiceAsync.GetAllWithPaginationAsync<UnlockProbabilityResponse, UnlockProbabilitySpecification>(request);
+            var pagedUnlockProbabilities = await _unlockUnlockProbabilityService.GetAllWithPaginationAsync<UnlockProbabilityResponse, UnlockProbabilitySpecification>(request);
             var response = new ApiResponse<PagedCollection<UnlockProbabilityResponse>>(pagedUnlockProbabilities);
             return Ok(response);
         }
@@ -34,7 +34,7 @@ namespace WebApi.Controllers.V1
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<UnlockProbabilityResponse>>> GetUnlockProbability(int id)
         {
-            var data = await _unlockUnlockProbabilityServiceAsync.GetByIdProjectedAsync<UnlockProbabilityResponse>(id);
+            var data = await _unlockUnlockProbabilityService.GetByIdProjectedAsync<UnlockProbabilityResponse>(id);
             var response = new ApiResponse<UnlockProbabilityResponse>(data);
             return Ok(response);
         }
@@ -43,7 +43,7 @@ namespace WebApi.Controllers.V1
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUnlockProbability(int id, UnlockProbabilityUpdateRequest request)
         {
-            await _unlockUnlockProbabilityServiceAsync.UpdateAsync(id, request);
+            await _unlockUnlockProbabilityService.UpdateAsync(id, request);
             return NoContent();
         }
 
@@ -51,7 +51,7 @@ namespace WebApi.Controllers.V1
         [HttpPost]
         public async Task<ActionResult<UnlockProbabilityResponse>> PostUnlockProbability(UnlockProbabilityCreateRequest request)
         {
-            var createdUnlockProbability = await _unlockUnlockProbabilityServiceAsync.CreateAsync<UnlockProbabilityCreateRequest, UnlockProbabilityResponse>(request);
+            var createdUnlockProbability = await _unlockUnlockProbabilityService.CreateAsync<UnlockProbabilityCreateRequest, UnlockProbabilityResponse>(request);
             var response = new ApiResponse<UnlockProbabilityResponse>(createdUnlockProbability);
             return CreatedAtAction("GetUnlockProbability", new { id = createdUnlockProbability.Id }, response);
         }
@@ -60,7 +60,7 @@ namespace WebApi.Controllers.V1
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteUnlockProbability(int id)
         {
-            await _unlockUnlockProbabilityServiceAsync.DeleteAsync(id);
+            await _unlockUnlockProbabilityService.DeleteAsync(id);
             return NoContent();
         }
 

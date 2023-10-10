@@ -18,17 +18,17 @@ namespace WebApi.Controllers.V1
     [ApiController]
     public class BrandsController : ControllerBase
     {
-        private readonly IBrandServiceAsync _brandServiceAsync;
+        private readonly IBrandService _brandService;
 
-        public BrandsController(IBrandServiceAsync brandServiceAsync)
+        public BrandsController(IBrandService brandService)
         {
-            _brandServiceAsync = brandServiceAsync;
+            _brandService = brandService;
         }
 
         [HttpGet]
         public async Task<ActionResult<ApiResponse<PagedCollection<BrandResponse>>>> GetAllBrandsAsync([FromQuery] BrandFilterAndPaginationRequest request)
         {
-            var pagedBrands = await _brandServiceAsync.GetAllWithPaginationAsync<BrandResponse, BrandSpecification>(request);
+            var pagedBrands = await _brandService.GetAllWithPaginationAsync<BrandResponse, BrandSpecification>(request);
             var response = new ApiResponse<PagedCollection<BrandResponse>>(pagedBrands);
             return Ok(response);
         }
@@ -37,7 +37,7 @@ namespace WebApi.Controllers.V1
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<BrandResponse>>> GetBrand(int id)
         {
-            var data = await _brandServiceAsync.GetByIdProjectedAsync<BrandResponse>(id);
+            var data = await _brandService.GetByIdProjectedAsync<BrandResponse>(id);
             var response = new ApiResponse<BrandResponse>(data);
             return Ok(response);
         }
@@ -46,7 +46,7 @@ namespace WebApi.Controllers.V1
         [HttpPut("{id}")]
         public async Task<IActionResult> PutBrand(int id, BrandUpdateRequest request)
         {
-            await _brandServiceAsync.UpdateAsync(id, request);
+            await _brandService.UpdateAsync(id, request);
             return NoContent();
         }
 
@@ -54,7 +54,7 @@ namespace WebApi.Controllers.V1
         [HttpPost]
         public async Task<ActionResult<BrandResponse>> PostBrand(BrandCreateRequest request)
         {
-            var createdBrand = await _brandServiceAsync.CreateAsync<BrandCreateRequest, BrandResponse>(request);
+            var createdBrand = await _brandService.CreateAsync<BrandCreateRequest, BrandResponse>(request);
             var response = new ApiResponse<BrandResponse>(createdBrand);
             return CreatedAtAction("GetBrand", new { id = createdBrand.Id }, response);
         }
@@ -63,7 +63,7 @@ namespace WebApi.Controllers.V1
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteBrand(int id)
         {
-            await _brandServiceAsync.DeleteAsync(id);
+            await _brandService.DeleteAsync(id);
             return NoContent();
         }
 

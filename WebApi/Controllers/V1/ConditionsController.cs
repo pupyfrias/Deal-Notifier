@@ -18,17 +18,17 @@ namespace WebApi.Controllers.V1
     [ApiController]
     public class ConditionsController : ControllerBase
     {
-        private readonly IConditionServiceAsync _conditionServiceAsync;
+        private readonly IConditionService _conditionService;
 
-        public ConditionsController(IConditionServiceAsync conditionServiceAsync)
+        public ConditionsController(IConditionService conditionService)
         {
-            _conditionServiceAsync = conditionServiceAsync;
+            _conditionService = conditionService;
         }
 
         [HttpGet]
         public async Task<ActionResult<ApiResponse<PagedCollection<ConditionResponse>>>> GetAllConditionsAsync([FromQuery] ConditionFilterAndPaginationRequest request)
         {
-            var pagedConditions = await _conditionServiceAsync.GetAllWithPaginationAsync<ConditionResponse, ConditionSpecification>(request);
+            var pagedConditions = await _conditionService.GetAllWithPaginationAsync<ConditionResponse, ConditionSpecification>(request);
             var response = new ApiResponse<PagedCollection<ConditionResponse>>(pagedConditions);
             return Ok(response);
         }
@@ -37,7 +37,7 @@ namespace WebApi.Controllers.V1
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<ConditionResponse>>> GetCondition(int id)
         {
-            var data = await _conditionServiceAsync.GetByIdProjectedAsync<ConditionResponse>(id);
+            var data = await _conditionService.GetByIdProjectedAsync<ConditionResponse>(id);
             var response = new ApiResponse<ConditionResponse>(data);
             return Ok(response);
         }
@@ -46,7 +46,7 @@ namespace WebApi.Controllers.V1
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCondition(int id, ConditionUpdateRequest request)
         {
-            await _conditionServiceAsync.UpdateAsync(id, request);
+            await _conditionService.UpdateAsync(id, request);
             return NoContent();
         }
 
@@ -54,7 +54,7 @@ namespace WebApi.Controllers.V1
         [HttpPost]
         public async Task<ActionResult<ConditionResponse>> PostCondition(ConditionCreateRequest request)
         {
-            var createdCondition = await _conditionServiceAsync.CreateAsync<ConditionCreateRequest, ConditionResponse>(request);
+            var createdCondition = await _conditionService.CreateAsync<ConditionCreateRequest, ConditionResponse>(request);
             var response = new ApiResponse<ConditionResponse>(createdCondition);
             return CreatedAtAction("GetCondition", new { id = createdCondition.Id }, response);
         }
@@ -63,7 +63,7 @@ namespace WebApi.Controllers.V1
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteCondition(int id)
         {
-            await _conditionServiceAsync.DeleteAsync(id);
+            await _conditionService.DeleteAsync(id);
             return NoContent();
         }
 

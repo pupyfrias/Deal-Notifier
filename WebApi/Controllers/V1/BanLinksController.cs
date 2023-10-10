@@ -18,17 +18,17 @@ namespace WebApi.Controllers.V1
     [ApiController]
     public class BanLinksController : ControllerBase
     {
-        private readonly IBanLinkServiceAsync _banLinkServiceAsync;
+        private readonly IBanLinkService _banLinkService;
 
-        public BanLinksController(IBanLinkServiceAsync banLinkServiceAsync)
+        public BanLinksController(IBanLinkService banLinkService)
         {
-            _banLinkServiceAsync = banLinkServiceAsync;
+            _banLinkService = banLinkService;
         }
 
         [HttpGet]
         public async Task<ActionResult<ApiResponse<PagedCollection<BanLinkResponse>>>> GetAllBanLinksAsync([FromQuery] BanLinkPaginationRequest request)
         {
-            var pagedBanLinks = await _banLinkServiceAsync.GetAllWithPaginationAsync<BanLinkResponse, BanLinkSpecification>(request);
+            var pagedBanLinks = await _banLinkService.GetAllWithPaginationAsync<BanLinkResponse, BanLinkSpecification>(request);
             var response = new ApiResponse<PagedCollection<BanLinkResponse>>(pagedBanLinks);
             return Ok(response);
         }
@@ -37,7 +37,7 @@ namespace WebApi.Controllers.V1
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<BanLinkResponse>>> GetBanLink(int id)
         {
-            var data = await _banLinkServiceAsync.GetByIdProjectedAsync<BanLinkResponse>(id);
+            var data = await _banLinkService.GetByIdProjectedAsync<BanLinkResponse>(id);
             var response = new ApiResponse<BanLinkResponse>(data);
             return Ok(response);
         }
@@ -46,7 +46,7 @@ namespace WebApi.Controllers.V1
         [HttpPut("{id}")]
         public async Task<IActionResult> PutBanLink(int id, BanLinkUpdateRequest request)
         {
-            await _banLinkServiceAsync.UpdateAsync(id, request);
+            await _banLinkService.UpdateAsync(id, request);
             return NoContent();
         }
 
@@ -54,7 +54,7 @@ namespace WebApi.Controllers.V1
         [HttpPost]
         public async Task<ActionResult<BanLinkResponse>> PostBanLink(BanLinkCreateRequest request)
         {
-            var createdBanLink = await _banLinkServiceAsync.CreateAsync<BanLinkCreateRequest, BanLinkResponse>(request);
+            var createdBanLink = await _banLinkService.CreateAsync<BanLinkCreateRequest, BanLinkResponse>(request);
             var response = new ApiResponse<BanLinkResponse>(createdBanLink);
             return CreatedAtAction("GetBanLink", new { id = createdBanLink.Id }, response);
         }
@@ -63,7 +63,7 @@ namespace WebApi.Controllers.V1
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteBanLink(int id)
         {
-            await _banLinkServiceAsync.DeleteAsync(id);
+            await _banLinkService.DeleteAsync(id);
             return NoContent();
         }
 

@@ -15,17 +15,17 @@ namespace WebApi.Controllers.V1
     [ApiController]
     public class StockStatusesController : ControllerBase
     {
-        private readonly IStockStatusServiceAsync _stockStatusServiceAsync;
+        private readonly IStockStatusService _stockStatusService;
 
-        public StockStatusesController(IStockStatusServiceAsync stockStatusServiceAsync)
+        public StockStatusesController(IStockStatusService stockStatusService)
         {
-            _stockStatusServiceAsync = stockStatusServiceAsync;
+            _stockStatusService = stockStatusService;
         }
 
         [HttpGet]
         public async Task<ActionResult<ApiResponse<PagedCollection<StockStatusResponse>>>> GetAllStockStatussAsync([FromQuery] StockStatusFilterAndPaginationRequest request)
         {
-            var pagedStockStatuss = await _stockStatusServiceAsync.GetAllWithPaginationAsync<StockStatusResponse, StockStatusSpecification>(request);
+            var pagedStockStatuss = await _stockStatusService.GetAllWithPaginationAsync<StockStatusResponse, StockStatusSpecification>(request);
             var response = new ApiResponse<PagedCollection<StockStatusResponse>>(pagedStockStatuss);
             return Ok(response);
         }
@@ -34,7 +34,7 @@ namespace WebApi.Controllers.V1
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<StockStatusResponse>>> GetStockStatus(int id)
         {
-            var data = await _stockStatusServiceAsync.GetByIdProjectedAsync<StockStatusResponse>(id);
+            var data = await _stockStatusService.GetByIdProjectedAsync<StockStatusResponse>(id);
             var response = new ApiResponse<StockStatusResponse>(data);
             return Ok(response);
         }
@@ -43,7 +43,7 @@ namespace WebApi.Controllers.V1
         [HttpPut("{id}")]
         public async Task<IActionResult> PutStockStatus(int id, StockStatusUpdateRequest request)
         {
-            await _stockStatusServiceAsync.UpdateAsync(id, request);
+            await _stockStatusService.UpdateAsync(id, request);
             return NoContent();
         }
 
@@ -51,7 +51,7 @@ namespace WebApi.Controllers.V1
         [HttpPost]
         public async Task<ActionResult<StockStatusResponse>> PostStockStatus(StockStatusCreateRequest request)
         {
-            var createdStockStatus = await _stockStatusServiceAsync.CreateAsync<StockStatusCreateRequest, StockStatusResponse>(request);
+            var createdStockStatus = await _stockStatusService.CreateAsync<StockStatusCreateRequest, StockStatusResponse>(request);
             var response = new ApiResponse<StockStatusResponse>(createdStockStatus);
             return CreatedAtAction("GetStockStatus", new { id = createdStockStatus.Id }, response);
         }
@@ -60,7 +60,7 @@ namespace WebApi.Controllers.V1
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteStockStatus(int id)
         {
-            await _stockStatusServiceAsync.DeleteAsync(id);
+            await _stockStatusService.DeleteAsync(id);
             return NoContent();
         }
 

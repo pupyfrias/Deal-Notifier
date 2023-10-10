@@ -19,19 +19,19 @@ namespace WebApi.Controllers.V1
     [ApiController]
     public class PhoneCarriersController : ControllerBase
     {
-        private readonly IPhoneCarrierServiceAsync _phoneCarrierServiceAsync;
-        private readonly IUnlockabledPhonePhoneCarrierServiceAsync _unlockabledPhonePhoneCarrierServiceAsync;
+        private readonly IPhoneCarrierService _phoneCarrierService;
+        private readonly IUnlockabledPhonePhoneCarrierService _unlockabledPhonePhoneCarrierService;
 
-        public PhoneCarriersController(IPhoneCarrierServiceAsync phoneCarrierServiceAsync, IUnlockabledPhonePhoneCarrierServiceAsync unlockabledPhonePhoneCarrierServiceAsync)
+        public PhoneCarriersController(IPhoneCarrierService phoneCarrierService, IUnlockabledPhonePhoneCarrierService unlockabledPhonePhoneCarrierService)
         {
-            _phoneCarrierServiceAsync = phoneCarrierServiceAsync;
-            _unlockabledPhonePhoneCarrierServiceAsync = unlockabledPhonePhoneCarrierServiceAsync;
+            _phoneCarrierService = phoneCarrierService;
+            _unlockabledPhonePhoneCarrierService = unlockabledPhonePhoneCarrierService;
         }
 
         [HttpGet]
         public async Task<ActionResult<ApiResponse<PagedCollection<PhoneCarrierResponse>>>> GetAllPhoneCarriersAsync([FromQuery] PhoneCarrierFilterAndPaginationRequest request)
         {
-            var pagedPhoneCarriers = await _phoneCarrierServiceAsync.GetAllWithPaginationAsync<PhoneCarrierResponse, PhoneCarrierSpecification>(request);
+            var pagedPhoneCarriers = await _phoneCarrierService.GetAllWithPaginationAsync<PhoneCarrierResponse, PhoneCarrierSpecification>(request);
             var response = new ApiResponse<PagedCollection<PhoneCarrierResponse>>(pagedPhoneCarriers);
             return Ok(response);
         }
@@ -40,7 +40,7 @@ namespace WebApi.Controllers.V1
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<PhoneCarrierResponse>>> GetPhoneCarrier(int id)
         {
-            var data = await _phoneCarrierServiceAsync.GetByIdProjectedAsync<PhoneCarrierResponse>(id);
+            var data = await _phoneCarrierService.GetByIdProjectedAsync<PhoneCarrierResponse>(id);
             var response = new ApiResponse<PhoneCarrierResponse>(data);
             return Ok(response);
         }
@@ -49,7 +49,7 @@ namespace WebApi.Controllers.V1
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPhoneCarrier(int id, PhoneCarrierUpdateRequest request)
         {
-            await _phoneCarrierServiceAsync.UpdateAsync(id, request);
+            await _phoneCarrierService.UpdateAsync(id, request);
             return NoContent();
         }
 
@@ -57,7 +57,7 @@ namespace WebApi.Controllers.V1
         [HttpPost]
         public async Task<ActionResult<PhoneCarrierResponse>> PostPhoneCarrier(PhoneCarrierCreateRequest request)
         {
-            var createdPhoneCarrier = await _phoneCarrierServiceAsync.CreateAsync<PhoneCarrierCreateRequest, PhoneCarrierResponse>(request);
+            var createdPhoneCarrier = await _phoneCarrierService.CreateAsync<PhoneCarrierCreateRequest, PhoneCarrierResponse>(request);
             var response = new ApiResponse<PhoneCarrierResponse>(createdPhoneCarrier);
             return CreatedAtAction("GetPhoneCarrier", new { id = createdPhoneCarrier.Id }, response);
         }
@@ -66,7 +66,7 @@ namespace WebApi.Controllers.V1
         [HttpPost("{PhoneCarrierId}/UnlockabledPhone")]
         public async Task<ActionResult<PhoneUnlockTool>> PostPhoneCarrierUnlockablePhone(int PhoneCarrierId, PhoneCarrierUnlockabledPhoneCreateRequest request)
         {
-            await _unlockabledPhonePhoneCarrierServiceAsync.CreateRangeAsync(PhoneCarrierId, request);
+            await _unlockabledPhonePhoneCarrierService.CreateRangeAsync(PhoneCarrierId, request);
             return NoContent();
         }
 
@@ -76,7 +76,7 @@ namespace WebApi.Controllers.V1
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeletePhoneCarrier(int id)
         {
-            await _phoneCarrierServiceAsync.DeleteAsync(id);
+            await _phoneCarrierService.DeleteAsync(id);
             return NoContent();
         }
 

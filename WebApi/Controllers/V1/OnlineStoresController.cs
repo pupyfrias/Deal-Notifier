@@ -15,17 +15,17 @@ namespace WebApi.Controllers.V1
     [ApiController]
     public class OnlineStoresController : ControllerBase
     {
-        private readonly IOnlineStoreServiceAsync _onlineStoreServiceAsync;
+        private readonly IOnlineStoreService _onlineStoreService;
 
-        public OnlineStoresController(IOnlineStoreServiceAsync onlineStoreServiceAsync)
+        public OnlineStoresController(IOnlineStoreService onlineStoreService)
         {
-            _onlineStoreServiceAsync = onlineStoreServiceAsync;
+            _onlineStoreService = onlineStoreService;
         }
 
         [HttpGet]
         public async Task<ActionResult<ApiResponse<PagedCollection<OnlineStoreResponse>>>> GetAllOnlineStoresAsync([FromQuery] OnlineStoreFilterAndPaginationRequest request)
         {
-            var pagedOnlineStores = await _onlineStoreServiceAsync.GetAllWithPaginationAsync<OnlineStoreResponse, OnlineStoreSpecification>(request);
+            var pagedOnlineStores = await _onlineStoreService.GetAllWithPaginationAsync<OnlineStoreResponse, OnlineStoreSpecification>(request);
             var response = new ApiResponse<PagedCollection<OnlineStoreResponse>>(pagedOnlineStores);
             return Ok(response);
         }
@@ -34,7 +34,7 @@ namespace WebApi.Controllers.V1
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<OnlineStoreResponse>>> GetOnlineStore(int id)
         {
-            var data = await _onlineStoreServiceAsync.GetByIdProjectedAsync<OnlineStoreResponse>(id);
+            var data = await _onlineStoreService.GetByIdProjectedAsync<OnlineStoreResponse>(id);
             var response = new ApiResponse<OnlineStoreResponse>(data);
             return Ok(response);
         }
@@ -43,7 +43,7 @@ namespace WebApi.Controllers.V1
         [HttpPut("{id}")]
         public async Task<IActionResult> PutOnlineStore(int id, OnlineStoreUpdateRequest request)
         {
-            await _onlineStoreServiceAsync.UpdateAsync(id, request);
+            await _onlineStoreService.UpdateAsync(id, request);
             return NoContent();
         }
 
@@ -51,7 +51,7 @@ namespace WebApi.Controllers.V1
         [HttpPost]
         public async Task<ActionResult<OnlineStoreResponse>> PostOnlineStore(OnlineStoreCreateRequest request)
         {
-            var createdOnlineStore = await _onlineStoreServiceAsync.CreateAsync<OnlineStoreCreateRequest, OnlineStoreResponse>(request);
+            var createdOnlineStore = await _onlineStoreService.CreateAsync<OnlineStoreCreateRequest, OnlineStoreResponse>(request);
             var response = new ApiResponse<OnlineStoreResponse>(createdOnlineStore);
             return CreatedAtAction("GetOnlineStore", new { id = createdOnlineStore.Id }, response);
         }
@@ -60,7 +60,7 @@ namespace WebApi.Controllers.V1
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteOnlineStore(int id)
         {
-            await _onlineStoreServiceAsync.DeleteAsync(id);
+            await _onlineStoreService.DeleteAsync(id);
             return NoContent();
         }
 
