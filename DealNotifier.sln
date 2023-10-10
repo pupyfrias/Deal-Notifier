@@ -15,7 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apps", "Apps", "{BFDA4940-5
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "FrontEnd", "Front End\FrontEnd.esproj", "{34A4E5A9-C143-47AF-ABFA-0A109B968192}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkerService.Samkey", "WorkerService.Samkey\WorkerService.Samkey.csproj", "{E3878137-CA53-4D17-B060-8D8784B49203}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SamkeyDataSyncWorker", "WorkerService.Samkey\SamkeyDataSyncWorker.csproj", "{E3878137-CA53-4D17-B060-8D8784B49203}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebScraping", "DealNotifier\WebScraping.csproj", "{19FE7C3D-C3B6-4352-AFFD-FBCCB334ABEA}"
 EndProject

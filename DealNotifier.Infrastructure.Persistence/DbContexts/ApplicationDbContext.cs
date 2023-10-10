@@ -1,12 +1,10 @@
 ﻿using DealNotifier.Core.Application.Extensions;
 using DealNotifier.Core.Application.ViewModels;
-using DealNotifier.Core.Application.ViewModels.V1;
 using DealNotifier.Core.Domain.Contracts;
 using DealNotifier.Core.Domain.Entities;
 using DealNotifier.Infrastructure.Persistence.Configuration;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Action = DealNotifier.Core.Application.Enums.Action;
 using ItemType = DealNotifier.Core.Domain.Entities.ItemType;
 
@@ -41,7 +39,7 @@ namespace DealNotifier.Infrastructure.Persistence.DbContexts
         public DbSet<ItemType> Types { get; set; }
         public DbSet<UnlockabledPhonePhoneCarrier> UnlockabledPhonePhoneCarriers { get; set; }
         public DbSet<UnlockabledPhone> UnlockabledPhones { get; set; }
-        public DbSet<UnlockabledPhonePhoneUnlockTool> UnlockabledPhoneUnlockTools { get; set; }
+        public DbSet<UnlockabledPhonePhoneUnlockTool> UnlockabledPhonePhoneUnlockTools { get; set; }
         public DbSet<UnlockProbability> UnlockProbability { get; set; }
 
         #endregion DbSets

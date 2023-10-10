@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DealNotifier.Core.Application.Interfaces.Repositories;
 using DealNotifier.Core.Application.Interfaces.Services;
+using DealNotifier.Core.Application.ViewModels.V1;
 using DealNotifier.Core.Application.ViewModels.V1.PhoneUnlockTool;
 using DealNotifier.Core.Application.ViewModels.V1.UnlockabledPhonePhoneUnlockTool;
 using DealNotifier.Core.Domain.Entities;
@@ -43,6 +44,12 @@ namespace DealNotifier.Core.Application.Services
             });
 
             await _repository.CreateRangeAsync(phoneUnlockToolUnlockablePhoneList);
+        }
+
+        public async Task<bool> ExistsAsync(UnlockabledPhonePhoneUnlockToolDto entity)
+        {
+            var mappedEntity = _mapper.Map<UnlockabledPhonePhoneUnlockTool>(entity);
+            return await _repository.ExistsAsync(mappedEntity);
         }
     }
 }

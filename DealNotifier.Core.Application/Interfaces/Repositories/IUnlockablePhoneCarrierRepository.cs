@@ -6,5 +6,9 @@ namespace DealNotifier.Core.Application.Interfaces.Repositories
     {
         Task CreateRangeAsync(IEnumerable<UnlockabledPhonePhoneUnlockTool> entities);
         Task CreateAsync(UnlockabledPhonePhoneUnlockTool entity);
+
+        Task<bool> ExistsAsync(UnlockabledPhonePhoneUnlockTool entity);
+
+
     }
 }

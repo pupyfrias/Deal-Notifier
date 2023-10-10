@@ -12,14 +12,13 @@ using Enums = DealNotifier.Core.Application.Enums;
 using ILogger = Serilog.ILogger;
 using Timer = System.Threading.Timer;
 
-namespace WorkerService.T_UnlokcDataSyncWorker
+namespace WorkerService.T_Unlock_WebScraping
 {
     public class Worker : BackgroundService
     {
         private IEnumerable<PhoneCarrierDto> phoneCarrierList = new List<PhoneCarrierDto>();
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
-        private IPhoneCarrierService _phoneCarrierService;
         private IUnlockabledPhonePhoneCarrierService _unlockabledPhonePhoneCarrierService;
         private IUnlockabledPhonePhoneUnlockToolService _unlockabledPhonePhoneUnlockToolService;
         private IUnlockabledPhoneService _unlockabledPhoneService;
@@ -107,13 +106,13 @@ namespace WorkerService.T_UnlokcDataSyncWorker
                 _unlockabledPhoneService = scope.ServiceProvider.GetRequiredService<IUnlockabledPhoneService>();
                 _unlockabledPhonePhoneCarrierService = scope.ServiceProvider.GetRequiredService<IUnlockabledPhonePhoneCarrierService>();
                 _unlockabledPhonePhoneUnlockToolService = scope.ServiceProvider.GetRequiredService<IUnlockabledPhonePhoneUnlockToolService>();
-                _phoneCarrierService = scope.ServiceProvider.GetRequiredService<IPhoneCarrierService>();
-
-
-                phoneCarrierList = await _phoneCarrierService.GetAllAsync<PhoneCarrierDto>();
+                var phoneCarrierService = scope.ServiceProvider.GetRequiredService<IPhoneCarrierService>();
+                phoneCarrierList = await phoneCarrierService.GetAllAsync<PhoneCarrierDto>();
                 await ScrappingAsync();
-                _logger.Information("T-Unlock Scraping Service completed.");
+
             }
+
+            _logger.Information("T-Unlock Scraping Service completed.");
         }
 
         private int GetBrandId(string path)
@@ -152,9 +151,9 @@ namespace WorkerService.T_UnlokcDataSyncWorker
                     var modelNumber = h7List[0].InnerText;
                     var modelName = h7List[1].InnerText;
                     var carrierList = h4.InnerText.Split(',');
-                    
 
-                    var possibleUnlockedPhone = await _unlockabledPhoneService.FirstOrDefaultAsync(unlockedPhone=> unlockedPhone.ModelNumber.Equals(modelNumber));
+
+                    var possibleUnlockedPhone = await _unlockabledPhoneService.FirstOrDefaultAsync(unlockedPhone => unlockedPhone.ModelNumber.Equals(modelNumber));
 
                     if (possibleUnlockedPhone == null)
                     {
@@ -170,7 +169,7 @@ namespace WorkerService.T_UnlokcDataSyncWorker
                         var unlockabledPhonePhoneUnlockTool = new UnlockabledPhonePhoneUnlockToolCreate
                         {
                             UnlockabledPhoneId = newUnlockedPhone.Id,
-                            PhoneUnlockToolId = (int) Enums.UnlockTool.TUnlock
+                            PhoneUnlockToolId = (int)Enums.UnlockTool.TUnlock
                         };
                         await _unlockabledPhonePhoneUnlockToolService.CreateAsync(unlockabledPhonePhoneUnlockTool);
 

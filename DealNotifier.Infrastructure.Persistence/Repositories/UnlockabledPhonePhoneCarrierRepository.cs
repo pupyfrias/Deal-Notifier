@@ -31,8 +31,7 @@ namespace DealNotifier.Infrastructure.Persistence.Repositories
         public async Task<bool> ExistsAsync(UnlockabledPhonePhoneCarrier entity)
         {
             return await _dbContext.UnlockabledPhonePhoneCarriers
-                .AnyAsync(x => x.PhoneCarrierId == entity.PhoneCarrierId &&
-                              x.UnlockabledPhoneId == entity.UnlockabledPhoneId);
+                .AnyAsync(x => x.PhoneCarrierId == entity.PhoneCarrierId && x.UnlockabledPhoneId == entity.UnlockabledPhoneId);
         }
 
         public async Task CreateRangeAsync(IEnumerable<UnlockabledPhonePhoneCarrier> entities)
@@ -43,7 +42,8 @@ namespace DealNotifier.Infrastructure.Persistence.Repositories
 
         public bool Exists(UnlockabledPhonePhoneCarrier entity)
         {
-            throw new NotImplementedException();
+            return _dbContext.UnlockabledPhonePhoneCarriers
+                .Any(x => x.PhoneCarrierId == entity.PhoneCarrierId && x.UnlockabledPhoneId == entity.UnlockabledPhoneId);
         }
 
         #endregion Constructor

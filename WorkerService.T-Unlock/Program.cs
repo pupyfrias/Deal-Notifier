@@ -8,7 +8,7 @@ using DealNotifier.Infrastructure.Persistence.Repositories;
 using DealNotifier.Infrastructure.Persistence.Setup;
 using Serilog;
 using System.Reflection;
-using WorkerService.T_UnlokcDataSyncWorker;
+using WorkerService.T_Unlock_WebScraping;
 
 
 

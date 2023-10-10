@@ -5,9 +5,10 @@ using DealNotifier.Core.Application.Setups;
 using DealNotifier.Core.Domain.Configs;
 using DealNotifier.Infrastructure.Persistence.DbContexts;
 using DealNotifier.Infrastructure.Persistence.Repositories;
+using DealNotifier.Infrastructure.Persistence.Setup;
+using SamkeyDataSyncWorker;
 using Serilog;
 using System.Reflection;
-using WorkerService.Samkey;
 
 var environment = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT");
 
@@ -23,25 +24,26 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddHttpContextAccessor();
         services.AddMemoryCache();
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-        services.AddSingleton(new ApplicationDbContext());
+        services.AddDbContext<ApplicationDbContext>(DbContextSetup.Configure(hostContext.Configuration));
+
 
         #region Repositories
 
-        services.AddSingleton(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
-        services.AddSingleton<IUnlockableRepository, UnlockableRepository>();
-        services.AddSingleton<IPhoneCarrierRepository, PhoneCarrierRepository>();
-        services.AddSingleton<IUnlockabledPhonePhoneUnlockToolRepository, UnlockabledPhonePhoneUnlockToolRepository>();
-        services.AddSingleton<IUnlockabledPhonePhoneCarrierRepository, UnlockabledPhonePhoneCarrierRepository>();
+        services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
+        services.AddScoped<IUnlockabledPhoneRepository, UnlockabledPhoneRepository>();
+        services.AddScoped<IPhoneCarrierRepository, PhoneCarrierRepository>();
+        services.AddScoped<IUnlockabledPhonePhoneUnlockToolRepository, UnlockabledPhonePhoneUnlockToolRepository>();
+        services.AddScoped<IUnlockabledPhonePhoneCarrierRepository, UnlockabledPhonePhoneCarrierRepository>();
 
         #endregion Repositories
 
         #region Services
 
-        services.AddSingleton(typeof(IGenericService<,>), typeof(GenericService<,>));
-        services.AddSingleton<IUnlockableService, UnlockableService>();
-        services.AddSingleton<IPhoneCarrierService, PhoneCarrierService>();
-        services.AddSingleton<IUnlockabledPhonePhoneUnlockToolService, UnlockabledPhonePhoneUnlockToolService>();
-        services.AddSingleton<IUnlockabledPhonePhoneCarrierService, UnlockabledPhonePhoneCarrierService>();
+        services.AddScoped(typeof(IGenericService<,>), typeof(GenericService<,>));
+        services.AddScoped<IUnlockabledPhoneService, UnlockabledPhoneService>();
+        services.AddScoped<IPhoneCarrierService, PhoneCarrierService>();
+        services.AddScoped<IUnlockabledPhonePhoneUnlockToolService, UnlockabledPhonePhoneUnlockToolService>();
+        services.AddScoped<IUnlockabledPhonePhoneCarrierService, UnlockabledPhonePhoneCarrierService>();
 
         #endregion Services
 

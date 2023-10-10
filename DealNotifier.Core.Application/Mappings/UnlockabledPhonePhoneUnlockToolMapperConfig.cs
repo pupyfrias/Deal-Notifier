@@ -9,8 +9,10 @@ namespace DealNotifier.Core.Application.Mappings
     {
         public UnlockabledPhonePhoneUnlockToolMapperConfig()
         {
-            CreateMap<UnlockabledPhonePhoneUnlockToolCreate, UnlockabledPhonePhoneUnlockTool>().IgnoreAllSourceNullProperties();
-            
+
+            CreateMap<UnlockabledPhonePhoneUnlockTool, UnlockabledPhonePhoneUnlockToolCreate>().ReverseMap();
+            CreateMap<UnlockabledPhonePhoneUnlockToolDto, UnlockabledPhonePhoneUnlockToolCreate>().ReverseMap();
+            CreateMap<UnlockabledPhonePhoneUnlockToolDto, UnlockabledPhonePhoneUnlockTool>().ReverseMap();
         }
     }
 }

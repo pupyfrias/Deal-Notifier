@@ -1,6 +1,7 @@
 ﻿using DealNotifier.Core.Application.Interfaces.Repositories;
 using DealNotifier.Core.Domain.Entities;
 using DealNotifier.Infrastructure.Persistence.DbContexts;
+using Microsoft.EntityFrameworkCore;
 
 namespace DealNotifier.Infrastructure.Persistence.Repositories
 {
@@ -21,14 +22,21 @@ namespace DealNotifier.Infrastructure.Persistence.Repositories
 
         public async Task CreateAsync(UnlockabledPhonePhoneUnlockTool entity)
         {
-            await _dbContext.UnlockabledPhoneUnlockTools.AddAsync(entity);
+            await _dbContext.UnlockabledPhonePhoneUnlockTools.AddAsync(entity);
             await _dbContext.SaveChangesAsync();
         }
 
         public async Task CreateRangeAsync(IEnumerable<UnlockabledPhonePhoneUnlockTool> entities)
         {
-            await _dbContext.UnlockabledPhoneUnlockTools.AddRangeAsync(entities);
+            await _dbContext.UnlockabledPhonePhoneUnlockTools.AddRangeAsync(entities);
             await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<bool> ExistsAsync(UnlockabledPhonePhoneUnlockTool entity)
+        {
+            return await _dbContext.UnlockabledPhonePhoneUnlockTools
+                .AnyAsync(x => x.PhoneUnlockToolId == entity.PhoneUnlockToolId &&
+                              x.UnlockabledPhoneId == entity.UnlockabledPhoneId);
         }
 
         #endregion Constructor
