@@ -8,7 +8,7 @@ namespace DealNotifier.Core.Application.Mappings
     {
         public BannedMapperConfig()
         {
-            CreateMap<BanKeyword, BannedDto>().ReverseMap();
+            CreateMap<BanKeyword, BanKeywordDto>().ReverseMap();
         }
     }
 }

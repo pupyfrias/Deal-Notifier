@@ -10,9 +10,9 @@ namespace DealNotifier.Core.Application.Mappings
         public AutoMapperConfig()
         {
             CreateMap<Condition, ConditionDto>().ReverseMap();
-            CreateMap<NotificationCriteria, ConditionsToNotifyDto>().ReverseMap();
+            CreateMap<NotificationCriteria, NotificationCriteriaDto>().ReverseMap();
             CreateMap<BanLink, BanLink>().ReverseMap();
-            CreateMap<Brand, BrandReadDto>().ReverseMap();
+            CreateMap<Brand, BrandDto>().ReverseMap();
         }
     }
 }

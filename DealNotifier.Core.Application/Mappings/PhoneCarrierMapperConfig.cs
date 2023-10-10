@@ -9,7 +9,7 @@ namespace DealNotifier.Core.Application.Mappings
     {
         public PhoneCarrierMapperConfig()
         {
-            CreateMap<PhoneCarrierReadDto, PhoneCarrier>().ReverseMap();
+            CreateMap<PhoneCarrierDto, PhoneCarrier>().ReverseMap();
             CreateMap<PhoneCarrierCreateRequest, PhoneCarrier>().IgnoreAllSourceNullProperties();
             CreateMap<PhoneCarrierUpdateRequest, PhoneCarrier>().IgnoreAllSourceNullProperties();
             CreateMap<PhoneCarrier, PhoneCarrierResponse>().IgnoreAllSourceNullProperties();
