@@ -25,7 +25,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DealNotifier.Core.Domain", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi", "WebApi\WebApi.csproj", "{1D2E3344-965C-46B9-A4EC-D572304BD691}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkerService.T-Unlock", "WorkerService.T-Unlock\WorkerService.T-Unlock.csproj", "{25536D1D-C39F-4093-8C10-D6F541E3A405}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "T-UnlockDataSyncWorker", "WorkerService.T-Unlock\T-UnlockDataSyncWorker.csproj", "{25536D1D-C39F-4093-8C10-D6F541E3A405}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DealNotifier.Infrastructure.Email", "DealNotifier.Infrastructure.Email\DealNotifier.Infrastructure.Email.csproj", "{DA3387A2-25BA-47AF-88B6-F26FA20BE13A}"
 EndProject

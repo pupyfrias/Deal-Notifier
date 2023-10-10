@@ -8,6 +8,7 @@ using DealNotifier.Core.Application.ViewModels.Common;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Caching.Memory;
+using System.Linq.Expressions;
 using System.Web;
 
 namespace DealNotifier.Core.Application.Services
@@ -164,6 +165,12 @@ namespace DealNotifier.Core.Application.Services
             CacheUtility.InvalidateCache<TEntity>(_cache);
             await _genericRepository.UpdateAsync(entity);
         }
+
+        public virtual async Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
+        {
+            return await _genericRepository.FirstOrDefaultAsync(predicate);
+        }
+
         #endregion Async
 
         #region Sync
@@ -292,6 +299,13 @@ namespace DealNotifier.Core.Application.Services
             _mapper.Map(source, entity);
             CacheUtility.InvalidateCache<TEntity>(_cache);
             _genericRepository.Update(entity);
+        }
+
+
+
+        public virtual TEntity? FirstOrDefault(Expression<Func<TEntity, bool>> predicate)
+        {
+            return _genericRepository.FirstOrDefault(predicate);
         }
         #endregion Sync
 

@@ -2,10 +2,8 @@ using AutoMapper;
 using DealNotifier.Core.Application.Interfaces.Services;
 using DealNotifier.Core.Application.ViewModels.V1;
 using DealNotifier.Core.Application.ViewModels.V1.PhoneCarrier;
-using DealNotifier.Core.Application.ViewModels.V1.Unlockable;
 using DealNotifier.Core.Application.ViewModels.V1.UnlockabledPhonePhoneCarrier;
 using DealNotifier.Core.Domain.Configs;
-using DealNotifier.Core.Domain.Entities;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -22,12 +20,12 @@ namespace WorkerService.Samkey
         private readonly IPhoneCarrierService _phoneCarrierService;
         private readonly SamkeyUrlConfig _samkeyUrlConfig;
         private readonly IUnlockabledPhonePhoneCarrierService _unlockablePhoneCarrierService;
-        private readonly IUnlockableService _unlockableService;
+        private readonly IUnlockabledPhoneService _unlockabledPhoneService;
         private readonly IUnlockabledPhonePhoneUnlockToolService _unlockableUnlockToolService;
         private Timer _timer;
         private List<PhoneCarrierDto> phoneCarrierList = new List<PhoneCarrierDto>();
 
-        public Worker(ILogger logger, IUnlockableService unlockableService,
+        public Worker(ILogger logger, IUnlockabledPhoneService unlockableService,
             IPhoneCarrierService phoneCarrierService,
             IUnlockabledPhonePhoneUnlockToolService unlockableUnlockToolService,
             IUnlockabledPhonePhoneCarrierService unlockablePhoneCarrierService,
@@ -36,7 +34,7 @@ namespace WorkerService.Samkey
             )
         {
             _logger = logger;
-            _unlockableService = unlockableService;
+            _unlockabledPhoneService = unlockableService;
             _phoneCarrierService = phoneCarrierService;
             _unlockableUnlockToolService = unlockableUnlockToolService;
             _unlockablePhoneCarrierService = unlockablePhoneCarrierService;
@@ -131,7 +129,7 @@ namespace WorkerService.Samkey
                     var carrierList = Regex.Replace(carriers, "[\\(\\),: }]+", "|", RegexOptions.IgnoreCase)
                         .Split("|");
 
-                    var possibleUnlockable = await _unlockableService.GetByModelNumberAsync(modelNumber);
+                    var possibleUnlockable = await _unlockabledPhoneService.GetByModelNumberAsync(modelNumber);
 
                     if (possibleUnlockable == null)
                     {

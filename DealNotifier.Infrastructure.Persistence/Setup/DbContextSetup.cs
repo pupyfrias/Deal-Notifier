@@ -1,7 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DealNotifier.Infrastructure.Persistence.DbContexts;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
-namespace DealNotifier.Infrastructure.Persistence.DbContexts
+namespace DealNotifier.Infrastructure.Persistence.Setup
 {
     public static class DbContextSetup
     {
@@ -11,8 +12,6 @@ namespace DealNotifier.Infrastructure.Persistence.DbContexts
             {
                 options.UseSqlServer(configuration.GetConnectionString("DealNotifierConnection"),
                             optionAction => optionAction.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName));
-
-                options.EnableSensitiveDataLogging();
             };
 
             return Options;

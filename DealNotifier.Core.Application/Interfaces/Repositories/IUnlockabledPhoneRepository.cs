@@ -1,9 +1,9 @@
 ﻿using DealNotifier.Core.Domain.Entities;
-using System.Linq.Expressions;
 
 namespace DealNotifier.Core.Application.Interfaces.Repositories
 {
     public interface IUnlockabledPhoneRepository : IGenericRepository<UnlockabledPhone, int>
     {
+        Task<bool> ExistsAsync(string modelName);
     }
 }

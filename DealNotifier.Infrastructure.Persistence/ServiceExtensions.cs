@@ -3,6 +3,7 @@ using DealNotifier.Core.Application.Interfaces.Services;
 using DealNotifier.Core.Application.Setups;
 using DealNotifier.Infrastructure.Persistence.DbContexts;
 using DealNotifier.Infrastructure.Persistence.Repositories;
+using DealNotifier.Infrastructure.Persistence.Setup;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

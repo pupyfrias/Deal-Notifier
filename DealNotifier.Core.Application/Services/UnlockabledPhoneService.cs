@@ -9,8 +9,17 @@ namespace DealNotifier.Core.Application.Services
 {
     public class UnlockabledPhoneService : GenericService<UnlockabledPhone, int>, IUnlockabledPhoneService
     {
+
+        private readonly IUnlockabledPhoneRepository _repository;
+
         public UnlockabledPhoneService(IUnlockabledPhoneRepository repository, IMapper mapper, IHttpContextAccessor httpContext, IMemoryCache cache) : base(repository, mapper, httpContext, cache)
         {
+            _repository = repository;
+        }
+
+        public async Task<bool> ExistsAsync(string modelName)
+        {
+            return await _repository.ExistsAsync(modelName);
         }
     }
 }

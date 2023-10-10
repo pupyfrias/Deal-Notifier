@@ -1,4 +1,5 @@
 ﻿using DealNotifier.Core.Application.ViewModels.Common;
+using System.Linq.Expressions;
 
 namespace DealNotifier.Core.Application.Interfaces.Services
 {
@@ -22,6 +23,8 @@ namespace DealNotifier.Core.Application.Interfaces.Services
         Task<TEntity> GetByIdAsync(TKey id);
 
         Task UpdateAsync<TSource>(TKey id, TSource source) where TSource : IHasId<TKey>;
+
+        Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate);
         #endregion Async
 
         #region Sync
@@ -42,6 +45,8 @@ namespace DealNotifier.Core.Application.Interfaces.Services
         TEntity GetById(TKey id);
 
         void Update<TSource>(TKey id, TSource source) where TSource : IHasId<TKey>;
+
+        TEntity? FirstOrDefault(Expression<Func<TEntity, bool>> predicate);
         #endregion Sync
 
 

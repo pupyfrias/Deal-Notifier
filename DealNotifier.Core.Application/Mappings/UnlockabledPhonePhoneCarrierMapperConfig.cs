@@ -14,6 +14,7 @@ namespace DealNotifier.Core.Application.Mappings
             CreateMap<UnlockabledPhonePhoneCarrierUpdateRequest, UnlockabledPhonePhoneCarrier>().IgnoreAllSourceNullProperties();
             CreateMap<UnlockabledPhonePhoneCarrier, UnlockabledPhonePhoneCarrierResponse>().IgnoreAllSourceNullProperties();
             CreateMap<UnlockabledPhonePhoneCarrierDto, UnlockabledPhonePhoneCarrierCreateRequest>().IgnoreAllSourceNullProperties().ReverseMap();
+            CreateMap<UnlockabledPhonePhoneCarrierDto, UnlockabledPhonePhoneCarrier>().IgnoreAllSourceNullProperties().ReverseMap();
         }
     }
 }

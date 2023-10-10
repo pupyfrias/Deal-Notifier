@@ -1,6 +1,6 @@
 ﻿{
   "profiles": {
-    "WorkerService.T_Unlock_WebScraping": {
+    "T-UnlockDataSyncWorker": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "environmentVariables": {

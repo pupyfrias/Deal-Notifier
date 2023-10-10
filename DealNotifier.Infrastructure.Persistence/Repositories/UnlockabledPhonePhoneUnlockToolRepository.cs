@@ -19,6 +19,12 @@ namespace DealNotifier.Infrastructure.Persistence.Repositories
             _dbContext = context;
         }
 
+        public async Task CreateAsync(UnlockabledPhonePhoneUnlockTool entity)
+        {
+            await _dbContext.UnlockabledPhoneUnlockTools.AddAsync(entity);
+            await _dbContext.SaveChangesAsync();
+        }
+
         public async Task CreateRangeAsync(IEnumerable<UnlockabledPhonePhoneUnlockTool> entities)
         {
             await _dbContext.UnlockabledPhoneUnlockTools.AddRangeAsync(entities);
