@@ -7,14 +7,9 @@ namespace DealNotifier.Core.Application.Heplers
 {
     public static class Helper
     {
-        public static string AppsettingsPath { get; } = Path.GetFullPath("..\\DealNotifier.Core.Application\\appsettings.json");
-        public static HashSet<BannedDto> BannedKeywordList { get; set; } = new HashSet<BannedDto>();
-        public static HashSet<ConditionsToNotifyDto> ConditionsToNotifyList { get; set; } = new HashSet<ConditionsToNotifyDto>();
-        public static HashSet<BrandReadDto> BrandList { get; set; } = new HashSet<BrandReadDto>();
-        public static HashSet<PhoneCarrierReadDto> PhoneCarrierList { get; set; } = new HashSet<PhoneCarrierReadDto>();
+        
+        
         public static string BasePath { get; } = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-        public static HashSet<BanLinkResponse> BanLinkList { get; set; } = new HashSet<BanLinkResponse>();
-        public static ConcurrentBag<string> CheckedList { get; set; } = new ConcurrentBag<string>();
 
         /// <summary>
         /// Get URL local path

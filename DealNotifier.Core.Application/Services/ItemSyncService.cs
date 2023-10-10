@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using DealNotifier.Core.Application.Constants;
-using DealNotifier.Core.Application.Heplers;
 using DealNotifier.Core.Application.Interfaces.Repositories;
 using DealNotifier.Core.Application.Interfaces.Services;
 using DealNotifier.Core.Application.Utilities;
@@ -8,8 +7,6 @@ using DealNotifier.Core.Application.ViewModels.V1;
 using DealNotifier.Core.Application.ViewModels.V1.Item;
 using DealNotifier.Core.Application.ViewModels.V1.PhoneCarrier;
 using DealNotifier.Core.Domain.Entities;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Caching.Memory;
 using Serilog;
 using System.Collections.Concurrent;
 using System.Text.RegularExpressions;
@@ -21,17 +18,17 @@ namespace DealNotifier.Core.Application.Services
     {
         #region Fields
 
-        private readonly IEmailService _emailServiceAsync;
-        private readonly IItemRepository _itemRepositoryAsync;
+        private readonly IEmailService _emailService;
+        private readonly IItemRepository _itemRepository;
         private readonly ILogger _logger;
-        private readonly IBanKeywordRepository _banKeywordRepositoryAsync;
-        private readonly IBanLinkRepository _banLinkRepositoryAsync;
-        private readonly IBrandRepository _brandRepositoryAsync;
-        private readonly INotificationCriteriaRepository _notificationCriteriaRepositoryAsync;
-        private readonly IPhoneCarrierRepository _phoneCarrierRepositoryAsync;
+        private readonly IBanKeywordRepository _banKeywordRepository;
+        private readonly IBanLinkRepository _banLinkRepository;
+        private readonly IBrandRepository _brandRepository;
+        private readonly INotificationCriteriaRepository _notificationCriteriaRepository;
+        private readonly IPhoneCarrierRepository _phoneCarrierRepository;
         private readonly IMapper _mapper;
-        private readonly IUnlockabledPhonePhoneCarrierRepository _unlockabledPhonePhoneCarrierRepositoryAsync;
-        private readonly IUnlockabledPhoneRepository _unlockabledPhoneRepositoryAsync;
+        private readonly IUnlockabledPhonePhoneCarrierRepository _unlockabledPhonePhoneCarrierRepository;
+        private readonly IUnlockabledPhoneRepository _unlockabledPhoneRepository;
         public ConcurrentBag<Item> itemToNotifyList { get; set; } = new ConcurrentBag<Item>();
 
         #endregion Fields
@@ -43,28 +40,28 @@ namespace DealNotifier.Core.Application.Services
             IConfigurationProvider configurationProvider,
             IEmailService emailService,
             ILogger logger,
-            IBanKeywordRepository banKeywordRepositoryAsync,
-            IBanLinkRepository banLinkRepositoryAsync,
-            IBrandRepository brandRepositoryAsync,
-            INotificationCriteriaRepository notificationCriteriaRepositoryAsync,
-            IPhoneCarrierRepository phoneCarrierRepositoryAsync,
+            IBanKeywordRepository banKeywordRepository,
+            IBanLinkRepository banLinkRepository,
+            IBrandRepository brandRepository,
+            INotificationCriteriaRepository notificationCriteriaRepository,
+            IPhoneCarrierRepository phoneCarrierRepository,
             IMapper mapper,
-            IUnlockabledPhonePhoneCarrierRepository unlockabledPhonePhoneCarrierRepositoryAsync,
-            IUnlockabledPhoneRepository unlockabledPhoneRepositoryAsync
+            IUnlockabledPhonePhoneCarrierRepository unlockabledPhonePhoneCarrierRepository,
+            IUnlockabledPhoneRepository unlockabledPhoneRepository
 
             )
         {
             _logger = logger;
-            _emailServiceAsync = emailService;
-            _itemRepositoryAsync = itemRepository;
-            _banKeywordRepositoryAsync = banKeywordRepositoryAsync;
-            _banLinkRepositoryAsync = banLinkRepositoryAsync;
-            _brandRepositoryAsync = brandRepositoryAsync;
-            _notificationCriteriaRepositoryAsync = notificationCriteriaRepositoryAsync;
-            _phoneCarrierRepositoryAsync = phoneCarrierRepositoryAsync;
+            _emailService = emailService;
+            _itemRepository = itemRepository;
+            _banKeywordRepository = banKeywordRepository;
+            _banLinkRepository = banLinkRepository;
+            _brandRepository = brandRepository;
+            _notificationCriteriaRepository = notificationCriteriaRepository;
+            _phoneCarrierRepository = phoneCarrierRepository;
             _mapper = mapper;
-            _unlockabledPhonePhoneCarrierRepositoryAsync = unlockabledPhonePhoneCarrierRepositoryAsync;
-            _unlockabledPhoneRepositoryAsync = unlockabledPhoneRepositoryAsync;
+            _unlockabledPhonePhoneCarrierRepository = unlockabledPhonePhoneCarrierRepository;
+            _unlockabledPhoneRepository = unlockabledPhoneRepository;
         }
 
         #endregion Constructor
@@ -103,7 +100,7 @@ namespace DealNotifier.Core.Application.Services
             {
                 var tasks = items.Select(async item =>
                 {
-                    var oldItem = await _itemRepositoryAsync.FirstOrDefaultAsync(i=> i.Link == item.Link);
+                    var oldItem = await _itemRepository.FirstOrDefaultAsync(i=> i.Link == item.Link);
                     if (oldItem == null)
                     {
                         var mappedItem = _mapper.Map<Item>(item);
@@ -148,8 +145,8 @@ namespace DealNotifier.Core.Application.Services
 
                 await Task.WhenAll(tasks);
 
-                var createTask = _itemRepositoryAsync.CreateRangeAsync(itemListToCreate);
-                var updateTask = _itemRepositoryAsync.UpdateRangeAsync(itemListToUpdate);
+                var createTask = _itemRepository.CreateRangeAsync(itemListToCreate);
+                var updateTask = _itemRepository.UpdateRangeAsync(itemListToUpdate);
                 Task.WhenAll(updateTask, createTask).Wait();
             }
             catch (Exception ex)
@@ -164,23 +161,24 @@ namespace DealNotifier.Core.Application.Services
 
 
 
-        public async Task<Enums.UnlockProbability> SetUnlockProbability(ItemCreateRequest item)
+        public void SetUnlockProbability(ref ItemCreateRequest itemCreate)
         {
-            var modelNumber = item.ModelNumber;
-            var modelName = item.ModelName;
-            var carrierId = item.PhoneCarrierId;
+            var modelNumber = itemCreate.ModelNumber;
+            var modelName = itemCreate.ModelName;
+            var carrierId = itemCreate.PhoneCarrierId ?? default;
 
-            if (item.Name.Contains("unlocked", StringComparison.OrdinalIgnoreCase)
-                || item.Name.Contains("ulk", StringComparison.OrdinalIgnoreCase))
+            if (itemCreate.Name.Contains("unlocked", StringComparison.OrdinalIgnoreCase)
+                || itemCreate.Name.Contains("ulk", StringComparison.OrdinalIgnoreCase))
             {
-                return Enums.UnlockProbability.High;
+               itemCreate.UnlockProbabilityId = (int) Enums.UnlockProbability.High;
+
             }
             else
             { 
                 if (modelNumber != null)
                 {
 
-                    var possibleUnlockedPhone = await _unlockabledPhoneRepositoryAsync.FirstOrDefaultAsync(item => item.ModelNumber.Equals(modelNumber));
+                    var possibleUnlockedPhone =  _unlockabledPhoneRepository.FirstOrDefault(item => item.ModelNumber.Equals(modelNumber));
 
                     if (possibleUnlockedPhone != null)
                     {
@@ -190,14 +188,18 @@ namespace DealNotifier.Core.Application.Services
                             UnlockabledPhoneId = possibleUnlockedPhone.Id
                         };
 
-                        var canBeUnlock = await _unlockabledPhonePhoneCarrierRepositoryAsync.ExistsAsync(unlockabledPhonePhoneCarrier);
-                        if(canBeUnlock) return Enums.UnlockProbability.High;
+                        var canBeUnlock = _unlockabledPhonePhoneCarrierRepository.Exists(unlockabledPhonePhoneCarrier);
+                        if (canBeUnlock) 
+                        {
+                            itemCreate.UnlockProbabilityId = (int)Enums.UnlockProbability.High;
+                            return;
+                        }
                     }
                 }
 
                 if (modelName != null)
                 {
-                    var possibleUnlockedPhone = await _unlockabledPhoneRepositoryAsync.FirstOrDefaultAsync(item => item.ModelName!.Contains(modelName));
+                    var possibleUnlockedPhone =  _unlockabledPhoneRepository.FirstOrDefault(item => item.ModelName!.Contains(modelName));
 
                     if (possibleUnlockedPhone != null)
                     {
@@ -207,90 +209,71 @@ namespace DealNotifier.Core.Application.Services
                             UnlockabledPhoneId = possibleUnlockedPhone.Id
                         };
 
-                        var canBeUnlock = await _unlockabledPhonePhoneCarrierRepositoryAsync.ExistsAsync(unlockabledPhonePhoneCarrier);
-                        if (canBeUnlock) return Enums.UnlockProbability.High;
+                        var canBeUnlock =  _unlockabledPhonePhoneCarrierRepository.Exists(unlockabledPhonePhoneCarrier);
+                        if (canBeUnlock)
+                        {
+                            itemCreate.UnlockProbabilityId = (int)Enums.UnlockProbability.Middle;
+                            return;
+                        }
                     }
                 }
 
-                return Enums.UnlockProbability.Low;
-                
+                itemCreate.UnlockProbabilityId = (int)Enums.UnlockProbability.Middle;
             }
         }
 
-        public void TrySetModelNumberModelNameAndBrand(ref ItemCreateRequest item)
+
+        public void TryAssignBrand(ItemCreateRequest itemCreate)
+        {
+            var matchedBrand = CacheDataUtility.BrandList
+                .FirstOrDefault(brand => itemCreate.Name.Contains(brand.Name, StringComparison.OrdinalIgnoreCase));
+
+            if (matchedBrand != null)
+            {
+                itemCreate.BrandId = matchedBrand.Id;
+            }
+        }
+
+
+        /// <summary>
+        /// Try to assign values to fields BrandId, ModelName & ModelNumber
+        /// </summary>
+        /// <param name="itemCreate"></param>
+        public void TryAssignItemDetails(ItemCreateRequest itemCreate)
+        {
+            var possibleModelNumber = Regex.Match(itemCreate.Name, RegExPattern.ModelNumber, RegexOptions.IgnoreCase).Value;
+
+            if (!string.IsNullOrEmpty(possibleModelNumber))
+            {
+                var possibleUnlockabledPhone = _unlockabledPhoneRepository.FirstOrDefault(element => element.ModelNumber.Equals(possibleModelNumber));
+
+                if (possibleUnlockabledPhone != null)
+                {
+                    itemCreate.BrandId = possibleUnlockabledPhone.Id;
+                    itemCreate.ModelName = possibleUnlockabledPhone.ModelName;
+                    itemCreate.ModelNumber = possibleUnlockabledPhone.ModelNumber;
+                }
+            }
+        }
+
+        public void TryAssignModelName(ref ItemCreateRequest itemCreate)
         {
 
-            var possibleModelNumber = Regex.Match(item.Name, RegExPattern.ModelNumber, RegexOptions.IgnoreCase).Value;
+            var possibleModelName = Regex.Match(itemCreate.Name, RegExPattern.ModelNumber,RegexOptions.IgnoreCase).Value;
 
-            if (!String.IsNullOrEmpty(possibleModelNumber))
+            if (!string.IsNullOrEmpty(possibleModelName))
             {
-                var unlockabledPhone = _unlockabledPhoneRepositoryAsync.FirstOrDefaultAsync(u => u.ModelNumber.Equals(possibleModelNumber));
+                
 
-                if (unlockabledPhone != null)
+                var possibleUnlockabledPhone = _unlockabledPhoneRepository.FirstOrDefault(element => element.ModelNumber.Contains(possibleModelName));
+
+                if (possibleUnlockabledPhone != null)
                 {
-                    item.BrandId = unlockabledPhone.Id;
-                    item.ModelName = unlockabledPhone.ModelName;
-                    item.ModelNumber = unlockabledPhone.ModelNumber;
+                    itemCreate.ModelName = possibleUnlockabledPhone.ModelName;
                 }
+
             }
 
-            if (item.BrandId == null && item.ModelName == null && item.ModelNumber == null)
-            {
-                #region set brand
-
-                foreach (var brand in CacheDataUtility.BrandList)
-                {
-                    bool isMatched = item.Name.IndexOf(brand.Name, StringComparison.OrdinalIgnoreCase) > -1;
-                    if (isMatched)
-                    {
-                        item.BrandId = brand.Id;
-                        break;
-                    }
-                }
-
-                #endregion set brand
-
-                #region set modelName & phone Carrier
-
-                UnlockableReadDto? unlockable;
-                var possibleModelName = Regex.Match(
-                item.Name,
-                "((?<=samsung\\s+)(galaxy\\s+)?\\w+[+]?)|((?<=motorola\\s+)moto\\s+\\w+)|(lg\\s+\\w+( \\d)?)",
-                RegexOptions.IgnoreCase
-                );
-
-                if (possibleModelName.Value != string.Empty)
-                {
-                    int phoneCarrierId = item.PhoneCarrierId ?? (int)Enums.PhoneCarrier.UNK;
-                    unlockable = context.UnlockablePhones
-                        .Include(x => x.UnlockablePhoneCarriers)
-                        .Where(x => x.ModelName.Contains(possibleModelName.Value) &&
-                        x.UnlockablePhoneCarriers.Any(u => u.PhoneCarrierId == phoneCarrierId))
-                        .ProjectTo<UnlockableReadDto>(_configurationProvider)
-                        .FirstOrDefault();
-
-                    if (unlockable != null)
-                    {
-                        item.ModelName = unlockable.ModelName;
-                        item.ModelNumber = unlockable.ModelNumber;
-                    }
-                    else
-                    {
-                        unlockable = context.UnlockablePhones
-                        .Where(x => x.ModelName.Contains(possibleModelName.Value))
-                        .ProjectTo<UnlockableReadDto>(_configurationProvider)
-                        .FirstOrDefault();
-
-                        if (unlockable != null)
-                        {
-                            item.ModelName = unlockable.ModelName;
-                        }
-                    }
-
-                    #endregion set modelName & phone Carrier
-                }
-            }
-            
         }
 
         public void UpdateStatus(ref ConcurrentBag<string> checkedList)
@@ -320,13 +303,13 @@ namespace DealNotifier.Core.Application.Services
             {
                 if (conditionsToNotify.ConditionId == item.ConditionId
                     && conditionsToNotify.MaxPrice >= item.Price
-                    && CheckKeywords(conditionsToNotify.Keywords, item.Name)
+                    && TitleContainsKeyword(conditionsToNotify.Keywords, item.Name)
                     && item.Notify
                     && notified.Date != DateTime.Now.Date
 
                     )
                 {
-                    if (item.TypeId == (int)Enums.ItemType.Phone && item.UnlockProbabilityId == (int)Enums.UnlockProbability.Low)
+                    if (item.ItemTypeId == (int)Enums.ItemType.Phone && item.UnlockProbabilityId == (int)Enums.UnlockProbability.Low)
                     {
                         break;
                     }
@@ -349,40 +332,45 @@ namespace DealNotifier.Core.Application.Services
 
         #region Private Methods
 
-        private bool CheckKeywords(string keywords, string title)
+        private bool TitleContainsKeyword(string title, string keywords)
         {
-            var keywordList = keywords.Split(',');
-            return keywordList.Any(keyword => title.IndexOf(keyword) > -1);
+            var keywordList = keywords.Split(',').Select(keyword=> keyword.Trim());
+            return keywordList.Any(keyword => title.Contains(keyword, StringComparison.OrdinalIgnoreCase));
         }
 
         private async Task LoadBandKeywords()
         {
-            var bandKeywordList = await _banKeywordRepositoryAsync.GetAllProjectedAsync<BanKeywordDto>();
+            var bandKeywordList = await _banKeywordRepository.GetAllProjectedAsync<BanKeywordDto>();
             CacheDataUtility.BanKeywordList = bandKeywordList.ToHashSet<BanKeywordDto>();
         }
 
         private async Task LoadBanLinks()
         {
-            var banLinkList = await _banLinkRepositoryAsync.GetAllProjectedAsync<BanLinkDto>();
+            var banLinkList = await _banLinkRepository.GetAllProjectedAsync<BanLinkDto>();
             CacheDataUtility.BanLinkList = banLinkList.ToHashSet<BanLinkDto>();
         }
 
         private async Task LoadBrands()
         {
-            var brandList = await _brandRepositoryAsync.GetAllProjectedAsync<BrandDto>();
+            var brandList = await _brandRepository.GetAllProjectedAsync<BrandDto>();
             CacheDataUtility.BrandList = brandList.ToHashSet<BrandDto>();
         }
 
         private async Task LoadNotificationCriteria()
         {
-            var notificationCriteria = await _notificationCriteriaRepositoryAsync.GetAllProjectedAsync<NotificationCriteriaDto>();
+            var notificationCriteria = await _notificationCriteriaRepository.GetAllProjectedAsync<NotificationCriteriaDto>();
             CacheDataUtility.NotificationCriteriaList = notificationCriteria.ToHashSet<NotificationCriteriaDto>();
         }
 
         private async Task LoadPhoneCarriers()
         {
-            var phoneCarrierList = await _phoneCarrierRepositoryAsync.GetAllProjectedAsync<PhoneCarrierDto>();
+            var phoneCarrierList = await _phoneCarrierRepository.GetAllProjectedAsync<PhoneCarrierDto>();
             CacheDataUtility.PhoneCarrierList = phoneCarrierList.ToHashSet<PhoneCarrierDto>();
+        }
+
+        public void TrySetModelNumberModelNameAndBrand(ref ItemCreateRequest itemCreate)
+        {
+            throw new NotImplementedException();
         }
 
 

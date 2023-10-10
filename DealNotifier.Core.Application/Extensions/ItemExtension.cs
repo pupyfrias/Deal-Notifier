@@ -1,5 +1,6 @@
 ﻿using DealNotifier.Core.Application.Enums;
 using DealNotifier.Core.Application.Heplers;
+using DealNotifier.Core.Application.Utilities;
 using DealNotifier.Core.Application.ViewModels.V1.Item;
 
 namespace DealNotifier.Core.Application.Extensions
@@ -17,12 +18,12 @@ namespace DealNotifier.Core.Application.Extensions
 
             Task bannedTask = Task.Run(() =>
             {
-                isBanned = Helper.BannedKeywordList.Any(element => item.Name.IndexOf(element.Keyword, StringComparison.OrdinalIgnoreCase) >= 0);
+                isBanned = CacheDataUtility.BanKeywordList.Any(element => item.Name.IndexOf(element.Keyword, StringComparison.OrdinalIgnoreCase) >= 0);
             });
 
             Task blackListTask = Task.Run(() =>
             {
-                isInBlackList = Helper.BanLinkList.Any(x => x.Link == item.Link);
+                isInBlackList = CacheDataUtility.BanLinkList.Any(x => x.Link == item.Link);
             });
 
             await Task.WhenAll(bannedTask, blackListTask);
@@ -32,7 +33,7 @@ namespace DealNotifier.Core.Application.Extensions
 
         public static void SetPhoneCarrier(this ItemCreateRequest item)
         {
-            foreach (var phoneCarrier in Helper.PhoneCarrierList)
+            foreach (var phoneCarrier in CacheDataUtility.PhoneCarrierList)
             {
                 var slitPhoneCarrierName = phoneCarrier.Name.Split('|');
 
