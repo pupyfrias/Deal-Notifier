@@ -2,9 +2,8 @@
 
 namespace DealNotifier.Core.Domain.Entities
 {
-    public class BanLink : AuditableEntity<int>
+    public class BanLink : AuditableEntity
     {
-        public override int Id { get; set; }
         public string Link { get; set; }
     }
 }

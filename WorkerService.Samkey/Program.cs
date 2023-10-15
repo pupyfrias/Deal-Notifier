@@ -29,7 +29,7 @@ IHost host = Host.CreateDefaultBuilder(args)
 
         #region Repositories
 
-        services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
+        services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         services.AddScoped<IUnlockabledPhoneRepository, UnlockabledPhoneRepository>();
         services.AddScoped<IPhoneCarrierRepository, PhoneCarrierRepository>();
         services.AddScoped<IUnlockabledPhonePhoneUnlockToolRepository, UnlockabledPhonePhoneUnlockToolRepository>();
@@ -39,7 +39,7 @@ IHost host = Host.CreateDefaultBuilder(args)
 
         #region Services
 
-        services.AddScoped(typeof(IGenericService<,>), typeof(GenericService<,>));
+        services.AddScoped(typeof(IGenericService<>), typeof(GenericService<>));
         services.AddScoped<IUnlockabledPhoneService, UnlockabledPhoneService>();
         services.AddScoped<IPhoneCarrierService, PhoneCarrierService>();
         services.AddScoped<IUnlockabledPhonePhoneUnlockToolService, UnlockabledPhonePhoneUnlockToolService>();

@@ -5,11 +5,12 @@ using DealNotifier.Core.Application.Interfaces.Repositories;
 using DealNotifier.Core.Domain.Contracts;
 using DealNotifier.Infrastructure.Persistence.DbContexts;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace DealNotifier.Infrastructure.Persistence.Repositories
 {
-    public class GenericRepository<TEntity, TKey> : IGenericRepository<TEntity, TKey> where TEntity : class, IAuditableEntity
+    public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class, IAuditableEntity
     {
         #region Private Variables
 
@@ -45,7 +46,7 @@ namespace DealNotifier.Infrastructure.Persistence.Repositories
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<TDestination?> GetByIdProjectedAsync<TDestination>(TKey id)
+        public async Task<TDestination?> GetByIdProjectedAsync<TDestination>(int id)
         {
             var query = _dbContext.Set<TEntity>().AsQueryable();
             return await query.Where(x => x.Id.Equals(id))
@@ -53,7 +54,7 @@ namespace DealNotifier.Infrastructure.Persistence.Repositories
                               .FirstOrDefaultAsync();
         }
 
-        public async Task<TEntity?> GetByIdAsync(TKey id)
+        public async Task<TEntity?> GetByIdAsync(int id)
         {
             var query = _dbContext.Set<TEntity>().AsQueryable();
             return await query.Where(x => x.Id.Equals(id))
@@ -115,7 +116,7 @@ namespace DealNotifier.Infrastructure.Persistence.Repositories
             _dbContext.SaveChanges();
         }
 
-        public TDestination? GetByIdProjected<TDestination>(TKey id)
+        public TDestination? GetByIdProjected<TDestination>(int id)
         {
             var query = _dbContext.Set<TEntity>().AsQueryable();
             return query.Where(x => x.Id.Equals(id))
@@ -123,7 +124,7 @@ namespace DealNotifier.Infrastructure.Persistence.Repositories
                               .FirstOrDefault();
         }
 
-        public TEntity? GetById(TKey id)
+        public TEntity? GetById(int id)
         {
             var query = _dbContext.Set<TEntity>().AsQueryable();
             return query.Where(x => x.Id.Equals(id))
@@ -166,6 +167,12 @@ namespace DealNotifier.Infrastructure.Persistence.Repositories
         public TEntity? FirstOrDefault(Expression<Func<TEntity, bool>> predicate)
         {
             return _dbContext.Set<TEntity>().FirstOrDefault(predicate);
+        }
+
+
+        public IQueryable<TEntity> Where(Expression<Func<TEntity, bool>> predicate)
+        {
+            return _dbContext.Set<TEntity>().Where(predicate);
         }
 
         #endregion Sync

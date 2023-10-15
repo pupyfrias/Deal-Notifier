@@ -2,7 +2,7 @@
 
 namespace DealNotifier.Core.Application.Interfaces.Repositories
 {
-    public interface IPhoneUnlockToolRepository : IGenericRepository<PhoneUnlockTool, int>
+    public interface IPhoneUnlockToolRepository : IGenericRepository<PhoneUnlockTool>
     {
     }
 }

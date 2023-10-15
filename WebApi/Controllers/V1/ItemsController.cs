@@ -38,8 +38,8 @@ namespace WebApi.Controllers.V1
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<ItemResponse>>> GetItem(Guid id)
         {
-            var data = await _itemService.GetByIdProjectedAsync<ItemResponse>(id);
-            var response = new ApiResponse<ItemResponse>(data);
+            var data = await _itemService.GetByPublicIdProjectedAsync<ItemResponse>(id);
+            var response = new ApiResponse<ItemResponse?>(data);
             return Ok(response);
         }
 

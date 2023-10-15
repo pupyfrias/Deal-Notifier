@@ -2,11 +2,9 @@
 
 namespace DealNotifier.Core.Domain.Entities
 {
-    public class Brand : AuditableEntity<int>
+    public class Brand : AuditableEntity
     {
-        public override int Id { get; set; }
         public string Name { get; set; }
-        public ICollection<Item> Items { get; set; }
-        public ICollection<UnlockabledPhone> UnlockabledPhones { get; set; }
+        public IEnumerable<UnlockabledPhone> UnlockabledPhones { get; set; }
     }
 }

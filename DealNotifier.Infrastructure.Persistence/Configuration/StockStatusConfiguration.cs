@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DealNotifier.Infrastructure.Persistence.Configuration
 {
-    public class StockStatusConfiguration : AuditableEntityConfiguration<StockStatus, int>
+    public class StockStatusConfiguration : AuditableEntityConfiguration<StockStatus>
     {
         public override void Configure(EntityTypeBuilder<StockStatus> builder)
         {
@@ -22,12 +22,6 @@ namespace DealNotifier.Infrastructure.Persistence.Configuration
                    .IsRequired();
 
             #endregion Properties
-
-            #region Keys
-
-            builder.HasKey(x => x.Id);
-
-            #endregion Keys
 
             #region Data Seeding
 

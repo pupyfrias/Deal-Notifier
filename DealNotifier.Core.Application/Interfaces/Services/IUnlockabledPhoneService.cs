@@ -2,7 +2,7 @@
 
 namespace DealNotifier.Core.Application.Interfaces.Services
 {
-    public interface IUnlockabledPhoneService : IGenericService<UnlockabledPhone, int>
+    public interface IUnlockabledPhoneService : IGenericService<UnlockabledPhone>
     {
     }
 }

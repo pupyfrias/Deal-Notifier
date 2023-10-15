@@ -1,10 +1,10 @@
-﻿using DealNotifier.Core.Application.Utilities;
+﻿
 using Serilog;
 using System.Diagnostics;
 
 namespace WebScraping
 {
-    public class Program
+    /*public class Program
     {
         private static ILogger _logger;
 
@@ -14,9 +14,9 @@ namespace WebScraping
 
             try
             {
-                /*                var eBayService = new EbayService();
+                *//*                var eBayService = new EbayService();
 
-                                await Timer(eBayService.Init);*/
+                                await Timer(eBayService.Init);*//*
             }
             catch (Exception e)
             {
@@ -49,5 +49,5 @@ namespace WebScraping
             string time = "Time taken: " + timeTaken.ToString(@"m\:ss\.fff");
             _logger.Information(time);
         }
-    }
+    }*/
 }

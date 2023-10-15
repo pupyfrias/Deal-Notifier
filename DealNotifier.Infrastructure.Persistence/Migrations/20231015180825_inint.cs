@@ -3,10 +3,14 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace DealNotifier.Infrastructure.Persistence.Migrations
 {
-    public partial class first : Migration
+    /// <inheritdoc />
+    public partial class inint : Migration
     {
+        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -255,28 +259,29 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                 name: "Item",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    BidCount = table.Column<int>(type: "Int", nullable: false),
+                    ConditionId = table.Column<int>(type: "int", nullable: false),
+                    PublicId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
+                    Image = table.Column<string>(type: "nvarchar(MAX)", nullable: false),
+                    IsAuction = table.Column<bool>(type: "BIT", nullable: false, defaultValueSql: "0"),
+                    ItemEndDate = table.Column<DateTime>(type: "DateTime", nullable: true),
+                    ItemTypeId = table.Column<int>(type: "int", nullable: false),
+                    Link = table.Column<string>(type: "nvarchar(254)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Notified = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Notify = table.Column<bool>(type: "BIT", nullable: false, defaultValueSql: "1"),
                     OldPrice = table.Column<decimal>(type: "decimal(13,2)", nullable: false, defaultValueSql: "0"),
+                    OnlineStoreId = table.Column<int>(type: "int", nullable: false),
                     Price = table.Column<decimal>(type: "decimal(13,2)", nullable: false),
                     Saving = table.Column<decimal>(type: "decimal(13,2)", nullable: false, defaultValueSql: "0"),
                     SavingsPercentage = table.Column<decimal>(type: "decimal(13,2)", nullable: false, defaultValueSql: "0"),
-                    ConditionId = table.Column<int>(type: "int", nullable: false),
-                    OnlineStoreId = table.Column<int>(type: "int", nullable: false),
                     StockStatusId = table.Column<int>(type: "int", nullable: false),
-                    ItemTypeId = table.Column<int>(type: "int", nullable: false),
-                    Image = table.Column<string>(type: "nvarchar(MAX)", nullable: false),
-                    Link = table.Column<string>(type: "nvarchar(254)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BrandId = table.Column<int>(type: "int", nullable: false, defaultValueSql: "1"),
-                    PhoneCarrierId = table.Column<int>(type: "int", nullable: true),
-                    ModelNumber = table.Column<string>(type: "nvarchar(25)", nullable: true),
-                    ModelName = table.Column<string>(type: "nvarchar(25)", nullable: true),
-                    Notify = table.Column<bool>(type: "BIT", nullable: false, defaultValueSql: "1"),
-                    IsAuction = table.Column<bool>(type: "BIT", nullable: false, defaultValueSql: "0"),
-                    BidCount = table.Column<int>(type: "Int", nullable: false),
                     UnlockProbabilityId = table.Column<int>(type: "int", nullable: true),
-                    ItemEndDate = table.Column<DateTime>(type: "DateTime", nullable: true),
-                    Notified = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UnlockabledPhoneId = table.Column<int>(type: "int", nullable: true),
+                    PhoneCarrierId = table.Column<int>(type: "int", nullable: false),
+                    BrandId = table.Column<int>(type: "int", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "default"),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -286,11 +291,10 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_Item", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Item_Brand",
+                        name: "FK_Item_Brand_BrandId",
                         column: x => x.BrandId,
                         principalTable: "Brand",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Item_Condition",
                         column: x => x.ConditionId,
@@ -310,7 +314,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Item_PhoneCarrier",
+                        name: "FK_Item_PhoneCarrier_PhoneCarrierId",
                         column: x => x.PhoneCarrierId,
                         principalTable: "PhoneCarrier",
                         principalColumn: "Id",
@@ -325,6 +329,11 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                         name: "FK_Item_UnlockProbability",
                         column: x => x.UnlockProbabilityId,
                         principalTable: "UnlockProbability",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Item_UnlockabledPhone",
+                        column: x => x.UnlockabledPhoneId,
+                        principalTable: "UnlockabledPhone",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -451,14 +460,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                     { 17, null, null, "Straight Talk", "STK" },
                     { 18, null, null, "Virgin Mobile|Virgin", "VMU" },
                     { 19, null, null, "Total Wireless", "TWL" },
-                    { 20, null, null, "Google Fi", "GFI" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "PhoneCarrier",
-                columns: new[] { "Id", "LastModified", "LastModifiedBy", "Name", "ShortName" },
-                values: new object[,]
-                {
+                    { 20, null, null, "Google Fi", "GFI" },
                     { 21, null, null, "Mint Mobile|Mint", "MNT" },
                     { 22, null, null, "Ting", "TNG" },
                     { 23, null, null, "Consumer Cellular", "CCU" },
@@ -530,9 +532,20 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                 column: "PhoneCarrierId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Item_PublicId",
+                table: "Item",
+                column: "PublicId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Item_StockStatusId",
                 table: "Item",
                 column: "StockStatusId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Item_UnlockabledPhoneId",
+                table: "Item",
+                column: "UnlockabledPhoneId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Item_UnlockProbabilityId",
@@ -572,6 +585,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                 column: "UnlockabledPhoneId");
         }
 
+        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(

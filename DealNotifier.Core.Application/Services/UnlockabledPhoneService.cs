@@ -7,7 +7,7 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace DealNotifier.Core.Application.Services
 {
-    public class UnlockabledPhoneService : GenericService<UnlockabledPhone, int>, IUnlockabledPhoneService
+    public class UnlockabledPhoneService : GenericService<UnlockabledPhone>, IUnlockabledPhoneService
     {
 
         private readonly IUnlockabledPhoneRepository _repository;

@@ -2,7 +2,7 @@
 {
     public interface IAuditableEntity
     {
-        object Id { get; set; }
+        int Id { get; set; }
         string CreatedBy { get; set; }
         DateTime Created { get; set; }
         string? LastModifiedBy { get; set; }

@@ -76,25 +76,25 @@ namespace DealNotifier.Core.Application.Specification
 
             #region Brands
 
-            if (request.Brands != null)
+/*            if (request.Brands != null)
             {
                 var brandList = request.Brands.Split(",").Select(int.Parse);
                 Expression<Func<Item, bool>> expression = item => brandList.Contains(item.BrandId);
 
                 Criteria = Criteria is null ? expression : Criteria.And(expression);
-            }
+            }*/
 
             #endregion Brands
 
             #region PhoneCarriers
 
-            if (request.PhoneCarriers != null)
+/*            if (request.PhoneCarriers != null)
             {
                 var phoneCarrierList = request.PhoneCarriers.Split(",").Select(int.Parse);
                 Expression<Func<Item, bool>> expression = item => phoneCarrierList.Equals(item.PhoneCarrierId);
 
                 Criteria = Criteria is null ? expression : Criteria.And(expression);
-            }
+            }*/
 
             #endregion PhoneCarriers
 

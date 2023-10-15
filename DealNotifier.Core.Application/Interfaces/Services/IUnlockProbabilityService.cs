@@ -2,7 +2,7 @@
 
 namespace DealNotifier.Core.Application.Interfaces.Services
 {
-    public interface IUnlockProbabilityService : IGenericService<UnlockProbability, int>
+    public interface IUnlockProbabilityService : IGenericService<UnlockProbability>
     {
     }
 }

@@ -2,7 +2,7 @@
 
 namespace DealNotifier.Core.Application.Interfaces.Repositories
 {
-    public interface IGenericRepository<TEntity, TKey>
+    public interface IGenericRepository<TEntity>
     {
         #region Sync Methods
         TEntity Create(TEntity entity);
@@ -13,13 +13,15 @@ namespace DealNotifier.Core.Application.Interfaces.Repositories
 
         List<TDestination> GetAllProjected<TDestination>(ISpecification<TEntity> spec);
 
-        TEntity? GetById(TKey id);
+        TEntity? GetById(int id);
 
-        TDestination? GetByIdProjected<TDestination>(TKey id);
+        TDestination? GetByIdProjected<TDestination>(int id);
         int GetTotalCount(Expression<Func<TEntity, bool>> predicate);
         TEntity? FirstOrDefault(Expression<Func<TEntity, bool>> predicate);
 
         void Update(TEntity entity);
+
+        IQueryable<TEntity> Where(Expression<Func<TEntity, bool>> predicate);
         #endregion Sync Methods
 
 
@@ -32,9 +34,9 @@ namespace DealNotifier.Core.Application.Interfaces.Repositories
 
         Task<List<TDestination>> GetAllProjectedAsync<TDestination>(ISpecification<TEntity> spec);
 
-        Task<TEntity?> GetByIdAsync(TKey id);
+        Task<TEntity?> GetByIdAsync(int id);
 
-        Task<TDestination?> GetByIdProjectedAsync<TDestination>(TKey id);
+        Task<TDestination?> GetByIdProjectedAsync<TDestination>(int id);
         Task<int> GetTotalCountAsync(Expression<Func<TEntity, bool>> predicate);
 
         Task UpdateAsync(TEntity entity);

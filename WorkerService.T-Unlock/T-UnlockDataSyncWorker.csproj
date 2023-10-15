@@ -1,7 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk.Worker">
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>dotnet-WorkerService.T_Unlock_WebScraping-d2c48afc-eadf-47e0-9d06-f18ef7d85ace</UserSecretsId>
@@ -13,9 +13,7 @@
 	</ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
-    <PackageReference Include="Serilog" Version="2.12.0" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.54" />
   </ItemGroup>
 
   <ItemGroup>

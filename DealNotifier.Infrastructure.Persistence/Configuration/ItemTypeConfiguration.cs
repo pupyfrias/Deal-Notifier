@@ -5,7 +5,7 @@ using ItemType = DealNotifier.Core.Domain.Entities.ItemType;
 
 namespace DealNotifier.Infrastructure.Persistence.Configuration
 {
-    public class ItemTypeConfiguration : AuditableEntityConfiguration<ItemType, int>
+    public class ItemTypeConfiguration : AuditableEntityConfiguration<ItemType>
     {
         public override void Configure(EntityTypeBuilder<ItemType> builder)
         {
@@ -22,12 +22,6 @@ namespace DealNotifier.Infrastructure.Persistence.Configuration
                     .IsRequired();
 
             #endregion Properties
-
-            #region Keys
-
-            builder.HasKey(x => x.Id);
-
-            #endregion Keys
 
             #region Data Seeding
 

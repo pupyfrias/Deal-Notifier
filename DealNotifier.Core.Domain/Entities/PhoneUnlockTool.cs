@@ -2,10 +2,9 @@
 
 namespace DealNotifier.Core.Domain.Entities
 {
-    public class PhoneUnlockTool : AuditableEntity<int>
+    public class PhoneUnlockTool : AuditableEntity
     {
-        public override int Id { get; set; }
         public string Name { get; set; }
-        public List<UnlockabledPhonePhoneUnlockTool> UnlockableUnlockTools { get; set; }
+        public IEnumerable<UnlockabledPhonePhoneUnlockTool> UnlockableUnlockTools { get; set; }
     }
 }

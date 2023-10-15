@@ -1,8 +1,8 @@
 using DealNotifier.Core.Application;
 using DealNotifier.Core.Application.Setups;
 using DealNotifier.Infrastructure.Email;
-using DealNotifier.Infrastructure.Identity;
 using DealNotifier.Infrastructure.Persistence;
+using DealNotifier.Infrastructure.Identity;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Serilog;
 using WebApi.Middlewares;

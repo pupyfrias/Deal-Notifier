@@ -5,7 +5,7 @@ using DealNotifier.Infrastructure.Persistence.DbContexts;
 
 namespace DealNotifier.Infrastructure.Persistence.Repositories
 {
-    public class StockStatusRepository : GenericRepository<StockStatus, int>, IStockStatusRepository
+    public class StockStatusRepository : GenericRepository<StockStatus>, IStockStatusRepository
     {
         #region Constructor
 

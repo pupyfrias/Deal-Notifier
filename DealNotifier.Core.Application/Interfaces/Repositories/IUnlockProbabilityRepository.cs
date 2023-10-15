@@ -2,7 +2,7 @@
 
 namespace DealNotifier.Core.Application.Interfaces.Repositories
 {
-    public interface IUnlockProbabilityRepository : IGenericRepository<UnlockProbability, int>
+    public interface IUnlockProbabilityRepository : IGenericRepository<UnlockProbability>
     {
     }
 }

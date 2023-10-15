@@ -1,6 +1,6 @@
 ﻿namespace DealNotifier.Core.Application.ViewModels.eBay
 {
-    public class eBayResponse
+    public class EBayResponse
     {
         public AutoCorrection AutoCorrections { get; set; }
         public string Href { get; set; }

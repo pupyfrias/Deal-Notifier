@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Worker">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>dotnet-WorkerService.Samkey-7f07597b-0037-45bb-9f52-57dad4f04e40</UserSecretsId>
@@ -9,11 +9,6 @@
 	<ItemGroup>
 		<Content Remove="Logs\**" />
 	</ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\DealNotifier.Core.Application\DealNotifier.Core.Application.csproj" />

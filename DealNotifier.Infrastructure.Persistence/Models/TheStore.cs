@@ -1,18 +1,17 @@
 ﻿using DealNotifier.Core.Application.Extensions;
 using DealNotifier.Core.Application.Heplers;
+using DealNotifier.Core.Application.Interfaces.Services;
 using DealNotifier.Core.Application.Utilities;
 using DealNotifier.Core.Application.ViewModels.V1.Item;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
-using SeleniumExtras.WaitHelpers;
 using Serilog;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using Condition = DealNotifier.Core.Application.Enums.Condition;
-using OnlineStore = DealNotifier.Core.Application.Enums.OnlineStore;
-using Status = DealNotifier.Core.Application.Enums.Status;
 using ItemType = DealNotifier.Core.Application.Enums.ItemType;
-using DealNotifier.Core.Application.Interfaces.Services;
+using OnlineStore = DealNotifier.Core.Application.Enums.OnlineStore;
+using StockStatus = DealNotifier.Core.Application.Enums.StockStatus;
 
 namespace DealNotifier.Infrastructure.Persistence.Models
 {
@@ -44,7 +43,7 @@ namespace DealNotifier.Infrastructure.Persistence.Models
                     try
                     {
                         By selector = By.CssSelector("div[class='product-tile']");
-                        wait.Until(ExpectedConditions.ElementIsVisible(selector));
+                       /// wait.Until(ExpectedConditions.ElementIsVisible(selector));
 
                         IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
                         js.ExecuteScript("document.getElementsByClassName('acsb-trigger acsb-bg-lead acsb-trigger-size-medium acsb-trigger-position-x-right acsb-trigger-position-y-bottom acsb-ready')[0]?.remove()");
@@ -72,13 +71,13 @@ namespace DealNotifier.Infrastructure.Persistence.Models
                                 item.OnlineStoreId = (int)OnlineStore.TheStore;
                                 item.ItemTypeId = (int)links[0, 1];
                                 item.ConditionId = (int)Condition.New;
-                                item.StockStatusId = (int)Status.InStock;
+                                item.StockStatusId = (int)StockStatus.InStock;
 
-                                if (await item.CanBeSaved())
+/*                                if (await item.CanBeSaved())
                                 {
                                     item.SetCondition();
                                     itemList.Add(item);
-                                }
+                                }*/
                             }
                             catch (Exception e) when (e is NoSuchElementException | e is StaleElementReferenceException)
                             {
@@ -99,7 +98,7 @@ namespace DealNotifier.Infrastructure.Persistence.Models
                     counter++;
                     try
                     {
-                        wait.Until(ExpectedConditions.ElementToBeClickable(By.CssSelector("button[class='round-button round-button__next']"))).Click();
+                        //wait.Until(ExpectedConditions.ElementToBeClickable(By.CssSelector("button[class='round-button round-button__next']"))).Click();
                     }
                     catch (WebDriverTimeoutException)
                     {
@@ -113,7 +112,7 @@ namespace DealNotifier.Infrastructure.Persistence.Models
                     }
                 }
 
-               _itemSyncService.SaveOrUpdate(itemList);
+               _itemSyncService.SaveOrUpdateAsync(itemList);
             }
         }
     }

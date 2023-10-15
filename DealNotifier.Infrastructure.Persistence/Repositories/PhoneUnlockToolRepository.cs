@@ -5,7 +5,7 @@ using DealNotifier.Infrastructure.Persistence.DbContexts;
 
 namespace DealNotifier.Infrastructure.Persistence.Repositories
 {
-    public class PhoneUnlockToolRepository : GenericRepository<PhoneUnlockTool, int>, IPhoneUnlockToolRepository
+    public class PhoneUnlockToolRepository : GenericRepository<PhoneUnlockTool>, IPhoneUnlockToolRepository
     {
         #region Constructor
 

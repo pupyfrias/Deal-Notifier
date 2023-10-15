@@ -1,6 +1,5 @@
 ﻿using DealNotifier.Core.Application.Interfaces.Repositories;
 using DealNotifier.Core.Application.Interfaces.Services;
-using DealNotifier.Core.Application.Setups;
 using DealNotifier.Infrastructure.Persistence.DbContexts;
 using DealNotifier.Infrastructure.Persistence.Repositories;
 using DealNotifier.Infrastructure.Persistence.Setup;
@@ -28,7 +27,7 @@ namespace DealNotifier.Infrastructure.Persistence
 
             #region Dependency Injection
 
-            services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
+            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IBanKeywordRepository, BanKeywordRepository>();
             services.AddScoped<IBanLinkRepository, BanLinkRepository>();
             services.AddScoped<IBrandRepository, BrandRepository>();
@@ -44,6 +43,7 @@ namespace DealNotifier.Infrastructure.Persistence
             services.AddScoped<IUnlockabledPhonePhoneUnlockToolRepository, UnlockabledPhonePhoneUnlockToolRepository>();
             services.AddScoped<IUnlockabledPhonePhoneCarrierRepository, UnlockabledPhonePhoneCarrierRepository>();
             services.AddScoped<IUnlockProbabilityRepository, UnlockProbabilityRepository>();
+            services.AddScoped<IItemSyncRepository, ItemSyncRepository>();
 
             #endregion Dependency Injection
         }

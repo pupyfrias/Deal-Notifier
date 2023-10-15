@@ -1,17 +1,16 @@
 ﻿using DealNotifier.Core.Application.Extensions;
 using DealNotifier.Core.Application.Heplers;
+using DealNotifier.Core.Application.Interfaces.Services;
 using DealNotifier.Core.Application.Utilities;
 using DealNotifier.Core.Application.ViewModels.V1.Item;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
-using SeleniumExtras.WaitHelpers;
 using Serilog;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
-using OnlineStore = DealNotifier.Core.Application.Enums.OnlineStore;
-using Status = DealNotifier.Core.Application.Enums.Status;
 using ItemType = DealNotifier.Core.Application.Enums.ItemType;
-using DealNotifier.Core.Application.Interfaces.Services;
+using OnlineStore = DealNotifier.Core.Application.Enums.OnlineStore;
+using StockStatus = DealNotifier.Core.Application.Enums.StockStatus;
 
 namespace DealNotifier.Infrastructure.Persistence.Models
 {
@@ -71,7 +70,7 @@ namespace DealNotifier.Infrastructure.Persistence.Models
                         {
                             By selector = By.CssSelector("div[data-component-type='s-search-result']");
 
-                            wait.Until(ExpectedConditions.ElementIsVisible(selector));
+                            //wait.Until(ExpectedConditions.ElementIsVisible(selector));
                             ReadOnlyCollection<IWebElement> elements = driver.FindElements(selector);
                             Parallel.ForEach(elements, async (element) =>
                             {
@@ -90,13 +89,13 @@ namespace DealNotifier.Infrastructure.Persistence.Models
                                     item.Price = decimal.Parse(ePriceWhole.Text.Replace(",", "") + "." + ePriceFraction.Text);
                                     item.OnlineStoreId = (int)OnlineStore.Amazon;
                                     item.ItemTypeId = (int)links[i, 1];
-                                    item.StockStatusId = (int)Status.InStock;
+                                    item.StockStatusId = (int)StockStatus.InStock;
 
-                                    if (await item.CanBeSaved())
+/*                                    if (await item.CanBeSaved())
                                     {
                                         item.SetCondition();
                                         itemList.Add(item);
-                                    }
+                                    }*/
                                 }
                                 catch (Exception e) when (e is NoSuchElementException | e is StaleElementReferenceException)
                                 {
@@ -118,7 +117,7 @@ namespace DealNotifier.Infrastructure.Persistence.Models
 
                         try
                         {
-                            wait2.Until(ExpectedConditions.ElementToBeClickable(By.CssSelector("a[class='s-pagination-item s-pagination-next s-pagination-button s-pagination-separator'"))).Click();
+                           // wait2.Until(ExpectedConditions.ElementToBeClickable(By.CssSelector("a[class='s-pagination-item s-pagination-next s-pagination-button s-pagination-separator'"))).Click();
                         }
                         catch (WebDriverTimeoutException)
                         {
@@ -132,7 +131,7 @@ namespace DealNotifier.Infrastructure.Persistence.Models
                         counter++;
                     }
 
-                    _itemSyncService.SaveOrUpdate(itemList);
+                    _itemSyncService.SaveOrUpdateAsync(itemList);
                 }
                 driver.Quit();
             }

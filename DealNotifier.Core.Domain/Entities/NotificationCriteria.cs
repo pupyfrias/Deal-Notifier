@@ -2,9 +2,8 @@
 
 namespace DealNotifier.Core.Domain.Entities
 {
-    public class NotificationCriteria : AuditableEntity<int>
+    public class NotificationCriteria : AuditableEntity
     {
-        public override int Id { get; set; }
         public string Keywords { get; set; }
         public decimal MaxPrice { get; set; }
         public int ConditionId { get; set; }

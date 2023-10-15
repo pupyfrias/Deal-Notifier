@@ -7,7 +7,7 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace DealNotifier.Core.Application.Services
 {
-    public class UnlockProbabilityService : GenericService<UnlockProbability, int>, IUnlockProbabilityService
+    public class UnlockProbabilityService : GenericService<UnlockProbability>, IUnlockProbabilityService
     {
         public UnlockProbabilityService(IUnlockProbabilityRepository repository, IMapper mapper, IHttpContextAccessor httpContext, IMemoryCache cache) : base(repository, mapper, httpContext, cache)
         {

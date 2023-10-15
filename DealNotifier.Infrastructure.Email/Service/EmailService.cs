@@ -17,6 +17,7 @@ namespace DealNotifier.Infrastructure.Email.Service
     {
         private readonly MailSettings _mailSettings;
         private readonly ILogger _logger;
+        public ConcurrentBag<Item> NotifiableItemList { get; set; } = new ConcurrentBag<Item>();
 
         public EmailService(IOptions<MailSettings> option, ILogger logger)
         {
@@ -24,9 +25,9 @@ namespace DealNotifier.Infrastructure.Email.Service
             _logger = logger;
         }
 
-        public async Task SendAsync(EmailDto emailDto)
+        public async Task SendEmailAsync(EmailDto emailDto)
         {
-            BodyBuilder body = new() { HtmlBody = emailDto.Body };
+            BodyBuilder body = new () { HtmlBody = emailDto.Body };
             MimeMessage email = new()
             {
                 Subject = emailDto.Subject,
@@ -47,14 +48,14 @@ namespace DealNotifier.Infrastructure.Email.Service
         }
 
 
-        public async Task NotifyByEmail(ConcurrentBag<Item> items)
+        public async Task NotifyUsersOfItemsByEmail()
         {
-            if (items.Count > 0)
+            if (NotifiableItemList.Count > 0)
             {
                 StringBuilder stringBuilder = new StringBuilder();
 
-                var orderItemToNotifyList = items.OrderBy(item => item.Price);
-                _logger.Information($"orderItemToNotifyList {orderItemToNotifyList.Count()}");
+                var orderItemToNotifyList = NotifiableItemList.OrderBy(item => item.Price);
+                _logger.Information($"{orderItemToNotifyList.Count()} Items to Notify");
 
                 foreach (var item in orderItemToNotifyList)
                 {
@@ -69,19 +70,25 @@ namespace DealNotifier.Infrastructure.Email.Service
                         <a href='{2}'>
                             <img src='{3}' style=""width: 540px;height: 720px;object-fit: cover;""/>
                         </a>
-                    </div>", item.Name, item.Price, item.Link, item.Image, item.Id, probability);
+                    </div>", item.Name, item.Price, item.Link, item.Image, item.PublicId, probability);
                 }
                 string body = stringBuilder.ToString();
 
                 var email = new EmailDto
                 {
                     To = "pupyfrias@gmail.com",
-                    Subject = "Phones Offer",
+                    Subject = "Item Deals",
                     Body = body
                 };
 
-                await SendAsync(email);
-                items.Clear();
+                await SendEmailAsync(email);
+                NotifiableItemList.Clear();
+            }
+            else
+            {
+                
+                
+                _logger.Information("There is not item to Notify");
             }
         }
     }

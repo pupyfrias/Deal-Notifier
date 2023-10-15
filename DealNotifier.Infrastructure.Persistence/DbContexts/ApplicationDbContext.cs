@@ -14,15 +14,11 @@ namespace DealNotifier.Infrastructure.Persistence.DbContexts
     {
         private readonly string _userName = "default";
 
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options,
-            IHttpContextAccessor httpContext) : base(options)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
-            _userName = httpContext.HttpContext.GetUserName();
         }
 
-        public ApplicationDbContext()
-        {
-        }
+
 
         #region DbSets
 

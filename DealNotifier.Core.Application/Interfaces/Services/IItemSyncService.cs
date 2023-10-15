@@ -6,16 +6,16 @@ namespace DealNotifier.Core.Application.Interfaces.Services
 {
     public interface IItemSyncService
     {
-        ConcurrentBag<Item> itemToNotifyList { get; set; }
+        Task<bool> CanBeSavedAsync(ItemCreateRequest itemCreate);
 
-        Task LoadData();
+        Task LoadDataAsync();
 
-        Task SaveOrUpdate(ConcurrentBag<ItemCreateRequest> items);
+        Task SaveOrUpdateAsync(ConcurrentBag<ItemCreateRequest> itemCreateList);
 
-        void UpdateStatus(ref ConcurrentBag<string> checkedList);
+        Task SetUnlockProbabilityAsync(ItemCreateRequest itemCreate);
+        Task TryAssignUnlockabledPhoneIdAsync(ItemCreateRequest itemCreate);
 
-        void TrySetModelNumberModelNameAndBrand(ref ItemCreateRequest itemCreate);
+        Task UpdateStockStatusAsync(Enums.OnlineStore onlineStore);
 
-        void SetUnlockProbability(ref ItemCreateRequest itemCreate);
     }
 }

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DealNotifier.Infrastructure.Persistence.Configuration
 {
-    public class ItemConfiguration : AuditableEntityConfiguration<Item, Guid>
+    public class ItemConfiguration : AuditableEntityConfiguration<Item>
     {
         public override void Configure(EntityTypeBuilder<Item> builder)
         {
@@ -16,7 +16,7 @@ namespace DealNotifier.Infrastructure.Persistence.Configuration
 
             #region Properties
 
-            builder.Property(x => x.Id)
+            builder.Property(x => x.PublicId)
                    .HasDefaultValueSql("NEWID()");
 
             builder.Property(x => x.Name)
@@ -63,22 +63,13 @@ namespace DealNotifier.Infrastructure.Persistence.Configuration
             builder.Property(x => x.Notified)
                 .IsRequired(false);
 
-            builder.Property(x => x.ModelNumber)
-            .HasColumnType("nvarchar(25)");
-
-            builder.Property(x => x.ModelName)
-           .HasColumnType("nvarchar(25)");
 
             builder.Property(x => x.ItemEndDate)
             .HasColumnType("DateTime")
             .IsRequired(false);
 
-            builder.Property(x => x.BrandId)
-           .HasDefaultValueSql("1")
-           .IsRequired();
-
-            builder.Property(x => x.PhoneCarrierId)
-            .IsRequired(false);
+            builder.Property(x => x.UnlockabledPhoneId)
+           .IsRequired(false);
 
             builder.Property(x => x.UnlockProbabilityId)
             .IsRequired(false);
@@ -90,7 +81,6 @@ namespace DealNotifier.Infrastructure.Persistence.Configuration
 
             #region Keys
 
-            builder.HasKey(x => x.Id);
 
             builder.HasOne(x => x.StockStatus)
             .WithMany(x => x.Items)
@@ -112,25 +102,28 @@ namespace DealNotifier.Infrastructure.Persistence.Configuration
             .HasForeignKey(x => x.OnlineStoreId)
             .HasConstraintName("FK_Item_OnlineStore");
 
-            builder.HasOne(x => x.Brand)
+            builder.HasOne(x => x.UnlockabledPhone)
             .WithMany(x => x.Items)
-            .HasForeignKey(x => x.BrandId)
-            .HasConstraintName("FK_Item_Brand");
-
-            builder.HasOne(x => x.PhoneCarrier)
-            .WithMany(x => x.Items)
-            .HasForeignKey(x => x.PhoneCarrierId)
-            .HasConstraintName("FK_Item_PhoneCarrier");
+            .HasForeignKey(x => x.UnlockabledPhoneId)
+            .HasConstraintName("FK_Item_UnlockabledPhone");
 
             builder.HasOne(x => x.UnlockProbability)
             .WithMany(x => x.Items)
             .HasForeignKey(x => x.UnlockProbabilityId)
-            .HasConstraintName("FK_Item_UnlockProbability");
+            .HasConstraintName("FK_Item_UnlockProbability")
+            .IsRequired(false);
 
+
+
+            #endregion Keys
+
+            #region Indexes
             builder.HasIndex(e => e.Link)
             .IsUnique();
 
-            #endregion Keys
+            builder.HasIndex(e => e.PublicId)
+            .IsUnique();
+            #endregion Indexes
 
             base.Configure(builder);
         }

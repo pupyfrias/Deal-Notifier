@@ -124,8 +124,7 @@ namespace SamkeyDataSyncWorker
                                        .Replace("carrier", "", StringComparison.OrdinalIgnoreCase)
                                        .Replace("carriers", "", StringComparison.OrdinalIgnoreCase);
 
-                    var carrierList = Regex.Replace(carriers, "[\\(\\),: }]+", "|", RegexOptions.IgnoreCase)
-                        .Split("|");
+                    var carrierList = Regex.Replace(carriers, "[\\(\\),: }]+", "|", RegexOptions.IgnoreCase).Split("|");
 
                     var possibleUnlockedPhone = await _unlockabledPhoneService.FirstOrDefaultAsync(unlockedPhone => unlockedPhone.ModelNumber.Equals(modelNumber));
 
@@ -150,9 +149,8 @@ namespace SamkeyDataSyncWorker
 
                         foreach (var carrier in carrierList)
                         {
-                            
                             var phoneCarrier = phoneCarrierList.FirstOrDefault(pc => pc.Name.Contains(carrier.Trim(), StringComparison.OrdinalIgnoreCase));
-                           
+
                             if (phoneCarrier != null)
                             {
                                 var unlockablePhoneCarrierDto = new UnlockabledPhonePhoneCarrierDto
@@ -167,7 +165,6 @@ namespace SamkeyDataSyncWorker
                                     var unlockablePhoneCarrierCreate = _mapper.Map<UnlockabledPhonePhoneCarrierCreateRequest>(unlockablePhoneCarrierDto);
                                     await _unlockabledPhonePhoneCarrierService.CreateAsync(unlockablePhoneCarrierCreate);
                                 }
-                                    
                             }
                             else
                             {
@@ -183,16 +180,12 @@ namespace SamkeyDataSyncWorker
                             PhoneUnlockToolId = (int)UnlockTool.SamKey
                         };
 
-
                         bool existsUnlockabledPhoneUnlockTool = await _unlockabledPhonePhoneUnlockToolService.ExistsAsync(unlockabledPhonePhoneUnlockToolDto);
                         if (!existsUnlockabledPhoneUnlockTool)
                         {
                             var unlockablePhoneUnlockToolCreate = _mapper.Map<UnlockabledPhonePhoneUnlockToolCreate>(unlockabledPhonePhoneUnlockToolDto);
                             await _unlockabledPhonePhoneUnlockToolService.CreateAsync(unlockablePhoneUnlockToolCreate);
                         }
-
-                        
-
 
                         foreach (var carrier in carrierList)
                         {
@@ -219,7 +212,6 @@ namespace SamkeyDataSyncWorker
                             }
                         }
                     }
-
                 }
             }
             catch (Exception ex)
@@ -267,7 +259,6 @@ namespace SamkeyDataSyncWorker
                     var phoneCarrierService = scope.ServiceProvider.GetRequiredService<IPhoneCarrierService>();
                     phoneCarrierList = await phoneCarrierService.GetAllAsync<PhoneCarrierDto>();
                     await ScrappingAsync();
-
                 }
                 _logger.Information("Samkey Scraping Service completed.");
             }

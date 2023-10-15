@@ -2,9 +2,8 @@
 
 namespace DealNotifier.Core.Domain.Entities
 {
-    public class BanKeyword : AuditableEntity<int>
+    public class BanKeyword : AuditableEntity
     {
-        public override int Id { get; set; }
         public string Keyword { get; set; }
     }
 }

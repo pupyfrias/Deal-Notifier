@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DealNotifier.Infrastructure.Persistence.Configuration
 {
-    public class PhoneCarrierConfiguration : AuditableEntityConfiguration<PhoneCarrier, int>
+    public class PhoneCarrierConfiguration : AuditableEntityConfiguration<PhoneCarrier>
     {
         public override void Configure(EntityTypeBuilder<PhoneCarrier> builder)
         {
@@ -26,12 +26,6 @@ namespace DealNotifier.Infrastructure.Persistence.Configuration
                     .IsRequired();
 
             #endregion Properties
-
-            #region Keys
-
-            builder.HasKey(x => x.Id);
-
-            #endregion Keys
 
             #region Index
 

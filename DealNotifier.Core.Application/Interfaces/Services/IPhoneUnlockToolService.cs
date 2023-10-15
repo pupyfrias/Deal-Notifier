@@ -2,7 +2,7 @@
 
 namespace DealNotifier.Core.Application.Interfaces.Services
 {
-    public interface IPhoneUnlockToolService : IGenericService<PhoneUnlockTool, int>
+    public interface IPhoneUnlockToolService : IGenericService<PhoneUnlockTool>
     {
     }
 }

@@ -7,8 +7,6 @@ namespace DealNotifier.Core.Application.ViewModels.V1.Item
     {
         public int BidCount { get; set; }
         [Required]
-        public int? BrandId { get; set; }
-        [Required]
         public int? ConditionId { get; set; }
         [Required]
         public Guid Id { get; set; }
@@ -18,8 +16,6 @@ namespace DealNotifier.Core.Application.ViewModels.V1.Item
         public DateTime? ItemEndDate { get; set; }
         [Required]
         public string Link { get; set; }
-        public string ModelName { get; set; }
-        public string ModelNumber { get; set; }
         [Required]
         public string Name { get; set; }
         public bool Notify { get; set; }

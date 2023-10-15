@@ -7,7 +7,7 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace DealNotifier.Core.Application.Services
 {
-    public class ItemTypeService : GenericService<ItemType, int>, IItemTypeService
+    public class ItemTypeService : GenericService<ItemType>, IItemTypeService
     {
         public ItemTypeService(IItemTypeRepository repository, IMapper mapper, IHttpContextAccessor httpContext, IMemoryCache cache) : base(repository, mapper, httpContext, cache)
         {

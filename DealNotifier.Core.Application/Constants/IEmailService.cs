@@ -6,8 +6,10 @@ namespace DealNotifier.Core.Application.Constants
 {
     public interface IEmailService
     {
-        Task SendAsync(EmailDto emailDTO);
+        Task SendEmailAsync(EmailDto emailDto);
 
-        Task NotifyByEmail(ConcurrentBag<Item> items);
+        Task NotifyUsersOfItemsByEmail();
+
+        ConcurrentBag<Item> NotifiableItemList { get; set; }
     }
 }

@@ -13,20 +13,20 @@ using System.Web;
 
 namespace DealNotifier.Core.Application.Services
 {
-    public class GenericService<TEntity, TKey> : IGenericService<TEntity, TKey>
+    public class GenericService<TEntity> : IGenericService<TEntity>
     {
         #region Private Variable
 
         private readonly IMemoryCache _cache;
         private readonly IHttpContextAccessor _httpContext;
         private readonly IMapper _mapper;
-        private readonly IGenericRepository<TEntity, TKey> _genericRepository;
+        private readonly IGenericRepository<TEntity> _genericRepository;
 
         #endregion Private Variable
 
         #region Constructor
 
-        public GenericService(IGenericRepository<TEntity, TKey> genericRepository, IMapper mapper, IHttpContextAccessor httpContext, IMemoryCache cache)
+        public GenericService(IGenericRepository<TEntity> genericRepository, IMapper mapper, IHttpContextAccessor httpContext, IMemoryCache cache)
         {
             _genericRepository = genericRepository;
             _mapper = mapper;
@@ -48,7 +48,7 @@ namespace DealNotifier.Core.Application.Services
             return mappedEntity;
         }
 
-        public virtual async Task DeleteAsync(TKey id)
+        public virtual async Task DeleteAsync(int id)
         {
             var entity = await GetByIdAsync(id);
 
@@ -61,7 +61,7 @@ namespace DealNotifier.Core.Application.Services
             CacheUtility.InvalidateCache<TEntity>(_cache);
         }
 
-        public virtual async Task<bool> ExistsAsync(TKey id)
+        public virtual async Task<bool> ExistsAsync(int id)
         {
             var entity = await GetByIdProjectedAsync<TEntity>(id);
             return entity != null;
@@ -123,7 +123,7 @@ namespace DealNotifier.Core.Application.Services
             return (mappedEntities, eTag);
         }
 
-        public virtual async Task<TDestination> GetByIdProjectedAsync<TDestination>(TKey id)
+        public virtual async Task<TDestination> GetByIdProjectedAsync<TDestination>(int id)
         {
             var mappedEntity = await _genericRepository.GetByIdProjectedAsync<TDestination>(id);
             if (mappedEntity is null)
@@ -134,7 +134,7 @@ namespace DealNotifier.Core.Application.Services
             return mappedEntity;
         }
 
-        public virtual async Task<TEntity> GetByIdAsync(TKey id)
+        public virtual async Task<TEntity> GetByIdAsync(int id)
         {
             var mappedEntity = await _genericRepository.GetByIdAsync(id);
             if (mappedEntity is null)
@@ -145,7 +145,7 @@ namespace DealNotifier.Core.Application.Services
             return mappedEntity;
         }
 
-        public virtual async Task UpdateAsync<TSource>(TKey id, TSource source) where TSource : IHasId<TKey>
+        public virtual async Task UpdateAsync<TSource>(int id, TSource source) where TSource : IHasId<int>
         {
 
             if (!id!.Equals(source.Id))
@@ -183,7 +183,7 @@ namespace DealNotifier.Core.Application.Services
             return mappedEntity;
         }
 
-        public virtual void Delete(TKey id)
+        public virtual void Delete(int id)
         {
             var entity = GetById(id);
 
@@ -196,7 +196,7 @@ namespace DealNotifier.Core.Application.Services
             CacheUtility.InvalidateCache<TEntity>(_cache);
         }
 
-        public virtual bool Exists(TKey id)
+        public virtual bool Exists(int id)
         {
             var entity = GetByIdProjected<TEntity>(id);
             return entity != null;
@@ -258,7 +258,7 @@ namespace DealNotifier.Core.Application.Services
             return (mappedEntities, eTag);
         }
 
-        public virtual TDestination GetByIdProjected<TDestination>(TKey id)
+        public virtual TDestination GetByIdProjected<TDestination>(int id)
         {
             var mappedEntity = _genericRepository.GetByIdProjected<TDestination>(id);
             if (mappedEntity is null)
@@ -269,7 +269,7 @@ namespace DealNotifier.Core.Application.Services
             return mappedEntity;
         }
 
-        public virtual TEntity GetById(TKey id)
+        public virtual TEntity GetById(int id)
         {
             var mappedEntity = _genericRepository.GetById(id);
             if (mappedEntity is null)
@@ -280,7 +280,7 @@ namespace DealNotifier.Core.Application.Services
             return mappedEntity;
         }
 
-        public virtual void Update<TSource>(TKey id, TSource source) where TSource : IHasId<TKey>
+        public virtual void Update<TSource>(int id, TSource source) where TSource : IHasId<int>
         {
 
             if (!id!.Equals(source.Id))

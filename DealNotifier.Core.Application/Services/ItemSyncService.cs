@@ -7,78 +7,106 @@ using DealNotifier.Core.Application.ViewModels.V1;
 using DealNotifier.Core.Application.ViewModels.V1.Item;
 using DealNotifier.Core.Application.ViewModels.V1.PhoneCarrier;
 using DealNotifier.Core.Domain.Entities;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using System.Collections.Concurrent;
+using System.Data;
 using System.Text.RegularExpressions;
-using IConfigurationProvider = AutoMapper.IConfigurationProvider;
+
 
 namespace DealNotifier.Core.Application.Services
 {
-    public class ItemSyncService :IItemSyncService
+    public class ItemSyncService : IItemSyncService
     {
         #region Fields
 
-        private readonly IEmailService _emailService;
-        private readonly IItemRepository _itemRepository;
-        private readonly ILogger _logger;
+       
         private readonly IBanKeywordRepository _banKeywordRepository;
         private readonly IBanLinkRepository _banLinkRepository;
         private readonly IBrandRepository _brandRepository;
+        private readonly IItemSyncRepository _itemSyncRepository;
+        private readonly ILogger _logger;
+        private readonly IMapper _mapper;
         private readonly INotificationCriteriaRepository _notificationCriteriaRepository;
         private readonly IPhoneCarrierRepository _phoneCarrierRepository;
-        private readonly IMapper _mapper;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly IUnlockabledPhonePhoneCarrierRepository _unlockabledPhonePhoneCarrierRepository;
         private readonly IUnlockabledPhoneRepository _unlockabledPhoneRepository;
-        public ConcurrentBag<Item> itemToNotifyList { get; set; } = new ConcurrentBag<Item>();
+        private readonly IEmailService _emailService;
+        private readonly ConcurrentBag<int> _evaluatedItemIdList = new ConcurrentBag<int>();
+
 
         #endregion Fields
 
         #region Constructor
 
         public ItemSyncService(
-            IItemRepository itemRepository,
-            IConfigurationProvider configurationProvider,
-            IEmailService emailService,
-            ILogger logger,
             IBanKeywordRepository banKeywordRepository,
             IBanLinkRepository banLinkRepository,
             IBrandRepository brandRepository,
+            ILogger logger,
+            IMapper mapper,
             INotificationCriteriaRepository notificationCriteriaRepository,
             IPhoneCarrierRepository phoneCarrierRepository,
-            IMapper mapper,
             IUnlockabledPhonePhoneCarrierRepository unlockabledPhonePhoneCarrierRepository,
-            IUnlockabledPhoneRepository unlockabledPhoneRepository
+            IUnlockabledPhoneRepository unlockabledPhoneRepository,
+            IServiceScopeFactory serviceScopeFactory,
+            IItemSyncRepository itemSyncRepository,
+            IEmailService emailService
+
 
             )
         {
-            _logger = logger;
-            _emailService = emailService;
-            _itemRepository = itemRepository;
             _banKeywordRepository = banKeywordRepository;
             _banLinkRepository = banLinkRepository;
             _brandRepository = brandRepository;
+            _logger = logger;
+            _mapper = mapper;
             _notificationCriteriaRepository = notificationCriteriaRepository;
             _phoneCarrierRepository = phoneCarrierRepository;
-            _mapper = mapper;
             _unlockabledPhonePhoneCarrierRepository = unlockabledPhonePhoneCarrierRepository;
             _unlockabledPhoneRepository = unlockabledPhoneRepository;
+            _serviceScopeFactory = serviceScopeFactory;
+            _itemSyncRepository = itemSyncRepository;
+            _emailService = emailService;
         }
 
         #endregion Constructor
 
         #region Methods
 
-        public async Task LoadData()
+        public async Task<bool> CanBeSavedAsync(ItemCreateRequest itemCreate)
+        {
+            bool isBanned = false;
+            bool isInBlackList = false;
+
+            Task banKeywordTask = Task.Run(() =>
+            {
+                isBanned = CacheDataUtility.BanKeywordList.Any(element => itemCreate.Name.Contains(element.Keyword, StringComparison.OrdinalIgnoreCase));
+            });
+
+            Task blackListTask = Task.Run(() =>
+            {
+                isInBlackList = CacheDataUtility.BanLinkList.Any(x => x.Link == itemCreate.Link);
+            });
+
+            await Task.WhenAll(banKeywordTask, blackListTask);
+
+            return !(isBanned || isInBlackList);
+        }
+
+        public async Task LoadDataAsync()
         {
             try
             {
                 var tasks = new List<Task>
                 {
-                    LoadBandKeywords(),
-                    LoadBanLinks(),
-                    LoadBrands(),
-                    LoadNotificationCriteria(),
-                    LoadPhoneCarriers()
+                    LoadBandKeywordsAsync(),
+                    LoadBanLinksAsync(),
+                    LoadBrandsAsync(),
+                    LoadNotificationCriteriaAsync(),
+                    LoadPhoneCarriersAsync()
                 };
 
                 await Task.WhenAll(tasks);
@@ -91,63 +119,102 @@ namespace DealNotifier.Core.Application.Services
         }
 
 
-        public async Task SaveOrUpdate( ConcurrentBag<ItemCreateRequest> items)
+        public async Task SaveOrUpdateAsync(ConcurrentBag<ItemCreateRequest> itemCreateList)
         {
             var itemListToCreate = new ConcurrentBag<Item>();
             var itemListToUpdate = new ConcurrentBag<Item>();
 
             try
             {
-                var tasks = items.Select(async item =>
+                var tasks = itemCreateList.Select(async item =>
                 {
-                    var oldItem = await _itemRepository.FirstOrDefaultAsync(i=> i.Link == item.Link);
-                    if (oldItem == null)
+                    using (var scope = _serviceScopeFactory.CreateScope())
                     {
-                        var mappedItem = _mapper.Map<Item>(item);
-
-                        ToNotify(mappedItem);
-                        itemListToCreate.Add(mappedItem);
-                    }
-                    else
-                    {
-                        decimal oldPrice = oldItem.Price;
-                        decimal saving = oldPrice - item.Price;
-
-                        if (oldPrice != item.Price ||
-                            oldItem.UnlockProbabilityId != item.UnlockProbabilityId ||
-                            oldItem.Image != item.Image ||
-                            item.IsAuction
-                            )
+                        var itemRepository = scope.ServiceProvider.GetRequiredService<IItemRepository>();
+                        var oldItem = await itemRepository.FirstOrDefaultAsync(i => i.Link == item.Link);
+                        
+                        if (oldItem == null)
                         {
-                            if (oldPrice > item.Price)
-                            {
-                                oldItem.Saving = saving;
-                                oldItem.SavingsPercentage = saving / oldPrice * 100;
-                                oldItem.OldPrice = oldPrice;
-                            }
-                            else if (oldPrice < item.Price)
-                            {
-                                oldItem.OldPrice = 0;
-                                oldItem.Saving = 0;
-                                oldItem.SavingsPercentage = 0;
-                            }
+                            var mappedItem = _mapper.Map<Item>(item);
 
-                            oldItem.Notified = null;
-                            _mapper.Map(item, oldItem);
-                            itemListToUpdate.Add(oldItem);
-                            if ((oldPrice - item.Price) >= 5 || item.IsAuction)
+                            EvaluateIfNotifiable(mappedItem);
+                            itemListToCreate.Add(mappedItem);
+                        }
+                        else
+                        {
+                            _evaluatedItemIdList.Add(oldItem.Id);
+                            decimal oldPrice = oldItem.Price;
+                            decimal saving = oldPrice - item.Price;
+
+                            if (oldPrice != item.Price ||
+                                oldItem.UnlockProbabilityId != item.UnlockProbabilityId ||
+                                oldItem.Image != item.Image ||
+                                item.IsAuction
+                                )
                             {
-                                ToNotify(oldItem);
+                                if (oldPrice > item.Price)
+                                {
+                                    oldItem.Saving = saving;
+                                    oldItem.SavingsPercentage = saving / oldPrice * 100;
+                                    oldItem.OldPrice = oldPrice;
+                                }
+                                else if (oldPrice < item.Price)
+                                {
+                                    oldItem.OldPrice = 0;
+                                    oldItem.Saving = 0;
+                                    oldItem.SavingsPercentage = 0;
+                                }
+
+                                oldItem.Notified = null;
+                                _mapper.Map(item, oldItem);
+                                itemListToUpdate.Add(oldItem);
+                                if ((oldPrice - item.Price) >= 5 || item.IsAuction)
+                                {
+                                    EvaluateIfNotifiable(oldItem);
+                                }
                             }
                         }
                     }
                 });
 
+
+
+
                 await Task.WhenAll(tasks);
 
-                var createTask = _itemRepository.CreateRangeAsync(itemListToCreate);
-                var updateTask = _itemRepository.UpdateRangeAsync(itemListToUpdate);
-                Task.WhenAll(updateTask, createTask).Wait();
+                var createTask = Task.Run(async () =>
+                {
+                    if(itemListToCreate.Count > 0)
+                    {
+                        using (var scope = _serviceScopeFactory.CreateScope())
+                        {
+                            var itemRepository = scope.ServiceProvider.GetRequiredService<IItemRepository>();
+                            await itemRepository.CreateRangeAsync(itemListToCreate);
+                            foreach (var item in itemListToCreate)
+                            {
+                                _evaluatedItemIdList.Add(item.Id);
+                            }
+                        }
+                    }
+
+                });
+
+                var updateTask = Task.Run(async() =>
+                {
+                    if (itemListToUpdate.Count > 0)
+                    {
+                        using (var scope = _serviceScopeFactory.CreateScope())
+                        {
+                            var itemRepository = scope.ServiceProvider.GetRequiredService<IItemRepository>();
+                            await itemRepository.UpdateRangeAsync(itemListToUpdate);
+                            
+                        }
+                    }
+                    
+                });
+                await Task.WhenAll(updateTask, createTask);
+                itemCreateList.Clear();
+                _logger.Information($"{itemListToCreate.Count} items created | {itemListToUpdate.Count} items updated");
             }
             catch (Exception ex)
             {
@@ -156,155 +223,121 @@ namespace DealNotifier.Core.Application.Services
         }
 
 
+        
 
-
-
-
-
-        public void SetUnlockProbability(ref ItemCreateRequest itemCreate)
+        public async Task SetUnlockProbabilityAsync(ItemCreateRequest itemCreate)
         {
-            var modelNumber = itemCreate.ModelNumber;
-            var modelName = itemCreate.ModelName;
-            var carrierId = itemCreate.PhoneCarrierId ?? default;
+
 
             if (itemCreate.Name.Contains("unlocked", StringComparison.OrdinalIgnoreCase)
                 || itemCreate.Name.Contains("ulk", StringComparison.OrdinalIgnoreCase))
             {
-               itemCreate.UnlockProbabilityId = (int) Enums.UnlockProbability.High;
+                itemCreate.UnlockProbabilityId = (int)Enums.UnlockProbability.High;
 
             }
             else
-            { 
-                if (modelNumber != null)
+            {
+                if (itemCreate.UnlockabledPhoneId != null)
                 {
-
-                    var possibleUnlockedPhone =  _unlockabledPhoneRepository.FirstOrDefault(item => item.ModelNumber.Equals(modelNumber));
-
-                    if (possibleUnlockedPhone != null)
+                    var carrierId = TryGetPhoneCarrierId(itemCreate.Name);
+                    if (carrierId != null)
                     {
                         var unlockabledPhonePhoneCarrier = new UnlockabledPhonePhoneCarrier
                         {
-                            PhoneCarrierId = carrierId,
-                            UnlockabledPhoneId = possibleUnlockedPhone.Id
+                            PhoneCarrierId = (int) carrierId,
+                            UnlockabledPhoneId =(int) itemCreate.UnlockabledPhoneId
                         };
 
-                        var canBeUnlock = _unlockabledPhonePhoneCarrierRepository.Exists(unlockabledPhonePhoneCarrier);
-                        if (canBeUnlock) 
+                        var canBeUnlock = await _unlockabledPhonePhoneCarrierRepository.ExistsAsync(unlockabledPhonePhoneCarrier);
+                        if (canBeUnlock)
                         {
                             itemCreate.UnlockProbabilityId = (int)Enums.UnlockProbability.High;
                             return;
                         }
                     }
                 }
-
-                if (modelName != null)
+                else
                 {
-                    var possibleUnlockedPhone =  _unlockabledPhoneRepository.FirstOrDefault(item => item.ModelName!.Contains(modelName));
-
-                    if (possibleUnlockedPhone != null)
+                    var possibleModelName = Regex.Match(itemCreate.Name, RegExPattern.ModelName, RegexOptions.IgnoreCase).Value;
+                    
+                    if(possibleModelName != null)
                     {
-                        var unlockabledPhonePhoneCarrier = new UnlockabledPhonePhoneCarrier
-                        {
-                            PhoneCarrierId = carrierId,
-                            UnlockabledPhoneId = possibleUnlockedPhone.Id
-                        };
+                        var possibleUnlockedPhone = await _unlockabledPhoneRepository.FirstOrDefaultAsync(item => item.ModelName!.Contains(possibleModelName));
 
-                        var canBeUnlock =  _unlockabledPhonePhoneCarrierRepository.Exists(unlockabledPhonePhoneCarrier);
-                        if (canBeUnlock)
+                        if (possibleUnlockedPhone != null)
                         {
-                            itemCreate.UnlockProbabilityId = (int)Enums.UnlockProbability.Middle;
-                            return;
+                            var carrierId = TryGetPhoneCarrierId(itemCreate.Name);
+                            if (carrierId != null)
+                            {
+                                var unlockabledPhonePhoneCarrier = new UnlockabledPhonePhoneCarrier
+                                {
+                                    PhoneCarrierId = (int)carrierId,
+                                    UnlockabledPhoneId = possibleUnlockedPhone.Id
+                                };
+
+                                var canBeUnlock = await _unlockabledPhonePhoneCarrierRepository.ExistsAsync(unlockabledPhonePhoneCarrier);
+                                if (canBeUnlock)
+                                {
+                                    itemCreate.UnlockProbabilityId = (int)Enums.UnlockProbability.Middle;
+                                    return;
+                                }
+                            }
                         }
-                    }
+                    }    
                 }
 
-                itemCreate.UnlockProbabilityId = (int)Enums.UnlockProbability.Middle;
+                itemCreate.UnlockProbabilityId = (int)Enums.UnlockProbability.Low;
             }
         }
 
 
-        public void TryAssignBrand(ItemCreateRequest itemCreate)
-        {
-            var matchedBrand = CacheDataUtility.BrandList
-                .FirstOrDefault(brand => itemCreate.Name.Contains(brand.Name, StringComparison.OrdinalIgnoreCase));
 
-            if (matchedBrand != null)
-            {
-                itemCreate.BrandId = matchedBrand.Id;
-            }
-        }
-
-
-        /// <summary>
-        /// Try to assign values to fields BrandId, ModelName & ModelNumber
-        /// </summary>
-        /// <param name="itemCreate"></param>
-        public void TryAssignItemDetails(ItemCreateRequest itemCreate)
+        public async Task TryAssignUnlockabledPhoneIdAsync(ItemCreateRequest itemCreate)
         {
             var possibleModelNumber = Regex.Match(itemCreate.Name, RegExPattern.ModelNumber, RegexOptions.IgnoreCase).Value;
 
             if (!string.IsNullOrEmpty(possibleModelNumber))
             {
-                var possibleUnlockabledPhone = _unlockabledPhoneRepository.FirstOrDefault(element => element.ModelNumber.Equals(possibleModelNumber));
+                var possibleUnlockabledPhone = await _unlockabledPhoneRepository.FirstOrDefaultAsync(element => element.ModelNumber.Equals(possibleModelNumber));
 
                 if (possibleUnlockabledPhone != null)
                 {
-                    itemCreate.BrandId = possibleUnlockabledPhone.Id;
-                    itemCreate.ModelName = possibleUnlockabledPhone.ModelName;
-                    itemCreate.ModelNumber = possibleUnlockabledPhone.ModelNumber;
+                    itemCreate.UnlockabledPhoneId = possibleUnlockabledPhone.Id;
                 }
             }
+            
         }
 
-        public void TryAssignModelName(ref ItemCreateRequest itemCreate)
+
+        public async Task UpdateStockStatusAsync(Enums.OnlineStore onlineStore)
         {
 
-            var possibleModelName = Regex.Match(itemCreate.Name, RegExPattern.ModelNumber,RegexOptions.IgnoreCase).Value;
+            string query = "EXEC Update_StockStatus @IdListString, @OnlineStoreId, @OutputResult OUTPUT, @ErrorMessage OUTPUT";
 
-            if (!string.IsNullOrEmpty(possibleModelName))
-            {
-                
+            var idListString = string.Join(',', _evaluatedItemIdList);
+            
+            var idListStringParameter = new SqlParameter("@IdListString", idListString);
+            var onlineStoreIdParameter = new SqlParameter("@OnlineStoreId",(int) onlineStore);
+            var outputResultParameter = new SqlParameter("@OutputResult", SqlDbType.Bit) { Direction = ParameterDirection.Output };
+            var errorMessageParameter = new SqlParameter("@ErrorMessage", SqlDbType.NVarChar, 4000) { Direction = ParameterDirection.Output };
 
-                var possibleUnlockabledPhone = _unlockabledPhoneRepository.FirstOrDefault(element => element.ModelNumber.Contains(possibleModelName));
+            await _itemSyncRepository.UpdateStockStatusAsync(query, idListStringParameter, onlineStoreIdParameter, outputResultParameter, errorMessageParameter);
 
-                if (possibleUnlockabledPhone != null)
-                {
-                    itemCreate.ModelName = possibleUnlockabledPhone.ModelName;
-                }
-
-            }
-
+            _logger.Information($"{_evaluatedItemIdList.Count} Items In Stock");
+            _evaluatedItemIdList.Clear();
         }
 
-        public void UpdateStatus(ref ConcurrentBag<string> checkedList)
-        {
-            /*using (var context = new ApplicationDbContext())
-            {
-                var listId = checkedList.Select(x => x.Replace("https://www.ebay.com/itm/", ""));
-                string query = "EXEC UPDATE_STATUS_EBAY @ListId, @OutputResult OUTPUT";
-                var listIdParameter = new SqlParameter("@ListId", string.Join(',', listId));
-                var outputResult = new SqlParameter("@OutputResult", SqlDbType.Bit) { Direction = ParameterDirection.Output };
-
-                context.Database.ExecuteSqlRaw(query, listIdParameter, outputResult);
-                bool result = (bool)outputResult.Value;
-                _logger.Information($"El resultado es: {result}");
-            }
-
-            _logger.Information($"{checkedList.Count} Items In Stock");
-            checkedList.Clear();*/
-        }
-
-        private void ToNotify(Item item)
+        private void EvaluateIfNotifiable(Item item)
         {
             DateTime notified = item.Notified.HasValue ? (DateTime)item.Notified : DateTime.MinValue;
             DateTime itemEndDate = item.ItemEndDate.HasValue ? (DateTime)item.ItemEndDate : DateTime.MinValue;
 
-            foreach (NotificationCriteriaDto conditionsToNotify in CacheDataUtility.NotificationCriteriaList)
+            foreach (NotificationCriteriaDto notificationCreteria in CacheDataUtility.NotificationCriteriaList)
             {
-                if (conditionsToNotify.ConditionId == item.ConditionId
-                    && conditionsToNotify.MaxPrice >= item.Price
-                    && TitleContainsKeyword(conditionsToNotify.Keywords, item.Name)
-                    && item.Notify
+                if (notificationCreteria.ConditionId == item.ConditionId
+                    && notificationCreteria.MaxPrice >= item.Price
+                    && TitleContainsKeyword(item.Name, notificationCreteria.Keywords)
+                    && (bool)item.Notify!
                     && notified.Date != DateTime.Now.Date
 
                     )
@@ -314,7 +347,7 @@ namespace DealNotifier.Core.Application.Services
                         break;
                     }
 
-                    if (item.IsAuction)
+                    if ((bool) item.IsAuction!)
                     {
                         var diff = (itemEndDate - DateTime.Now).TotalHours;
                         if (diff > 2 || diff < 0 || item.BidCount > 3)
@@ -323,7 +356,7 @@ namespace DealNotifier.Core.Application.Services
                         }
                     }
 
-                    itemToNotifyList.Add(item);
+                     _emailService.NotifiableItemList.Add(item);
                     item.Notified = DateTime.Now;
                     break;
                 }
@@ -332,50 +365,53 @@ namespace DealNotifier.Core.Application.Services
 
         #region Private Methods
 
-        private bool TitleContainsKeyword(string title, string keywords)
-        {
-            var keywordList = keywords.Split(',').Select(keyword=> keyword.Trim());
-            return keywordList.Any(keyword => title.Contains(keyword, StringComparison.OrdinalIgnoreCase));
-        }
-
-        private async Task LoadBandKeywords()
+        private async Task LoadBandKeywordsAsync()
         {
             var bandKeywordList = await _banKeywordRepository.GetAllProjectedAsync<BanKeywordDto>();
             CacheDataUtility.BanKeywordList = bandKeywordList.ToHashSet<BanKeywordDto>();
         }
 
-        private async Task LoadBanLinks()
+        private async Task LoadBanLinksAsync()
         {
             var banLinkList = await _banLinkRepository.GetAllProjectedAsync<BanLinkDto>();
             CacheDataUtility.BanLinkList = banLinkList.ToHashSet<BanLinkDto>();
         }
 
-        private async Task LoadBrands()
+        private async Task LoadBrandsAsync()
         {
             var brandList = await _brandRepository.GetAllProjectedAsync<BrandDto>();
             CacheDataUtility.BrandList = brandList.ToHashSet<BrandDto>();
         }
 
-        private async Task LoadNotificationCriteria()
+        private async Task LoadNotificationCriteriaAsync()
         {
             var notificationCriteria = await _notificationCriteriaRepository.GetAllProjectedAsync<NotificationCriteriaDto>();
             CacheDataUtility.NotificationCriteriaList = notificationCriteria.ToHashSet<NotificationCriteriaDto>();
         }
 
-        private async Task LoadPhoneCarriers()
+        private async Task LoadPhoneCarriersAsync()
         {
             var phoneCarrierList = await _phoneCarrierRepository.GetAllProjectedAsync<PhoneCarrierDto>();
             CacheDataUtility.PhoneCarrierList = phoneCarrierList.ToHashSet<PhoneCarrierDto>();
         }
 
-        public void TrySetModelNumberModelNameAndBrand(ref ItemCreateRequest itemCreate)
+        private bool TitleContainsKeyword(string title, string keywords)
         {
-            throw new NotImplementedException();
+            var keywordList = keywords.Split(',').Select(keyword => keyword.Trim());
+            return keywordList.Any(keyword => title.Contains(keyword, StringComparison.OrdinalIgnoreCase));
         }
 
+        private int? TryGetPhoneCarrierId(string name)
+        {
+            var matchedPhoneCarrier = CacheDataUtility.PhoneCarrierList.FirstOrDefault(carrier =>
+            {
+                var PhoneCarrierNameAndShortNameList = carrier.Name.Split('|').ToList();
 
+                return PhoneCarrierNameAndShortNameList.Exists(element => name.Contains(element, StringComparison.OrdinalIgnoreCase));
+            });
 
-
+            return matchedPhoneCarrier?.Id ?? null;
+        }
         #endregion Private Methods
 
         #endregion Methods

@@ -5,7 +5,7 @@ using DealNotifier.Infrastructure.Persistence.DbContexts;
 
 namespace DealNotifier.Infrastructure.Persistence.Repositories
 {
-    public class OnlineStoreRepository : GenericRepository<OnlineStore, int>, IOnlineStoreRepository
+    public class OnlineStoreRepository : GenericRepository<OnlineStore>, IOnlineStoreRepository
     {
         #region Constructor
 

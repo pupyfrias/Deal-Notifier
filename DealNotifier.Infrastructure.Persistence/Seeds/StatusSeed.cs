@@ -9,13 +9,13 @@ namespace DealNotifier.Infrastructure.Persistence.Seeds
         {
             new StockStatus
             {
-                Id= (int) Enums.Status.InStock,
-                Name= Enums.Status.InStock.ToString()
+                Id= (int) Enums.StockStatus.InStock,
+                Name= Enums.StockStatus.InStock.ToString()
             },
             new StockStatus
             {
-                Id= (int) Enums.Status.OutStock,
-                Name= Enums.Status.OutStock.ToString()
+                Id= (int) Enums.StockStatus.OutStock,
+                Name= Enums.StockStatus.OutStock.ToString()
             }
         };
     }

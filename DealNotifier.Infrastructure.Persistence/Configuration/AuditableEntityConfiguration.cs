@@ -4,19 +4,21 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DealNotifier.Infrastructure.Persistence.Configuration
 {
-    public abstract class AuditableEntityConfiguration<TEntity, TKey> : IEntityTypeConfiguration<TEntity> where TEntity : AuditableEntity<TKey>
+    public abstract class AuditableEntityConfiguration<TEntity> : IEntityTypeConfiguration<TEntity> where TEntity : AuditableEntity
     {
         public virtual void Configure(EntityTypeBuilder<TEntity> builder)
         {
-            builder.Property(x => x.CreatedBy)
+           builder.HasKey(e => e.Id);
+            
+            builder.Property(e => e.CreatedBy)
                   .HasDefaultValue("default");
 
-            builder.Property(x => x.Created)
+            builder.Property(e => e.Created)
                    .HasDefaultValueSql("GETDATE()");
 
-            builder.Property(x => x.LastModifiedBy);
+            builder.Property(e => e.LastModifiedBy);
 
-            builder.Property(x => x.LastModified);
+            builder.Property(e => e.LastModified);
         }
     }
 }

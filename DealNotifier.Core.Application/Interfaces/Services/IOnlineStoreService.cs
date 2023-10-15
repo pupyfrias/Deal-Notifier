@@ -2,7 +2,7 @@
 
 namespace DealNotifier.Core.Application.Interfaces.Services
 {
-    public interface IOnlineStoreService : IGenericService<OnlineStore, int>
+    public interface IOnlineStoreService : IGenericService<OnlineStore>
     {
     }
 }

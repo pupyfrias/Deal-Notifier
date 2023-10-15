@@ -2,7 +2,7 @@
 
 namespace DealNotifier.Core.Application.Interfaces.Repositories
 {
-    public interface IOnlineStoreRepository : IGenericRepository<OnlineStore, int>
+    public interface IOnlineStoreRepository : IGenericRepository<OnlineStore>
     {
     }
 }

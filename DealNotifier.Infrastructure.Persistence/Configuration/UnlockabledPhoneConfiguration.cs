@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DealNotifier.Infrastructure.Persistence.Configuration
 {
-    public class UnlockabledPhoneConfiguration : AuditableEntityConfiguration<UnlockabledPhone, int>
+    public class UnlockabledPhoneConfiguration : AuditableEntityConfiguration<UnlockabledPhone>
     {
         public override void Configure(EntityTypeBuilder<UnlockabledPhone> builder)
         {
@@ -29,12 +29,6 @@ namespace DealNotifier.Infrastructure.Persistence.Configuration
                 .IsRequired(false);
 
             #endregion Properties
-
-            #region Keys
-
-            builder.HasKey(x => x.Id);
-
-            #endregion Keys
 
             #region Index
 

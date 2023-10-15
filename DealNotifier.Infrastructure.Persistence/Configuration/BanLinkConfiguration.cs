@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DealNotifier.Infrastructure.Persistence.Configuration
 {
-    public class BanLinkConfiguration : AuditableEntityConfiguration<BanLink, int>
+    public class BanLinkConfiguration : AuditableEntityConfiguration<BanLink>
     {
         public override void Configure(EntityTypeBuilder<BanLink> builder)
         {
@@ -22,11 +22,6 @@ namespace DealNotifier.Infrastructure.Persistence.Configuration
 
             #endregion Properties
 
-            #region Keys
-
-            builder.HasKey(x => x.Id);
-
-            #endregion Keys
         }
     }
 }

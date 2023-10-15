@@ -2,7 +2,7 @@
 
 namespace DealNotifier.Core.Application.Interfaces.Repositories
 {
-    public interface IBanKeywordRepository : IGenericRepository<BanKeyword, int>
+    public interface IBanKeywordRepository : IGenericRepository<BanKeyword>
     {
     }
 }

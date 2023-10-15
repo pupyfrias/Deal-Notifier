@@ -1,6 +1,7 @@
 ﻿using DealNotifier.Infrastructure.Persistence.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace DealNotifier.Infrastructure.Persistence.Setup
 {
@@ -11,7 +12,8 @@ namespace DealNotifier.Infrastructure.Persistence.Setup
             Action<DbContextOptionsBuilder> Options = (options) =>
             {
                 options.UseSqlServer(configuration.GetConnectionString("DealNotifierConnection"),
-                            optionAction => optionAction.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName));
+                            optionAction => optionAction.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName))
+                /*.LogTo(Console.WriteLine, LogLevel.Information)*/;
             };
 
             return Options;

@@ -1,4 +1,5 @@
 using AutoMapper;
+using DealNotifier.Core.Application.Enums;
 using DealNotifier.Core.Application.Interfaces.Services;
 using DealNotifier.Core.Application.ViewModels.V1;
 using DealNotifier.Core.Application.ViewModels.V1.PhoneCarrier;
@@ -152,14 +153,13 @@ namespace WorkerService.T_Unlock_WebScraping
                     var modelName = h7List[1].InnerText;
                     var carrierList = h4.InnerText.Split(',');
 
-
                     var possibleUnlockedPhone = await _unlockabledPhoneService.FirstOrDefaultAsync(unlockedPhone => unlockedPhone.ModelNumber.Equals(modelNumber));
 
                     if (possibleUnlockedPhone == null)
                     {
                         var unlockableCreateDto = new UnlockabledPhoneCreateRequest
                         {
-                            BrandId = GetBrandId(path),
+                            BrandId = (int)Brand.Samsung,
                             ModelName = modelName,
                             ModelNumber = modelNumber
                         };
@@ -169,22 +169,29 @@ namespace WorkerService.T_Unlock_WebScraping
                         var unlockabledPhonePhoneUnlockTool = new UnlockabledPhonePhoneUnlockToolCreate
                         {
                             UnlockabledPhoneId = newUnlockedPhone.Id,
-                            PhoneUnlockToolId = (int)Enums.UnlockTool.TUnlock
+                            PhoneUnlockToolId = (int)UnlockTool.SamKey
                         };
+
                         await _unlockabledPhonePhoneUnlockToolService.CreateAsync(unlockabledPhonePhoneUnlockTool);
 
                         foreach (var carrier in carrierList)
                         {
                             var phoneCarrier = phoneCarrierList.FirstOrDefault(pc => pc.Name.Contains(carrier.Trim(), StringComparison.OrdinalIgnoreCase));
+
                             if (phoneCarrier != null)
                             {
-                                var unlockablePhoneCarrier = new UnlockabledPhonePhoneCarrierCreateRequest
+                                var unlockablePhoneCarrierDto = new UnlockabledPhonePhoneCarrierDto
                                 {
                                     UnlockabledPhoneId = newUnlockedPhone.Id,
                                     PhoneCarrierId = phoneCarrier.Id,
                                 };
+                                bool existsUnlockabledPhonePhoneCarrier = await _unlockabledPhonePhoneCarrierService.ExistsAsync(unlockablePhoneCarrierDto);
 
-                                await _unlockabledPhonePhoneCarrierService.CreateAsync(unlockablePhoneCarrier);
+                                if (!existsUnlockabledPhonePhoneCarrier)
+                                {
+                                    var unlockablePhoneCarrierCreate = _mapper.Map<UnlockabledPhonePhoneCarrierCreateRequest>(unlockablePhoneCarrierDto);
+                                    await _unlockabledPhonePhoneCarrierService.CreateAsync(unlockablePhoneCarrierCreate);
+                                }
                             }
                             else
                             {
@@ -194,6 +201,19 @@ namespace WorkerService.T_Unlock_WebScraping
                     }
                     else
                     {
+                        var unlockabledPhonePhoneUnlockToolDto = new UnlockabledPhonePhoneUnlockToolDto
+                        {
+                            UnlockabledPhoneId = possibleUnlockedPhone.Id,
+                            PhoneUnlockToolId = (int)UnlockTool.SamKey
+                        };
+
+                        bool existsUnlockabledPhoneUnlockTool = await _unlockabledPhonePhoneUnlockToolService.ExistsAsync(unlockabledPhonePhoneUnlockToolDto);
+                        if (!existsUnlockabledPhoneUnlockTool)
+                        {
+                            var unlockablePhoneUnlockToolCreate = _mapper.Map<UnlockabledPhonePhoneUnlockToolCreate>(unlockabledPhonePhoneUnlockToolDto);
+                            await _unlockabledPhonePhoneUnlockToolService.CreateAsync(unlockablePhoneUnlockToolCreate);
+                        }
+
                         foreach (var carrier in carrierList)
                         {
                             var phoneCarrier = phoneCarrierList.FirstOrDefault(pc => pc.Name.Contains(carrier.Trim(), StringComparison.OrdinalIgnoreCase));

@@ -3,6 +3,7 @@ using DealNotifier.Core.Application.ViewModels.V1.UnlockabledPhonePhoneCarrier;
 using DealNotifier.Core.Domain.Entities;
 using DealNotifier.Infrastructure.Persistence.DbContexts;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace DealNotifier.Infrastructure.Persistence.Repositories
 {
@@ -44,6 +45,16 @@ namespace DealNotifier.Infrastructure.Persistence.Repositories
         {
             return _dbContext.UnlockabledPhonePhoneCarriers
                 .Any(x => x.PhoneCarrierId == entity.PhoneCarrierId && x.UnlockabledPhoneId == entity.UnlockabledPhoneId);
+        }
+
+        public UnlockabledPhonePhoneCarrier? FirstOrDefault(Expression<Func<UnlockabledPhonePhoneCarrier, bool>> predicate)
+        {
+            return _dbContext.UnlockabledPhonePhoneCarriers.FirstOrDefault(predicate);
+        }
+
+        public async Task<UnlockabledPhonePhoneCarrier?> FirstOrDefaultAsync(Expression<Func<UnlockabledPhonePhoneCarrier, bool>> predicate)
+        {
+            return await _dbContext.UnlockabledPhonePhoneCarriers.FirstOrDefaultAsync(predicate);
         }
 
         #endregion Constructor

@@ -2,7 +2,7 @@
 
 namespace DealNotifier.Core.Application.Interfaces.Services
 {
-    public interface IBrandService : IGenericService<Brand, int>
+    public interface IBrandService : IGenericService<Brand>
     {
 
     }

@@ -1,18 +1,17 @@
 ﻿using AutoMapper;
 using DealNotifier.Core.Application.Extensions;
-using DealNotifier.Core.Application.ViewModels.V1;
-using DealNotifier.Core.Application.ViewModels.V1.BanLink;
+using DealNotifier.Core.Application.ViewModels.V1.BanKeyword;
 using DealNotifier.Core.Domain.Entities;
 
 namespace DealNotifier.Core.Application.Mappings
 {
-    public class BanLinkMapperConfig : Profile
+    public class BanKeywordMapperConfig : Profile
     {
-        public BanLinkMapperConfig()
+        public BanKeywordMapperConfig()
         {
-            CreateMap<BanLinkCreateRequest, BanLink>().IgnoreAllSourceNullProperties();
-            CreateMap<BanLinkUpdateRequest, BanLink>().IgnoreAllSourceNullProperties();
-            CreateMap<BanLink, BanLinkResponse>().IgnoreAllSourceNullProperties();
+            CreateMap<BanKeywordCreateRequest, BanKeyword>().IgnoreAllSourceNullProperties();
+            CreateMap<BanKeywordUpdateRequest, BanKeyword>().IgnoreAllSourceNullProperties();
+            CreateMap<BanKeyword, BanKeywordResponse>().IgnoreAllSourceNullProperties();
         }
     }
 }

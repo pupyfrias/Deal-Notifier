@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DealNotifier.Infrastructure.Persistence.Configuration
 {
-    public class NotificationCriteriaConfiguration : AuditableEntityConfiguration<NotificationCriteria, int>
+    public class NotificationCriteriaConfiguration : AuditableEntityConfiguration<NotificationCriteria>
     {
         public override void Configure(EntityTypeBuilder<NotificationCriteria> builder)
         {
@@ -31,9 +31,6 @@ namespace DealNotifier.Infrastructure.Persistence.Configuration
             #endregion Properties
 
             #region Keys
-
-            builder.HasKey(x => x.Id);
-
             builder.HasOne(x => x.Condition)
             .WithMany(x => x.ConditionToNotifies)
             .HasForeignKey(x => x.ConditionId)
