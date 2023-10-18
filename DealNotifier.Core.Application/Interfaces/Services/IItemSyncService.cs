@@ -1,14 +1,13 @@
 ﻿using DealNotifier.Core.Application.ViewModels.V1.Item;
-using DealNotifier.Core.Domain.Entities;
 using System.Collections.Concurrent;
 
 namespace DealNotifier.Core.Application.Interfaces.Services
 {
     public interface IItemSyncService
     {
-        Task<bool> CanBeSavedAsync(ItemCreateRequest itemCreate);
+        bool CanBeSaved(ItemCreateRequest itemCreate);
 
-        Task LoadDataAsync();
+        Task LoadNecessaryDataAsync();
 
         Task SaveOrUpdateAsync(ConcurrentBag<ItemCreateRequest> itemCreateList);
 

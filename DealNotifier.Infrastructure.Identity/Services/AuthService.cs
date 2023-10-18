@@ -1,7 +1,5 @@
-﻿using AuthProto;
-using AutoMapper;
+﻿using AutoMapper;
 using DealNotifier.Core.Application.Interfaces.Services;
-using DealNotifier.Core.Application.ViewModels.V1.Auth;
 using DealNotifier.Core.Application.Wrappers;
 using Grpc.Net.Client;
 

@@ -1,0 +1,82 @@
+version: '3.8'
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD}
+      - ACCEPT_EULA=Y
+    ports:
+      - "1434:1433"
+    volumes:
+      - dbdata:/var/opt/mssql
+
+  migrate:
+    build:
+        context: ./
+        dockerfile: Dockerfile.migrations
+    environment:
+         - ConnectionStrings__DealNotifierConnection=${CONNECTION_STRING}
+    depends_on:
+        - db
+    restart: "no"
+  add-stored-procedures:
+    image: mcr.microsoft.com/mssql-tools
+    environment:
+      - MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD}
+      - ACCEPT_EULA=Y
+    volumes:
+      - ./StoredProcedures.sql:/tmp/StoredProcedures.sql
+    depends_on:
+      - db
+      - migrate
+    entrypoint:
+      - /bin/bash
+      - -c
+      - 'sleep 15 && /opt/mssql-tools/bin/sqlcmd -S db -U SA -P $$MSSQL_SA_PASSWORD -i /tmp/StoredProcedures.sql'
+    restart: "no"
+  web-api:
+    image: web-api:1.0
+    build: 
+        context: ./
+        dockerfile: WebApi/Dockerfile
+    ports:
+      - "8080:80"
+    environment:
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DealNotifierConnection=${CONNECTION_STRING}
+    depends_on:
+    - db
+    - migrate
+    - add-stored-procedures
+  ebay-data-sync-worker:
+    image: ebay-data-sync-worker:1.0
+    build: 
+        context: ./
+        dockerfile: EbayDataSyncWorker/Dockerfile
+    environment:
+        - ConnectionStrings__DealNotifierConnection=${CONNECTION_STRING}
+        - ClientId=${CLIENT_ID}
+        - ClientSecret=${CLIENT_SECRET}
+        - RefreshToken=${REFRESH_TOKEN}
+    depends_on:
+        - db
+        - migrate
+        - web-api
+        - add-stored-procedures
+  t-unlock-data-sync-worker:
+    image: t-unlock-data-sync-worker:1.0
+    build: 
+        context: ./
+        dockerfile: T-UnlockDataSyncWorker/Dockerfile
+    environment:
+        - ConnectionStrings__DealNotifierConnection=${CONNECTION_STRING}
+    depends_on:
+    - db
+    - migrate
+    - web-api
+    - add-stored-procedures
+    restart: "no"
+
+
+volumes:
+  dbdata:

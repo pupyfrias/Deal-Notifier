@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DealNotifier.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class inint : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -280,8 +280,6 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                     StockStatusId = table.Column<int>(type: "int", nullable: false),
                     UnlockProbabilityId = table.Column<int>(type: "int", nullable: true),
                     UnlockabledPhoneId = table.Column<int>(type: "int", nullable: true),
-                    PhoneCarrierId = table.Column<int>(type: "int", nullable: false),
-                    BrandId = table.Column<int>(type: "int", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "default"),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -290,11 +288,6 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Item", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Item_Brand_BrandId",
-                        column: x => x.BrandId,
-                        principalTable: "Brand",
-                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Item_Condition",
                         column: x => x.ConditionId,
@@ -311,12 +304,6 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                         name: "FK_Item_OnlineStore",
                         column: x => x.OnlineStoreId,
                         principalTable: "OnlineStore",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Item_PhoneCarrier_PhoneCarrierId",
-                        column: x => x.PhoneCarrierId,
-                        principalTable: "PhoneCarrier",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -501,11 +488,6 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Item_BrandId",
-                table: "Item",
-                column: "BrandId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Item_ConditionId",
                 table: "Item",
                 column: "ConditionId");
@@ -525,11 +507,6 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                 name: "IX_Item_OnlineStoreId",
                 table: "Item",
                 column: "OnlineStoreId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Item_PhoneCarrierId",
-                table: "Item",
-                column: "PhoneCarrierId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Item_PublicId",

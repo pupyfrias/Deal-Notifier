@@ -5,28 +5,9 @@ namespace DealNotifier.Infrastructure.Persistence.Seeds
 {
     public static class UnlockProbabilitySeed
     {
-        public static List<UnlockProbability> Data { get; } = new List<UnlockProbability>
-        {
-            new UnlockProbability
-            {
-                Id= (int) Enums.UnlockProbability.None,
-                Name= Enums.UnlockProbability.None.ToString()
-            },
-            new UnlockProbability
-            {
-                Id= (int) Enums.UnlockProbability.Low,
-                Name= Enums.UnlockProbability.Low.ToString()
-            },
-            new UnlockProbability
-            {
-                Id= (int) Enums.UnlockProbability.Middle,
-                Name= Enums.UnlockProbability.Middle.ToString()
-            },
-            new UnlockProbability
-            {
-                Id= (int) Enums.UnlockProbability.High,
-                Name= Enums.UnlockProbability.High.ToString()
-            }
-        };
+        public static List<UnlockProbability> Data { get; } = Enum.GetValues<Enums.UnlockProbability>()
+                                                              .Select(e => new UnlockProbability {Id = (int)e, Name = e.ToString()})
+                                                              .ToList();
+        
     }
 }

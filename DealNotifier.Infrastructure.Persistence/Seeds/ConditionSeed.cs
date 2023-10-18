@@ -5,18 +5,8 @@ namespace DealNotifier.Infrastructure.Persistence.Seeds
 {
     public static class ConditionSeed
     {
-        public static List<Condition> Data { get; } = new List<Condition>
-        {
-            new Condition
-            {
-                Id= (int) Enums.Condition.New,
-                Name= Enums.Condition.New.ToString()
-            },
-            new Condition
-            {
-                Id= (int) Enums.Condition.Used,
-                Name= Enums.Condition.Used.ToString()
-            }
-        };
+        public static List<Condition> Data { get; } = Enum.GetValues<Enums.Condition>()
+                                                      .Select(e => new Condition { Id = (int)e, Name = e.ToString() })
+                                                      .ToList();
     }
 }

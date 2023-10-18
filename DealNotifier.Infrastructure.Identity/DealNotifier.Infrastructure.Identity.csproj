@@ -7,6 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <None Remove="Protos\auth.proto" />
+      <None Remove="Protos\role.proto" />
+      <None Remove="Protos\user.proto" />
+    </ItemGroup>
+
+    <ItemGroup>
       <PackageReference Include="Google.Protobuf" Version="3.24.4" />
       <PackageReference Include="Grpc.Net.ClientFactory" Version="2.57.0" />
       <PackageReference Include="Grpc.Tools" Version="2.58.0">
@@ -31,16 +37,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Protobuf Include="..\..\DealNotifier Security\DealNotifierSecurity.GrpcService\Protos\auth.proto" GrpcServices="Client">
-        <Link>Protos\auth.proto</Link>
-      </Protobuf>
-      <Protobuf Include="..\..\DealNotifier Security\DealNotifierSecurity.GrpcService\Protos\role.proto" GrpcServices="Client">
-        <Link>Protos\role.proto</Link>
-      </Protobuf>
-      <Protobuf Include="..\..\DealNotifier Security\DealNotifierSecurity.GrpcService\Protos\user.proto" GrpcServices="Client">
-        <Link>Protos\user.proto</Link>
-      </Protobuf>
+      <Protobuf Include="Protos\auth.proto" GrpcServices="Client" />
+      <Protobuf Include="Protos\role.proto" GrpcServices="Client" />
+      <Protobuf Include="Protos\user.proto" GrpcServices="Client" />
     </ItemGroup>
+
   
   </Project>
   

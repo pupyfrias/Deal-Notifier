@@ -5,23 +5,8 @@ namespace DealNotifier.Infrastructure.Persistence.Seeds
 {
     public static class OnlineStoreSeed
     {
-        public static List<OnlineStore> Data { get;} = new List<OnlineStore>
-        {
-            new OnlineStore
-            {
-                Id= (int) Enums.OnlineStore.Amazon,
-                Name= Enums.OnlineStore.Amazon.ToString()
-            },
-            new OnlineStore
-            {
-                Id= (int) Enums.OnlineStore.eBay,
-                Name= Enums.OnlineStore.eBay.ToString()
-            },
-             new OnlineStore
-             {
-                Id= (int) Enums.OnlineStore.TheStore,
-                Name= Enums.OnlineStore.TheStore.ToString()
-             }
-        };
+        public static List<OnlineStore> Data { get;} = Enum.GetValues<Enums.OnlineStore>()
+                                                       .Select(e => new OnlineStore { Id = (int)e, Name = e.ToString() })
+                                                       .ToList();
     }
 }

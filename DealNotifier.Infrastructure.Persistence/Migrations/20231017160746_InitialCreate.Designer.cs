@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DealNotifier.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231015180825_inint")]
-    partial class inint
+    [Migration("20231017160746_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -275,9 +275,6 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                     b.Property<int>("BidCount")
                         .HasColumnType("Int");
 
-                    b.Property<int?>("BrandId")
-                        .HasColumnType("int");
-
                     b.Property<int>("ConditionId")
                         .HasColumnType("int");
 
@@ -339,9 +336,6 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                     b.Property<int>("OnlineStoreId")
                         .HasColumnType("int");
 
-                    b.Property<int>("PhoneCarrierId")
-                        .HasColumnType("int");
-
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(13,2)");
 
@@ -371,8 +365,6 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BrandId");
-
                     b.HasIndex("ConditionId");
 
                     b.HasIndex("ItemTypeId");
@@ -381,8 +373,6 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                         .IsUnique();
 
                     b.HasIndex("OnlineStoreId");
-
-                    b.HasIndex("PhoneCarrierId");
 
                     b.HasIndex("PublicId")
                         .IsUnique();
@@ -1051,10 +1041,6 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("DealNotifier.Core.Domain.Entities.Item", b =>
                 {
-                    b.HasOne("DealNotifier.Core.Domain.Entities.Brand", null)
-                        .WithMany("Items")
-                        .HasForeignKey("BrandId");
-
                     b.HasOne("DealNotifier.Core.Domain.Entities.Condition", "Condition")
                         .WithMany("Items")
                         .HasForeignKey("ConditionId")
@@ -1075,12 +1061,6 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_Item_OnlineStore");
-
-                    b.HasOne("DealNotifier.Core.Domain.Entities.PhoneCarrier", "PhoneCarrier")
-                        .WithMany("Items")
-                        .HasForeignKey("PhoneCarrierId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
 
                     b.HasOne("DealNotifier.Core.Domain.Entities.StockStatus", "StockStatus")
                         .WithMany("Items")
@@ -1106,8 +1086,6 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                     b.Navigation("ItemType");
 
                     b.Navigation("OnlineStore");
-
-                    b.Navigation("PhoneCarrier");
 
                     b.Navigation("StockStatus");
 
@@ -1179,8 +1157,6 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("DealNotifier.Core.Domain.Entities.Brand", b =>
                 {
-                    b.Navigation("Items");
-
                     b.Navigation("UnlockabledPhones");
                 });
 
@@ -1203,8 +1179,6 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("DealNotifier.Core.Domain.Entities.PhoneCarrier", b =>
                 {
-                    b.Navigation("Items");
-
                     b.Navigation("UnlockablePhoneCarriers");
                 });
 

@@ -1,0 +1,28 @@
+﻿# Usar la imagen del SDK de .NET 7.0
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build-env
+
+# Instalar la herramienta dotnet-ef
+RUN dotnet tool install --global dotnet-ef
+
+# Agregar la ruta de las herramientas globales para hacer accesible dotnet-ef
+ENV PATH="${PATH}:/root/.dotnet/tools"
+
+# Establecer el directorio de trabajo en la imagen
+WORKDIR /app
+
+# Copiar los proyectos necesarios para ejecutar las migraciones
+COPY ["WebApi/WebApi.csproj", "WebApi/"]
+COPY ["DealNotifier.Core.Application/DealNotifier.Core.Application.csproj", "DealNotifier.Core.Application/"]
+COPY ["DealNotifier.Core.Domain/DealNotifier.Core.Domain.csproj", "DealNotifier.Core.Domain/"]
+COPY ["DealNotifier.Infrastructure.Email/DealNotifier.Infrastructure.Email.csproj", "DealNotifier.Infrastructure.Email/"]
+COPY ["DealNotifier.Infrastructure.Identity/DealNotifier.Infrastructure.Identity.csproj", "DealNotifier.Infrastructure.Identity/"]
+COPY ["DealNotifier.Infrastructure.Persistence/DealNotifier.Infrastructure.Persistence.csproj", "DealNotifier.Infrastructure.Persistence/"]
+
+# Restaurar las dependencias y herramientas de los proyectos
+RUN dotnet restore "./WebApi/WebApi.csproj"
+
+# Copiar todo el código necesario para ejecutar las migraciones
+COPY . .
+
+# Ejecutar los comandos para aplicar las migraciones
+CMD ["bash", "-c", "dotnet ef database update --startup-project ./WebApi/WebApi.csproj --context applicationDbContext"]

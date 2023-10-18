@@ -35,6 +35,9 @@ namespace DealNotifier.Core.Application.Services
         private readonly IUnlockabledPhoneRepository _unlockabledPhoneRepository;
         private readonly IEmailService _emailService;
         private readonly ConcurrentBag<int> _evaluatedItemIdList = new ConcurrentBag<int>();
+        private const  int _maxBidCount = 3;
+        private const decimal _minPriceDifferenceForNotification = 5m;
+        private const int _maxTimeDifference = 2;
 
 
         #endregion Fields
@@ -76,33 +79,22 @@ namespace DealNotifier.Core.Application.Services
 
         #region Methods
 
-        public async Task<bool> CanBeSavedAsync(ItemCreateRequest itemCreate)
+        public bool CanBeSaved(ItemCreateRequest itemCreate)
         {
-            bool isBanned = false;
-            bool isInBlackList = false;
-
-            Task banKeywordTask = Task.Run(() =>
-            {
-                isBanned = CacheDataUtility.BanKeywordList.Any(element => itemCreate.Name.Contains(element.Keyword, StringComparison.OrdinalIgnoreCase));
-            });
-
-            Task blackListTask = Task.Run(() =>
-            {
-                isInBlackList = CacheDataUtility.BanLinkList.Any(x => x.Link == itemCreate.Link);
-            });
-
-            await Task.WhenAll(banKeywordTask, blackListTask);
-
-            return !(isBanned || isInBlackList);
+            var isBannedKeyword = CheckBanKeywords(itemCreate);
+            var isBannedLink = CheckBanList(itemCreate);
+            return !(isBannedKeyword || isBannedLink);
         }
 
-        public async Task LoadDataAsync()
+       
+
+        public async Task LoadNecessaryDataAsync()
         {
             try
             {
                 var tasks = new List<Task>
                 {
-                    LoadBandKeywordsAsync(),
+                    LoadBanKeywordsAsync(),
                     LoadBanLinksAsync(),
                     LoadBrandsAsync(),
                     LoadNotificationCriteriaAsync(),
@@ -119,6 +111,8 @@ namespace DealNotifier.Core.Application.Services
         }
 
 
+
+
         public async Task SaveOrUpdateAsync(ConcurrentBag<ItemCreateRequest> itemCreateList)
         {
             var itemListToCreate = new ConcurrentBag<Item>();
@@ -126,92 +120,31 @@ namespace DealNotifier.Core.Application.Services
 
             try
             {
-                var tasks = itemCreateList.Select(async item =>
+                var tasks = itemCreateList.Select(async itemCreate =>
                 {
                     using (var scope = _serviceScopeFactory.CreateScope())
                     {
                         var itemRepository = scope.ServiceProvider.GetRequiredService<IItemRepository>();
-                        var oldItem = await itemRepository.FirstOrDefaultAsync(i => i.Link == item.Link);
+                        var oldItem = await itemRepository.FirstOrDefaultAsync(i => i.Link == itemCreate.Link);
                         
                         if (oldItem == null)
                         {
-                            var mappedItem = _mapper.Map<Item>(item);
-
-                            EvaluateIfNotifiable(mappedItem);
-                            itemListToCreate.Add(mappedItem);
+                            Item newItem = CreateNewItem(itemCreate);
+                            itemListToCreate.Add(newItem);
                         }
                         else
                         {
-                            _evaluatedItemIdList.Add(oldItem.Id);
-                            decimal oldPrice = oldItem.Price;
-                            decimal saving = oldPrice - item.Price;
-
-                            if (oldPrice != item.Price ||
-                                oldItem.UnlockProbabilityId != item.UnlockProbabilityId ||
-                                oldItem.Image != item.Image ||
-                                item.IsAuction
-                                )
-                            {
-                                if (oldPrice > item.Price)
-                                {
-                                    oldItem.Saving = saving;
-                                    oldItem.SavingsPercentage = saving / oldPrice * 100;
-                                    oldItem.OldPrice = oldPrice;
-                                }
-                                else if (oldPrice < item.Price)
-                                {
-                                    oldItem.OldPrice = 0;
-                                    oldItem.Saving = 0;
-                                    oldItem.SavingsPercentage = 0;
-                                }
-
-                                oldItem.Notified = null;
-                                _mapper.Map(item, oldItem);
-                                itemListToUpdate.Add(oldItem);
-                                if ((oldPrice - item.Price) >= 5 || item.IsAuction)
-                                {
-                                    EvaluateIfNotifiable(oldItem);
-                                }
-                            }
+                            UpdateExistingItem(oldItem, itemCreate);
+                            itemListToUpdate.Add(oldItem);
                         }
                     }
                 });
-
-
-
 
                 await Task.WhenAll(tasks);
 
-                var createTask = Task.Run(async () =>
-                {
-                    if(itemListToCreate.Count > 0)
-                    {
-                        using (var scope = _serviceScopeFactory.CreateScope())
-                        {
-                            var itemRepository = scope.ServiceProvider.GetRequiredService<IItemRepository>();
-                            await itemRepository.CreateRangeAsync(itemListToCreate);
-                            foreach (var item in itemListToCreate)
-                            {
-                                _evaluatedItemIdList.Add(item.Id);
-                            }
-                        }
-                    }
+                var createTask = CreateRangeAsync(itemListToCreate);
+                var updateTask = UpdateRangeAsync(itemListToUpdate);
 
-                });
-
-                var updateTask = Task.Run(async() =>
-                {
-                    if (itemListToUpdate.Count > 0)
-                    {
-                        using (var scope = _serviceScopeFactory.CreateScope())
-                        {
-                            var itemRepository = scope.ServiceProvider.GetRequiredService<IItemRepository>();
-                            await itemRepository.UpdateRangeAsync(itemListToUpdate);
-                            
-                        }
-                    }
-                    
-                });
                 await Task.WhenAll(updateTask, createTask);
                 itemCreateList.Clear();
                 _logger.Information($"{itemListToCreate.Count} items created | {itemListToUpdate.Count} items updated");
@@ -223,69 +156,20 @@ namespace DealNotifier.Core.Application.Services
         }
 
 
-        
 
         public async Task SetUnlockProbabilityAsync(ItemCreateRequest itemCreate)
         {
-
-
-            if (itemCreate.Name.Contains("unlocked", StringComparison.OrdinalIgnoreCase)
-                || itemCreate.Name.Contains("ulk", StringComparison.OrdinalIgnoreCase))
+            if (ContainsUnlockedWord(itemCreate.Name) || await CanBeUnlockedBasedOnUnlockabledPhoneIdAsync(itemCreate))
             {
                 itemCreate.UnlockProbabilityId = (int)Enums.UnlockProbability.High;
+            }
 
+            else if (await CanBeUnlockedBasedOnModelNameAsync(itemCreate))
+            {
+                itemCreate.UnlockProbabilityId = (int)Enums.UnlockProbability.Middle;
             }
             else
             {
-                if (itemCreate.UnlockabledPhoneId != null)
-                {
-                    var carrierId = TryGetPhoneCarrierId(itemCreate.Name);
-                    if (carrierId != null)
-                    {
-                        var unlockabledPhonePhoneCarrier = new UnlockabledPhonePhoneCarrier
-                        {
-                            PhoneCarrierId = (int) carrierId,
-                            UnlockabledPhoneId =(int) itemCreate.UnlockabledPhoneId
-                        };
-
-                        var canBeUnlock = await _unlockabledPhonePhoneCarrierRepository.ExistsAsync(unlockabledPhonePhoneCarrier);
-                        if (canBeUnlock)
-                        {
-                            itemCreate.UnlockProbabilityId = (int)Enums.UnlockProbability.High;
-                            return;
-                        }
-                    }
-                }
-                else
-                {
-                    var possibleModelName = Regex.Match(itemCreate.Name, RegExPattern.ModelName, RegexOptions.IgnoreCase).Value;
-                    
-                    if(possibleModelName != null)
-                    {
-                        var possibleUnlockedPhone = await _unlockabledPhoneRepository.FirstOrDefaultAsync(item => item.ModelName!.Contains(possibleModelName));
-
-                        if (possibleUnlockedPhone != null)
-                        {
-                            var carrierId = TryGetPhoneCarrierId(itemCreate.Name);
-                            if (carrierId != null)
-                            {
-                                var unlockabledPhonePhoneCarrier = new UnlockabledPhonePhoneCarrier
-                                {
-                                    PhoneCarrierId = (int)carrierId,
-                                    UnlockabledPhoneId = possibleUnlockedPhone.Id
-                                };
-
-                                var canBeUnlock = await _unlockabledPhonePhoneCarrierRepository.ExistsAsync(unlockabledPhonePhoneCarrier);
-                                if (canBeUnlock)
-                                {
-                                    itemCreate.UnlockProbabilityId = (int)Enums.UnlockProbability.Middle;
-                                    return;
-                                }
-                            }
-                        }
-                    }    
-                }
-
                 itemCreate.UnlockProbabilityId = (int)Enums.UnlockProbability.Low;
             }
         }
@@ -327,16 +211,76 @@ namespace DealNotifier.Core.Application.Services
             _evaluatedItemIdList.Clear();
         }
 
+
+
+        #region Private Methods
+
+
+        private bool ContainsUnlockedWord(string title)
+        {
+            return title.Contains("unlocked", StringComparison.OrdinalIgnoreCase) || title.Contains("ulk", StringComparison.OrdinalIgnoreCase);
+        }
+
+
+        private async Task<bool> CanBeUnlockedBasedOnUnlockabledPhoneIdAsync(ItemCreateRequest itemCreate)
+        {
+            if (itemCreate.UnlockabledPhoneId != null)
+            {
+                var carrierId = TryGetPhoneCarrierId(itemCreate.Name);
+                if (carrierId != null)
+                {
+                    return await ExistsUnlockabledPhonePhoneCarrier((int)itemCreate.UnlockabledPhoneId, (int)carrierId);
+                }
+            }
+
+            return false;
+        }
+
+        private async Task<bool> ExistsUnlockabledPhonePhoneCarrier(int unlockabledPhoneId, int carrierId)
+        {
+            var unlockabledPhonePhoneCarrier = new UnlockabledPhonePhoneCarrier
+            {
+                PhoneCarrierId = carrierId,
+                UnlockabledPhoneId = unlockabledPhoneId
+            };
+
+            return await _unlockabledPhonePhoneCarrierRepository.ExistsAsync(unlockabledPhonePhoneCarrier);
+        }
+
+
+        private async Task<bool> CanBeUnlockedBasedOnModelNameAsync(ItemCreateRequest itemCreate)
+        {
+            var possibleModelName = Regex.Match(itemCreate.Name, RegExPattern.ModelName, RegexOptions.IgnoreCase).Value;
+
+            if (possibleModelName != null)
+            {
+                var possibleUnlockedPhone = await _unlockabledPhoneRepository.FirstOrDefaultAsync(item => item.ModelName!.Contains(possibleModelName));
+
+                if (possibleUnlockedPhone != null)
+                {
+                    var carrierId = TryGetPhoneCarrierId(itemCreate.Name);
+                    if (carrierId != null)
+                    {
+                        return await ExistsUnlockabledPhonePhoneCarrier(possibleUnlockedPhone.Id, (int)carrierId);
+
+                    }
+                }
+            }
+
+            return false;
+        }
+
+
         private void EvaluateIfNotifiable(Item item)
         {
             DateTime notified = item.Notified.HasValue ? (DateTime)item.Notified : DateTime.MinValue;
             DateTime itemEndDate = item.ItemEndDate.HasValue ? (DateTime)item.ItemEndDate : DateTime.MinValue;
 
-            foreach (NotificationCriteriaDto notificationCreteria in CacheDataUtility.NotificationCriteriaList)
+            foreach (NotificationCriteriaDto notificationCriteria in CacheDataUtility.NotificationCriteriaList)
             {
-                if (notificationCreteria.ConditionId == item.ConditionId
-                    && notificationCreteria.MaxPrice >= item.Price
-                    && TitleContainsKeyword(item.Name, notificationCreteria.Keywords)
+                if (notificationCriteria.ConditionId == item.ConditionId
+                    && notificationCriteria.MaxPrice >= item.Price
+                    && TitleContainsKeyword(item.Name, notificationCriteria.Keywords)
                     && (bool)item.Notify!
                     && notified.Date != DateTime.Now.Date
 
@@ -347,25 +291,97 @@ namespace DealNotifier.Core.Application.Services
                         break;
                     }
 
-                    if ((bool) item.IsAuction!)
+                    if ((bool)item.IsAuction!)
                     {
-                        var diff = (itemEndDate - DateTime.Now).TotalHours;
-                        if (diff > 2 || diff < 0 || item.BidCount > 3)
+
+                        var timeDifference = (itemEndDate - DateTime.Now).TotalHours;
+                        if (timeDifference > _maxTimeDifference || timeDifference < 0 || item.BidCount > _maxBidCount)
                         {
                             break;
                         }
                     }
 
-                     _emailService.NotifiableItemList.Add(item);
+                    _emailService.NotifiableItemList.Add(item);
                     item.Notified = DateTime.Now;
                     break;
                 }
             }
         }
 
-        #region Private Methods
 
-        private async Task LoadBandKeywordsAsync()
+        private Item CreateNewItem(ItemCreateRequest itemCreate)
+        {
+            var mappedItem = _mapper.Map<Item>(itemCreate);
+            EvaluateIfNotifiable(mappedItem);
+            return mappedItem;
+        }
+
+
+        private void UpdateExistingItem(Item oldItem, ItemCreateRequest item)
+        {
+            _evaluatedItemIdList.Add(oldItem.Id);
+            decimal oldPrice = oldItem.Price;
+            decimal saving = oldPrice - item.Price;
+
+            if (oldPrice != item.Price ||
+                oldItem.UnlockProbabilityId != item.UnlockProbabilityId ||
+                oldItem.Image != item.Image ||
+                item.IsAuction
+                )
+            {
+                if (oldPrice > item.Price)
+                {
+                    oldItem.Saving = saving;
+                    oldItem.SavingsPercentage = saving / oldPrice * 100;
+                    oldItem.OldPrice = oldPrice;
+                }
+                else if (oldPrice < item.Price)
+                {
+                    oldItem.OldPrice = 0;
+                    oldItem.Saving = 0;
+                    oldItem.SavingsPercentage = 0;
+                }
+
+                oldItem.Notified = null;
+                _mapper.Map(item, oldItem);
+                if ((oldPrice - item.Price) >= _minPriceDifferenceForNotification || item.IsAuction)
+                {
+                    EvaluateIfNotifiable(oldItem);
+                }
+            }
+        }
+
+
+        private async Task CreateRangeAsync(ConcurrentBag<Item> itemListToCreate)
+        {
+            if (itemListToCreate.Count > 0)
+            {
+                using (var scope = _serviceScopeFactory.CreateScope())
+                {
+                    var itemRepository = scope.ServiceProvider.GetRequiredService<IItemRepository>();
+                    await itemRepository.CreateRangeAsync(itemListToCreate);
+                    foreach (var item in itemListToCreate)
+                    {
+                        _evaluatedItemIdList.Add(item.Id);
+                    }
+                }
+            }
+        }
+
+        private async Task UpdateRangeAsync(ConcurrentBag<Item> itemListToUpdate)
+        {
+
+            if (itemListToUpdate.Count > 0)
+            {
+                using (var scope = _serviceScopeFactory.CreateScope())
+                {
+                    var itemRepository = scope.ServiceProvider.GetRequiredService<IItemRepository>();
+                    await itemRepository.UpdateRangeAsync(itemListToUpdate);
+                }
+            }
+        }
+
+        private async Task LoadBanKeywordsAsync()
         {
             var bandKeywordList = await _banKeywordRepository.GetAllProjectedAsync<BanKeywordDto>();
             CacheDataUtility.BanKeywordList = bandKeywordList.ToHashSet<BanKeywordDto>();
@@ -412,6 +428,17 @@ namespace DealNotifier.Core.Application.Services
 
             return matchedPhoneCarrier?.Id ?? null;
         }
+        private bool CheckBanKeywords(ItemCreateRequest itemCreate)
+        {
+            return CacheDataUtility.BanKeywordList.Any(element => itemCreate.Name.Contains(element.Keyword, StringComparison.OrdinalIgnoreCase));
+        }
+
+        private bool CheckBanList(ItemCreateRequest itemCreate)
+        {
+            return CacheDataUtility.BanLinkList.Any(x => x.Link == itemCreate.Link);
+        }
+
+
         #endregion Private Methods
 
         #endregion Methods

@@ -1,45 +1,32 @@
-using Azure.Core;
+using DealNotifier.Core.Application.Constants;
+using DealNotifier.Core.Application.Enums;
 using DealNotifier.Core.Application.Interfaces.Services;
-using DealNotifier.Core.Application.Services;
 using DealNotifier.Core.Application.ViewModels.eBay;
 using DealNotifier.Core.Application.ViewModels.V1.Item;
 using DealNotifier.Core.Domain.Configs;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
+using System.Collections.Concurrent;
+using System.Diagnostics;
+using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using System.Net;
 using System.Text;
 using ILogger = Serilog.ILogger;
-using Timer = System.Threading.Timer;
-using DealNotifier.Core.Application.Enums;
-using System.Collections.Concurrent;
-using DealNotifier.Core.Application.Extensions;
-using System.Xml.Linq;
-using DealNotifier.Core.Application.ViewModels.V1.PhoneCarrier;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Caching.Memory;
-using DealNotifier.Infrastructure.Persistence.Repositories;
-using DealNotifier.Infrastructure.Persistence.DbContexts;
-using DealNotifier.Core.Application.Interfaces.Repositories;
-using System.Diagnostics;
-using DealNotifier.Core.Application.Constants;
 
 namespace EbayDataSyncWorker
 {
     public class Worker : BackgroundService
     {
-        private readonly ConcurrentBag<ItemCreateRequest> _itemList = new ConcurrentBag<ItemCreateRequest>();
-
-        private IItemSyncService _itemSyncService;
+        private readonly string _baseUrl;
         private readonly EbayUrlConfig _ebayUrlConfig;
         private readonly HttpClient _httpClient;
-        private IEmailService _emailService;
         private readonly ILogger _logger;
         private readonly IMemoryCache _memoryCache;
         private readonly IServiceScopeFactory _serviceScopeFactory;
-        private readonly string _baseUrl;
-        private string? _currentUrl = string.Empty;
-        private Timer _timer;
+        private IEmailService _emailService;
+        private IItemSyncService _itemSyncService;
+        private int _retryFetch = 0;
 
         public Worker(
             ILogger logger, 
@@ -55,26 +42,11 @@ namespace EbayDataSyncWorker
             _serviceScopeFactory = serviceScopeFactory;
             _memoryCache = memoryCache;
             _httpClient = httpClientFactory.CreateClient();
+            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
         }
 
-        public override Task StopAsync(CancellationToken cancellationToken)
-        {
-            _timer?.Dispose();
-            return base.StopAsync(cancellationToken);
-        }
-
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-        {
-            _logger.Information("Starting ExecuteAsync.");
-            TimerCallback callback = async (state) => await TimerElapsed();
-
-            _timer = new Timer(callback, null, TimeSpan.Zero, TimeSpan.FromHours(1));
-            await Task.Delay(-1, stoppingToken);
-            _logger.Information("ExecuteAsync finished.");
-        }
-
-        private async Task TimerElapsed()
+        public async Task InitAsync()
         {
             _logger.Information($"Timer elapsed. Running eBay Service Init. {DateTime.Now}");
             var timer = new Stopwatch();
@@ -84,77 +56,125 @@ namespace EbayDataSyncWorker
             {
                 _itemSyncService = scope.ServiceProvider.GetRequiredService<IItemSyncService>();
                 _emailService = scope.ServiceProvider.GetRequiredService<IEmailService>();
-                await InitAsync();
+                string searchUrl = _baseUrl + _ebayUrlConfig.Paths.Search.First();
+                await _itemSyncService.LoadNecessaryDataAsync();
+                await ProcessDataAsync(searchUrl);
             }
 
             timer.Stop();
             TimeSpan timeTaken = timer.Elapsed;
 
             _logger.Information($"Time taken: {timeTaken.ToString(@"m\:ss\.fff")}");
-            _logger.Information("eBay Service Init completed.");
+            _logger.Information("eBay Service completed.");
+
+
+           
+        }
+
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        {
+            _logger.Information("Starting ExecuteAsync.");
+             await InitAsync();
+             await StopAsync(stoppingToken);
+            _logger.Information("ExecuteAsync finished.");
         }
 
 
-        public async Task InitAsync()
+        private async Task ProcessDataAsync(string? initialUrl) 
         {
-            string searchUrl = _baseUrl+ _ebayUrlConfig.Paths.Search.First();
-            await _itemSyncService.LoadDataAsync();
-            await RunAsync(searchUrl);
+            try
+            {
+                string? currentUrl = initialUrl;
+                do
+                {
+                    var ebayResponse = await FetchDataAsync(currentUrl);
+                    if (ebayResponse == null) break;
+                    var itemCreateList = await MapItemSummariesToItemCreatesAsync(ebayResponse.ItemSummaries);
+                    await _itemSyncService.SaveOrUpdateAsync(itemCreateList);
+                    currentUrl = ebayResponse.Next;
+                }
+                while (currentUrl != null);
+
+
+                await _itemSyncService.UpdateStockStatusAsync(OnlineStore.eBay);
+                await _emailService.NotifyUsersOfItemsByEmail();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.Message);
+            }  
         }
 
-        private async Task RunAsync(string? url)
+
+
+        private async Task<EBayResponse?> FetchDataAsync(string? url)
         {
-                _currentUrl = url;
+            EBayResponse? ebayResponse = default;
+            try
+            {
                 _memoryCache.TryGetValue("accessToken", out string? accessToken);
-
-                if(string.IsNullOrEmpty(accessToken)) 
+              
+                if (string.IsNullOrEmpty(accessToken))
                 {
                     await RefreshTokenAsync();
-                    await RunAsync(_currentUrl);
-                    return;
+                    _memoryCache.TryGetValue("accessToken", out accessToken);
                 }
 
-
-                _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                var response = await _httpClient.GetAsync(_currentUrl);
+                var response = await _httpClient.GetAsync(url);
                 if (response.IsSuccessStatusCode)
                 {
-                    var content = await response.Content.ReadFromJsonAsync<EBayResponse>();
-
-                    await ItemMapperAsync(content?.ItemSummaries);
-                    await _itemSyncService.SaveOrUpdateAsync(_itemList);
-                    _currentUrl = content?.Next;
-
-                    if(_currentUrl != null)
-                    {
-                        await RunAsync(_currentUrl);
-                        return;
-                    }
-
-                     await _itemSyncService.UpdateStockStatusAsync(OnlineStore.eBay);
-                     await _emailService.NotifyUsersOfItemsByEmail();
-                    
+                    ebayResponse = await response.Content.ReadFromJsonAsync<EBayResponse>();
+                    _retryFetch = 0;
                 }
                 else if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
+                    if(_retryFetch > 3)
+                    {
+                        _logger.Information("Maximum retry limit reached");
+                        _retryFetch = 0;
+                        return null;
+                    }
+
+                    _retryFetch++;
                     _logger.Information("Unauthorized");
                     await RefreshTokenAsync();
-                    await RunAsync(_currentUrl);
+                    return await FetchDataAsync(url);
 
                 }
                 else
                 {
                     _logger.Warning($"{(int)response.StatusCode} | {response.ReasonPhrase}");
                 }
-            
+            }
+            catch(Exception ex)
+            {
+                _logger?.Error(ex.Message);
+
+            }
+           
+            return ebayResponse;
 
         }
 
+
         #region Private Methods
 
-        private async Task ItemMapperAsync(List<ItemSummary>? itemSummaries)
+        private int GetConditionId(ItemSummary itemSummary)
         {
+            return itemSummary.Condition == "New" ? (int)Condition.New : (int)Condition.Used;
+        }
+
+        private string GetImage(ItemSummary itemSummary)
+        {
+
+            return itemSummary.ThumbnailImages?[0]?.ImageUrl ?? itemSummary.Image?.ImageUrl ?? string.Empty;
+        }
+
+        private async Task<ConcurrentBag<ItemCreateRequest>> MapItemSummariesToItemCreatesAsync(List<ItemSummary>? itemSummaries)
+        {
+            var mappedItemList = new ConcurrentBag<ItemCreateRequest>();
+
             if (itemSummaries != null)
             {
                 var tasks = itemSummaries.Select(async element =>
@@ -169,7 +189,7 @@ namespace EbayDataSyncWorker
                             itemCreate.Name = element.Title;
                             itemCreate.Link = element.ItemWebUrl.Substring(0, element.ItemWebUrl.IndexOf("?"));
 
-                            if (await itemSyncService.CanBeSavedAsync(itemCreate))
+                            if (await itemSyncService.CanBeSaved(itemCreate))
                             {
                                 decimal price = 0;
                                 bool isAuction = decimal.TryParse(element.CurrentBidPrice?.Value, out decimal currentBidPrice);
@@ -188,7 +208,7 @@ namespace EbayDataSyncWorker
                                 price += shippingCost;
 
                                 itemCreate.BidCount = element!.BidCount;
-                                itemCreate.ConditionId = GetCondition(element);
+                                itemCreate.ConditionId = GetConditionId(element);
                                 itemCreate.Image = GetImage(element);
                                 itemCreate.IsAuction = isAuction;
                                 itemCreate.ItemEndDate = element.ItemEndDate?.AddHours(-4);
@@ -199,7 +219,7 @@ namespace EbayDataSyncWorker
                                 await itemSyncService.TryAssignUnlockabledPhoneIdAsync(itemCreate);
                                 await itemSyncService.SetUnlockProbabilityAsync(itemCreate);
 
-                                _itemList.Add(itemCreate);
+                                mappedItemList.Add(itemCreate);
                             }
                         }
                        
@@ -216,20 +236,9 @@ namespace EbayDataSyncWorker
             {
                 _logger.Warning("itemSummaries is null");
             }
+
+            return mappedItemList;
         }
-
-
-        private string GetImage(ItemSummary itemSummary)
-        {
-
-            return itemSummary.ThumbnailImages?[0]?.ImageUrl ?? itemSummary.Image?.ImageUrl ?? string.Empty;
-        }
-
-        private int GetCondition(ItemSummary itemSummary)
-        {
-            return itemSummary.Condition == "New" ? (int) Condition.New : (int)Condition.Used;
-        }
-
         private async Task RefreshTokenAsync()
         {
             string clientId = Environment.GetEnvironmentVariable("ClientId") ?? string.Empty;
@@ -260,7 +269,9 @@ namespace EbayDataSyncWorker
             }
             else
             {
-                _logger.Error(await response.Content.ReadAsStringAsync());
+                var error = await response.Content.ReadAsStringAsync();
+                throw new Exception(error);
+                
             }
         }
 
