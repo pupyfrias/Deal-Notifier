@@ -3,12 +3,12 @@ using DealNotifier.Core.Application.ViewModels.V1.PhoneCarrier;
 using DealNotifier.Core.Domain.Entities;
 using System.Collections.Concurrent;
 
-namespace DealNotifier.Core.Application.Heplers
+namespace DealNotifier.Core.Application.Helpers
 {
     public static class Helper
     {
-        
-        
+
+
         public static string BasePath { get; } = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
 
         /// <summary>

@@ -36,6 +36,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.env = .env
 		docker-compose.yml = docker-compose.yml
 		Dockerfile.migrations = Dockerfile.migrations
+		wait-for-it.sh = wait-for-it.sh
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQL Scripts", "SQL Scripts", "{5FBE1C06-F98B-4987-A951-4158E379B798}"

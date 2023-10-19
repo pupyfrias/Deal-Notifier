@@ -50,6 +50,7 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddScoped<IUnlockabledPhonePhoneCarrierRepository, UnlockabledPhonePhoneCarrierRepository>();
         services.AddScoped<IUnlockabledPhoneRepository, UnlockabledPhoneRepository>();
         services.AddScoped<IItemSyncRepository,ItemSyncRepository>();
+        services.AddScoped<IUnlockabledPhoneService, UnlockabledPhoneService>();
 
     })
    .Build();

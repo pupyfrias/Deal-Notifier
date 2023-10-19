@@ -1,5 +1,5 @@
 ﻿using DealNotifier.Core.Application.Constants;
-using DealNotifier.Core.Application.Heplers;
+using DealNotifier.Core.Application.Helpers;
 using Serilog;
 using Serilog.Formatting;
 using Serilog.Formatting.Json;

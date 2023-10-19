@@ -12,5 +12,7 @@ namespace DealNotifier.Core.Application.Interfaces.Services
         Task<bool> ExistsAsync(UnlockabledPhonePhoneCarrierDto entity);
 
         Task CreateRangeAsync(int phoneCarrierId, PhoneCarrierUnlockabledPhoneCreateRequest request);
+
+        Task CreateIfNotExists(int unlockabledPhoneId, int phoneCarrierId);
     }
 }

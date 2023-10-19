@@ -75,7 +75,6 @@ namespace EbayDataSyncWorker
         {
             _logger.Information("Starting ExecuteAsync.");
              await InitAsync();
-             await StopAsync(stoppingToken);
             _logger.Information("ExecuteAsync finished.");
         }
 
@@ -189,7 +188,7 @@ namespace EbayDataSyncWorker
                             itemCreate.Name = element.Title;
                             itemCreate.Link = element.ItemWebUrl.Substring(0, element.ItemWebUrl.IndexOf("?"));
 
-                            if (await itemSyncService.CanBeSaved(itemCreate))
+                            if (itemSyncService.CanBeSaved(itemCreate))
                             {
                                 decimal price = 0;
                                 bool isAuction = decimal.TryParse(element.CurrentBidPrice?.Value, out decimal currentBidPrice);
@@ -258,6 +257,11 @@ namespace EbayDataSyncWorker
                 new KeyValuePair<string, string>("refresh_token", refreshToken),
                 new KeyValuePair<string, string>("scope", scope),
             });
+
+            var dictionary = new Dictionary<string, object>() {
+                { "grant_type", "refresh_token" },
+                { "refresh_token", refreshToken },
+                {"scope", scope }};
 
             HttpResponseMessage response = await _httpClient.PostAsync(tokenUrl, requestBody);
 

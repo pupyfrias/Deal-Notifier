@@ -12,7 +12,13 @@ namespace DealNotifier.Infrastructure.Persistence.Setup
             Action<DbContextOptionsBuilder> Options = (options) =>
             {
                 options.UseSqlServer(configuration.GetConnectionString("DealNotifierConnection"),
-                            optionAction => optionAction.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName))
+                            optionAction => {
+                                optionAction.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName);
+                                optionAction.EnableRetryOnFailure();
+                               
+                                }
+                            
+                            )
                 /*.LogTo(Console.WriteLine, LogLevel.Information)*/;
             };
 

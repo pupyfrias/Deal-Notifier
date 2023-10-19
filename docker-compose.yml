@@ -9,6 +9,7 @@ services:
       - "1434:1433"
     volumes:
       - dbdata:/var/opt/mssql
+    
 
   migrate:
     build:
@@ -16,9 +17,12 @@ services:
         dockerfile: Dockerfile.migrations
     environment:
          - ConnectionStrings__DealNotifierConnection=${CONNECTION_STRING}
+    volumes:
+      - ./wait-for-it.sh:/app/wait-for-it.sh
+    entrypoint: ["/bin/sh", "-c", "/app/wait-for-it.sh db:1433 -- dotnet ef database update --startup-project ./WebApi/WebApi.csproj --context applicationDbContext"]
     depends_on:
         - db
-    restart: "no"
+
   add-stored-procedures:
     image: mcr.microsoft.com/mssql-tools
     environment:
@@ -26,14 +30,13 @@ services:
       - ACCEPT_EULA=Y
     volumes:
       - ./StoredProcedures.sql:/tmp/StoredProcedures.sql
+      - ./wait-for-it.sh:/app/wait-for-it.sh
     depends_on:
       - db
       - migrate
-    entrypoint:
-      - /bin/bash
-      - -c
-      - 'sleep 15 && /opt/mssql-tools/bin/sqlcmd -S db -U SA -P $$MSSQL_SA_PASSWORD -i /tmp/StoredProcedures.sql'
-    restart: "no"
+    entrypoint: ["/bin/sh", "-c", "/app/wait-for-it.sh db:1433 -- /opt/mssql-tools/bin/sqlcmd -S db -U SA -P $$MSSQL_SA_PASSWORD -i /tmp/StoredProcedures.sql"]
+    
+
   web-api:
     image: web-api:1.0
     build: 
@@ -48,6 +51,9 @@ services:
     - db
     - migrate
     - add-stored-procedures
+    volumes:
+          - ./wait-for-it.sh:/app/wait-for-it.sh
+    entrypoint: ["/bin/sh", "-c", "/app/wait-for-it.sh db:1433 -- dotnet /app/WebApi.dll"]
   ebay-data-sync-worker:
     image: ebay-data-sync-worker:1.0
     build: 
@@ -60,9 +66,9 @@ services:
         - RefreshToken=${REFRESH_TOKEN}
     depends_on:
         - db
-        - migrate
-        - web-api
-        - add-stored-procedures
+    volumes:
+      - ./wait-for-it.sh:/app/wait-for-it.sh
+    entrypoint: ["/bin/sh", "-c", "/app/wait-for-it.sh db:1433 -- dotnet /app/EbayDataSyncWorker.dll"]
   t-unlock-data-sync-worker:
     image: t-unlock-data-sync-worker:1.0
     build: 
@@ -72,10 +78,6 @@ services:
         - ConnectionStrings__DealNotifierConnection=${CONNECTION_STRING}
     depends_on:
     - db
-    - migrate
-    - web-api
-    - add-stored-procedures
-    restart: "no"
 
 
 volumes:

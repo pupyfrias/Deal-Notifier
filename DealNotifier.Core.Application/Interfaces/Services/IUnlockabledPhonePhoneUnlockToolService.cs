@@ -1,15 +1,14 @@
-﻿using DealNotifier.Core.Application.ViewModels.V1;
-using DealNotifier.Core.Application.ViewModels.V1.PhoneUnlockTool;
-using DealNotifier.Core.Application.ViewModels.V1.UnlockabledPhonePhoneUnlockTool;
-using DealNotifier.Core.Domain.Entities;
+﻿using DealNotifier.Core.Application.ViewModels.V1.UnlockabledPhonePhoneUnlockTool;
 
 namespace DealNotifier.Core.Application.Interfaces.Services
 {
     public interface IUnlockabledPhonePhoneUnlockToolService
     {
-        Task CreateRangeAsync(int PhoneUnlockToolId, PhoneUnlockToolUnlockablePhoneCreateRequest request);
-        Task CreateAsync(UnlockabledPhonePhoneUnlockToolCreate model);
+
+        Task CreateAsync(int unlockedPhoneId, int phoneUnlockToolId);
 
         Task<bool> ExistsAsync(UnlockabledPhonePhoneUnlockToolDto entity);
+
+        Task CreateIfNotExists(int unlockabledPhoneId, int phoneUnlockToolId);
     }
 }

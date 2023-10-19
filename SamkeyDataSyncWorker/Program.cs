@@ -7,6 +7,8 @@ using DealNotifier.Infrastructure.Persistence.DbContexts;
 using DealNotifier.Infrastructure.Persistence.Repositories;
 using DealNotifier.Infrastructure.Persistence.Setup;
 using SamkeyDataSyncWorker;
+using SamkeyDataSyncWorker.Interfaces;
+using SamkeyDataSyncWorker.Services;
 using Serilog;
 using System.Reflection;
 
@@ -23,13 +25,11 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddHostedService<Worker>();
         services.AddHttpContextAccessor();
         services.AddMemoryCache();
+        services.AddHttpClient();
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         services.AddDbContext<ApplicationDbContext>(DbContextSetup.Configure(hostContext.Configuration));
 
-
         #region Repositories
-
-        services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         services.AddScoped<IUnlockabledPhoneRepository, UnlockabledPhoneRepository>();
         services.AddScoped<IPhoneCarrierRepository, PhoneCarrierRepository>();
         services.AddScoped<IUnlockabledPhonePhoneUnlockToolRepository, UnlockabledPhonePhoneUnlockToolRepository>();
@@ -38,12 +38,15 @@ IHost host = Host.CreateDefaultBuilder(args)
         #endregion Repositories
 
         #region Services
-
-        services.AddScoped(typeof(IGenericService<>), typeof(GenericService<>));
         services.AddScoped<IUnlockabledPhoneService, UnlockabledPhoneService>();
         services.AddScoped<IPhoneCarrierService, PhoneCarrierService>();
         services.AddScoped<IUnlockabledPhonePhoneUnlockToolService, UnlockabledPhonePhoneUnlockToolService>();
         services.AddScoped<IUnlockabledPhonePhoneCarrierService, UnlockabledPhonePhoneCarrierService>();
+        services.AddScoped<IDataSynchronizerSamkeyService, DataSynchronizerSamkeyService>();
+        services.AddScoped<IFetchSamkey, FetchSamkey >();
+        services.AddScoped<IProcessPhoneSamkey, ProcessPhoneSamkey >();
+        services.AddScoped<IUnlockabledPhonePhoneCarrierSamkey, UnlockabledPhonePhoneCarrierSamkey>();
+        services.AddScoped<IHttpService, HttpService>();
 
         #endregion Services
 

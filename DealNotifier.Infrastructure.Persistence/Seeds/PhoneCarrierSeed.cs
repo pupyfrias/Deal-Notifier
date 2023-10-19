@@ -167,6 +167,18 @@ namespace DealNotifier.Infrastructure.Persistence.Seeds
                 Id = (int)Enums.PhoneCarrier.DSH,
                 Name = "Dish",
                 ShortName = Enums.PhoneCarrier.DSH.ToString(),
+            },
+             new PhoneCarrier
+            {
+                Id = (int)Enums.PhoneCarrier.BAA,
+                Name = "Bahama",
+                ShortName = Enums.PhoneCarrier.BAA.ToString(),
+            },
+             new PhoneCarrier
+            {
+                Id = (int)Enums.PhoneCarrier.PCT,
+                Name = "Puerto Rico",
+                ShortName = Enums.PhoneCarrier.PCT.ToString(),
             }
         };
     }

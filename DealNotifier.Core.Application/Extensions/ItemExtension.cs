@@ -1,5 +1,5 @@
 ﻿using DealNotifier.Core.Application.Enums;
-using DealNotifier.Core.Application.Heplers;
+using DealNotifier.Core.Application.Helpers;
 using DealNotifier.Core.Application.Utilities;
 using DealNotifier.Core.Application.ViewModels.V1.Item;
 using DealNotifier.Core.Domain.Entities;

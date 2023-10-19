@@ -8,6 +8,10 @@ using DealNotifier.Core.Domain.Entities;
 
 namespace DealNotifier.Core.Application.Services
 {
+    /// <summary>
+    /// This class represents the many-to-many relationship between <see cref="UnlockabledPhone"/> and <see cref="PhoneCarrier"/>.
+    /// It serves as a "join table" to associate UnlockabledPhones with supported PhoneCarriers.
+    /// </summary>
     public class UnlockabledPhonePhoneCarrierService : IUnlockabledPhonePhoneCarrierService
     {
         #region Private Variable
@@ -57,6 +61,25 @@ namespace DealNotifier.Core.Application.Services
             var mappedEntity = _mapper.Map<UnlockabledPhonePhoneCarrier>(entity);
             return await _repository.ExistsAsync(mappedEntity);
         }
+
+        public async Task CreateIfNotExists(int unlockabledPhoneId, int phoneCarrierId)
+        {
+            var unlockablePhoneCarrierDto = new UnlockabledPhonePhoneCarrierDto
+            {
+                UnlockabledPhoneId = unlockabledPhoneId,
+                PhoneCarrierId = phoneCarrierId
+            };
+
+            var existsUnlockabledPhonePhoneCarrier = await ExistsAsync(unlockablePhoneCarrierDto);
+
+            if (!existsUnlockabledPhonePhoneCarrier)
+            {
+                var unlockablePhoneCarrierCreate = _mapper.Map<UnlockabledPhonePhoneCarrierCreateRequest>(unlockablePhoneCarrierDto);
+                await CreateAsync(unlockablePhoneCarrierCreate);
+            }
+        }
+
+
         #endregion Async
 
         #region Sync
