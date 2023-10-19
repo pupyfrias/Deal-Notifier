@@ -41,6 +41,54 @@ namespace DealNotifier.Core.Application.Services
             return responseBody;
         }
 
+        public async Task<TDestination?> MakeGetRequestAsync<TDestination>(string url, Dictionary<string, string>? dataRequestHeader = null)
+        {
+            TDestination? responseBody = default;
+
+            using (HttpRequestMessage requestMessage = new(HttpMethod.Get, url))
+            {
+                AddRequestHeaders(requestMessage.Headers, dataRequestHeader);
+            
+                HttpResponseMessage response = await _httpClient.SendAsync(requestMessage);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    responseBody = await response.Content.ReadFromJsonAsync<TDestination>();
+                }
+                else
+                {
+                    var error = await response.Content.ReadAsStringAsync();
+                    _logger.Error($"{response.StatusCode} => {error}");
+                }
+            }
+            return responseBody;
+        }
+
+        public async Task<string?> MakeGetRequestAsync(string url, Dictionary<string, string>? dataRequestHeader = null)
+        {
+            string? responseBody = default;
+
+            using (HttpRequestMessage requestMessage = new(HttpMethod.Get, url))
+            {
+                AddRequestHeaders(requestMessage.Headers, dataRequestHeader);
+
+                HttpResponseMessage response = await _httpClient.SendAsync(requestMessage);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    responseBody = await response.Content.ReadAsStringAsync();
+                }
+                else
+                {
+                    var error = await response.Content.ReadAsStringAsync();
+                    _logger.Error($"{response.StatusCode} => {error}");
+                }
+            }
+            return responseBody;
+        }
+
+
+
         private void AddRequestHeaders(HttpRequestHeaders httpRequestHeaders, Dictionary<string, string>? dataHeader)
         {
             if (dataHeader != null)

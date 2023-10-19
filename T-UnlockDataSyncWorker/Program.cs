@@ -9,8 +9,8 @@ using DealNotifier.Infrastructure.Persistence.Setup;
 using Serilog;
 using System.Reflection;
 using WorkerService.T_Unlock_WebScraping;
-
-
+using WorkerService.T_Unlock_WebScraping.Interfaces;
+using WorkerService.T_Unlock_WebScraping.Services;
 
 IHost host = Host.CreateDefaultBuilder(args)
 
@@ -18,14 +18,13 @@ IHost host = Host.CreateDefaultBuilder(args)
     {
         services.AddHostedService<Worker>();
         services.AddHttpContextAccessor();
+        services.AddHttpClient();
         services.AddMemoryCache();
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-        services.AddDbContext<ApplicationDbContext>(DbContextSetup.Configure(hostContext.Configuration));
+        services.AddDbContext<ApplicationDbContext>(DbContextSetup.Configure(hostContext.Configuration), ServiceLifetime.Transient);
 
 
         #region Repositories
-
-        services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         services.AddScoped<IUnlockabledPhoneRepository, UnlockabledPhoneRepository>();
         services.AddScoped<IPhoneCarrierRepository, PhoneCarrierRepository>();
         services.AddScoped<IUnlockabledPhonePhoneUnlockToolRepository, UnlockabledPhonePhoneUnlockToolRepository>();
@@ -34,12 +33,15 @@ IHost host = Host.CreateDefaultBuilder(args)
         #endregion Repositories
 
         #region Services
-
-        services.AddScoped(typeof(IGenericService<>), typeof(GenericService<>));
-        services.AddScoped<IUnlockabledPhoneService, UnlockabledPhoneService>();
+        services.AddScoped<IDataSynchronizerTUnlockService, DataSynchronizerTUnlockService>();
+        services.AddScoped<IFetchTUnlock, FetchTUnlock>();
+        services.AddScoped<IHttpService, HttpService>();
         services.AddScoped<IPhoneCarrierService, PhoneCarrierService>();
-        services.AddScoped<IUnlockabledPhonePhoneUnlockToolService, UnlockabledPhonePhoneUnlockToolService>();
+        services.AddScoped<IProcessPhoneTUnlock, ProcessPhoneTUnlock>();
         services.AddScoped<IUnlockabledPhonePhoneCarrierService, UnlockabledPhonePhoneCarrierService>();
+        services.AddScoped<IUnlockabledPhonePhoneCarrierTUnlock, UnlockabledPhonePhoneCarrierTUnlock>();
+        services.AddScoped<IUnlockabledPhonePhoneUnlockToolService, UnlockabledPhonePhoneUnlockToolService>();
+        services.AddScoped<IUnlockabledPhoneService, UnlockabledPhoneService>();
 
         #endregion Services
 

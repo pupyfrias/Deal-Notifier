@@ -1,7 +1,8 @@
-﻿namespace SamkeyDataSyncWorker.Interfaces
+﻿using DealNotifier.Core.Application.Interfaces.Services;
+
+namespace SamkeyDataSyncWorker.Interfaces
 {
-    public interface IDataSynchronizerSamkeyService
+    public interface IDataSynchronizerSamkeyService: IDataSynchronizerService
     {
-        Task InitializeAsync();
     }
 }
