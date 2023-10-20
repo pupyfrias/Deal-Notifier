@@ -62,16 +62,6 @@ namespace WebApi.Controllers.V1
             return CreatedAtAction("GetPhoneCarrier", new { id = createdPhoneCarrier.Id }, response);
         }
 
-        // POST: api/PhoneCarriers/1/UnlockabledPhone
-        [HttpPost("{PhoneCarrierId}/UnlockabledPhone")]
-        public async Task<ActionResult<PhoneUnlockTool>> PostPhoneCarrierUnlockablePhone(int PhoneCarrierId, PhoneCarrierUnlockabledPhoneCreateRequest request)
-        {
-            await _unlockabledPhonePhoneCarrierService.CreateRangeAsync(PhoneCarrierId, request);
-            return NoContent();
-        }
-
-
-
         // DELETE: api/PhoneCarriers/5
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeletePhoneCarrier(int id)

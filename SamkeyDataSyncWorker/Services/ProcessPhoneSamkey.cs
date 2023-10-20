@@ -1,28 +1,27 @@
 ﻿using DealNotifier.Core.Application.Enums;
 using DealNotifier.Core.Application.Interfaces.Services;
-using DealNotifier.Core.Application.ViewModels.V1.UnlockabledPhone;
+using SamkeyDataSyncWorker.Helpers;
 using SamkeyDataSyncWorker.Interfaces;
 using SamkeyDataSyncWorker.ViewModels;
+using Brand = DealNotifier.Core.Application.Enums.Brand;
+using ILogger = Serilog.ILogger;
 
 namespace SamkeyDataSyncWorker.Services
 {
     public class ProcessPhoneSamkey : IProcessPhoneSamkey
     {
         private readonly IFetchSamkey _fetchSamkey;
-        private readonly IUnlockabledPhonePhoneCarrierSamkey _unlockabledPhonePhoneCarrierSamkey;
-        private readonly IUnlockabledPhonePhoneUnlockToolService _unlockabledPhonePhoneUnlockToolService;
         private readonly IUnlockabledPhoneService _unlockabledPhoneService;
+        private readonly ILogger _logger;
         public ProcessPhoneSamkey(
             IFetchSamkey fetchSamkey,
             IUnlockabledPhoneService unlockabledPhoneService,
-            IUnlockabledPhonePhoneCarrierSamkey unlockabledPhonePhoneCarrierSamkey,
-            IUnlockabledPhonePhoneUnlockToolService unlockabledPhonePhoneUnlockToolService
+            ILogger logger
             )
         {
             _fetchSamkey = fetchSamkey;
-            _unlockabledPhonePhoneCarrierSamkey = unlockabledPhonePhoneCarrierSamkey;
-            _unlockabledPhonePhoneUnlockToolService = unlockabledPhonePhoneUnlockToolService;
             _unlockabledPhoneService = unlockabledPhoneService;
+            _logger = logger;
         }
 
 
@@ -35,50 +34,39 @@ namespace SamkeyDataSyncWorker.Services
         }
 
 
-        private async Task<UnlockabledPhoneResponse> CreateUnlockabledPhone(string modelName, string modelNumber)
-        {
-            var unlockableCreateDto = new UnlockabledPhoneCreateRequest
-            {
-                BrandId = (int)Brand.Samsung,
-                ModelName = modelName,
-                ModelNumber = modelNumber
-            };
-
-            return await _unlockabledPhoneService.CreateAsync<UnlockabledPhoneCreateRequest, UnlockabledPhoneResponse>(unlockableCreateDto);
-        }
-
         private async Task ProcessSinglePhone(string phoneModel)
         {
-            var splitPhone = SplitPhoneModel(phoneModel);
-            if (splitPhone == null) return;
-
-            var (modelNumber, modelName) = splitPhone.Value;
-
-            DetailsPhoneResponse? detailsPhone = await _fetchSamkey.GetDetailsPhoneAsync(modelNumber);
-
-            if (detailsPhone == null) return;
-
-            var possibleUnlockedPhone = await _unlockabledPhoneService.FirstOrDefaultAsync(unlockedPhone => unlockedPhone.ModelNumber.Equals(modelNumber));
-
-            if (possibleUnlockedPhone == null)
+            try
             {
-                var newUnlockedPhone = await CreateUnlockabledPhone(modelName, modelNumber);
-                await _unlockabledPhonePhoneUnlockToolService.CreateAsync(newUnlockedPhone.Id, (int)UnlockTool.SamKey);
-                await _unlockabledPhonePhoneCarrierSamkey.CreateMassive(newUnlockedPhone.Id, detailsPhone.SupportCarriers);
+                var unlockedPhoneDetail = HelperSamkey.MapStringToUnlockedPhoneDetails(phoneModel);
+                if (unlockedPhoneDetail == null) return;
+
+
+                PhoneDetailsResponse? phoneDetails = await _fetchSamkey.GetPhoneDetailsAsync(unlockedPhoneDetail.ModelNumber);
+
+                if (phoneDetails == null) return;
+
+                var possibleUnlockedPhone = await _unlockabledPhoneService.FirstOrDefaultAsync(unlockedPhone =>
+                unlockedPhone.ModelNumber.Equals(unlockedPhoneDetail.ModelNumber));
+
+
+                if (possibleUnlockedPhone == null)
+                {
+                    await _unlockabledPhoneService.HandleNewUnlockedPhoneAsync(unlockedPhoneDetail, Brand.Samsung,
+                        UnlockTool.SamKey);
+                }
+                else
+                {
+                    await _unlockabledPhoneService.HandleExistingUnlockedPhoneAsync(possibleUnlockedPhone,
+                        phoneDetails.SupportCarriers, UnlockTool.SamKey);
+                }
             }
-            else
+            catch(Exception ex)
             {
-                await _unlockabledPhonePhoneUnlockToolService.CreateIfNotExists(possibleUnlockedPhone.Id, (int)UnlockTool.SamKey);
-                await _unlockabledPhonePhoneCarrierSamkey.CreateMassive(possibleUnlockedPhone.Id, detailsPhone.SupportCarriers);
+
+                _logger.Warning($"Exception when processing {phoneModel}. Message: {ex.Message} InnerException: {ex.InnerException?.Message}");
             }
-        }
-
-        private (string, string)? SplitPhoneModel(string phoneModel)
-        {
-            var splitPhone = phoneModel.Split(" | ");
-            if (splitPhone.Length < 2) return null;
-
-            return (splitPhone[0], splitPhone[1]);
+           
         }
     }
 }

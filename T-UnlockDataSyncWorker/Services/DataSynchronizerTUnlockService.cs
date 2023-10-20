@@ -34,25 +34,38 @@ namespace WorkerService.T_Unlock_WebScraping.Services
         {
             try
             {
-                foreach(string path in _unlockUrlConfig.Paths)
+                if (_unlockUrlConfig?.Paths == null)
                 {
-                    var pageHtml = await _fetchTUnlock.GetPageHTMLAsync(path);
+                    _logger.Warning("TUnlock URL config or paths are null. Initialization aborted.");
+                    return;
+                }
 
-                    if (pageHtml != null)
+                foreach (string path in _unlockUrlConfig.Paths)
+                {
+                    try
                     {
-                        var brand = BrandHelper.GetBrandByName(path);
-                        await _processPhoneTUnlock.ProcessAsync(pageHtml, brand);
+                        var pageHtml = await _fetchTUnlock.GetPageHTMLAsync(path);
+
+                        if (pageHtml != null)
+                        {
+                            var brand = BrandHelper.GetBrandByName(path);
+                            await _processPhoneTUnlock.ProcessAsync(pageHtml, brand);
+                        }
+                        else
+                        {
+                            _logger.Warning($"Page HTML for path {path} is null.");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.Error($"An error occurred while processing path {path}: {ex.Message}", ex);
                     }
                 }
-                
             }
             catch (Exception ex)
             {
-                _logger.Error(ex.Message, ex);
+                _logger.Error($"An error occurred during initialization: {ex.Message}", ex);
             }
         }
-
-
-        
     }
 }

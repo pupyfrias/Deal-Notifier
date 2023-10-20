@@ -2,7 +2,7 @@
 
 namespace SamkeyDataSyncWorker.ViewModels
 {
-    public class DetailsPhoneResponse
+    public class PhoneDetailsResponse
     {
         [JsonProperty("id")]
         public string Id { get; set; }

@@ -13,7 +13,7 @@ namespace WorkerService.T_Unlock_WebScraping.Helpers
         }
 
 
-        public static PhoneDetailsTUnlock MapHtmlNodeToPhoneDetails(HtmlNode htmlNode)
+        public static UnlockedPhoneDetailsDto MapHtmlNodeToPhoneDetails(HtmlNode htmlNode)
         {
             var thead = htmlNode.SelectSingleNode(".//thead");
             var h7List = thead.Descendants("h7").ToList();
@@ -24,7 +24,7 @@ namespace WorkerService.T_Unlock_WebScraping.Helpers
             string carrierList = h4.InnerText;
 
 
-            var phoneDetailsTUnlock = new PhoneDetailsTUnlock
+            var phoneDetailsTUnlock = new UnlockedPhoneDetailsDto
             {
                 Carriers = carrierList,
                 ModelName = modelName,

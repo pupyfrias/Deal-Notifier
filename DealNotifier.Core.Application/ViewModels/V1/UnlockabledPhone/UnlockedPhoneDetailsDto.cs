@@ -1,6 +1,6 @@
 ﻿namespace WorkerService.T_Unlock_WebScraping.ViewModels
 {
-    public class PhoneDetailsTUnlock
+    public class UnlockedPhoneDetailsDto
     {
         public string ModelName { get; set; }
         public string ModelNumber { get; set; }

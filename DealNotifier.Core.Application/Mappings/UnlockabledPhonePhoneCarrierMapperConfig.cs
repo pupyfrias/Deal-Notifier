@@ -10,10 +10,10 @@ namespace DealNotifier.Core.Application.Mappings
     {
         public UnlockabledPhonePhoneCarrierMapperConfig()
         {
-            CreateMap<UnlockabledPhonePhoneCarrierCreateRequest, UnlockabledPhonePhoneCarrier>().IgnoreAllSourceNullProperties();
+            CreateMap<UnlockabledPhonePhoneCarrierCreate, UnlockabledPhonePhoneCarrier>().IgnoreAllSourceNullProperties();
             CreateMap<UnlockabledPhonePhoneCarrierUpdateRequest, UnlockabledPhonePhoneCarrier>().IgnoreAllSourceNullProperties();
             CreateMap<UnlockabledPhonePhoneCarrier, UnlockabledPhonePhoneCarrierResponse>().IgnoreAllSourceNullProperties();
-            CreateMap<UnlockabledPhonePhoneCarrierDto, UnlockabledPhonePhoneCarrierCreateRequest>().IgnoreAllSourceNullProperties().ReverseMap();
+            CreateMap<UnlockabledPhonePhoneCarrierDto, UnlockabledPhonePhoneCarrierCreate>().IgnoreAllSourceNullProperties().ReverseMap();
             CreateMap<UnlockabledPhonePhoneCarrierDto, UnlockabledPhonePhoneCarrier>().IgnoreAllSourceNullProperties().ReverseMap();
         }
     }

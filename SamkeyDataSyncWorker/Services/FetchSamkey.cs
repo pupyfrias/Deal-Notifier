@@ -27,7 +27,7 @@ namespace SamkeyDataSyncWorker.Services
                 { "Referer",  _baseUrl}
             };
         }
-        public async Task<DetailsPhoneResponse?> GetDetailsPhoneAsync(string modelNumber)
+        public async Task<PhoneDetailsResponse?> GetPhoneDetailsAsync(string modelNumber)
         {
 
             string supportedPath = _samkeyUrlConfig.Paths.Supported;
@@ -41,12 +41,13 @@ namespace SamkeyDataSyncWorker.Services
 
             try
             {
-                var response = await _httpService.MakePostRequestAsync<List<DetailsPhoneResponse>>(url, requestBody, _headers);
+                var response = await _httpService.MakePostRequestAsync<List<PhoneDetailsResponse>>(url, requestBody, _headers);
                 return response?[0];
             }
             catch (Exception ex)
             {
-                _logger.Error(ex.Message);
+                _logger.Warning($"Exception occurred making POST request to Samkey. Url: {url}, ModelNumber: {modelNumber}, " +
+                    $"Exception: {ex.Message}, InnerException: {ex.InnerException?.Message}");
                 return null;
             }
         }

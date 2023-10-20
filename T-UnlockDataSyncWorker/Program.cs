@@ -39,7 +39,6 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddScoped<IPhoneCarrierService, PhoneCarrierService>();
         services.AddScoped<IProcessPhoneTUnlock, ProcessPhoneTUnlock>();
         services.AddScoped<IUnlockabledPhonePhoneCarrierService, UnlockabledPhonePhoneCarrierService>();
-        services.AddScoped<IUnlockabledPhonePhoneCarrierTUnlock, UnlockabledPhonePhoneCarrierTUnlock>();
         services.AddScoped<IUnlockabledPhonePhoneUnlockToolService, UnlockabledPhonePhoneUnlockToolService>();
         services.AddScoped<IUnlockabledPhoneService, UnlockabledPhoneService>();
 

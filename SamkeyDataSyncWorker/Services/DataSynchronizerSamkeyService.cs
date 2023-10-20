@@ -28,6 +28,10 @@ namespace SamkeyDataSyncWorker.Services
                     _logger.Information($"Processing {phoneModelList.Count} Phones");
                     await _processPhoneSamkey.ProcessAsync(phoneModelList);
                 }
+                else
+                {
+                    _logger.Warning("Method GetPhoneModelsAsync returned a null");
+                }
             }
             catch (Exception ex)
             {

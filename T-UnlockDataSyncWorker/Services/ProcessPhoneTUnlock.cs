@@ -1,19 +1,24 @@
 ﻿using DealNotifier.Core.Application.Enums;
 using DealNotifier.Core.Application.Interfaces.Services;
-using DealNotifier.Core.Application.ViewModels.V1.UnlockabledPhone;
 using HtmlAgilityPack;
 using WorkerService.T_Unlock_WebScraping.Helpers;
 using WorkerService.T_Unlock_WebScraping.Interfaces;
+using Brand = DealNotifier.Core.Application.Enums.Brand;
+using ILogger = Serilog.ILogger;
 
 namespace WorkerService.T_Unlock_WebScraping.Services
 {
     public class ProcessPhoneTUnlock : IProcessPhoneTUnlock
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;
+        private readonly ILogger _logger;
 
-        public ProcessPhoneTUnlock(IServiceScopeFactory serviceScopeFactory)
+        public ProcessPhoneTUnlock(
+            IServiceScopeFactory serviceScopeFactory, 
+            ILogger logger)
         {
             _serviceScopeFactory = serviceScopeFactory;
+            _logger = logger;
         }
 
         public async Task ProcessAsync(string pageHtml, Brand brand)
@@ -27,46 +32,37 @@ namespace WorkerService.T_Unlock_WebScraping.Services
             await Task.WhenAll(tasks);
         }
 
-        private async Task<UnlockabledPhoneResponse> CreateUnlockabledPhone(string modelName, string modelNumber, int brandId)
-        {
-            var unlockableCreateDto = new UnlockabledPhoneCreateRequest
-            {
-                BrandId = brandId,
-                ModelName = modelName,
-                ModelNumber = modelNumber
-            };
 
-            using (var scope = _serviceScopeFactory.CreateScope())
-            {
-                var unlockabledPhoneService = scope.ServiceProvider.GetRequiredService<IUnlockabledPhoneService>();
-                return await unlockabledPhoneService.CreateAsync<UnlockabledPhoneCreateRequest, UnlockabledPhoneResponse>(unlockableCreateDto);
-            }
-        }
-
+       
         private async Task ProcessSinglePhoneAsync(HtmlNode htmlNode, Brand brand)
         {
-            using (var scope = _serviceScopeFactory.CreateScope())
+
+            try
             {
-                var unlockabledPhoneService = scope.ServiceProvider.GetRequiredService<IUnlockabledPhoneService>();
-                var unlockabledPhonePhoneUnlockToolService = scope.ServiceProvider.GetRequiredService<IUnlockabledPhonePhoneUnlockToolService>();
-                var unlockabledPhonePhoneCarrierTUnlock = scope.ServiceProvider.GetRequiredService<IUnlockabledPhonePhoneCarrierTUnlock>();
-
-                var phoneDetailsTUnlock = HtmlNodeMapper.MapHtmlNodeToPhoneDetails(htmlNode);
-
-                var possibleUnlockedPhone = await unlockabledPhoneService.FirstOrDefaultAsync(unlockedPhone => unlockedPhone.ModelNumber.Equals(phoneDetailsTUnlock.ModelNumber));
-
-                if (possibleUnlockedPhone == null)
+                using (var scope = _serviceScopeFactory.CreateScope())
                 {
-                    var newUnlockedPhone = await CreateUnlockabledPhone(phoneDetailsTUnlock.ModelName, phoneDetailsTUnlock.ModelNumber, (int)brand);
-                    await unlockabledPhonePhoneUnlockToolService.CreateAsync(newUnlockedPhone.Id, (int)UnlockTool.TUnlock);
-                    await unlockabledPhonePhoneCarrierTUnlock.CreateMassive(newUnlockedPhone.Id, phoneDetailsTUnlock.Carriers);
-                }
-                else
-                {
-                    await unlockabledPhonePhoneUnlockToolService.CreateIfNotExists(possibleUnlockedPhone.Id, (int)UnlockTool.TUnlock);
-                    await unlockabledPhonePhoneCarrierTUnlock.CreateMassive(possibleUnlockedPhone.Id, phoneDetailsTUnlock.Carriers);
+                    var unlockabledPhoneService = scope.ServiceProvider.GetRequiredService<IUnlockabledPhoneService>();
+                    var unlockedPhoneDetails = HtmlNodeMapper.MapHtmlNodeToPhoneDetails(htmlNode);
+
+                    var possibleUnlockedPhone = await unlockabledPhoneService.FirstOrDefaultAsync(unlockedPhone =>
+                        unlockedPhone.ModelNumber.Equals(unlockedPhoneDetails.ModelNumber));
+
+                    if (possibleUnlockedPhone == null)
+                    {
+                        await unlockabledPhoneService.HandleNewUnlockedPhoneAsync(unlockedPhoneDetails, brand, UnlockTool.TUnlock);
+                    }
+                    else
+                    {
+                        await unlockabledPhoneService.HandleExistingUnlockedPhoneAsync(possibleUnlockedPhone,
+                            unlockedPhoneDetails.Carriers, UnlockTool.TUnlock);
+                    }
                 }
             }
+            catch (Exception ex) 
+            {
+                _logger.Warning($"Error while processing brand: {brand}. Node: {htmlNode.OuterHtml}. Exception: {ex.Message}. InnerException => {ex.InnerException?.Message}");
+            }
+           
         }
     }
 }

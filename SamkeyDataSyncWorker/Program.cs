@@ -34,7 +34,6 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddScoped<IPhoneCarrierRepository, PhoneCarrierRepository>();
         services.AddScoped<IUnlockabledPhonePhoneUnlockToolRepository, UnlockabledPhonePhoneUnlockToolRepository>();
         services.AddScoped<IUnlockabledPhonePhoneCarrierRepository, UnlockabledPhonePhoneCarrierRepository>();
-
         #endregion Repositories
 
         #region Services
@@ -45,7 +44,6 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddScoped<IDataSynchronizerSamkeyService, DataSynchronizerSamkeyService>();
         services.AddScoped<IFetchSamkey, FetchSamkey >();
         services.AddScoped<IProcessPhoneSamkey, ProcessPhoneSamkey >();
-        services.AddScoped<IUnlockabledPhonePhoneCarrierSamkey, UnlockabledPhonePhoneCarrierSamkey>();
         services.AddScoped<IHttpService, HttpService>();
 
         #endregion Services

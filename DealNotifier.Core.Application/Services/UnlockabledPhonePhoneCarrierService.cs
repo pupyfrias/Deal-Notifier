@@ -1,97 +1,101 @@
 ﻿using AutoMapper;
 using DealNotifier.Core.Application.Interfaces.Repositories;
 using DealNotifier.Core.Application.Interfaces.Services;
-using DealNotifier.Core.Application.ViewModels.V1;
 using DealNotifier.Core.Application.ViewModels.V1.PhoneCarrier;
 using DealNotifier.Core.Application.ViewModels.V1.UnlockabledPhonePhoneCarrier;
 using DealNotifier.Core.Domain.Entities;
+using Serilog;
 
 namespace DealNotifier.Core.Application.Services
 {
-    /// <summary>
-    /// This class represents the many-to-many relationship between <see cref="UnlockabledPhone"/> and <see cref="PhoneCarrier"/>.
-    /// It serves as a "join table" to associate UnlockabledPhones with supported PhoneCarriers.
-    /// </summary>
     public class UnlockabledPhonePhoneCarrierService : IUnlockabledPhonePhoneCarrierService
     {
         #region Private Variable
 
-        private readonly IUnlockabledPhonePhoneCarrierRepository _repository;
+        private readonly ILogger _logger;
         private readonly IMapper _mapper;
+        private readonly IPhoneCarrierService _phoneCarrierService;
+        private readonly IUnlockabledPhonePhoneCarrierRepository _unlockabledPhonePhoneCarrierRepository;
+        private HashSet<PhoneCarrierDto> _phoneCarrierList;
 
         #endregion Private Variable
 
         public UnlockabledPhonePhoneCarrierService(
-            IUnlockabledPhonePhoneCarrierRepository repository, 
-            IMapper mapper
+            IUnlockabledPhonePhoneCarrierRepository unlockabledPhonePhoneCarrierRepository,
+            IMapper mapper,
+            ILogger logger,
+            IPhoneCarrierService phoneCarrierService
             )
         {
-            _repository = repository;
+            _unlockabledPhonePhoneCarrierRepository = unlockabledPhonePhoneCarrierRepository;
             _mapper = mapper;
+            _logger = logger;
+            _phoneCarrierService = phoneCarrierService; 
         }
 
-
-
-        #region Async
-        public async Task<UnlockabledPhonePhoneCarrier> CreateAsync(UnlockabledPhonePhoneCarrierCreateRequest entity)
+        public async Task CreateMassiveAsync(int unlockedPhoneId, string carriers)
         {
-            var mappedEntity = _mapper.Map<UnlockabledPhonePhoneCarrier>(entity);
-            return await _repository.CreateAsync(mappedEntity);
-        }
-
-        public async Task CreateRangeAsync(int phoneCarrierId, PhoneCarrierUnlockabledPhoneCreateRequest request)
-        {
-            var unlockedPhoneList = request.UnlockabledPhones.Split(',').Select(s => int.Parse(s));
-            var phoneUnlockToolUnlockablePhoneList = unlockedPhoneList.Select(unlockedPhoneId =>
+            var phoneCarrierList = await FilterPhoneCarrierAsync(carriers);
+            if (phoneCarrierList.Count > 0)
             {
-                return new UnlockabledPhonePhoneCarrier
+                foreach (int phoneCarrierId in phoneCarrierList)
                 {
-                    UnlockabledPhoneId = unlockedPhoneId,
-                    PhoneCarrierId = phoneCarrierId
-                };
-
-            });
-
-
-            await _repository.CreateRangeAsync(phoneUnlockToolUnlockablePhoneList);
+                    await CreateIfNotExists(unlockedPhoneId, phoneCarrierId);
+                }
+            }
+            else
+            {
+                _logger.Warning($"Carriers [{carriers}] no exists on DataBase");
+            }
         }
 
-        public async Task<bool> ExistsAsync(UnlockabledPhonePhoneCarrierDto entity)
+        private async Task CreateAsync(UnlockabledPhonePhoneCarrierCreate entity)
         {
             var mappedEntity = _mapper.Map<UnlockabledPhonePhoneCarrier>(entity);
-            return await _repository.ExistsAsync(mappedEntity);
+            await _unlockabledPhonePhoneCarrierRepository.CreateAsync(mappedEntity);
         }
-
-        public async Task CreateIfNotExists(int unlockabledPhoneId, int phoneCarrierId)
+        private async Task CreateIfNotExists(int unlockabledPhoneId, int phoneCarrierId)
         {
-            var unlockablePhoneCarrierDto = new UnlockabledPhonePhoneCarrierDto
+            var unlockablePhoneCarrierCreate = new UnlockabledPhonePhoneCarrierCreate
             {
                 UnlockabledPhoneId = unlockabledPhoneId,
                 PhoneCarrierId = phoneCarrierId
             };
 
-            var existsUnlockabledPhonePhoneCarrier = await ExistsAsync(unlockablePhoneCarrierDto);
+            var existsUnlockabledPhonePhoneCarrier = await ExistsAsync(unlockablePhoneCarrierCreate);
 
             if (!existsUnlockabledPhonePhoneCarrier)
             {
-                var unlockablePhoneCarrierCreate = _mapper.Map<UnlockabledPhonePhoneCarrierCreateRequest>(unlockablePhoneCarrierDto);
+     
                 await CreateAsync(unlockablePhoneCarrierCreate);
             }
         }
 
-
-        #endregion Async
-
-        #region Sync
-        public bool Exists(UnlockabledPhonePhoneCarrierDto entity)
+        private async Task<bool> ExistsAsync(UnlockabledPhonePhoneCarrierCreate entity)
         {
             var mappedEntity = _mapper.Map<UnlockabledPhonePhoneCarrier>(entity);
-            return _repository.Exists(mappedEntity);
+            return await _unlockabledPhonePhoneCarrierRepository.ExistsAsync(mappedEntity);
         }
-        #endregion Sync
+        private async Task<HashSet<int>> FilterPhoneCarrierAsync(string carriers)
+        {
+            if (_phoneCarrierList == null)
+            {
+                var phoneCarriers = await _phoneCarrierService.GetAllAsync<PhoneCarrierDto>();
+                _phoneCarrierList = phoneCarriers.ToHashSet();
+            }
 
+            return _phoneCarrierList.Where(phoneCarrier =>
+            {
+                var nameParts = phoneCarrier.Name.Split("|");
+                var firstPart = nameParts.Length > 0 ? nameParts[0] : "EMPTY";
+                var secondPart = nameParts.Length > 1 ? nameParts[1] : "EMPTY";
 
-
-
+                return carriers.Contains(firstPart, StringComparison.OrdinalIgnoreCase) ||
+                        carriers.Contains(secondPart, StringComparison.OrdinalIgnoreCase) ||
+                        carriers.Contains(phoneCarrier.ShortName, StringComparison.OrdinalIgnoreCase);
+            })
+                    .Select(phoneCarrier => phoneCarrier.Id)
+                    .ToHashSet();
+        }
     }
 }
