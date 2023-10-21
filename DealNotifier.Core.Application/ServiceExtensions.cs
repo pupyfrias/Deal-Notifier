@@ -1,6 +1,8 @@
 ﻿using DealNotifier.Core.Application.Interfaces.Repositories;
 using DealNotifier.Core.Application.Interfaces.Services;
+using DealNotifier.Core.Application.Interfaces.Services.Items;
 using DealNotifier.Core.Application.Services;
+using DealNotifier.Core.Application.Services.Items;
 using DealNotifier.Core.Application.Setups;
 using DealNotifier.Core.Application.Setups.Swagger;
 using Microsoft.Extensions.Configuration;

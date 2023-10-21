@@ -1,7 +1,5 @@
 ﻿using DealNotifier.Core.Domain.Entities;
-using Microsoft.EntityFrameworkCore.Query;
-using System.Collections.Concurrent;
-using System.Linq.Expressions;
+using Microsoft.Data.SqlClient;
 
 namespace DealNotifier.Core.Application.Interfaces.Repositories
 {
@@ -13,5 +11,8 @@ namespace DealNotifier.Core.Application.Interfaces.Repositories
         Task<Item?> GetByPublicIdAsync(Guid id);
 
         Task<TDestination?> GetByPublicIdProjected<TDestination>(Guid id);
+
+        Task UpdateStockStatusAsync(string query, SqlParameter idListString, SqlParameter onlineStoreId, 
+            SqlParameter outputResult, SqlParameter errorMessage);
     }
 }

@@ -364,41 +364,41 @@ FodyWeavers.xsd
 
 # -----------------------Angular --------------
 # Compiled output
-Front End/dist
-Front End/tmp
-Front End/out-tsc
-Front End/bazel-out
+DealNotifier.Presentation.FrontEnd/dist
+DealNotifier.Presentation.FrontEnd/tmp
+DealNotifier.Presentation.FrontEnd/out-tsc
+DealNotifier.Presentation.FrontEnd/bazel-out
 
 # Node
-Front End/node_modules
-Front End/npm-debug.log
-Front End/yarn-error.log
+DealNotifier.Presentation.FrontEnd/node_modules
+DealNotifier.Presentation.FrontEnd/npm-debug.log
+DealNotifier.Presentation.FrontEnd/yarn-error.log
 
 # IDEs and editors
-Front End/.idea/
-Front End/.project
-Front End/.classpath
-Front End/.c9/
-Front End/*.launch
-Front End/.settings/
-Front End/*.sublime-workspace
+DealNotifier.Presentation.FrontEnd/.idea/
+DealNotifier.Presentation.FrontEnd/.project
+DealNotifier.Presentation.FrontEnd/.classpath
+DealNotifier.Presentation.FrontEnd/.c9/
+DealNotifier.Presentation.FrontEnd/*.launch
+DealNotifier.Presentation.FrontEnd/.settings/
+DealNotifier.Presentation.FrontEnd/*.sublime-workspace
 
 # Visual Studio Code
-Front End/.vscode/*
-Front End/!.vscode/settings.json
-Front End/!.vscode/tasks.json
-Front End/!.vscode/launch.json
-Front End/!.vscode/extensions.json
-Front End/.history/*
+DealNotifier.Presentation.FrontEnd/.vscode/*
+DealNotifier.Presentation.FrontEnd/!.vscode/settings.json
+DealNotifier.Presentation.FrontEnd/!.vscode/tasks.json
+DealNotifier.Presentation.FrontEnd/!.vscode/launch.json
+DealNotifier.Presentation.FrontEnd/!.vscode/extensions.json
+DealNotifier.Presentation.FrontEnd/.history/*
 
 # Miscellaneous
-Front End/.angular/cache
-Front End/.sass-cache/
-Front End/connect.lock
-Front End/coverage
-Front End/libpeerconnection.log
-Front End/testem.log
-Front End/typings
+DealNotifier.Presentation.FrontEnd/.angular/cache
+DealNotifier.Presentation.FrontEnd/.sass-cache/
+DealNotifier.Presentation.FrontEnd/connect.lock
+DealNotifier.Presentation.FrontEnd/coverage
+DealNotifier.Presentation.FrontEnd/libpeerconnection.log
+DealNotifier.Presentation.FrontEnd/testem.log
+DealNotifier.Presentation.FrontEnd/typings
 
 # System files
 .DS_Store

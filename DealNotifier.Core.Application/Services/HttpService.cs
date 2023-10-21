@@ -1,99 +1,42 @@
 ﻿using DealNotifier.Core.Application.Interfaces.Services;
-using Serilog;
 using System.Net.Http.Headers;
-using System.Net.Http.Json;
 
 namespace DealNotifier.Core.Application.Services
 {
-    public class HttpService: IHttpService
+    public class HttpService : IHttpService
     {
-        private readonly ILogger _logger;
         private readonly HttpClient _httpClient;
 
-        public HttpService(ILogger logger, IHttpClientFactory httpClientFactory)
-        {           
-            _logger = logger;
+        public HttpService(IHttpClientFactory httpClientFactory)
+        {
             _httpClient = httpClientFactory.CreateClient();
         }
 
-
-        public async Task<TDestination?> MakePostRequestAsync<TDestination>(string url, Dictionary<string, string> requestBody, Dictionary<string, string>? dataRequestHeader = null)
+        public async Task<HttpResponseMessage> MakePostRequestAsync(string url, Dictionary<string, string> requestBody, Dictionary<string, string>? dataRequestHeader = null)
         {
-            TDestination? responseBody = default;
-            
             using (HttpRequestMessage requestMessage = new(HttpMethod.Post, url))
             {
                 AddRequestHeaders(requestMessage.Headers, dataRequestHeader);
                 HttpContent content = new FormUrlEncodedContent(requestBody);
                 requestMessage.Content = content;
-                HttpResponseMessage response = await _httpClient.SendAsync(requestMessage);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    responseBody = await response.Content.ReadFromJsonAsync<TDestination>();
-                }
-                else
-                {
-                    var error = await response.Content.ReadAsStringAsync();
-                    _logger.Error($"{response.StatusCode} => {error}");
-                }
+                return await _httpClient.SendAsync(requestMessage);
             }
-            return responseBody;
         }
 
-        public async Task<TDestination?> MakeGetRequestAsync<TDestination>(string url, Dictionary<string, string>? dataRequestHeader = null)
+        public async Task<HttpResponseMessage> MakeGetRequestAsync(string url, Dictionary<string, string>? requestHeader = null)
         {
-            TDestination? responseBody = default;
-
             using (HttpRequestMessage requestMessage = new(HttpMethod.Get, url))
             {
-                AddRequestHeaders(requestMessage.Headers, dataRequestHeader);
-            
-                HttpResponseMessage response = await _httpClient.SendAsync(requestMessage);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    responseBody = await response.Content.ReadFromJsonAsync<TDestination>();
-                }
-                else
-                {
-                    var error = await response.Content.ReadAsStringAsync();
-                    _logger.Error($"{response.StatusCode} => {error}");
-                }
+                AddRequestHeaders(requestMessage.Headers, requestHeader);
+                return await _httpClient.SendAsync(requestMessage);
             }
-            return responseBody;
         }
 
-        public async Task<string?> MakeGetRequestAsync(string url, Dictionary<string, string>? dataRequestHeader = null)
+        private void AddRequestHeaders(HttpRequestHeaders httpRequestHeaders, Dictionary<string, string>? headerData)
         {
-            string? responseBody = default;
-
-            using (HttpRequestMessage requestMessage = new(HttpMethod.Get, url))
+            if (headerData != null)
             {
-                AddRequestHeaders(requestMessage.Headers, dataRequestHeader);
-
-                HttpResponseMessage response = await _httpClient.SendAsync(requestMessage);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    responseBody = await response.Content.ReadAsStringAsync();
-                }
-                else
-                {
-                    var error = await response.Content.ReadAsStringAsync();
-                    _logger.Error($"{response.StatusCode} => {error}");
-                }
-            }
-            return responseBody;
-        }
-
-
-
-        private void AddRequestHeaders(HttpRequestHeaders httpRequestHeaders, Dictionary<string, string>? dataHeader)
-        {
-            if (dataHeader != null)
-            {
-                foreach (var item in dataHeader)
+                foreach (var item in headerData)
                 {
                     httpRequestHeaders.Add(item.Key, item.Value);
                 }

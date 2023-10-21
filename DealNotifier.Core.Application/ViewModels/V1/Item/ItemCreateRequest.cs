@@ -21,7 +21,6 @@ namespace DealNotifier.Core.Application.ViewModels.V1.Item
         [Required]
         public string Name { get; set; }
         public bool Notify { get; set; } = true;
-        public decimal OldPrice { get; set; }
         [Required]
         public int? OnlineStoreId { get; set; }
 
@@ -30,5 +29,6 @@ namespace DealNotifier.Core.Application.ViewModels.V1.Item
         public int? StockStatusId { get; set; }
         public int? UnlockProbabilityId { get; set; }
         public int? UnlockabledPhoneId { get; set; }
+
     }
 }

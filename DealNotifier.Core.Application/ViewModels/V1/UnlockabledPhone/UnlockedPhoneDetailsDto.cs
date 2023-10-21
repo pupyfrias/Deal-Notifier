@@ -1,4 +1,4 @@
-﻿namespace WorkerService.T_Unlock_WebScraping.ViewModels
+﻿namespace DealNotifier.Core.Application.ViewModels.V1.UnlockabledPhone
 {
     public class UnlockedPhoneDetailsDto
     {
