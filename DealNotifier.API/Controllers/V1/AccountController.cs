@@ -1,6 +1,6 @@
-﻿using DealNotifier.Core.Application.Interfaces.Services;
-using DealNotifier.Core.Application.ViewModels.V1.Auth;
-using DealNotifier.Core.Application.ViewModels.V1.Token;
+﻿using Catalog.Application.Interfaces.Services;
+using Catalog.Application.ViewModels.V1.Auth;
+using Catalog.Application.ViewModels.V1.Token;
 using Microsoft.AspNetCore.Mvc;
 using ILogger = Serilog.ILogger;
 
@@ -16,9 +16,8 @@ namespace DealNotifier.API.Controllers.V1
         private readonly IAuthService _authService;
         private readonly ILogger _logger;
 
-        public AccountController(IAccountService accountService, ILogger logger, IAuthService authService)
+        public AccountController(ILogger logger, IAuthService authService)
         {
-            _accountService = accountService;
             _logger = logger;
             _authService = authService;
         }

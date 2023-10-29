@@ -1,9 +1,9 @@
-﻿using DealNotifier.Core.Application.Enums;
-using DealNotifier.Core.Application.ViewModels.V1.Item;
-using DealNotifier.Core.Application.ViewModels.V1.UnlockabledPhone;
-using DealNotifier.Core.Domain.Entities;
+﻿using Catalog.Application.Enums;
+using Catalog.Application.ViewModels.V1.Item;
+using Catalog.Application.ViewModels.V1.UnlockabledPhone;
+using Catalog.Domain.Entities;
 
-namespace DealNotifier.Core.Application.Interfaces.Services
+namespace Catalog.Application.Interfaces.Services
 {
     public interface IUnlockabledPhoneService : IGenericService<UnlockabledPhone>
     {

@@ -1,8 +1,8 @@
-﻿using DealNotifier.Core.Application.ViewModels;
-using DealNotifier.Core.Domain.Entities;
+﻿using Catalog.Application.ViewModels.Common;
+using Catalog.Domain.Entities;
 using Newtonsoft.Json;
 
-namespace DealNotifier.Core.Application.Extensions
+namespace Catalog.Application.Extensions
 {
     public static class AuditExtensions
     {

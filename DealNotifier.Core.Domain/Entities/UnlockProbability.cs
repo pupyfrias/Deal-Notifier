@@ -1,6 +1,6 @@
-﻿using DealNotifier.Core.Domain.Common;
+﻿using Catalog.Domain.Common;
 
-namespace DealNotifier.Core.Domain.Entities
+namespace Catalog.Domain.Entities
 {
     public class UnlockProbability : AuditableEntity
     {

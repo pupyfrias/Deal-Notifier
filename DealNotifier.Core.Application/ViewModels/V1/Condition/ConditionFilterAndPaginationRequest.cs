@@ -1,6 +1,6 @@
-﻿using DealNotifier.Core.Application.ViewModels.Common;
+﻿using Catalog.Application.Wrappers;
 
-namespace DealNotifier.Core.Application.ViewModels.V1.Condition
+namespace Catalog.Application.ViewModels.V1.Condition
 {
     public class ConditionFilterAndPaginationRequest : PaginationBase
     {

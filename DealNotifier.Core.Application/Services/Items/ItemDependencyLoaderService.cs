@@ -1,13 +1,16 @@
 ﻿using AutoMapper;
-using DealNotifier.Core.Application.Interfaces.Repositories;
-using DealNotifier.Core.Application.Interfaces.Services;
-using DealNotifier.Core.Application.Interfaces.Services.Items;
-using DealNotifier.Core.Application.ViewModels.V1;
-using DealNotifier.Core.Application.ViewModels.V1.PhoneCarrier;
+using Catalog.Application.Interfaces.Repositories;
+using Catalog.Application.Interfaces.Services;
+using Catalog.Application.Interfaces.Services.Items;
+using Catalog.Application.ViewModels.V1.BanKeyword;
+using Catalog.Application.ViewModels.V1.BanLink;
+using Catalog.Application.ViewModels.V1.Brand;
+using Catalog.Application.ViewModels.V1.NotificationCriteria;
+using Catalog.Application.ViewModels.V1.PhoneCarrier;
 using Serilog;
 
 
-namespace DealNotifier.Core.Application.Services.Items
+namespace Catalog.Application.Services.Items
 {
     public class ItemDependencyLoaderService : IItemDependencyLoaderService
     {

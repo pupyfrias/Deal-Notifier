@@ -1,8 +1,8 @@
-﻿using DealNotifier.Core.Domain.Entities;
+﻿using Catalog.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace DealNotifier.Persistence.Configuration
+namespace Catalog.Persistence.Configuration
 {
     public class BanLinkConfiguration : AuditableEntityConfiguration<BanLink>
     {

@@ -1,12 +1,12 @@
-﻿using DealNotifier.Core.Domain.Common;
+﻿using Catalog.Domain.Common;
 
-namespace DealNotifier.Core.Domain.Entities
+namespace Catalog.Domain.Entities
 {
     public class Item : AuditableEntity
     {
         public int BidCount { get; set; }
         public int ConditionId { get; set; }
-        public  Guid PublicId { get; set; }
+        public Guid PublicId { get; set; }
         public string Image { get; set; }
         public bool? IsAuction { get; set; }
         public DateTime? ItemEndDate { get; set; }

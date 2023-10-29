@@ -1,4 +1,4 @@
-﻿namespace DealNotifier.Core.Application.ViewModels.V1.Email
+﻿namespace Catalog.Application.ViewModels.V1.Email
 {
     public class EmailDto
     {

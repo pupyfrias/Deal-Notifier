@@ -1,4 +1,4 @@
-﻿namespace DealNotifier.Core.Domain.Entities
+﻿namespace Catalog.Domain.Entities
 {
     public class Audit
     {

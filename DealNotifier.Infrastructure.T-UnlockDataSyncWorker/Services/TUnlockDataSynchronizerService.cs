@@ -1,4 +1,4 @@
-﻿using DealNotifier.Core.Domain.Configs;
+﻿using Catalog.Domain.Configs;
 using Microsoft.Extensions.Options;
 using WorkerService.T_Unlock_WebScraping.Helpers;
 using WorkerService.T_Unlock_WebScraping.Interfaces;

@@ -1,9 +1,9 @@
-﻿using DealNotifier.Core.Application.Enums;
-using DealNotifier.Core.Application.Interfaces.Services;
-using DealNotifier.Core.Application.Interfaces.Services.Items;
-using DealNotifier.Core.Application.ViewModels.eBay;
-using DealNotifier.Core.Application.ViewModels.V1.Item;
+﻿using Catalog.Application.Enums;
+using Catalog.Application.Interfaces.Services;
+using Catalog.Application.Interfaces.Services.Items;
+using Catalog.Application.ViewModels.V1.Item;
 using DealNotifier.Infrastructure.EbayDataSyncWorker.Interfaces;
+using DealNotifier.Infrastructure.EbayDataSyncWorker.ViewModels;
 using System.Collections.Concurrent;
 using ILogger = Serilog.ILogger;
 

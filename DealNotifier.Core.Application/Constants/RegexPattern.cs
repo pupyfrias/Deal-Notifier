@@ -1,4 +1,4 @@
-﻿namespace DealNotifier.Core.Application.Constants
+﻿namespace Catalog.Application.Constants
 {
     public static class RegExPattern
     {

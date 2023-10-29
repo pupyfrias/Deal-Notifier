@@ -1,7 +1,7 @@
-﻿using DealNotifier.Core.Application.Interfaces;
+﻿using Catalog.Application.Interfaces;
 using System.ComponentModel.DataAnnotations;
 
-namespace DealNotifier.Core.Application.ViewModels.V1.UnlockabledPhone
+namespace Catalog.Application.ViewModels.V1.UnlockabledPhone
 {
     public class UnlockabledPhoneUpdateRequest : IHasId<int>
     {

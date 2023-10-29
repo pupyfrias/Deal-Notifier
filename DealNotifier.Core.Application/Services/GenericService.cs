@@ -1,17 +1,17 @@
 ﻿using AutoMapper;
-using DealNotifier.Core.Application.Exceptions;
-using DealNotifier.Core.Application.Interfaces;
-using DealNotifier.Core.Application.Interfaces.Repositories;
-using DealNotifier.Core.Application.Interfaces.Services;
-using DealNotifier.Core.Application.Utilities;
-using DealNotifier.Core.Application.ViewModels.Common;
+using Catalog.Application.Exceptions;
+using Catalog.Application.Interfaces;
+using Catalog.Application.Interfaces.Repositories;
+using Catalog.Application.Interfaces.Services;
+using Catalog.Application.Utilities;
+using Catalog.Application.Wrappers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Caching.Memory;
 using System.Linq.Expressions;
 using System.Web;
 
-namespace DealNotifier.Core.Application.Services
+namespace Catalog.Application.Services
 {
     public class GenericService<TEntity> : IGenericService<TEntity>
     {

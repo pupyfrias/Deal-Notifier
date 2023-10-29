@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using DealNotifier.Core.Application.Interfaces.Services;
-using DealNotifier.Core.Domain.Entities;
-using DealNotifier.Persistence.DbContexts;
+using Catalog.Application.Interfaces.Services;
+using Catalog.Domain.Entities;
+using Catalog.Persistence.DbContexts;
 
-namespace DealNotifier.Persistence.Repositories
+namespace Catalog.Persistence.Repositories
 {
     public class NotificationCriteriaRepository : GenericRepository<NotificationCriteria>, INotificationCriteriaRepository
     {

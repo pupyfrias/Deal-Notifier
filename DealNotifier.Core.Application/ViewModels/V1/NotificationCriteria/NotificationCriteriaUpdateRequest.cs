@@ -1,7 +1,7 @@
-﻿using DealNotifier.Core.Application.Interfaces;
+﻿using Catalog.Application.Interfaces;
 using System.ComponentModel.DataAnnotations;
 
-namespace DealNotifier.Core.Application.ViewModels.V1.NotificationCriteria
+namespace Catalog.Application.ViewModels.V1.NotificationCriteria
 {
     public class NotificationCriteriaUpdateRequest : IHasId<int>
     {

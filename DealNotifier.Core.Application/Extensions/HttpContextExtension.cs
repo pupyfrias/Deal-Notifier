@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 
-namespace DealNotifier.Core.Application.Extensions
+namespace Catalog.Application.Extensions
 {
     public static class HttpContextExtension
     {

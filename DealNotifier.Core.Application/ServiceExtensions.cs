@@ -1,38 +1,33 @@
-﻿using DealNotifier.Core.Application.Interfaces.Repositories;
-using DealNotifier.Core.Application.Interfaces.Services;
-using DealNotifier.Core.Application.Interfaces.Services.Items;
-using DealNotifier.Core.Application.Services;
-using DealNotifier.Core.Application.Services.Items;
-using DealNotifier.Core.Application.Setups;
-using DealNotifier.Core.Application.Setups.Swagger;
+﻿using Catalog.Application.Interfaces.Services;
+using Catalog.Application.Interfaces.Services.Items;
+using Catalog.Application.Services;
+using Catalog.Application.Services.Items;
+using Catalog.Domain.Configs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace DealNotifier.Core.Application
+namespace Catalog.Application
 {
     public static class ServiceExtensions
     {
         public static void AddApplicationLayer(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddApiVersioning(ApiVersionSetup.Configure);
-            services.AddAuthorization();
+            
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddControllers();
-            services.AddCors(CorsSetup.Configure);
+
             services.AddEndpointsApiExplorer();
             services.AddHttpContextAccessor();
             services.AddMemoryCache();
-            services.AddSwaggerGen(SwaggerGenSetup.Configure);
-            services.AddVersionedApiExplorer(VersionedApiExplorerSetup.Configure);
+
 
 
 
             #region Dependency Injection
 
-            services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
-            services.AddScoped(typeof(IGenericService<>), typeof(GenericService<>));
+            //services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
             services.AddScoped<IItemService, ItemService>();
             services.AddScoped<IBanKeywordService, BanKeywordService>();
             services.AddScoped<IBanLinkService, BanLinkService>();
@@ -48,9 +43,16 @@ namespace DealNotifier.Core.Application
             services.AddScoped<IUnlockabledPhonePhoneUnlockToolService, UnlockabledPhonePhoneUnlockToolService>();
             services.AddScoped<IUnlockabledPhonePhoneCarrierService, UnlockabledPhonePhoneCarrierService>();
             services.AddScoped<IUnlockProbabilityService, UnlockProbabilityService>();
+            services.AddScoped<IItemManagerService, ItemManagerService>();
+            services.AddScoped<IItemValidationService, ItemValidationService>();
+            services.AddScoped<ICacheDataService, CacheDataService>();
+            services.AddScoped<IItemNotificationService, ItemNotificationService>();
+            services.AddScoped<IUnlockVerificationService, UnlockVerificationService>();
 
 
             #endregion Dependency Injection
+
+            services.AddSingleton<SecurityServiceConfig>();
         }
     }
 }

@@ -1,15 +1,14 @@
-﻿using DealNotifier.Core.Application.Exceptions;
-using DealNotifier.Core.Application.Extensions;
-using DealNotifier.Core.Application.ViewModels.V1.Item;
-using DealNotifier.Core.Domain.Entities;
-using System.Linq;
+﻿using Catalog.Application.Exceptions;
+using Catalog.Application.Extensions;
+using Catalog.Application.ViewModels.V1.Item;
+using Catalog.Domain.Entities;
 using System.Linq.Expressions;
 
-namespace DealNotifier.Core.Application.Specification
+namespace Catalog.Application.Specification
 {
     public class ItemSpecification : Specification<Item>
     {
-        public ItemSpecification(ItemFilterAndPaginationRequest request):base(request)
+        public ItemSpecification(ItemFilterAndPaginationRequest request) : base(request)
         {
             #region Criteria
 
@@ -76,25 +75,25 @@ namespace DealNotifier.Core.Application.Specification
 
             #region Brands
 
-/*            if (request.Brands != null)
-            {
-                var brandList = request.Brands.Split(",").Select(int.Parse);
-                Expression<Func<Item, bool>> expression = item => brandList.Contains(item.BrandId);
+            /*            if (request.Brands != null)
+                        {
+                            var brandList = request.Brands.Split(",").Select(int.Parse);
+                            Expression<Func<Item, bool>> expression = item => brandList.Contains(item.BrandId);
 
-                Criteria = Criteria is null ? expression : Criteria.And(expression);
-            }*/
+                            Criteria = Criteria is null ? expression : Criteria.And(expression);
+                        }*/
 
             #endregion Brands
 
             #region PhoneCarriers
 
-/*            if (request.PhoneCarriers != null)
-            {
-                var phoneCarrierList = request.PhoneCarriers.Split(",").Select(int.Parse);
-                Expression<Func<Item, bool>> expression = item => phoneCarrierList.Equals(item.PhoneCarrierId);
+            /*            if (request.PhoneCarriers != null)
+                        {
+                            var phoneCarrierList = request.PhoneCarriers.Split(",").Select(int.Parse);
+                            Expression<Func<Item, bool>> expression = item => phoneCarrierList.Equals(item.PhoneCarrierId);
 
-                Criteria = Criteria is null ? expression : Criteria.And(expression);
-            }*/
+                            Criteria = Criteria is null ? expression : Criteria.And(expression);
+                        }*/
 
             #endregion PhoneCarriers
 

@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
-using DealNotifier.Core.Application.Interfaces.Repositories;
-using DealNotifier.Core.Application.Interfaces.Services.Items;
-using DealNotifier.Core.Application.ViewModels.V1.Item;
-using DealNotifier.Core.Domain.Entities;
+using Catalog.Application.Interfaces.Repositories;
+using Catalog.Application.Interfaces.Services.Items;
+using Catalog.Application.ViewModels.V1.Item;
+using Catalog.Domain.Entities;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Concurrent;
 using System.Data;
 
-namespace DealNotifier.Core.Application.Services.Items
+namespace Catalog.Application.Services.Items
 {
     public class ItemManagerService : IItemManagerService
     {

@@ -1,8 +1,8 @@
-﻿using DealNotifier.Core.Domain.Common;
+﻿using Catalog.Domain.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace DealNotifier.Persistence.Configuration
+namespace Catalog.Persistence.Configuration
 {
     public abstract class AuditableEntityConfiguration<TEntity> : IEntityTypeConfiguration<TEntity> where TEntity : AuditableEntity
     {

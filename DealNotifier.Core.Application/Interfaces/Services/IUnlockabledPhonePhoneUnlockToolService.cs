@@ -1,6 +1,6 @@
-﻿using DealNotifier.Core.Application.ViewModels.V1.UnlockabledPhonePhoneUnlockTool;
+﻿using Catalog.Application.ViewModels.V1.UnlockabledPhonePhoneUnlockTool;
 
-namespace DealNotifier.Core.Application.Interfaces.Services
+namespace Catalog.Application.Interfaces.Services
 {
     public interface IUnlockabledPhonePhoneUnlockToolService
     {

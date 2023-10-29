@@ -1,4 +1,4 @@
-﻿namespace DealNotifier.Core.Application.Interfaces.Services
+﻿namespace Catalog.Application.Interfaces.Services
 {
     public interface IHttpService
     {

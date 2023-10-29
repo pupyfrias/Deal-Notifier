@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace DealNotifier.Core.Application.ViewModels.V1.BanLink
+namespace Catalog.Application.ViewModels.V1.BanLink
 {
     public class BanLinkCreateRequest
     {

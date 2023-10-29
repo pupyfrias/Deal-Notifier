@@ -1,10 +1,9 @@
-﻿using DealNotifier.Core.Application.Exceptions;
-using DealNotifier.Core.Application.Extensions;
-using DealNotifier.Core.Application.ViewModels.V1.NotificationCriteria;
-using DealNotifier.Core.Domain.Entities;
+﻿using Catalog.Application.Extensions;
+using Catalog.Application.ViewModels.V1.NotificationCriteria;
+using Catalog.Domain.Entities;
 using System.Linq.Expressions;
 
-namespace DealNotifier.Core.Application.Specification
+namespace Catalog.Application.Specification
 {
     public class NotificationCriteriaSpecification : Specification<NotificationCriteria>
     {

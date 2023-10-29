@@ -1,9 +1,9 @@
-﻿using DealNotifier.Core.Application.Interfaces;
+﻿using Catalog.Application.Interfaces;
 using System.ComponentModel.DataAnnotations;
 
-namespace DealNotifier.Core.Application.ViewModels.V1.Item
+namespace Catalog.Application.ViewModels.V1.Item
 {
-    public class ItemUpdateRequest: IHasId<Guid>
+    public class ItemUpdateRequest : IHasId<Guid>
     {
         public int BidCount { get; set; }
         [Required]

@@ -1,9 +1,9 @@
-﻿using DealNotifier.Core.Domain.Entities;
-using DealNotifier.Persistence.Seeds;
+﻿using Catalog.Domain.Entities;
+using Catalog.Persistence.Seeds;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace DealNotifier.Persistence.Configuration
+namespace Catalog.Persistence.Configuration
 {
     public class PhoneCarrierConfiguration : AuditableEntityConfiguration<PhoneCarrier>
     {

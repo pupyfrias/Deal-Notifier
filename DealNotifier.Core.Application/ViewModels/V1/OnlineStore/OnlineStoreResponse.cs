@@ -1,4 +1,4 @@
-﻿namespace DealNotifier.Core.Application.ViewModels.V1.OnlineStore
+﻿namespace Catalog.Application.ViewModels.V1.OnlineStore
 {
     public class OnlineStoreResponse
     {

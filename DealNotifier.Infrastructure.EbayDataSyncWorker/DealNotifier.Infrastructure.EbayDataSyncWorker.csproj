@@ -10,13 +10,14 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="7.0.1" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.4" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DealNotifier.Infrastructure.Email\DealNotifier.Infrastructure.Email.csproj" />
-    <ProjectReference Include="..\DealNotifier.Infrastructure.Persistence\DealNotifier.Persistence.csproj" />
-    <ProjectReference Include="..\DealNotifier.Persistence\DealNotifier.Persistence.csproj" />
+    <ProjectReference Include="..\DealNotifier.Core.Application\Catalog.Application.csproj" />
+    <ProjectReference Include="..\DealNotifier.Core.Domain\Catalog.Domain.csproj" />
+    <ProjectReference Include="..\DealNotifier.Infrastructure.Email\Email.csproj" />
+    <ProjectReference Include="..\DealNotifier.Persistence\Catalog.Persistence.csproj" />
   </ItemGroup>
 
   <ItemGroup>

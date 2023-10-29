@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
-using DealNotifier.Core.Application.Interfaces.Repositories;
-using DealNotifier.Core.Application.Interfaces.Services;
-using DealNotifier.Core.Application.ViewModels.V1.PhoneCarrier;
-using DealNotifier.Core.Application.ViewModels.V1.UnlockabledPhonePhoneCarrier;
-using DealNotifier.Core.Domain.Entities;
+using Catalog.Application.Interfaces.Repositories;
+using Catalog.Application.Interfaces.Services;
+using Catalog.Application.ViewModels.V1.PhoneCarrier;
+using Catalog.Application.ViewModels.V1.UnlockabledPhonePhoneCarrier;
+using Catalog.Domain.Entities;
 using Serilog;
 
-namespace DealNotifier.Core.Application.Services
+namespace Catalog.Application.Services
 {
     public class UnlockabledPhonePhoneCarrierService : IUnlockabledPhonePhoneCarrierService
     {
@@ -30,7 +30,7 @@ namespace DealNotifier.Core.Application.Services
             _unlockabledPhonePhoneCarrierRepository = unlockabledPhonePhoneCarrierRepository;
             _mapper = mapper;
             _logger = logger;
-            _phoneCarrierService = phoneCarrierService; 
+            _phoneCarrierService = phoneCarrierService;
         }
 
         public async Task CreateMassiveAsync(int unlockedPhoneId, string carriers)
@@ -66,7 +66,7 @@ namespace DealNotifier.Core.Application.Services
 
             if (!existsUnlockabledPhonePhoneCarrier)
             {
-     
+
                 await CreateAsync(unlockablePhoneCarrierCreate);
             }
         }

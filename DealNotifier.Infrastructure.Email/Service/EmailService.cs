@@ -1,17 +1,13 @@
-﻿using DealNotifier.Core.Application.Constants;
-using DealNotifier.Core.Application.ViewModels.V1.Email;
-using DealNotifier.Core.Domain.Entities;
-using DealNotifier.Infrastructure.Email.Settings;
+﻿using Catalog.Application.Interfaces.Services;
+using Catalog.Application.ViewModels.V1.Email;
+using Email.Settings;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
-using System.Collections.Concurrent;
-using System.Text;
 using ILogger = Serilog.ILogger;
-using Enums = DealNotifier.Core.Application.Enums;
 
-namespace DealNotifier.Infrastructure.Email.Service
+namespace Email.Service
 {
     public class EmailService : IEmailService
     {
@@ -47,11 +43,11 @@ namespace DealNotifier.Infrastructure.Email.Service
                     await smtp.SendAsync(email);
                 }
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 _logger.Error($"An error occurred while send Email. Error: {ex.Message}");
             }
-            
+
         }
 
     }

@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using DealNotifier.Core.Application.Extensions;
-using DealNotifier.Core.Application.ViewModels.V1.Condition;
-using DealNotifier.Core.Domain.Entities;
+using Catalog.Application.Extensions;
+using Catalog.Application.ViewModels.V1.Condition;
+using Catalog.Domain.Entities;
 
-namespace DealNotifier.Core.Application.Mappings
+namespace Catalog.Application.Mappings
 {
     public class ConditionMapperConfig : Profile
     {
@@ -12,6 +12,7 @@ namespace DealNotifier.Core.Application.Mappings
             CreateMap<ConditionCreateRequest, Condition>().IgnoreAllSourceNullProperties();
             CreateMap<ConditionUpdateRequest, Condition>().IgnoreAllSourceNullProperties();
             CreateMap<Condition, ConditionResponse>().IgnoreAllSourceNullProperties();
+            CreateMap<Condition, ConditionDto>().ReverseMap();
         }
     }
 }

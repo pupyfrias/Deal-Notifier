@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace DealNotifier.Core.Application.Extensions
+namespace Catalog.Application.Extensions
 {
     public static class ExpressionExtensions
     {

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace DealNotifier.Core.Application.ViewModels.V1.UnlockProbability
+namespace Catalog.Application.ViewModels.V1.UnlockProbability
 {
     public class UnlockProbabilityCreateRequest
     {

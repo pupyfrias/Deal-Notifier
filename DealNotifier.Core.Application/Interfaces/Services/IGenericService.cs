@@ -1,7 +1,8 @@
-﻿using DealNotifier.Core.Application.ViewModels.Common;
+﻿using Catalog.Application.Interfaces;
+using Catalog.Application.Wrappers;
 using System.Linq.Expressions;
 
-namespace DealNotifier.Core.Application.Interfaces.Services
+namespace Catalog.Application.Interfaces.Services
 {
     public interface IGenericService<TEntity>
     {
@@ -12,9 +13,9 @@ namespace DealNotifier.Core.Application.Interfaces.Services
 
         Task<bool> ExistsAsync(int id);
 
-        Task <IEnumerable <TDestination>> GetAllAsync<TDestination>();
+        Task<IEnumerable<TDestination>> GetAllAsync<TDestination>();
 
-        Task<(IEnumerable <TSource>, string)> GetAllWithETagAsync<TSource>();
+        Task<(IEnumerable<TSource>, string)> GetAllWithETagAsync<TSource>();
 
         Task<PagedCollection<TDestination>> GetAllWithPaginationAsync<TDestination, TSpecification>(IPaginationBase request) where TSpecification : ISpecification<TEntity>;
 
@@ -34,9 +35,9 @@ namespace DealNotifier.Core.Application.Interfaces.Services
 
         bool Exists(int id);
 
-        IEnumerable <TDestination> GetAll<TDestination>();
+        IEnumerable<TDestination> GetAll<TDestination>();
 
-        (IEnumerable <TSource>, string) GetAllWithETag<TSource>();
+        (IEnumerable<TSource>, string) GetAllWithETag<TSource>();
 
         PagedCollection<TDestination> GetAllWithPagination<TDestination, TSpecification>(IPaginationBase request) where TSpecification : ISpecification<TEntity>;
 

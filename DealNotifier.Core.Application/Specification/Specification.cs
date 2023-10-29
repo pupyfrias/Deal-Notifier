@@ -1,10 +1,10 @@
-﻿using DealNotifier.Core.Application.Exceptions;
-using DealNotifier.Core.Application.Interfaces;
-using DealNotifier.Core.Domain.Contracts;
+﻿using Catalog.Application.Exceptions;
+using Catalog.Application.Interfaces;
+using Catalog.Domain.Contracts;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace DealNotifier.Core.Application.Specification
+namespace Catalog.Application.Specification
 {
     public abstract class Specification<TEntity> : ISpecification<TEntity> where TEntity : IAuditableEntity
     {

@@ -1,8 +1,8 @@
-﻿using DealNotifier.Core.Application.ViewModels.V1.UnlockProbability;
-using DealNotifier.Core.Domain.Entities;
+﻿using Catalog.Application.ViewModels.V1.UnlockProbability;
+using Catalog.Domain.Entities;
 using System.Linq.Expressions;
 
-namespace DealNotifier.Core.Application.Specification
+namespace Catalog.Application.Specification
 {
     public class UnlockProbabilitySpecification : Specification<UnlockProbability>
     {

@@ -1,4 +1,4 @@
-﻿namespace DealNotifier.Core.Application.ViewModels.V1.ItemType
+﻿namespace Catalog.Application.ViewModels.V1.ItemType
 {
     public class ItemTypeResponse
     {

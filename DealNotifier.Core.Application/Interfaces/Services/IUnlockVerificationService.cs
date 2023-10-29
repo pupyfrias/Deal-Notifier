@@ -1,6 +1,6 @@
-﻿using DealNotifier.Core.Application.ViewModels.V1.Item;
+﻿using Catalog.Application.ViewModels.V1.Item;
 
-namespace DealNotifier.Core.Application.Interfaces.Services
+namespace Catalog.Application.Interfaces.Services
 {
     public interface IUnlockVerificationService
     {

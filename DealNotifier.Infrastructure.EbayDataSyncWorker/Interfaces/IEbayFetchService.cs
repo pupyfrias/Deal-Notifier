@@ -1,6 +1,4 @@
-﻿
-
-using DealNotifier.Core.Application.ViewModels.eBay;
+﻿using DealNotifier.Infrastructure.EbayDataSyncWorker.ViewModels;
 
 namespace DealNotifier.Infrastructure.EbayDataSyncWorker.Interfaces
 {

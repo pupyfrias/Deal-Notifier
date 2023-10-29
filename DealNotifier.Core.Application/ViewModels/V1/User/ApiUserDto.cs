@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace DealNotifier.Core.Application.ViewModels.V1.User
+namespace Catalog.Application.ViewModels.V1.User
 {
     public class ApiUserDto : LoginDto
     {

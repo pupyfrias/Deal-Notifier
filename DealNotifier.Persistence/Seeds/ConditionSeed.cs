@@ -1,7 +1,6 @@
-﻿using DealNotifier.Core.Domain.Entities;
-using Enums = DealNotifier.Core.Application.Enums;
-
-namespace DealNotifier.Persistence.Seeds
+﻿using  Catalog.Domain.Entities;
+using Enums = Catalog.Application.Enums;
+namespace Catalog.Persistence.Seeds
 {
     public static class ConditionSeed
     {

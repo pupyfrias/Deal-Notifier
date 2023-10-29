@@ -1,10 +1,10 @@
-﻿using DealNotifier.Core.Application.Constants;
-using DealNotifier.Infrastructure.Email.Service;
-using DealNotifier.Infrastructure.Email.Settings;
+﻿using Catalog.Application.Interfaces.Services;
+using Email.Service;
+using Email.Settings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace DealNotifier.Infrastructure.Email
+namespace Email
 {
     public static class ServiceExtensiones
     {

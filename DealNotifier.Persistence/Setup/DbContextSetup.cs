@@ -1,9 +1,8 @@
-﻿using DealNotifier.Persistence.DbContexts;
+﻿using Catalog.Persistence.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
-namespace DealNotifier.Persistence.Setup
+namespace Catalog.Persistence.Setup
 {
     public static class DbContextSetup
     {

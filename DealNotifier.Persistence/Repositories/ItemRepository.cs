@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using DealNotifier.Core.Application.Interfaces.Repositories;
-using DealNotifier.Core.Domain.Entities;
-using DealNotifier.Persistence.DbContexts;
+using Catalog.Application.Interfaces.Repositories;
+using Catalog.Domain.Entities;
+using Catalog.Persistence.DbContexts;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
-namespace DealNotifier.Persistence.Repositories
+namespace Catalog.Persistence.Repositories
 {
     public class ItemRepository : GenericRepository<Item>, IItemRepository
     {

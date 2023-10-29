@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace DealNotifier.Core.Application.ViewModels.V1.Auth
+namespace Catalog.Application.ViewModels.V1.Auth
 {
     public class AuthenticationResponse
     {
@@ -10,7 +10,7 @@ namespace DealNotifier.Core.Application.ViewModels.V1.Auth
         public List<string> Roles { get; set; }
         public bool IsVerified { get; set; }
         public string AccessToken { get; set; }
-        public int ExpiresIn { get; set; }
+        public DateTime ValidTo { get; set; }
 
         [JsonIgnore]
         public string RefreshToken { get; set; }

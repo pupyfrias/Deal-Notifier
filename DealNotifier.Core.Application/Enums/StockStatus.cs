@@ -1,9 +1,9 @@
-﻿namespace DealNotifier.Core.Application.Enums
+﻿namespace Catalog.Application.Enums
 {
     public enum StockStatus
     {
         InStock = 1,
-        OutStock 
-        
+        OutStock
+
     }
 }

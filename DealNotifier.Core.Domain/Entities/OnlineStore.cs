@@ -1,10 +1,10 @@
-﻿using DealNotifier.Core.Domain.Common;
+﻿using Catalog.Domain.Common;
 
-namespace DealNotifier.Core.Domain.Entities
+namespace Catalog.Domain.Entities
 {
     public class OnlineStore : AuditableEntity
     {
-        
+
         public string Name { get; set; }
         public IEnumerable<Item> Items { get; set; }
     }

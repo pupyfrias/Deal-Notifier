@@ -1,7 +1,7 @@
-﻿using DealNotifier.Core.Application.ViewModels.V1.Item;
-using DealNotifier.Core.Domain.Entities;
+﻿using Catalog.Application.ViewModels.V1.Item;
+using Catalog.Domain.Entities;
 
-namespace DealNotifier.Core.Application.Interfaces.Services
+namespace Catalog.Application.Interfaces.Services
 {
     public interface IUnlockProbabilityService : IGenericService<UnlockProbability>
     {

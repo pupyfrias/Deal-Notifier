@@ -1,5 +1,5 @@
-﻿using DealNotifier.Core.Application.ViewModels.eBay;
-using DealNotifier.Core.Application.ViewModels.V1.Item;
+﻿using Catalog.Application.ViewModels.V1.Item;
+using DealNotifier.Infrastructure.EbayDataSyncWorker.ViewModels;
 using System.Collections.Concurrent;
 
 namespace DealNotifier.Infrastructure.EbayDataSyncWorker.Interfaces

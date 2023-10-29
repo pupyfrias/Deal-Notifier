@@ -1,0 +1,20 @@
+﻿syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+package role_proto;
+
+message RoleData {
+  string id = 1;
+  string name = 2;
+  string normalized_name = 3;
+}
+
+message RoleResponse {
+  string etag = 1;
+  repeated RoleData roles = 2;
+}
+
+service RoleService {
+  rpc GetAll (google.protobuf.Empty) returns ( RoleResponse);
+}

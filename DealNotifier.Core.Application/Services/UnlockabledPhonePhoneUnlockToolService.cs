@@ -1,13 +1,10 @@
 ﻿using AutoMapper;
-using DealNotifier.Core.Application.Enums;
-using DealNotifier.Core.Application.Interfaces.Repositories;
-using DealNotifier.Core.Application.Interfaces.Services;
-using DealNotifier.Core.Application.ViewModels.V1;
-using DealNotifier.Core.Application.ViewModels.V1.PhoneUnlockTool;
-using DealNotifier.Core.Application.ViewModels.V1.UnlockabledPhonePhoneUnlockTool;
-using DealNotifier.Core.Domain.Entities;
+using Catalog.Application.Interfaces.Repositories;
+using Catalog.Application.Interfaces.Services;
+using Catalog.Application.ViewModels.V1.UnlockabledPhonePhoneUnlockTool;
+using Catalog.Domain.Entities;
 
-namespace DealNotifier.Core.Application.Services
+namespace Catalog.Application.Services
 {
     /// <summary>
     /// This class represents the many-to-many relationship between <see cref="UnlockabledPhone"/> and <see cref="PhoneUnlockTool"/>.

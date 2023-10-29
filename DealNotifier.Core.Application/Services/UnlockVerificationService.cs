@@ -1,13 +1,13 @@
-﻿using DealNotifier.Core.Application.Constants;
-using DealNotifier.Core.Application.Interfaces.Repositories;
-using DealNotifier.Core.Application.Interfaces.Services;
-using DealNotifier.Core.Application.ViewModels.V1.Item;
-using DealNotifier.Core.Domain.Entities;
+﻿using Catalog.Application.Constants;
+using Catalog.Application.Interfaces.Repositories;
+using Catalog.Application.Interfaces.Services;
+using Catalog.Application.ViewModels.V1.Item;
+using Catalog.Domain.Entities;
 using System.Text.RegularExpressions;
 
-namespace DealNotifier.Core.Application.Services
+namespace Catalog.Application.Services
 {
-    public class UnlockVerificationService: IUnlockVerificationService
+    public class UnlockVerificationService : IUnlockVerificationService
     {
         private readonly IUnlockabledPhoneRepository _unlockabledPhoneRepository;
         private readonly IUnlockabledPhonePhoneCarrierRepository _unlockabledPhonePhoneCarrierRepository;

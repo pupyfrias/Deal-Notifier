@@ -1,4 +1,4 @@
-﻿namespace DealNotifier.Core.Application.Exceptions
+﻿namespace Catalog.Application.Exceptions
 {
     public class BadRequestException : Exception
     {

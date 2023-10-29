@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 
-namespace DealNotifier.Core.Application.Extensions
+namespace Catalog.Application.Extensions
 {
     public static class AutoMapperExtensions
     {

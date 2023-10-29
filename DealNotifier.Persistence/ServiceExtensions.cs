@@ -1,12 +1,12 @@
-﻿using DealNotifier.Core.Application.Interfaces.Repositories;
-using DealNotifier.Core.Application.Interfaces.Services;
-using DealNotifier.Persistence.DbContexts;
-using DealNotifier.Persistence.Repositories;
-using DealNotifier.Persistence.Setup;
+﻿using Catalog.Application.Interfaces.Repositories;
+using Catalog.Application.Interfaces.Services;
+using Catalog.Persistence.DbContexts;
+using Catalog.Persistence.Repositories;
+using Catalog.Persistence.Setup;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace DealNotifier.Persistence
+namespace Catalog.Persistence
 {
     public static class ServiceExtensions
     {
@@ -26,8 +26,6 @@ namespace DealNotifier.Persistence
             #endregion DbContext
 
             #region Dependency Injection
-
-            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IBanKeywordRepository, BanKeywordRepository>();
             services.AddScoped<IBanLinkRepository, BanLinkRepository>();
             services.AddScoped<IBrandRepository, BrandRepository>();

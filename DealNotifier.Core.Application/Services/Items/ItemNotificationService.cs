@@ -1,14 +1,13 @@
-﻿using DealNotifier.Core.Application.Constants;
-using DealNotifier.Core.Application.Interfaces.Services;
-using DealNotifier.Core.Application.Interfaces.Services.Items;
-using DealNotifier.Core.Application.ViewModels.V1;
-using DealNotifier.Core.Application.ViewModels.V1.Email;
-using DealNotifier.Core.Domain.Entities;
+﻿using Catalog.Application.Interfaces.Services;
+using Catalog.Application.Interfaces.Services.Items;
+using Catalog.Application.ViewModels.V1.Email;
+using Catalog.Application.ViewModels.V1.NotificationCriteria;
+using Catalog.Domain.Entities;
 using Serilog;
 using System.Collections.Concurrent;
 using System.Text;
 
-namespace DealNotifier.Core.Application.Services.Items
+namespace Catalog.Application.Services.Items
 {
     public class ItemNotificationService : IItemNotificationService
     {

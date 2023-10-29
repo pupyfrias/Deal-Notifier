@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using DealNotifier.Core.Application.ViewModels.V1;
-using DealNotifier.Core.Domain.Entities;
+using Catalog.Application.ViewModels.V1.BanKeyword;
+using Catalog.Domain.Entities;
 
-namespace DealNotifier.Core.Application.Mappings
+namespace Catalog.Application.Mappings
 {
     public class BannedMapperConfig : Profile
     {

@@ -1,6 +1,7 @@
-﻿using System.Linq.Expressions;
+﻿using Catalog.Application.Interfaces;
+using System.Linq.Expressions;
 
-namespace DealNotifier.Core.Application.Interfaces.Repositories
+namespace Catalog.Application.Interfaces.Repositories
 {
     public interface IGenericRepository<TEntity>
     {

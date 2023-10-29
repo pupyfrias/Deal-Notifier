@@ -1,8 +1,7 @@
-﻿using DealNotifier.Core.Application.ViewModels.V1.UnlockabledPhonePhoneCarrier;
-using DealNotifier.Core.Domain.Entities;
+﻿using Catalog.Domain.Entities;
 using System.Linq.Expressions;
 
-namespace DealNotifier.Core.Application.Interfaces.Repositories
+namespace Catalog.Application.Interfaces.Repositories
 {
     public interface IUnlockabledPhonePhoneCarrierRepository
     {

@@ -1,13 +1,14 @@
-﻿using DealNotifier.Core.Application.Extensions;
-using DealNotifier.Core.Application.ViewModels;
-using DealNotifier.Core.Domain.Contracts;
-using DealNotifier.Core.Domain.Entities;
-using DealNotifier.Persistence.Configuration;
+﻿
+using Catalog.Application.Extensions;
+using Catalog.Application.ViewModels.Common;
+using Catalog.Domain.Contracts;
+using Catalog.Domain.Entities;
+using Catalog.Persistence.Configuration;
 using Microsoft.EntityFrameworkCore;
-using Action = DealNotifier.Core.Application.Enums.Action;
-using ItemType = DealNotifier.Core.Domain.Entities.ItemType;
+using Action = Catalog.Application.Enums.Action;
 
-namespace DealNotifier.Persistence.DbContexts
+
+namespace Catalog.Persistence.DbContexts
 {
     public class ApplicationDbContext : DbContext
     {

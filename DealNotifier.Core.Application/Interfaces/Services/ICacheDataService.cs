@@ -1,8 +1,11 @@
-﻿using DealNotifier.Core.Application.ViewModels.V1.PhoneCarrier;
-using DealNotifier.Core.Application.ViewModels.V1;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
+using Catalog.Application.ViewModels.V1.PhoneCarrier;
+using Catalog.Application.ViewModels.V1.Brand;
+using Catalog.Application.ViewModels.V1.BanLink;
+using Catalog.Application.ViewModels.V1.NotificationCriteria;
+using Catalog.Application.ViewModels.V1.BanKeyword;
 
-namespace DealNotifier.Core.Application.Interfaces.Services
+namespace Catalog.Application.Interfaces.Services
 {
     public interface ICacheDataService
     {

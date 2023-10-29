@@ -1,13 +1,12 @@
-﻿using DealNotifier.Core.Application.Extensions;
-using DealNotifier.Core.Application.ViewModels.V1.BanKeyword;
-using DealNotifier.Core.Domain.Entities;
+﻿using Catalog.Application.ViewModels.V1.BanKeyword;
+using Catalog.Domain.Entities;
 using System.Linq.Expressions;
 
-namespace DealNotifier.Core.Application.Specification
+namespace Catalog.Application.Specification
 {
     public class BanKeywordSpecification : Specification<BanKeyword>
     {
-        public BanKeywordSpecification(BanKeywordFilterAndPaginationRequest request): base(request)
+        public BanKeywordSpecification(BanKeywordFilterAndPaginationRequest request) : base(request)
         {
 
 
@@ -17,12 +16,12 @@ namespace DealNotifier.Core.Application.Specification
             {
                 Expression<Func<BanKeyword, bool>> expression = item => item.Keyword.Contains(request.Keyword);
 
-                Criteria =  expression;
+                Criteria = expression;
             }
 
             #endregion Keywords
 
-            
+
         }
 
     }

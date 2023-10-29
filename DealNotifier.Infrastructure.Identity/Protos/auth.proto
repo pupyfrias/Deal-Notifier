@@ -17,8 +17,9 @@ message AuthenticationResponse {
 	string email = 3;
 	repeated string roles = 4;
 	bool is_verified = 5;
-	string jwt_token = 6;
-	string refresh_token = 7;
+	google.protobuf.Timestamp valid_to = 6;
+	string access_token = 7;
+	string refresh_token = 8;
 }
 
 message ConfirmEmailRequest {
@@ -41,7 +42,9 @@ message ResetPasswordRequest {
   string confirm_password = 4;
 }
 
-
+message PublicKeyResponse {
+    string publicKey = 1;
+}
 
 
 message RefreshToken {
@@ -57,4 +60,5 @@ service AuthService {
 	rpc ConfirmEmail (ConfirmEmailRequest) returns (ConfirmEmailResponse);
 	rpc ForgotPassword (ForgotPasswordRequest) returns (google.protobuf.Empty);
 	rpc ResetPassword (ResetPasswordRequest) returns (google.protobuf.Empty);
+	rpc PublicKey(google.protobuf.Empty) returns (PublicKeyResponse); 
 }

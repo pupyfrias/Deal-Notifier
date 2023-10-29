@@ -1,8 +1,8 @@
-﻿using DealNotifier.Core.Domain.Entities;
+﻿using Catalog.Domain.Entities;
 
-namespace DealNotifier.Core.Application.Interfaces.Repositories
+namespace Catalog.Application.Interfaces.Repositories
 {
-    public interface IItemTypeRepository: IGenericRepository<ItemType>
+    public interface IItemTypeRepository : IGenericRepository<ItemType>
     {
     }
 }

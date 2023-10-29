@@ -1,9 +1,8 @@
-﻿
-using DealNotifier.Core.Domain.Entities;
+﻿using Catalog.Domain.Entities;
 
-namespace DealNotifier.Core.Application.Interfaces.Repositories
+namespace Catalog.Application.Interfaces.Repositories
 {
-    public interface IBrandRepository: IGenericRepository<Brand>
+    public interface IBrandRepository : IGenericRepository<Brand>
     {
     }
 }

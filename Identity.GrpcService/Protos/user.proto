@@ -1,0 +1,123 @@
+﻿syntax = "proto3";
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+
+package user_proto;
+
+message UserCreateRequest {
+  string first_name = 1;
+  string last_name = 2;
+  string user_name = 3;
+  string email = 4;
+  string password = 5;
+  string confirm_password = 6;
+}
+
+message UserCreateResponse {
+  string result = 1;
+}
+
+message UserDetailRequest {
+  string id = 1;
+}
+
+message UserDetailResponse {
+  string id = 1;
+  string user_name = 2;
+  string email = 3;
+  repeated string roles = 4;
+  bool is_verified = 5;
+  string access_token = 6;
+  int32 expires_in = 7;
+  string refresh_token = 8;
+  repeated string resource_permissions = 9;
+}
+
+message UserDetailsResponse {
+  string id = 1;
+  string user_name = 2;
+  string first_name = 3;
+  string last_name = 4;
+  string email = 5;
+  repeated string roles = 6;
+  bool email_confirmed = 7;
+}   
+
+message UserList {
+  string id = 1;
+  string user_name = 2;
+  string first_name = 3;
+  string last_name = 4;
+  string email = 5;
+}
+
+
+message UserUpdateRequest {
+  string id = 1;
+  string first_name = 2;
+  string last_name = 3;
+  string current_password = 4;
+  string new_password = 5;
+  string confirm_password = 6;
+}
+
+message AddRolesRequest{
+  string user_id = 1;
+  repeated string roles = 2;
+}
+
+message RemoveRolesRequest{
+  string user_id = 1;
+  repeated string roles = 2;
+}
+
+message UserDeleteRequest{
+  string id = 1;
+}
+
+message UserExistsRequest{
+  string id = 1;
+}
+
+message UserExistsResponse{
+  bool result = 1;
+}
+
+message QueryParametersRequest {
+  bool descending = 1;
+  int32 limit = 2;
+  int32 offset = 3;
+  string search = 4;
+  repeated string sortable_properties = 5;
+}
+
+message PagedResultResponse {
+  string href = 1;
+  string next = 2;
+  string prev = 3;
+  int32 total = 4;
+  int32 limit = 5;
+  int32 offset = 6;
+  repeated UserList items = 7;
+}
+
+message UserIdRequest{
+  string id = 1;
+}
+
+
+message UserRolesResponse {
+  repeated string roles = 1;
+}
+
+service UserService {
+  rpc Create (UserCreateRequest) returns (UserCreateResponse);
+  rpc AddRoles (AddRolesRequest) returns (google.protobuf.Empty);
+  rpc RemoveRoles (RemoveRolesRequest) returns (google.protobuf.Empty);
+  rpc GetRoles(UserIdRequest) returns (UserRolesResponse);
+  rpc Delete (UserDeleteRequest) returns (google.protobuf.Empty);
+  rpc Exists (UserExistsRequest) returns (UserExistsResponse);
+  rpc GetAll (QueryParametersRequest) returns (PagedResultResponse);
+  rpc GetById (UserIdRequest) returns (UserDetailsResponse);
+  rpc Update (UserUpdateRequest) returns (google.protobuf.Empty);
+}

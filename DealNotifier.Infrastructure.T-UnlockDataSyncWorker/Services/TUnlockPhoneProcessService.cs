@@ -1,9 +1,9 @@
-﻿using DealNotifier.Core.Application.Enums;
-using DealNotifier.Core.Application.Interfaces.Services;
+﻿using Catalog.Application.Enums;
+using Catalog.Application.Interfaces.Services;
 using HtmlAgilityPack;
 using WorkerService.T_Unlock_WebScraping.Helpers;
 using WorkerService.T_Unlock_WebScraping.Interfaces;
-using Brand = DealNotifier.Core.Application.Enums.Brand;
+using Brand = Catalog.Application.Enums.Brand;
 using ILogger = Serilog.ILogger;
 
 namespace WorkerService.T_Unlock_WebScraping.Services

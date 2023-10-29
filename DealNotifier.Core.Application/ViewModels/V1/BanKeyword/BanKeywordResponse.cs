@@ -1,4 +1,4 @@
-﻿namespace DealNotifier.Core.Application.ViewModels.V1.BanKeyword
+﻿namespace Catalog.Application.ViewModels.V1.BanKeyword
 {
     public class BanKeywordResponse
     {

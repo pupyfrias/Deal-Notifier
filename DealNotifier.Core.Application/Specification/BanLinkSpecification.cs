@@ -1,13 +1,13 @@
-﻿using DealNotifier.Core.Application.ViewModels.V1.BanLink;
-using DealNotifier.Core.Domain.Entities;
+﻿using Catalog.Application.ViewModels.V1.BanLink;
+using Catalog.Domain.Entities;
 
-namespace DealNotifier.Core.Application.Specification
+namespace Catalog.Application.Specification
 {
     public class BanLinkSpecification : Specification<BanLink>
     {
         public BanLinkSpecification(BanLinkPaginationRequest request) : base(request)
         {
-            
+
         }
     }
 }
