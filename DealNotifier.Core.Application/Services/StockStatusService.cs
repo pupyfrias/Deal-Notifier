@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
-using DealNotifier.Core.Application.Interfaces.Repositories;
-using DealNotifier.Core.Application.Interfaces.Services;
-using DealNotifier.Core.Domain.Entities;
+using Catalog.Application.Interfaces.Repositories;
+using Catalog.Application.Interfaces.Services;
+using Catalog.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
 
-namespace DealNotifier.Core.Application.Services
+namespace Catalog.Application.Services
 {
     public class StockStatusService : GenericService<StockStatus>, IStockStatusService
     {

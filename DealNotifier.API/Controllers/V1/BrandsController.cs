@@ -1,8 +1,7 @@
-﻿using DealNotifier.Core.Application.Interfaces.Services;
-using DealNotifier.Core.Application.Specification;
-using DealNotifier.Core.Application.ViewModels.Common;
-using DealNotifier.Core.Application.ViewModels.V1.Brand;
-using DealNotifier.Core.Application.Wrappers;
+﻿using Catalog.Application.Interfaces.Services;
+using Catalog.Application.Specification;
+using Catalog.Application.ViewModels.V1.Brand;
+using Catalog.Application.Wrappers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DealNotifier.API.Controllers.V1

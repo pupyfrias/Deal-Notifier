@@ -1,4 +1,4 @@
-﻿namespace DealNotifier.Core.Application.ViewModels.V1.StockStatus
+﻿namespace Catalog.Application.ViewModels.V1.StockStatus
 {
     public class StockStatusResponse
     {

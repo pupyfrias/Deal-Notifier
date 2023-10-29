@@ -1,7 +1,7 @@
-﻿using DealNotifier.Core.Domain.Entities;
-using Enums = DealNotifier.Core.Application.Enums;
+﻿using Catalog.Application.Enums;
+using Catalog.Domain.Entities;
 
-namespace DealNotifier.Persistence.Seeds
+namespace Catalog.Persistence.Seeds
 {
     public static class UnlockToolSeed
     {
@@ -9,17 +9,17 @@ namespace DealNotifier.Persistence.Seeds
         {
             new PhoneUnlockTool
             {
-                Id= (int) Enums.UnlockTool.TUnlock,
+                Id= (int) UnlockTool.TUnlock,
                 Name= "T-Unlock"
             },
             new PhoneUnlockTool
             {
-                Id= (int) Enums.UnlockTool.SamKey,
+                Id= (int) UnlockTool.SamKey,
                 Name= "SamKey"
             },
              new PhoneUnlockTool
              {
-                Id= (int) Enums.UnlockTool.GlobalUnlocker,
+                Id= (int) UnlockTool.GlobalUnlocker,
                 Name= "Global Unlocker"
              }
         };

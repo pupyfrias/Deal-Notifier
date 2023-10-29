@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using DealNotifier.Core.Application.Extensions;
-using DealNotifier.Core.Application.ViewModels.V1.Brand;
-using DealNotifier.Core.Domain.Entities;
+using Catalog.Application.Extensions;
+using Catalog.Application.ViewModels.V1.Brand;
+using Catalog.Domain.Entities;
 
-namespace DealNotifier.Core.Application.Mappings
+namespace Catalog.Application.Mappings
 {
     public class BrandMapperConfig : Profile
     {
@@ -12,6 +12,7 @@ namespace DealNotifier.Core.Application.Mappings
             CreateMap<BrandCreateRequest, Brand>().IgnoreAllSourceNullProperties();
             CreateMap<BrandUpdateRequest, Brand>().IgnoreAllSourceNullProperties();
             CreateMap<Brand, BrandResponse>().IgnoreAllSourceNullProperties();
+            CreateMap<Brand, BrandDto>().ReverseMap();
         }
     }
 }

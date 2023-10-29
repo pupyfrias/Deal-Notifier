@@ -1,4 +1,4 @@
-﻿namespace DealNotifier.Core.Domain.Contracts
+﻿namespace Catalog.Domain.Contracts
 {
     public interface IAuditableEntity
     {

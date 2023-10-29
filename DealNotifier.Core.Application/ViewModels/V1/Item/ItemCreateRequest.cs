@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
-namespace DealNotifier.Core.Application.ViewModels.V1.Item
+namespace Catalog.Application.ViewModels.V1.Item
 {
     public class ItemCreateRequest
     {

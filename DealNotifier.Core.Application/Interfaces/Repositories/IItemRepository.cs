@@ -1,7 +1,7 @@
-﻿using DealNotifier.Core.Domain.Entities;
+﻿using Catalog.Domain.Entities;
 using Microsoft.Data.SqlClient;
 
-namespace DealNotifier.Core.Application.Interfaces.Repositories
+namespace Catalog.Application.Interfaces.Repositories
 {
     public interface IItemRepository : IGenericRepository<Item>
     {
@@ -12,7 +12,7 @@ namespace DealNotifier.Core.Application.Interfaces.Repositories
 
         Task<TDestination?> GetByPublicIdProjected<TDestination>(Guid id);
 
-        Task UpdateStockStatusAsync(string query, SqlParameter idListString, SqlParameter onlineStoreId, 
+        Task UpdateStockStatusAsync(string query, SqlParameter idListString, SqlParameter onlineStoreId,
             SqlParameter outputResult, SqlParameter errorMessage);
     }
 }

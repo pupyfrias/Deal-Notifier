@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace DealNotifier.Core.Application.ViewModels.V1.Condition
+namespace Catalog.Application.ViewModels.V1.Condition
 {
     public class ConditionCreateRequest
     {

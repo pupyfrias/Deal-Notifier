@@ -1,6 +1,6 @@
-﻿using DealNotifier.Core.Application.ViewModels.Common;
+﻿using Catalog.Application.Wrappers;
 
-namespace DealNotifier.Core.Application.ViewModels.V1.Item
+namespace Catalog.Application.ViewModels.V1.Item
 {
     public class ItemFilterAndPaginationRequest : PaginationBase
     {

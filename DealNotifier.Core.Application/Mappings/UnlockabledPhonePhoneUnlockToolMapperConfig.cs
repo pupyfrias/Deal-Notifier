@@ -1,9 +1,8 @@
 ﻿using AutoMapper;
-using DealNotifier.Core.Application.Extensions;
-using DealNotifier.Core.Application.ViewModels.V1.UnlockabledPhonePhoneUnlockTool;
-using DealNotifier.Core.Domain.Entities;
+using Catalog.Application.ViewModels.V1.UnlockabledPhonePhoneUnlockTool;
+using Catalog.Domain.Entities;
 
-namespace DealNotifier.Core.Application.Mappings
+namespace Catalog.Application.Mappings
 {
     public class UnlockabledPhonePhoneUnlockToolMapperConfig : Profile
     {

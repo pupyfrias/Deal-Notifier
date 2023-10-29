@@ -1,6 +1,6 @@
-﻿using DealNotifier.Core.Application.Exceptions;
-using DealNotifier.Core.Application.Extensions;
-using DealNotifier.Core.Application.Wrappers;
+﻿using Catalog.Application.Exceptions;
+using Catalog.Application.Extensions;
+using Catalog.Application.Wrappers;
 using Grpc.Core;
 using Serilog.Context;
 using ILogger = Serilog.ILogger;

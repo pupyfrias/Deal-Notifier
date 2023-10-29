@@ -1,7 +1,7 @@
-﻿using DealNotifier.Core.Application.ViewModels.V1.Item;
-using DealNotifier.Core.Domain.Entities;
+﻿using Catalog.Application.ViewModels.V1.Item;
+using Catalog.Domain.Entities;
 
-namespace DealNotifier.Core.Application.Interfaces.Services.Items
+namespace Catalog.Application.Interfaces.Services.Items
 {
     public interface IItemValidationService
     {

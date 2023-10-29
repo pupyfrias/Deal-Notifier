@@ -1,15 +1,15 @@
-﻿using DealNotifier.Core.Application.Interfaces.Services.Items;
-using DealNotifier.Core.Application.Specification;
-using DealNotifier.Core.Application.ViewModels.Common;
-using DealNotifier.Core.Application.ViewModels.V1.Item;
-using DealNotifier.Core.Application.Wrappers;
-using DealNotifier.Persistence.DbContexts;
+﻿using Catalog.Application.Interfaces.Services.Items;
+using Catalog.Application.Specification;
+using Catalog.Application.ViewModels.V1.Item;
+using Catalog.Application.Wrappers;
+using Catalog.Persistence.DbContexts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DealNotifier.API.Controllers.V1
 {
-    //[Authorize(Roles = $"{Role.SuperAdmin}")]
+    //[Authorize(Roles =$"{Role.Admin}")]
+    [Authorize]
     [ApiVersion("1.0")]
     [Route("api/[controller]")]
     [Route("api/v{version:apiVersion}/[controller]")]

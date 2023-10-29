@@ -1,4 +1,4 @@
-﻿using DealNotifier.Core.Application.Extensions;
+﻿using Catalog.Application.Extensions;
 using Serilog.Context;
 
 namespace DealNotifier.API.Middlewares

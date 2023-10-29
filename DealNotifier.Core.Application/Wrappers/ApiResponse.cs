@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace DealNotifier.Core.Application.Wrappers
+namespace Catalog.Application.Wrappers
 {
     public class ApiResponse<TSource>
     {

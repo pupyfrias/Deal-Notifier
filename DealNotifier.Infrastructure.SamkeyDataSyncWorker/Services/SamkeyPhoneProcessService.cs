@@ -1,9 +1,9 @@
-﻿using DealNotifier.Core.Application.Enums;
-using DealNotifier.Core.Application.Interfaces.Services;
+﻿using Catalog.Application.Enums;
+using Catalog.Application.Interfaces.Services;
 using DealNotifier.Infrastructure.SamkeyDataSyncWorker.Helpers;
 using DealNotifier.Infrastructure.SamkeyDataSyncWorker.Interfaces;
 using DealNotifier.Infrastructure.SamkeyDataSyncWorker.ViewModels;
-using Brand = DealNotifier.Core.Application.Enums.Brand;
+using Brand = Catalog.Application.Enums.Brand;
 using ILogger = Serilog.ILogger;
 
 namespace DealNotifier.Infrastructure.SamkeyDataSyncWorker.Services

@@ -1,4 +1,4 @@
-﻿using DealNotifier.Core.Application.ViewModels.V1.UnlockabledPhone;
+﻿using Catalog.Application.ViewModels.V1.UnlockabledPhone;
 using HtmlAgilityPack;
 
 namespace WorkerService.T_Unlock_WebScraping.Helpers

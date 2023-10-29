@@ -1,4 +1,4 @@
-﻿namespace DealNotifier.Core.Application.ViewModels.V1.Token
+﻿namespace Catalog.Application.ViewModels.V1.Token
 {
     public class RefreshTokenRequestDto
     {

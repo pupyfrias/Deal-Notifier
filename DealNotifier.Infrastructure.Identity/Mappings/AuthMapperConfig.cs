@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
-using DealNotifier.Core.Application.ViewModels.V1.Auth;
+using Catalog.Application.ViewModels.V1.Auth;
+
 
 namespace DealNotifier.Infrastructure.Identity.Mappings
 {
@@ -7,7 +8,9 @@ namespace DealNotifier.Infrastructure.Identity.Mappings
     {
         public AuthMapperConfig()
         {
-            CreateMap<AuthenticationResponse, AuthProto.AuthenticationResponse>().ReverseMap();
+            CreateMap<AuthenticationResponse, AuthProto.AuthenticationResponse>()
+                .ReverseMap()
+                 .ForMember(dest => dest.ValidTo, opt => opt.MapFrom(src => src.ValidTo.ToDateTime()));
             CreateMap<AuthenticationRequest, AuthProto.AuthenticationRequest>().ReverseMap();
         }
     }

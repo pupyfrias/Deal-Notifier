@@ -1,6 +1,6 @@
-﻿using DealNotifier.Core.Domain.Entities;
+﻿using Catalog.Domain.Entities;
 
-namespace DealNotifier.Core.Application.Interfaces.Services
+namespace Catalog.Application.Interfaces.Services
 {
     public interface IBanKeywordService : IGenericService<BanKeyword>
     {

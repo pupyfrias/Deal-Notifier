@@ -1,4 +1,4 @@
-﻿using DealNotifier.Core.Application.ViewModels.V1.UnlockabledPhone;
+﻿using Catalog.Application.ViewModels.V1.UnlockabledPhone;
 
 namespace DealNotifier.Infrastructure.SamkeyDataSyncWorker.Helpers
 {

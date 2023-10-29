@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
-using DealNotifier.Core.Application.Exceptions;
-using DealNotifier.Core.Application.Interfaces;
-using DealNotifier.Core.Application.Interfaces.Repositories;
-using DealNotifier.Core.Application.Interfaces.Services.Items;
-using DealNotifier.Core.Application.Utilities;
-using DealNotifier.Core.Application.ViewModels.V1.Item;
-using DealNotifier.Core.Domain.Entities;
+using Catalog.Application.Exceptions;
+using Catalog.Application.Interfaces;
+using Catalog.Application.Interfaces.Repositories;
+using Catalog.Application.Interfaces.Services.Items;
+using Catalog.Application.Utilities;
+using Catalog.Application.ViewModels.V1.Item;
+using Catalog.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Caching.Memory;
@@ -13,9 +13,9 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Concurrent;
 using System.Data;
 using ILogger = Serilog.ILogger;
-using OnlineStore = DealNotifier.Core.Application.Enums.OnlineStore;
+using OnlineStore = Catalog.Application.Enums.OnlineStore;
 
-namespace DealNotifier.Core.Application.Services.Items
+namespace Catalog.Application.Services.Items
 {
     public class ItemService : GenericService<Item>, IItemService
     {
@@ -86,7 +86,7 @@ namespace DealNotifier.Core.Application.Services.Items
                 await Task.WhenAll(updateTask, createTask);
 
                 _itemManager.AddNewItemIdToEvaluatedIdList(itemListToCreate);
-                _logger.Information($"{itemListToCreate.Count} items created | {itemListToUpdate.Count} items updated");
+                _logger.Information($"{itemListToCreate.Count} items created \n| {itemListToUpdate.Count} items updated");
             }
             catch (Exception ex)
             {
@@ -133,12 +133,12 @@ namespace DealNotifier.Core.Application.Services.Items
 
         private async Task CreateRangeAsync(IEnumerable<Item> itemListToCreate)
         {
-            using(var scope = _serviceScopeFactory.CreateScope()) 
+            using (var scope = _serviceScopeFactory.CreateScope())
             {
                 var itemRepository = scope.ServiceProvider.GetRequiredService<IItemRepository>();
                 await itemRepository.CreateRangeAsync(itemListToCreate);
             }
-            
+
         }
 
 
@@ -149,7 +149,7 @@ namespace DealNotifier.Core.Application.Services.Items
                 var itemRepository = scope.ServiceProvider.GetRequiredService<IItemRepository>();
                 await itemRepository.UpdateRangeAsync(itemListToUpdate);
             }
-            
+
         }
 
 

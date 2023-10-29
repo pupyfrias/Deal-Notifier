@@ -1,4 +1,4 @@
-﻿namespace DealNotifier.Infrastructure.Email.Settings
+﻿namespace Email.Settings
 {
     public class MailSettings
     {

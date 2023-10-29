@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace DealNotifier.Core.Application.Interfaces
+namespace Catalog.Application.Interfaces
 {
     public interface ISpecification<TEntity>
     {

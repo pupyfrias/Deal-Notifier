@@ -1,9 +1,9 @@
-﻿using DealNotifier.Core.Application.Interfaces;
+﻿using Catalog.Application.Interfaces;
 using System.ComponentModel.DataAnnotations;
 
-namespace DealNotifier.Core.Application.ViewModels.V1.Brand
+namespace Catalog.Application.ViewModels.V1.Brand
 {
-    public class BrandUpdateRequest: IHasId<int>
+    public class BrandUpdateRequest : IHasId<int>
     {
         [Required]
         public int Id { get; set; }

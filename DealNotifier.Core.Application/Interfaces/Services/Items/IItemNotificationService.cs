@@ -1,6 +1,6 @@
-﻿using DealNotifier.Core.Domain.Entities;
+﻿using Catalog.Domain.Entities;
 
-namespace DealNotifier.Core.Application.Interfaces.Services.Items
+namespace Catalog.Application.Interfaces.Services.Items
 {
     public interface IItemNotificationService
     {

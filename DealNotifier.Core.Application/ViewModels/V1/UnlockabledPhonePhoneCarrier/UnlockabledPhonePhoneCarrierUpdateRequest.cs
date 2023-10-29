@@ -1,4 +1,4 @@
-﻿namespace DealNotifier.Core.Application.ViewModels.V1.UnlockabledPhonePhoneCarrier
+﻿namespace Catalog.Application.ViewModels.V1.UnlockabledPhonePhoneCarrier
 {
     public class UnlockabledPhonePhoneCarrierUpdateRequest
     {

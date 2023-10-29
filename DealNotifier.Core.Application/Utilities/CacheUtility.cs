@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 
-namespace DealNotifier.Core.Application.Utilities
+namespace Catalog.Application.Utilities
 {
     public static class CacheUtility
     {

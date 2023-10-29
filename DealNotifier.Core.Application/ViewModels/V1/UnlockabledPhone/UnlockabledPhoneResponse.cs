@@ -1,4 +1,4 @@
-﻿namespace DealNotifier.Core.Application.ViewModels.V1.UnlockabledPhone
+﻿namespace Catalog.Application.ViewModels.V1.UnlockabledPhone
 {
     public class UnlockabledPhoneResponse
     {

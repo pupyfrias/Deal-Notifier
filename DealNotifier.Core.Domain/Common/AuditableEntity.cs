@@ -1,8 +1,8 @@
 ﻿// Ignore Spelling: Auditable
 
-using DealNotifier.Core.Domain.Contracts;
+using Catalog.Domain.Contracts;
 
-namespace DealNotifier.Core.Domain.Common
+namespace Catalog.Domain.Common
 {
     public abstract class AuditableEntity : IAuditableEntity
     {
@@ -11,6 +11,6 @@ namespace DealNotifier.Core.Domain.Common
         public DateTime Created { get; set; }
         public string? LastModifiedBy { get; set; }
         public DateTime? LastModified { get; set; }
-        
+
     }
 }

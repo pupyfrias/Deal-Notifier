@@ -1,9 +1,9 @@
-﻿using DealNotifier.Core.Application.Interfaces;
+﻿using Catalog.Application.Interfaces;
 using System.ComponentModel.DataAnnotations;
 
-namespace DealNotifier.Core.Application.ViewModels.V1.BanLink
+namespace Catalog.Application.ViewModels.V1.BanLink
 {
-    public class BanLinkUpdateRequest: IHasId<int>
+    public class BanLinkUpdateRequest : IHasId<int>
     {
         [Required]
         public int Id { get; set; }

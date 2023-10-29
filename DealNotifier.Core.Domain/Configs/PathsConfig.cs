@@ -1,4 +1,4 @@
-﻿namespace DealNotifier.Core.Domain.Configs
+﻿namespace Catalog.Domain.Configs
 {
     public class PathsConfig
     {

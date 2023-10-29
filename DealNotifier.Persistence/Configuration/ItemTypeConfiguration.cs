@@ -1,9 +1,9 @@
-﻿using DealNotifier.Persistence.Seeds;
+﻿using Catalog.Persistence.Seeds;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using ItemType = DealNotifier.Core.Domain.Entities.ItemType;
+using ItemType = Catalog.Domain.Entities.ItemType;
 
-namespace DealNotifier.Persistence.Configuration
+namespace Catalog.Persistence.Configuration
 {
     public class ItemTypeConfiguration : AuditableEntityConfiguration<ItemType>
     {

@@ -1,4 +1,4 @@
-﻿namespace DealNotifier.Core.Application.ViewModels.V1.PhoneUnlockTool
+﻿namespace Catalog.Application.ViewModels.V1.PhoneUnlockTool
 {
     public class PhoneUnlockToolResponse
     {

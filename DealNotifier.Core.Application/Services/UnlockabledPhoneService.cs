@@ -1,17 +1,18 @@
 ﻿using AutoMapper;
-using DealNotifier.Core.Application.Constants;
-using DealNotifier.Core.Application.Enums;
-using DealNotifier.Core.Application.Interfaces.Repositories;
-using DealNotifier.Core.Application.Interfaces.Services;
-using DealNotifier.Core.Application.ViewModels.V1.Item;
-using DealNotifier.Core.Application.ViewModels.V1.UnlockabledPhone;
-using DealNotifier.Core.Domain.Entities;
+using Catalog.Application.Constants;
+using Catalog.Application.Enums;
+using Catalog.Application.Interfaces.Repositories;
+using Catalog.Application.Interfaces.Services;
+using Catalog.Application.ViewModels.V1.Item;
+using Catalog.Application.ViewModels.V1.UnlockabledPhone;
+using Catalog.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
+using Serilog;
 using System.Text.RegularExpressions;
-using Brand = DealNotifier.Core.Application.Enums.Brand;
+using Brand = Catalog.Application.Enums.Brand;
 
-namespace DealNotifier.Core.Application.Services
+namespace Catalog.Application.Services
 {
     public class UnlockabledPhoneService : GenericService<UnlockabledPhone>, IUnlockabledPhoneService
     {
@@ -19,28 +20,31 @@ namespace DealNotifier.Core.Application.Services
         private readonly IUnlockabledPhoneRepository _unlockabledPhoneRepository;
         private readonly IUnlockabledPhonePhoneUnlockToolService _unlockabledPhonePhoneUnlockToolService;
         private readonly IUnlockabledPhonePhoneCarrierService _unlockabledPhonePhoneCarrierService;
+        private readonly ILogger _logger;
 
         public UnlockabledPhoneService(
-            IUnlockabledPhoneRepository unlockedPhoneRepository, 
-            IMapper mapper, IHttpContextAccessor httpContext, 
+            IUnlockabledPhoneRepository unlockedPhoneRepository,
+            IMapper mapper, IHttpContextAccessor httpContext,
             IMemoryCache cache,
             IUnlockabledPhonePhoneCarrierService unlockabledPhonePhoneCarrier,
-            IUnlockabledPhonePhoneUnlockToolService unlockabledPhonePhoneUnlockToolService
+            IUnlockabledPhonePhoneUnlockToolService unlockabledPhonePhoneUnlockToolService,
+            ILogger logger
             )
             : base(unlockedPhoneRepository, mapper, httpContext, cache)
         {
             _unlockabledPhoneRepository = unlockedPhoneRepository;
             _unlockabledPhonePhoneCarrierService = unlockabledPhonePhoneCarrier;
             _unlockabledPhonePhoneUnlockToolService = unlockabledPhonePhoneUnlockToolService;
+            _logger = logger;
         }
 
-        public async Task HandleExistingUnlockedPhoneAsync( UnlockabledPhone possibleUnlockedPhone, string carriers, UnlockTool unlockTool)
+        public async Task HandleExistingUnlockedPhoneAsync(UnlockabledPhone possibleUnlockedPhone, string carriers, UnlockTool unlockTool)
         {
-            await _unlockabledPhonePhoneUnlockToolService.CreateIfNotExists(possibleUnlockedPhone.Id, (int) unlockTool);
+            await _unlockabledPhonePhoneUnlockToolService.CreateIfNotExists(possibleUnlockedPhone.Id, (int)unlockTool);
             await _unlockabledPhonePhoneCarrierService.CreateMassiveAsync(possibleUnlockedPhone.Id, carriers);
         }
 
-        public  async Task HandleNewUnlockedPhoneAsync(UnlockedPhoneDetailsDto unlockedPhoneDetails, Brand brand, UnlockTool unlockTool)
+        public async Task HandleNewUnlockedPhoneAsync(UnlockedPhoneDetailsDto unlockedPhoneDetails, Brand brand, UnlockTool unlockTool)
         {
             var newUnlockedPhone = await CreateUnlockabledPhone(unlockedPhoneDetails.ModelName, unlockedPhoneDetails.ModelNumber, (int)brand);
             await _unlockabledPhonePhoneUnlockToolService.CreateAsync(newUnlockedPhone.Id, (int)unlockTool);
@@ -55,11 +59,15 @@ namespace DealNotifier.Core.Application.Services
 
             if (!string.IsNullOrEmpty(possibleModelNumber))
             {
-                var possibleUnlockabledPhone = await _unlockabledPhoneRepository.FirstOrDefaultAsync(element => element.ModelNumber.Equals(possibleModelNumber));
+                var possibleUnlockabledPhone = await _unlockabledPhoneRepository.FirstOrDefaultAsync(element => element.ModelNumber.Contains(possibleModelNumber));
 
                 if (possibleUnlockabledPhone != null)
                 {
                     itemCreate.UnlockabledPhoneId = possibleUnlockabledPhone.Id;
+                }
+                else
+                {
+                    _logger.Warning($"Unlockabled Phone with ModelNumber [{possibleModelNumber}] wasn't found\n Title: {itemCreate.Name}");
                 }
             }
         }
@@ -74,7 +82,7 @@ namespace DealNotifier.Core.Application.Services
                 ModelNumber = modelNumber
             };
 
-           return await CreateAsync<UnlockabledPhoneCreateRequest, UnlockabledPhoneResponse>(unlockabledPhoneCreate);
+            return await CreateAsync<UnlockabledPhoneCreateRequest, UnlockabledPhoneResponse>(unlockabledPhoneCreate);
         }
 
     }

@@ -1,11 +1,7 @@
-﻿using DealNotifier.Core.Application.Interfaces.Repositories;
-using DealNotifier.Core.Application.Interfaces.Services;
-using DealNotifier.Core.Application.Services;
-using DealNotifier.Core.Application.Specification;
-using DealNotifier.Core.Application.ViewModels.Common;
-using DealNotifier.Core.Application.ViewModels.V1.PhoneUnlockTool;
-using DealNotifier.Core.Application.Wrappers;
-using DealNotifier.Core.Domain.Entities;
+﻿using Catalog.Application.Interfaces.Services;
+using Catalog.Application.Specification;
+using Catalog.Application.ViewModels.V1.PhoneUnlockTool;
+using Catalog.Application.Wrappers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DealNotifier.API.Controllers.V1

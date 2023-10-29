@@ -1,4 +1,4 @@
-﻿using DealNotifier.Core.Application.Enums;
+﻿using Catalog.Application.Enums;
 
 namespace WorkerService.T_Unlock_WebScraping.Helpers
 {

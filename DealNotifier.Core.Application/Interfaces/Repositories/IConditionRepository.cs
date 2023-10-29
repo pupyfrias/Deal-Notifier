@@ -1,10 +1,8 @@
-﻿
+﻿using Catalog.Domain.Entities;
 
-using DealNotifier.Core.Domain.Entities;
-
-namespace DealNotifier.Core.Application.Interfaces.Repositories
+namespace Catalog.Application.Interfaces.Repositories
 {
-    public interface IConditionRepository: IGenericRepository<Condition>
+    public interface IConditionRepository : IGenericRepository<Condition>
     {
     }
 }

@@ -1,7 +1,7 @@
-﻿using DealNotifier.Core.Application.Interfaces.Services;
+﻿using Catalog.Application.Interfaces.Services;
 using System.Net.Http.Headers;
 
-namespace DealNotifier.Core.Application.Services
+namespace Catalog.Application.Services
 {
     public class HttpService : IHttpService
     {

@@ -1,4 +1,4 @@
-﻿namespace DealNotifier.Core.Application.Enums
+﻿namespace Catalog.Application.Enums
 {
     public enum UnlockTool
     {

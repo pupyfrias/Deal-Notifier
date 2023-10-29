@@ -1,5 +1,5 @@
-﻿using DealNotifier.Core.Application.Interfaces.Services;
-using DealNotifier.Core.Domain.Configs;
+﻿using Catalog.Application.Interfaces.Services;
+using Catalog.Domain.Configs;
 using DealNotifier.Infrastructure.SamkeyDataSyncWorker.Interfaces;
 using DealNotifier.Infrastructure.SamkeyDataSyncWorker.ViewModels;
 using Microsoft.Extensions.Options;

@@ -1,33 +1,33 @@
 ﻿using AutoMapper;
-using DealNotifier.Core.Application.Interfaces.Services;
-using DealNotifier.Core.Application.Wrappers;
+using Catalog.Application.Interfaces.Services;
+using Catalog.Application.ViewModels.V1.Auth;
+using Catalog.Application.Wrappers;
+using Catalog.Domain.Configs;
 using Grpc.Net.Client;
-
+using Microsoft.Extensions.Options;
 
 namespace DealNotifier.Infrastructure.Identity.Services
 {
     public class AuthService : IAuthService
     {
-        private GrpcChannel channel;
-        private AuthProto.AuthService.AuthServiceClient authClient;
-        private IMapper _mapper;
+        private readonly AuthProto.AuthService.AuthServiceClient _authClient;
+        private readonly IMapper _mapper;
 
-        public AuthService(IMapper mapper)
+        public AuthService(IMapper mapper, IOptions<SecurityServiceConfig> options)
         {
             _mapper = mapper;
-            const string address = "https://localhost:8001/";
-            //const string address = "https://localhost:7199";
-            channel = GrpcChannel.ForAddress(address);
+            var channel = GrpcChannel.ForAddress(options.Value.Address);
             channel.ConnectAsync().Wait();
-            authClient = new AuthProto.AuthService.AuthServiceClient(channel);
+            _authClient = new AuthProto.AuthService.AuthServiceClient(channel);
+
         }
 
-        public async Task<Response<Core.Application.ViewModels.V1.Auth.AuthenticationResponse>> LoginAsync(Core.Application.ViewModels.V1.Auth.AuthenticationRequest request)
+        public async Task<Response<AuthenticationResponse>> LoginAsync(AuthenticationRequest request)
         {
             var mappedRequest = _mapper.Map<AuthProto.AuthenticationRequest>(request);
-            var response = await authClient.loginAsync(mappedRequest);
-            var mappedResponse = _mapper.Map<Core.Application.ViewModels.V1.Auth.AuthenticationResponse>(response);
-            return new Response<Core.Application.ViewModels.V1.Auth.AuthenticationResponse>(mappedResponse);
+            var response = await _authClient.loginAsync(mappedRequest);
+            var mappedResponse = _mapper.Map<AuthenticationResponse>(response);
+            return new Response<AuthenticationResponse>(mappedResponse);
         }
     }
 }

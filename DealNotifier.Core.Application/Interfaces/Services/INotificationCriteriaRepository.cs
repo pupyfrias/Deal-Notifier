@@ -1,7 +1,7 @@
-﻿using DealNotifier.Core.Application.Interfaces.Repositories;
-using DealNotifier.Core.Domain.Entities;
+﻿using Catalog.Application.Interfaces.Repositories;
+using Catalog.Domain.Entities;
 
-namespace DealNotifier.Core.Application.Interfaces.Services
+namespace Catalog.Application.Interfaces.Services
 {
     public interface INotificationCriteriaRepository : IGenericRepository<NotificationCriteria>
     {

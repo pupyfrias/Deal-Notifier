@@ -1,9 +1,10 @@
-﻿using DealNotifier.Core.Application.ViewModels.V1.Item;
-using DealNotifier.Core.Domain.Entities;
+﻿using Catalog.Application.Interfaces;
+using Catalog.Application.ViewModels.V1.Item;
+using Catalog.Domain.Entities;
 using System.Collections.Concurrent;
-using OnlineStore = DealNotifier.Core.Application.Enums.OnlineStore;
+using OnlineStore = Catalog.Application.Enums.OnlineStore;
 
-namespace DealNotifier.Core.Application.Interfaces.Services.Items
+namespace Catalog.Application.Interfaces.Services.Items
 {
     public interface IItemService : IGenericService<Item>
     {

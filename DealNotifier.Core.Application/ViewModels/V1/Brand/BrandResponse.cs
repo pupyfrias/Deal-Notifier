@@ -1,4 +1,4 @@
-﻿namespace DealNotifier.Core.Application.ViewModels.V1.Brand
+﻿namespace Catalog.Application.ViewModels.V1.Brand
 {
     public class BrandResponse
     {
