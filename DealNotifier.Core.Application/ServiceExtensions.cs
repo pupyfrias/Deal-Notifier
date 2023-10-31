@@ -48,7 +48,11 @@ namespace DealNotifier.Core.Application
             services.AddScoped<IUnlockabledPhonePhoneUnlockToolService, UnlockabledPhonePhoneUnlockToolService>();
             services.AddScoped<IUnlockabledPhonePhoneCarrierService, UnlockabledPhonePhoneCarrierService>();
             services.AddScoped<IUnlockProbabilityService, UnlockProbabilityService>();
-
+            services.AddScoped<IItemManagerService, ItemManagerService>();
+            services.AddScoped<IItemValidationService, ItemValidationService>();
+            services.AddScoped<ICacheDataService, CacheDataService>();
+            services.AddScoped<IItemNotificationService, ItemNotificationService>();
+            services.AddScoped<IUnlockVerificationService, UnlockVerificationService>();
 
             #endregion Dependency Injection
         }

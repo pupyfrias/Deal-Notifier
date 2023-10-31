@@ -15,8 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DealNotifier.Infrastructure.Email\DealNotifier.Infrastructure.Email.csproj" />
-    <ProjectReference Include="..\DealNotifier.Infrastructure.Persistence\DealNotifier.Persistence.csproj" />
-    <ProjectReference Include="..\DealNotifier.Persistence\DealNotifier.Persistence.csproj" />
+    <ProjectReference Include="..\DealNotifier.Presentation.FrontEnd\DealNotifier.Presentation.FrontEnd.esproj" />
   </ItemGroup>
 
   <ItemGroup>

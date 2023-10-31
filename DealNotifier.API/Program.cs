@@ -1,11 +1,11 @@
+using DealNotifier.API.Middlewares;
 using DealNotifier.Core.Application;
 using DealNotifier.Core.Application.Setups;
 using DealNotifier.Infrastructure.Email;
 using DealNotifier.Infrastructure.Identity;
+using DealNotifier.Persistence;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Serilog;
-using DealNotifier.Persistence;
-using DealNotifier.API.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 ConfigurationManager configuration = builder.Configuration;

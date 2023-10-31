@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pruebas", "Pruebas\Pruebas.csproj", "{21D9C52B-399C-4E87-AAA6-35477371FD5E}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{B50251AC-C0BA-4F83-A407-F3876044CD60}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{AB9C9CC0-DF62-4265-BE9C-94555960ADA4}"
@@ -58,14 +56,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{21D9C52B-399C-4E87-AAA6-35477371FD5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{21D9C52B-399C-4E87-AAA6-35477371FD5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{21D9C52B-399C-4E87-AAA6-35477371FD5E}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{21D9C52B-399C-4E87-AAA6-35477371FD5E}.Debug|x86.Build.0 = Debug|Any CPU
-		{21D9C52B-399C-4E87-AAA6-35477371FD5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{21D9C52B-399C-4E87-AAA6-35477371FD5E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{21D9C52B-399C-4E87-AAA6-35477371FD5E}.Release|x86.ActiveCfg = Release|Any CPU
-		{21D9C52B-399C-4E87-AAA6-35477371FD5E}.Release|x86.Build.0 = Release|Any CPU
 		{8D7A3CC1-F1E3-4063-909E-53BBE68BCE65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8D7A3CC1-F1E3-4063-909E-53BBE68BCE65}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8D7A3CC1-F1E3-4063-909E-53BBE68BCE65}.Debug|x86.ActiveCfg = Debug|Any CPU
