@@ -1,12 +1,12 @@
 ﻿using DealNotifier.Core.Application.Exceptions;
 using DealNotifier.Core.Application.Interfaces;
-using DealNotifier.Core.Domain.Contracts;
+using DealNotifier.Core.Domain.Common;
 using System.Linq.Expressions;
 using System.Reflection;
 
 namespace DealNotifier.Core.Application.Specification
 {
-    public abstract class Specification<TEntity> : ISpecification<TEntity> where TEntity : IAuditableEntity
+    public abstract class Specification<TEntity> : ISpecification<TEntity> where TEntity : AuditableEntity
     {
         protected Specification(IPaginationBase pagination)
         {

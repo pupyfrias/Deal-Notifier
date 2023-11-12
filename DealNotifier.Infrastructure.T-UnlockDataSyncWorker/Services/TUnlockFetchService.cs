@@ -1,5 +1,5 @@
-﻿using DealNotifier.Core.Application.Interfaces.Services;
-using DealNotifier.Core.Domain.Configs;
+﻿using DealNotifier.Core.Application.Configs;
+using DealNotifier.Core.Application.Interfaces.Services;
 using Microsoft.Extensions.Options;
 using WorkerService.T_Unlock_WebScraping.Interfaces;
 using ILogger = Serilog.ILogger;

@@ -1,6 +1,6 @@
 ﻿using DealNotifier.Core.Application.Extensions;
 using DealNotifier.Core.Application.ViewModels;
-using DealNotifier.Core.Domain.Contracts;
+using DealNotifier.Core.Domain.Common;
 using DealNotifier.Core.Domain.Entities;
 using DealNotifier.Persistence.Configuration;
 using Microsoft.EntityFrameworkCore;
@@ -73,7 +73,7 @@ namespace DealNotifier.Persistence.DbContexts
         {
             var auditEntryList = new List<AuditEntry>();
 
-            foreach (var entry in ChangeTracker.Entries<IAuditableEntity>())
+            foreach (var entry in ChangeTracker.Entries<AuditableEntity>())
             {
                 if (entry.State == EntityState.Detached || entry.State == EntityState.Unchanged)
                     continue;

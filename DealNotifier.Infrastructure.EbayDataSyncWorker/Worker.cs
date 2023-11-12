@@ -18,15 +18,26 @@ namespace DealNotifier.Infrastructure.EbayDataSyncWorker
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.Information($"EbayDataSyncService Initialized.");
-            var timer = new Stopwatch();
-            timer.Start();
-            await _ebayDataSynchronizerService.InitializeAsync();
-            timer.Stop();
-            TimeSpan timeTaken = timer.Elapsed;
+            try
+            {
+                _logger.Information($"EbayDataSyncService Initialized.");
+                var timer = new Stopwatch();
+                timer.Start();
+                await _ebayDataSynchronizerService.InitializeAsync();
+                timer.Stop();
+                TimeSpan timeTaken = timer.Elapsed;
 
-            _logger.Information($"Time taken: {timeTaken.ToString(@"m\:ss\.fff")}");
-            _logger.Information("EbayDataSyncService completed.");
+                _logger.Information($"Time taken: {timeTaken.ToString(@"m\:ss\.fff")}");
+                _logger.Information("EbayDataSyncService completed.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, ex.Message);
+            }
+            finally
+            {
+                Environment.Exit(0);
+            }
         }
     }
 }

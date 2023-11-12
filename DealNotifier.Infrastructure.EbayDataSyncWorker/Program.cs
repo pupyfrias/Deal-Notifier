@@ -1,3 +1,4 @@
+using DealNotifier.Core.Application.Configs;
 using DealNotifier.Core.Application.Constants;
 using DealNotifier.Core.Application.Interfaces.Repositories;
 using DealNotifier.Core.Application.Interfaces.Services;
@@ -5,15 +6,14 @@ using DealNotifier.Core.Application.Interfaces.Services.Items;
 using DealNotifier.Core.Application.Services;
 using DealNotifier.Core.Application.Services.Items;
 using DealNotifier.Core.Application.Setups;
-using DealNotifier.Core.Domain.Configs;
 using DealNotifier.Infrastructure.EbayDataSyncWorker;
 using DealNotifier.Infrastructure.EbayDataSyncWorker.Interfaces;
 using DealNotifier.Infrastructure.EbayDataSyncWorker.Services;
 using DealNotifier.Infrastructure.Email.Service;
 using DealNotifier.Infrastructure.Email.Settings;
 using DealNotifier.Persistence.DbContexts;
-using DealNotifier.Persistence.Setup;
 using DealNotifier.Persistence.Repositories;
+using DealNotifier.Persistence.Setup;
 using Serilog;
 using System.Reflection;
 

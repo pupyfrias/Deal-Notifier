@@ -1,6 +1,6 @@
-﻿using DealNotifier.Core.Application.Interfaces.Services;
+﻿using DealNotifier.Core.Application.Configs;
+using DealNotifier.Core.Application.Interfaces.Services;
 using DealNotifier.Core.Application.ViewModels.eBay;
-using DealNotifier.Core.Domain.Configs;
 using DealNotifier.Infrastructure.EbayDataSyncWorker.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;

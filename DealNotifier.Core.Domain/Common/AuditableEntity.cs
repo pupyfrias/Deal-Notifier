@@ -1,10 +1,6 @@
-﻿// Ignore Spelling: Auditable
-
-using DealNotifier.Core.Domain.Contracts;
-
-namespace DealNotifier.Core.Domain.Common
+﻿namespace DealNotifier.Core.Domain.Common
 {
-    public abstract class AuditableEntity : IAuditableEntity
+    public abstract class AuditableEntity
     {
         public int Id { get; set; }
         public string CreatedBy { get; set; }

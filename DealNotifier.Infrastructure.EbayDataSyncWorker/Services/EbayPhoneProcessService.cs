@@ -1,7 +1,7 @@
-﻿using DealNotifier.Core.Application.Constants;
+﻿using DealNotifier.Core.Application.Configs;
+using DealNotifier.Core.Application.Constants;
 using DealNotifier.Core.Application.Enums;
 using DealNotifier.Core.Application.Interfaces.Services.Items;
-using DealNotifier.Core.Domain.Configs;
 using DealNotifier.Infrastructure.EbayDataSyncWorker.Interfaces;
 using Microsoft.Extensions.Options;
 using ILogger = Serilog.ILogger;

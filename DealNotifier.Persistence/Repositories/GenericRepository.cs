@@ -2,15 +2,14 @@
 using AutoMapper.QueryableExtensions;
 using DealNotifier.Core.Application.Interfaces;
 using DealNotifier.Core.Application.Interfaces.Repositories;
-using DealNotifier.Core.Domain.Contracts;
+using DealNotifier.Core.Domain.Common;
 using DealNotifier.Persistence.DbContexts;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 using System.Linq.Expressions;
 
 namespace DealNotifier.Persistence.Repositories
 {
-    public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class, IAuditableEntity
+    public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : AuditableEntity
     {
         #region Private Variables
 

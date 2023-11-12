@@ -2,7 +2,6 @@ using DealNotifier.Core.Application.Interfaces.Repositories;
 using DealNotifier.Core.Application.Interfaces.Services;
 using DealNotifier.Core.Application.Services;
 using DealNotifier.Core.Application.Setups;
-using DealNotifier.Core.Domain.Configs;
 using DealNotifier.Persistence.DbContexts;
 using DealNotifier.Persistence.Repositories;
 using DealNotifier.Persistence.Setup;
@@ -11,6 +10,7 @@ using DealNotifier.Infrastructure.SamkeyDataSyncWorker.Services;
 using DealNotifier.Infrastructure.SamkeyDataSyncWorker.Interfaces;
 using Serilog;
 using System.Reflection;
+using DealNotifier.Core.Application.Configs;
 
 var environment = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT");
 

@@ -1,4 +1,4 @@
-﻿namespace DealNotifier.Core.Domain.Configs
+﻿namespace DealNotifier.Core.Application.Configs
 {
     public class TUnlockUrlConfig
     {

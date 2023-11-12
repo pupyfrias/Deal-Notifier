@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DealNotifier.Core.Application.Configs;
 using DealNotifier.Core.Application.Constants;
 using DealNotifier.Core.Application.Exceptions;
 using DealNotifier.Core.Application.Interfaces.Services;
@@ -6,7 +7,6 @@ using DealNotifier.Core.Application.ViewModels.V1.Auth;
 using DealNotifier.Core.Application.ViewModels.V1.Token;
 using DealNotifier.Core.Application.ViewModels.V1.User;
 using DealNotifier.Core.Application.Wrappers;
-using DealNotifier.Core.Domain.Configs;
 using DealNotifier.Infrastructure.Identity.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;

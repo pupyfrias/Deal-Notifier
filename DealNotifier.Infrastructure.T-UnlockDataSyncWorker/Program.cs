@@ -1,8 +1,8 @@
+using DealNotifier.Core.Application.Configs;
 using DealNotifier.Core.Application.Interfaces.Repositories;
 using DealNotifier.Core.Application.Interfaces.Services;
 using DealNotifier.Core.Application.Services;
 using DealNotifier.Core.Application.Setups;
-using DealNotifier.Core.Domain.Configs;
 using DealNotifier.Persistence.DbContexts;
 using DealNotifier.Persistence.Repositories;
 using DealNotifier.Persistence.Setup;
@@ -41,6 +41,7 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddScoped<IUnlockabledPhonePhoneCarrierService, UnlockabledPhonePhoneCarrierService>();
         services.AddScoped<IUnlockabledPhonePhoneUnlockToolService, UnlockabledPhonePhoneUnlockToolService>();
         services.AddScoped<IUnlockabledPhoneService, UnlockabledPhoneService>();
+        services.AddScoped<ITUnlockFetchService, TUnlockFetchService>();
 
         #endregion Services
 

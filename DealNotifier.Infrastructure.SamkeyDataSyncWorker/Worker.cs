@@ -18,9 +18,21 @@ namespace DealNotifier.Infrastructure.SamkeyDataSyncWorker
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.Information("Starting ExecuteAsync.");
-            await _samkeyDataSynchronizerService.InitializeAsync();
-            _logger.Information("ExecuteAsync finished.");
+            try
+            {
+                _logger.Information("Starting ExecuteAsync.");
+                await _samkeyDataSynchronizerService.InitializeAsync();
+                _logger.Information("ExecuteAsync finished.");
+
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, ex.Message);
+            }
+            finally
+            {
+                Environment.Exit(0);
+            }
         }
     }
 }

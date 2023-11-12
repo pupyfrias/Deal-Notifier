@@ -9,9 +9,6 @@
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
-	<ItemGroup>
-		<Content Remove="Logs\**" />
-	</ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="HtmlAgilityPack" Version="1.11.54" />
@@ -32,4 +29,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+	<ItemGroup>
+		<Content Update="Logs\**" CopyToPublishDirectory="Never" />
+	</ItemGroup>
 </Project>

@@ -8,9 +8,6 @@
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 	<ItemGroup>
-		<Content Remove="Logs\**" />
-	</ItemGroup>
-	<ItemGroup>
 	  <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.4" />
 	</ItemGroup>
 	<ItemGroup>
@@ -27,4 +24,8 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+
+	<ItemGroup>
+		<Content Update="Logs\**" CopyToPublishDirectory="Never" />
+	</ItemGroup>
 </Project>
