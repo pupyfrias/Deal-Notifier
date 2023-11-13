@@ -11,18 +11,17 @@ ENV PATH="${PATH}:/root/.dotnet/tools"
 WORKDIR /app
 
 # Copiar los proyectos necesarios para ejecutar las migraciones
-COPY ["WebApi/WebApi.csproj", "WebApi/"]
+COPY ["DealNotifier.API/DealNotifier.API.csproj", "DealNotifier.API/"]
 COPY ["DealNotifier.Core.Application/DealNotifier.Core.Application.csproj", "DealNotifier.Core.Application/"]
 COPY ["DealNotifier.Core.Domain/DealNotifier.Core.Domain.csproj", "DealNotifier.Core.Domain/"]
 COPY ["DealNotifier.Infrastructure.Email/DealNotifier.Infrastructure.Email.csproj", "DealNotifier.Infrastructure.Email/"]
 COPY ["DealNotifier.Infrastructure.Identity/DealNotifier.Infrastructure.Identity.csproj", "DealNotifier.Infrastructure.Identity/"]
-COPY ["DealNotifier.Infrastructure.Persistence/DealNotifier.Infrastructure.Persistence.csproj", "DealNotifier.Infrastructure.Persistence/"]
-
+COPY ["DealNotifier.Persistence/DealNotifier.Persistence.csproj", "DealNotifier.Persistence/"]
 # Restaurar las dependencias y herramientas de los proyectos
-RUN dotnet restore "./WebApi/WebApi.csproj"
+RUN dotnet restore "./DealNotifier.API/DealNotifier.API.csproj"
 
 # Copiar todo el código necesario para ejecutar las migraciones
 COPY . .
 
 # Ejecutar los comandos para aplicar las migraciones
-CMD ["bash", "-c", "dotnet ef database update --startup-project ./WebApi/WebApi.csproj --context applicationDbContext"]
+CMD ["bash", "-c", "dotnet ef database update --startup-project ./DealNotifier.API/DealNotifier.API.csproj --context applicationDbContext"]

@@ -14,7 +14,7 @@ namespace DealNotifier.Core.Application
 {
     public static class ServiceExtensions
     {
-        public static void AddApplicationLayer(this IServiceCollection services, IConfiguration configuration)
+        public static void AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddApiVersioning(ApiVersionSetup.Configure);
             services.AddAuthorization();

@@ -1,0 +1,101 @@
+version: '3.4'
+
+services:
+  db:
+    container_name: db
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    restart: always
+    environment:
+      - MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD}
+      - ACCEPT_EULA=Y
+    ports:
+      - "1434:1433"
+    volumes:
+      - db_data:/var/opt/mssql
+  
+  migrate:
+    environment:
+         - ConnectionStrings__DealNotifierConnection=${CONNECTION_STRING}
+    volumes:
+      - ./wait-for-it.sh:/app/wait-for-it.sh
+    entrypoint: ["/bin/sh", "-c", "/app/wait-for-it.sh db:1433 -- dotnet ef database update --startup-project ./DealNotifier.API/DealNotifier.API.csproj --context applicationDbContext"]
+    depends_on:
+        - db
+
+
+  add-stored-procedures:
+    container_name: add-stored-procedures
+    environment:
+      - MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD}
+      - ACCEPT_EULA=Y
+    volumes:
+      - ./StoredProcedures.sql:/tmp/StoredProcedures.sql
+      - ./wait-for-it.sh:/app/wait-for-it.sh
+    depends_on:
+      - db
+      - migrate
+    entrypoint: ["/bin/sh", "-c", "/app/wait-for-it.sh db:1433 -- /opt/mssql-tools/bin/sqlcmd -S db -U SA -P $$MSSQL_SA_PASSWORD -i /tmp/StoredProcedures.sql"]
+    
+
+
+
+  dealnotifier.api:
+    container_name: dealnotifier.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      -  ConnectionStrings__DealNotifierConnection=${CONNECTION_STRING}
+    ports:
+      - "80"
+      - "443"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+    depends_on:
+      - db
+      - migrate
+      - add-stored-procedures
+  
+      
+  ebaydatasyncworker:
+    container_name: ebaydatasyncworker
+    environment:
+      - DOTNET_ENVIRONMENT=Development
+      - ConnectionStrings__DealNotifierConnection=${CONNECTION_STRING}
+      - ClientId=${CLIENT_ID}
+      - ClientSecret=${CLIENT_SECRET}
+      - RefreshToken=${REFRESH_TOKEN}
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+    depends_on:
+      - db
+      - migrate
+      - add-stored-procedures
+
+  samkeydatasyncworker:
+    container_name: samkeydatasyncworker
+    environment:
+      - DOTNET_ENVIRONMENT=Development
+      -  ConnectionStrings__DealNotifierConnection=${CONNECTION_STRING}
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+    depends_on:
+      - db
+      - migrate
+      - add-stored-procedures
+
+  t-unlockdatasyncworker:
+    container_name: t-unlockdatasyncworker
+    environment:
+      - DOTNET_ENVIRONMENT=Development
+      - ConnectionStrings__DealNotifierConnection=${CONNECTION_STRING}
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+    depends_on:
+      - db
+      - migrate
+      - add-stored-procedures
+
+
+volumes:
+  db_data:

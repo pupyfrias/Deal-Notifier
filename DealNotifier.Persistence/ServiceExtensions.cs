@@ -10,7 +10,7 @@ namespace DealNotifier.Persistence
 {
     public static class ServiceExtensions
     {
-        public static void AddPersistenceInfrastructure(this IServiceCollection services, IConfiguration configuration)
+        public static void AddPersistenceServices(this IServiceCollection services, IConfiguration configuration)
         {
             #region DbContext
 

@@ -4,7 +4,9 @@ using DealNotifier.Core.Application.Setups;
 using DealNotifier.Infrastructure.Email;
 using DealNotifier.Infrastructure.Identity;
 using DealNotifier.Persistence;
+using DealNotifier.Persistence.DbContexts;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,10 +14,10 @@ ConfigurationManager configuration = builder.Configuration;
 
 #region Add services to the container
 
-builder.Services.AddApplicationLayer(configuration);
-builder.Services.AddPersistenceInfrastructure(configuration);
-builder.Services.AddIdentityInfrastructure(configuration);
-builder.Services.AddInfrastructureEmail(configuration);
+builder.Services.AddApplicationServices(configuration);
+builder.Services.AddPersistenceServices(configuration);
+builder.Services.AddIdentityServices(configuration);
+builder.Services.AddEmailServices(configuration);
 
 #endregion Add services to the container
 
@@ -37,8 +39,6 @@ if (app.Environment.IsDevelopment())
             options.SwaggerEndpoint(url, name);
         }
     });
-
-
 }
 
 app.UseMiddleware<ExceptionMiddleware>();

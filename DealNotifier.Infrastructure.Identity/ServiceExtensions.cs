@@ -18,7 +18,7 @@ namespace DealNotifier.Infrastructure.Identity
 {
     public static class ServiceExtensions
     {
-        public static void AddIdentityInfrastructure(this IServiceCollection services, IConfiguration configuration)
+        public static void AddIdentityServices(this IServiceCollection services, IConfiguration configuration)
         {
             #region DbContext
 

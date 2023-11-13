@@ -17,19 +17,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DealNotifier.Infrastructure
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DealNotifier.Infrastructure.Identity", "DealNotifier.Infrastructure.Identity\DealNotifier.Infrastructure.Identity.csproj", "{6D4581DE-B642-447C-8E2D-8DEA3CC13B51}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A134E959-E9C8-44F4-A78E-01C225895136}"
-	ProjectSection(SolutionItems) = preProject
-		.env = .env
-		docker-compose.yml = docker-compose.yml
-		Dockerfile.migrations = Dockerfile.migrations
-		wait-for-it.sh = wait-for-it.sh
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQL Scripts", "SQL Scripts", "{5FBE1C06-F98B-4987-A951-4158E379B798}"
-	ProjectSection(SolutionItems) = preProject
-		StoredProcedures.sql = StoredProcedures.sql
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{56A9F719-BF5B-4449-91BE-B16297B8B86C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Persistence", "Persistence", "{DA98B157-B1E8-4876-BC88-C91F15C0FB0C}"
@@ -47,6 +34,8 @@ EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "DealNotifier.Presentation.FrontEnd", "DealNotifier.Presentation.FrontEnd\DealNotifier.Presentation.FrontEnd.esproj", "{57977988-9468-462B-B970-46C83ACFFE52}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DealNotifier.API", "DealNotifier.API\DealNotifier.API.csproj", "{E8BF93EE-B6ED-4FEA-9B2C-70B728B30EC4}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{E860770E-2095-4629-85DE-C5A22F5369DA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -140,6 +129,14 @@ Global
 		{E8BF93EE-B6ED-4FEA-9B2C-70B728B30EC4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E8BF93EE-B6ED-4FEA-9B2C-70B728B30EC4}.Release|x86.ActiveCfg = Release|Any CPU
 		{E8BF93EE-B6ED-4FEA-9B2C-70B728B30EC4}.Release|x86.Build.0 = Release|Any CPU
+		{E860770E-2095-4629-85DE-C5A22F5369DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E860770E-2095-4629-85DE-C5A22F5369DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E860770E-2095-4629-85DE-C5A22F5369DA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E860770E-2095-4629-85DE-C5A22F5369DA}.Debug|x86.Build.0 = Debug|Any CPU
+		{E860770E-2095-4629-85DE-C5A22F5369DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E860770E-2095-4629-85DE-C5A22F5369DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E860770E-2095-4629-85DE-C5A22F5369DA}.Release|x86.ActiveCfg = Release|Any CPU
+		{E860770E-2095-4629-85DE-C5A22F5369DA}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -149,7 +146,6 @@ Global
 		{DB6FEC90-BC30-4DB8-BEF5-A1B9151AA25A} = {B50251AC-C0BA-4F83-A407-F3876044CD60}
 		{DA3387A2-25BA-47AF-88B6-F26FA20BE13A} = {AB9C9CC0-DF62-4265-BE9C-94555960ADA4}
 		{6D4581DE-B642-447C-8E2D-8DEA3CC13B51} = {AB9C9CC0-DF62-4265-BE9C-94555960ADA4}
-		{5FBE1C06-F98B-4987-A951-4158E379B798} = {A134E959-E9C8-44F4-A78E-01C225895136}
 		{3E3613A3-F626-4DC1-8534-278ED65DD8DE} = {03601DBE-54F5-4342-B34D-6042F4407114}
 		{EE4DBF68-E603-43FA-AB7D-95AAF3DD2693} = {03601DBE-54F5-4342-B34D-6042F4407114}
 		{D9042317-73AE-4F3B-96A4-D46C1E229166} = {03601DBE-54F5-4342-B34D-6042F4407114}
