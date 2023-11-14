@@ -52,9 +52,9 @@ namespace DealNotifier.API.Controllers.V1
 
         // POST: api/Items
         [HttpPost]
-        public async Task<ActionResult<ItemResponse>> PostItem(ItemCreateRequest item)
+        public async Task<ActionResult<ItemResponse>> PostItem(ItemDto item)
         {
-            var createdItem = await _itemService.CreateAsync<ItemCreateRequest, ItemResponse>(item);
+            var createdItem = await _itemService.CreateAsync<ItemDto, ItemResponse>(item);
             var response = new ApiResponse<ItemResponse>(createdItem);
             return CreatedAtAction("GetItem", new { id = createdItem.Id }, response);
         }

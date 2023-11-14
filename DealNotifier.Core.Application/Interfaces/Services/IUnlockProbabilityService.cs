@@ -5,6 +5,6 @@ namespace DealNotifier.Core.Application.Interfaces.Services
 {
     public interface IUnlockProbabilityService : IGenericService<UnlockProbability>
     {
-        Task SetUnlockProbabilityAsync(ItemCreateRequest itemCreate);
+        Task SetUnlockProbabilityAsync(ItemDto itemCreate);
     }
 }

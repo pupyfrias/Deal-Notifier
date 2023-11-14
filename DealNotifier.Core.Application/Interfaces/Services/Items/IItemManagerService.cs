@@ -6,11 +6,11 @@ namespace DealNotifier.Core.Application.Interfaces.Services.Items
 {
     public interface IItemManagerService
     {
-        ConcurrentBag<int> EvaluatedItemIdList { get; set; }
+        ConcurrentBag<int> EvaluatedItemIds { get; set; }
 
         void AddNewItemIdToEvaluatedIdList(IEnumerable<Item> itemListToCreate);
 
-        Task SplitExistingItemsFromNewItems(ConcurrentBag<ItemCreateRequest> itemCreateList,
-                            ConcurrentBag<Item> itemListToCreate, ConcurrentBag<Item> itemListToUpdate);
+        Task<(ConcurrentBag<Item> itemListToCreate, ConcurrentBag<Item> itemListToUpdate)> SplitExistingItemsFromNewItems(
+            ConcurrentBag<ItemDto> itemsToProcess);
     }
 }

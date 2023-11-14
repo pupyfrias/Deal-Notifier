@@ -17,7 +17,7 @@ namespace DealNotifier.Core.Application.Services.Items
         private readonly IItemValidationService _itemValidationService;
         private readonly IItemNotificationService _itemNotificationService;
 
-        public ConcurrentBag<int> EvaluatedItemIdList { get; set; } = new();
+        public ConcurrentBag<int> EvaluatedItemIds { get; set; } = new();
 
         public ItemManagerService(
             IServiceScopeFactory serviceScopeFactory,
@@ -36,16 +36,19 @@ namespace DealNotifier.Core.Application.Services.Items
         {
             foreach (var item in itemListToCreate)
             {
-                EvaluatedItemIdList.Add(item.Id);
+                EvaluatedItemIds.Add(item.Id);
             }
         }
 
 
-        private void HandleExistingItem(Item oldItem, ItemCreateRequest newItem, ConcurrentBag<Item> itemListToUpdate)
+        private void HandleExistingItem(Item oldItem, ItemDto newItem, ConcurrentBag<Item> itemsToUpdate)
         {
+            EvaluatedItemIds.Add(oldItem.Id);
+            
+            if (!_itemValidationService.CanItemBeUpdated(oldItem, newItem)) return;
+            
             UpdateOldItemFromNew(oldItem, newItem);
-            itemListToUpdate.Add(oldItem);
-            EvaluatedItemIdList.Add(oldItem.Id);
+            itemsToUpdate.Add(oldItem);
 
             decimal priceDifference = oldItem.Price - newItem.Price;
 
@@ -55,40 +58,39 @@ namespace DealNotifier.Core.Application.Services.Items
             }
         }
 
-        private void HandleNewItem(ItemCreateRequest itemCreate, ConcurrentBag<Item> itemListToCreate)
+        private void HandleNewItem(ItemDto itemCreate, ConcurrentBag<Item> itemsToCreate)
         {
             Item newItem = _mapper.Map<Item>(itemCreate);
-            itemListToCreate.Add(newItem);
+            itemsToCreate.Add(newItem);
             _itemNotificationService.EvaluateIfNotifiable(newItem);
         }
 
-        public async Task SplitExistingItemsFromNewItems(
-            ConcurrentBag<ItemCreateRequest> itemCreateList,
-            ConcurrentBag<Item> itemListToCreate,
-            ConcurrentBag<Item> itemListToUpdate)
+        public async Task<(ConcurrentBag<Item> ,ConcurrentBag<Item>)> SplitExistingItemsFromNewItems(ConcurrentBag<ItemDto> itemsToProcess)
         {
-            var tasks = itemCreateList.Select(async itemCreate =>
+
+            ConcurrentBag<Item> itemsToCreate = new();
+            ConcurrentBag<Item> itemsToUpdate = new();
+
+            var tasks = itemsToProcess.Select(async item =>
             {
                 using (var scope = _serviceScopeFactory.CreateScope())
                 {
                     var itemRepository = scope.ServiceProvider.GetRequiredService<IItemRepository>();
-                    var oldItem = await itemRepository.FirstOrDefaultAsync(i => i.Link == itemCreate.Link);
+                    var oldItem = await itemRepository.FirstOrDefaultAsync(i => i.Link == item.Link);
 
                     if (oldItem == null)
                     {
-                        HandleNewItem(itemCreate, itemListToCreate);
+                        HandleNewItem(item, itemsToCreate);
                     }
                     else
                     {
-                        if (_itemValidationService.CanItemBeUpdated(oldItem, itemCreate))
-                        {
-                            HandleExistingItem(oldItem, itemCreate, itemListToUpdate);
-                        }
+                        HandleExistingItem(oldItem, item, itemsToUpdate);
                     }
                 }
             });
 
             await Task.WhenAll(tasks);
+            return (itemsToCreate, itemsToUpdate);
         }
         private void UpdateItemPrice(Item oldItem, decimal newPrice, decimal oldPrice)
         {
@@ -107,7 +109,7 @@ namespace DealNotifier.Core.Application.Services.Items
                 oldItem.SavingsPercentage = 0;
             }
         }
-        private void UpdateOldItemFromNew(Item oldItem, ItemCreateRequest newItem)
+        private void UpdateOldItemFromNew(Item oldItem, ItemDto newItem)
         {
             UpdateItemPrice(oldItem, newItem.Price, oldItem.Price);
             oldItem.Notified = null;

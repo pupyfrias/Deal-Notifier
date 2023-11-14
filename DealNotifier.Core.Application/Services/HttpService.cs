@@ -1,5 +1,6 @@
 ﻿using DealNotifier.Core.Application.Interfaces.Services;
 using Polly;
+using Polly.Extensions.Http;
 using Serilog;
 using System.Net;
 using System.Net.Http.Headers;
@@ -10,26 +11,52 @@ namespace DealNotifier.Core.Application.Services
     public class HttpService : IHttpService
     {
         private readonly HttpClient _httpClient;
-        private readonly IAsyncPolicy<HttpResponseMessage> _retryPolicy;
+        private readonly IAsyncPolicy<HttpResponseMessage> _resiliencePolicy;
         private readonly ILogger _logger;
 
         public HttpService(IHttpClientFactory httpClientFactory, ILogger logger)
         {
             _logger = logger;
             _httpClient = httpClientFactory.CreateClient();
-            _retryPolicy = Policy
-                           .HandleResult<HttpResponseMessage>(response => response.StatusCode >= HttpStatusCode.InternalServerError)
-                           .Or<HttpRequestException>()
-                           .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
-                            onRetry: (outcome, timespan, retryAttempt, context) =>
-                            {
-                                _logger.Warning($"Retry {retryAttempt} for error: {outcome.Result.StatusCode}. waiting {timespan}.");
-                            });
+
+            var waitAndRetry = HttpPolicyExtensions.HandleTransientHttpError()
+                .WaitAndRetryAsync(
+                    5,
+                    retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
+                    onRetry: (outcome, timespan, retryAttempt, context) =>
+                    {
+                        _logger.Warning($"Retry {retryAttempt} due to {outcome.Exception?.Message ??
+                            outcome.Result.StatusCode.ToString()}. Waiting {timespan}.");
+                    });
+
+            var circuitBreaker = HttpPolicyExtensions.HandleTransientHttpError()
+                .CircuitBreakerAsync(
+                    5,
+                    TimeSpan.FromSeconds(30),
+                    onBreak: (outcome, timespan, context) =>
+                    {
+                        _logger.Warning($"Circuit breaker opened due to {outcome.Exception?.Message ??
+                            outcome.Result.StatusCode.ToString()}. Break time: {timespan}.");
+                    },
+                    onReset: context =>
+                    {
+                        _logger.Information("Circuit breaker reset.");
+                    },
+                    onHalfOpen: () =>
+                    {
+                        _logger.Information("Circuit breaker is half-open.");
+                    });
+
+            _resiliencePolicy = Policy.WrapAsync(waitAndRetry, circuitBreaker);
         }
 
-        public async Task<HttpResponseMessage> MakePostRequestAsync(string url, Dictionary<string, string> requestBody, Dictionary<string, string>? dataRequestHeader = null)
+        public async Task<HttpResponseMessage> MakePostRequestAsync(
+            string url, Dictionary<string, 
+            string> requestBody, 
+            Dictionary<string, string>? dataRequestHeader = null
+            )
         {
-            return await _retryPolicy.ExecuteAsync(async () =>
+            return await _resiliencePolicy.ExecuteAsync(async () =>
             {
                 using (HttpRequestMessage requestMessage = new(HttpMethod.Post, url))
                 {
@@ -41,12 +68,12 @@ namespace DealNotifier.Core.Application.Services
 
             });
 
-            
+
         }
 
         public async Task<HttpResponseMessage> MakeGetRequestAsync(string url, Dictionary<string, string>? requestHeader = null)
         {
-            return await _retryPolicy.ExecuteAsync(async () => 
+            return await _resiliencePolicy.ExecuteAsync(async () =>
             {
                 using (HttpRequestMessage requestMessage = new(HttpMethod.Get, url))
                 {

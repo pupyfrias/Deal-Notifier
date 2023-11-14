@@ -49,7 +49,7 @@ namespace DealNotifier.Core.Application.Services
 
 
 
-        public async Task TryAssignUnlockabledPhoneIdAsync(ItemCreateRequest itemCreate)
+        public async Task TryAssignUnlockabledPhoneIdAsync(ItemDto itemCreate)
         {
             var possibleModelNumber = Regex.Match(itemCreate.Name, RegExPattern.ModelNumber, RegexOptions.IgnoreCase).Value;
 

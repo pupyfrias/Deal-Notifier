@@ -23,7 +23,7 @@ namespace DealNotifier.Core.Application.Services
             _cacheDataService = cacheDataService;
         }
 
-        public async Task<bool> CanBeUnlockedBasedOnModelNameAsync(ItemCreateRequest itemCreate)
+        public async Task<bool> CanBeUnlockedBasedOnModelNameAsync(ItemDto itemCreate)
         {
             var possibleModelName = Regex.Match(itemCreate.Name, RegExPattern.ModelName, RegexOptions.IgnoreCase).Value;
 
@@ -44,7 +44,7 @@ namespace DealNotifier.Core.Application.Services
             return false;
         }
 
-        public async Task<bool> CanBeUnlockedBasedOnUnlockabledPhoneIdAsync(ItemCreateRequest itemCreate)
+        public async Task<bool> CanBeUnlockedBasedOnUnlockabledPhoneIdAsync(ItemDto itemCreate)
         {
             if (itemCreate.UnlockabledPhoneId != null)
             {

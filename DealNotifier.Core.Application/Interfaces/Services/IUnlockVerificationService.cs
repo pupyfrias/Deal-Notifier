@@ -4,7 +4,7 @@ namespace DealNotifier.Core.Application.Interfaces.Services
 {
     public interface IUnlockVerificationService
     {
-        Task<bool> CanBeUnlockedBasedOnModelNameAsync(ItemCreateRequest itemCreate);
-        Task<bool> CanBeUnlockedBasedOnUnlockabledPhoneIdAsync(ItemCreateRequest itemCreate);
+        Task<bool> CanBeUnlockedBasedOnModelNameAsync(ItemDto itemCreate);
+        Task<bool> CanBeUnlockedBasedOnUnlockabledPhoneIdAsync(ItemDto itemCreate);
     }
 }

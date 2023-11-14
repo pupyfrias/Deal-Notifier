@@ -10,6 +10,6 @@ namespace DealNotifier.Core.Application.Interfaces.Services
         Task HandleNewUnlockedPhoneAsync(UnlockedPhoneDetailsDto unlockedPhoneDetails, Enums.Brand brand, UnlockTool unlockTool);
         Task HandleExistingUnlockedPhoneAsync(UnlockabledPhone possibleUnlockedPhone, string carriers, UnlockTool unlockTool);
 
-        Task TryAssignUnlockabledPhoneIdAsync(ItemCreateRequest itemCreate);
+        Task TryAssignUnlockabledPhoneIdAsync(ItemDto itemCreate);
     }
 }

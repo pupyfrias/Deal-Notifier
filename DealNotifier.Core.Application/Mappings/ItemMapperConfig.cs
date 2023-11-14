@@ -9,7 +9,7 @@ namespace DealNotifier.Core.Application.Mappings
     {
         public ItemMapperConfig()
         {
-            CreateMap<ItemCreateRequest, Item>().IgnoreAllSourceNullProperties();
+            CreateMap<ItemDto, Item>().IgnoreAllSourceNullProperties();
             CreateMap<ItemUpdateRequest, Item>().IgnoreAllSourceNullProperties();
             CreateMap<Item, ItemResponse>().IgnoreAllSourceNullProperties();
 

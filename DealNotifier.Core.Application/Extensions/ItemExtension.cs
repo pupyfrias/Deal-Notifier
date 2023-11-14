@@ -19,7 +19,7 @@ namespace DealNotifier.Core.Application.Extensions
         /// <summary>
         /// Set Item Condition
         /// </summary>
-        public static void SetCondition(this ItemCreateRequest item)
+        public static void SetCondition(this ItemDto item)
         {
             /* bool isNotNew =  conditionList.Any(condition =>  item.Name.IndexOf(condition, StringComparison.OrdinalIgnoreCase) >= 0);
              item.ConditionId = isNotNew ? (int)Condition.Used : (int)Condition.New;*/

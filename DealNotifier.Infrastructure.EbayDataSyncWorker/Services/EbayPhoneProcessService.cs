@@ -66,8 +66,8 @@ namespace DealNotifier.Infrastructure.EbayDataSyncWorker.Services
             {
                 var ebayResponse = await _ebayFetchService.GetItemsAsync(currentUrl);
                 if (ebayResponse == null) break;
-                var itemCreateList = await _itemSummaryManagerService.MapToItemCreatesAsync(ebayResponse.ItemSummaries);
-                await _itemService.SaveOrUpdateRangeAsync(itemCreateList);
+                var itemsToProcess = await _itemSummaryManagerService.MapToItemAsync(ebayResponse.ItemSummaries);
+                await _itemService.SaveOrUpdateRangeAsync(itemsToProcess);
                 currentUrl = ebayResponse.Next;
             }
             while (currentUrl != null);

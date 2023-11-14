@@ -6,6 +6,6 @@ namespace DealNotifier.Infrastructure.EbayDataSyncWorker.Interfaces
 {
     public interface IItemSummaryManagerService
     {
-        Task<ConcurrentBag<ItemCreateRequest>> MapToItemCreatesAsync(List<ItemSummary>? itemSummaries);
+        Task<ConcurrentBag<ItemDto>> MapToItemAsync(List<ItemSummary>? itemSummaries);
     }
 }

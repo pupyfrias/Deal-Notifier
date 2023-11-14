@@ -4,6 +4,7 @@ using DealNotifier.Core.Domain.Common;
 using DealNotifier.Core.Domain.Entities;
 using DealNotifier.Persistence.Configuration;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 using Action = DealNotifier.Core.Application.Enums.Action;
 using ItemType = DealNotifier.Core.Domain.Entities.ItemType;
 
@@ -53,21 +54,7 @@ namespace DealNotifier.Persistence.DbContexts
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfiguration(new BanKeywordConfiguration());
-            modelBuilder.ApplyConfiguration(new BanLinkConfiguration());
-            modelBuilder.ApplyConfiguration(new BrandConfiguration());
-            modelBuilder.ApplyConfiguration(new ConditionConfiguration());
-            modelBuilder.ApplyConfiguration(new ItemConfiguration());
-            modelBuilder.ApplyConfiguration(new NotificationCriteriaConfiguration());
-            modelBuilder.ApplyConfiguration(new PhoneCarrierConfiguration());
-            modelBuilder.ApplyConfiguration(new PhoneUnlockToolConfiguration());
-            modelBuilder.ApplyConfiguration(new OnlineStoreConfiguration());
-            modelBuilder.ApplyConfiguration(new StockStatusConfiguration());
-            modelBuilder.ApplyConfiguration(new ItemTypeConfiguration());
-            modelBuilder.ApplyConfiguration(new UnlockabledPhoneConfiguration());
-            modelBuilder.ApplyConfiguration(new UnlockabledPhonePhoneUnlockToolConfiguration());
-            modelBuilder.ApplyConfiguration(new UnlockabledPhonePhoneCarrierConfiguration());
-            modelBuilder.ApplyConfiguration(new UnlockProbabilityConfiguration());
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
         private void SetEntry()
         {

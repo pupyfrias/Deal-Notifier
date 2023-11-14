@@ -73,20 +73,17 @@ namespace DealNotifier.Core.Application.Services.Items
 
         #endregion Constructor
 
-        public async Task SaveOrUpdateRangeAsync(ConcurrentBag<ItemCreateRequest> itemCreateList)
+        public async Task SaveOrUpdateRangeAsync(ConcurrentBag<ItemDto> itemsToProcess)
         {
             try
             {
-                ConcurrentBag<Item> itemListToCreate = new();
-                ConcurrentBag<Item> itemListToUpdate = new();
-
-                await _itemManager.SplitExistingItemsFromNewItems(itemCreateList, itemListToCreate, itemListToUpdate);
-                var createTask = CreateRangeAsync(itemListToCreate);
-                var updateTask = UpdateRangeAsync(itemListToUpdate);
+                (var itemsToCreate, var itemsToUpdate) = await _itemManager.SplitExistingItemsFromNewItems(itemsToProcess);
+                var createTask = CreateRangeAsync(itemsToCreate);
+                var updateTask = UpdateRangeAsync(itemsToUpdate);
                 await Task.WhenAll(updateTask, createTask);
 
-                _itemManager.AddNewItemIdToEvaluatedIdList(itemListToCreate);
-                _logger.Information($"{itemListToCreate.Count} items created | {itemListToUpdate.Count} items updated");
+                _itemManager.AddNewItemIdToEvaluatedIdList(itemsToCreate);
+                _logger.Information($"{itemsToCreate.Count} items created | {itemsToUpdate.Count} items updated");
             }
             catch (Exception ex)
             {
@@ -117,7 +114,7 @@ namespace DealNotifier.Core.Application.Services.Items
         {
             string query = "EXEC Update_StockStatus @IdListString, @OnlineStoreId, @OutputResult OUTPUT, @ErrorMessage OUTPUT";
 
-            var idListString = string.Join(',', _itemManager.EvaluatedItemIdList);
+            var idListString = string.Join(',', _itemManager.EvaluatedItemIds);
 
             var idListStringParameter = new SqlParameter("@IdListString", idListString);
             var onlineStoreIdParameter = new SqlParameter("@OnlineStoreId", (int)onlineStore);
@@ -126,8 +123,8 @@ namespace DealNotifier.Core.Application.Services.Items
 
             await _itemRepository.UpdateStockStatusAsync(query, idListStringParameter, onlineStoreIdParameter, outputResultParameter, errorMessageParameter);
 
-            _logger.Information($"{_itemManager.EvaluatedItemIdList.Count} Items In Stock");
-            _itemManager.EvaluatedItemIdList.Clear();
+            _logger.Information($"{_itemManager.EvaluatedItemIds.Count} Items In Stock");
+            _itemManager.EvaluatedItemIds.Clear();
         }
 
 
@@ -142,12 +139,12 @@ namespace DealNotifier.Core.Application.Services.Items
         }
 
 
-        private async Task UpdateRangeAsync(IEnumerable<Item> itemListToUpdate)
+        private async Task UpdateRangeAsync(IEnumerable<Item> itemsToUpdate)
         {
             using (var scope = _serviceScopeFactory.CreateScope())
             {
                 var itemRepository = scope.ServiceProvider.GetRequiredService<IItemRepository>();
-                await itemRepository.UpdateRangeAsync(itemListToUpdate);
+                await itemRepository.UpdateRangeAsync(itemsToUpdate);
             }
             
         }

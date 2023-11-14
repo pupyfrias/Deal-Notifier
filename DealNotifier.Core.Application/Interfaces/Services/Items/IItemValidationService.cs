@@ -7,8 +7,8 @@ namespace DealNotifier.Core.Application.Interfaces.Services.Items
     {
         bool TitleContainsKeyword(string title, string keywords);
         bool ContainsWordUnlocked(string title);
-        bool CanBeSaved(ItemCreateRequest itemCreate);
-        bool CanItemBeUpdated(Item oldItem, ItemCreateRequest item);
+        bool CanBeSaved(ItemDto itemCreate);
+        bool CanItemBeUpdated(Item oldItem, ItemDto item);
 
     }
 }

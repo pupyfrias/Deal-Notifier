@@ -74,10 +74,18 @@ namespace DealNotifier.Infrastructure.EbayDataSyncWorker.Services
                     await RefreshTokenAsync();
                     return await GetItemsAsync(url);
                 }
+                else if (response.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    var content = await response.Content.ReadFromJsonAsync<EBayErrorResponse>();
+                    var error = content?.Errors?.FirstOrDefault();
+                    _logger.Warning($"Url: {url} Message: {error?.Message}");
+                }
                 else
                 {
-                    var error = await response.Content.ReadAsStringAsync();
-                    _logger.Error($"Error Trying consume eBay API. Message: {error} StatusCode: {(int)response.StatusCode}");
+                    var content = await response.Content.ReadFromJsonAsync<EBayErrorResponse>();
+                    var error = content?.Errors?.FirstOrDefault();
+                    _logger.Error($"Error Trying consume eBay API. Message: {error?.Message} StatusCode: {(int)response.StatusCode}" +
+                        $"Category: {error?.Category} Domain: {error?.Domain} ErrorId: {error?.ErrorId}");
                 }
             }
             catch (Exception ex)

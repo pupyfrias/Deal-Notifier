@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace DealNotifier.Core.Application.ViewModels.V1.Item
 {
-    public class ItemCreateRequest
+    public class ItemDto
     {
         public int BidCount { get; set; }
         [Required]

@@ -1,4 +1,4 @@
-﻿using DealNotifier.Core.Application.Constants;
+﻿ using DealNotifier.Core.Application.Constants;
 using DealNotifier.Core.Application.Interfaces.Services;
 using DealNotifier.Core.Application.Interfaces.Services.Items;
 using DealNotifier.Core.Application.ViewModels.V1;
@@ -12,14 +12,13 @@ namespace DealNotifier.Core.Application.Services.Items
 {
     public class ItemNotificationService : IItemNotificationService
     {
-        private readonly ICacheDataService _cacheDataService;
-        private readonly IItemValidationService _itemValidationService;
-        private readonly ILogger _logger;
-        private readonly ConcurrentBag<Item> _notifiableItemList = new();
         private const int _maxBidCount = 3;
         private const int _maxTimeDifference = 2;
+        private readonly ICacheDataService _cacheDataService;
         private readonly IEmailService _emailService;
-
+        private readonly IItemValidationService _itemValidationService;
+        private readonly ILogger _logger;
+        private readonly ConcurrentBag<Item> _notifiableItems = new();
         public ItemNotificationService(
             ICacheDataService cacheDataService,
             IItemValidationService itemValidationService,
@@ -35,53 +34,30 @@ namespace DealNotifier.Core.Application.Services.Items
 
         public void EvaluateIfNotifiable(Item item)
         {
-            DateTime notified = item.Notified.HasValue ? (DateTime)item.Notified : DateTime.MinValue;
-            DateTime itemEndDate = item.ItemEndDate.HasValue ? (DateTime)item.ItemEndDate : DateTime.MinValue;
+            if (!IsItemEligibleForNotification(item) ||
+                IsPhoneWithLowUnlockProbability(item) || 
+                IsInvalidAuctionItem(item)) return;
 
-            foreach (NotificationCriteriaDto notificationCriteria in _cacheDataService.NotificationCriteriaList)
+            foreach (var notificationCriteria in _cacheDataService.NotificationCriteriaList)
             {
-                if (notificationCriteria.ConditionId == item.ConditionId
-                    && notificationCriteria.MaxPrice >= item.Price
-                    && _itemValidationService.TitleContainsKeyword(item.Name, notificationCriteria.Keywords)
-                    && (bool)item.Notify!
-                    && notified.Date != DateTime.Now.Date
-
-                    )
-                {
-                    if (item.ItemTypeId == (int)Enums.ItemType.Phone &&
-                        item.UnlockProbabilityId == (int)Enums.UnlockProbability.Low)
-                    {
-                        break;
-                    }
-
-                    if ((bool)item.IsAuction!)
-                    {
-                        var timeDifference = (itemEndDate - DateTime.Now).TotalHours;
-                        if (timeDifference > _maxTimeDifference || timeDifference < 0 || item.BidCount > _maxBidCount)
-                        {
-                            break;
-                        }
-                    }
-
-                    _notifiableItemList.Add(item);
-                    item.Notified = DateTime.Now;
-                    break;
-                }
+                if (!MatchesCriteria(item, notificationCriteria)) continue;
+                NotifyItem(item);
+                break;
             }
         }
 
         public async Task NotifyUsersOfItemsByEmail()
         {
-            if (_notifiableItemList.Count > 0)
+            if (_notifiableItems.Any())
             {
                 StringBuilder stringBuilder = new StringBuilder();
 
-                var orderItemToNotifyList = _notifiableItemList.OrderBy(item => item.Price);
+                var orderItemToNotifyList = _notifiableItems.OrderBy(item => item.Price);
                 _logger.Information($"{orderItemToNotifyList.Count()} Items to Notify");
 
                 foreach (var item in orderItemToNotifyList)
                 {
-                    var probability = item.UnlockProbabilityId == 3 ? Enums.UnlockProbability.High.ToString() : Enums.UnlockProbability.Middle.ToString();
+                    var probability = Enum.GetValues<Enums.UnlockProbability>().First(e => (int)e == item.UnlockProbabilityId);
 
                     stringBuilder.AppendFormat(
                         @"<div style=""margin: 50px 20px;border-radius: 10px;box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.4);padding: 10px;"">
@@ -104,12 +80,45 @@ namespace DealNotifier.Core.Application.Services.Items
                 };
 
                 await _emailService.SendEmailAsync(email);
-                _notifiableItemList.Clear();
+                _notifiableItems.Clear();
             }
             else
             {
                 _logger.Information("There is not items to Notify");
             }
+        }
+
+        private bool IsInvalidAuctionItem(Item item)
+        {
+            if (item.IsAuction == true)
+            {
+                var timeDifference = (item.ItemEndDate.GetValueOrDefault(DateTime.MinValue) - DateTime.Now).TotalHours;
+                return timeDifference > _maxTimeDifference || timeDifference < 0 || item.BidCount > _maxBidCount;
+            }
+            return false;
+        }
+
+        private bool IsItemEligibleForNotification(Item item)
+        {
+            return item.Notified.GetValueOrDefault(DateTime.MinValue).Date != DateTime.Now.Date && item.Notify == true;
+        }
+
+        private bool IsPhoneWithLowUnlockProbability(Item item)
+        {
+            return item.ItemTypeId == (int)Enums.ItemType.Phone &&
+                   item.UnlockProbabilityId == (int)Enums.UnlockProbability.Low;
+        }
+
+        private bool MatchesCriteria(Item item, NotificationCriteriaDto criteria)
+        {
+            return criteria.ConditionId == item.ConditionId
+                   && criteria.MaxPrice >= item.Price
+                   && _itemValidationService.TitleContainsKeyword(item.Name, criteria.Keywords);
+        }
+        private void NotifyItem(Item item)
+        {
+            _notifiableItems.Add(item);
+            item.Notified = DateTime.Now;
         }
     }
 }

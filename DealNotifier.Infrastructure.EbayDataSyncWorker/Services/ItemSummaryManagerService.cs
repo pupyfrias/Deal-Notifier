@@ -27,9 +27,9 @@ namespace DealNotifier.Infrastructure.EbayDataSyncWorker.Services
 
         }
 
-        public async Task<ConcurrentBag<ItemCreateRequest>> MapToItemCreatesAsync(List<ItemSummary>? itemSummaries)
+        public async Task<ConcurrentBag<ItemDto>> MapToItemAsync(List<ItemSummary>? itemSummaries)
         {
-            var mappedItemList = new ConcurrentBag<ItemCreateRequest>();
+            var mappedItems = new ConcurrentBag<ItemDto>();
 
             if (itemSummaries != null)
             {
@@ -37,30 +37,29 @@ namespace DealNotifier.Infrastructure.EbayDataSyncWorker.Services
                 {
                     try
                     {
-                        var itemCreate = new ItemCreateRequest();
-                        itemCreate.Name = itemSummary.Title;
-                        itemCreate.Link = itemSummary.ItemWebUrl.Substring(0, itemSummary.ItemWebUrl.IndexOf("?"));
+                        var item = new ItemDto();
+                        item.Name = itemSummary.Title;
+                        item.Link = itemSummary.ItemWebUrl.Substring(0, itemSummary.ItemWebUrl.IndexOf("?"));
 
-                        if (_itemValidationService.CanBeSaved(itemCreate))
+                        if (_itemValidationService.CanBeSaved(item))
                         {
                             using (var scope = _serviceScopeFactory.CreateScope())
                             {
                                 var unlockabledPhoneService = scope.ServiceProvider.GetRequiredService<IUnlockabledPhoneService>();
                                 var unlockProbabilityService = scope.ServiceProvider.GetRequiredService<IUnlockProbabilityService>();
 
-                                itemCreate.BidCount = itemSummary!.BidCount;
-                                itemCreate.ConditionId = GetConditionId(itemSummary);
-                                itemCreate.Image = GetImage(itemSummary);
-                                itemCreate.IsAuction = itemSummary.CurrentBidPrice != null;
-                                itemCreate.ItemEndDate = itemSummary.ItemEndDate?.AddHours(-4);
-                                itemCreate.ItemTypeId = (int)ItemType.Phone;
-                                itemCreate.OnlineStoreId = (int)OnlineStore.eBay;
-                                itemCreate.Price = GetPrice(itemSummary);
-                                itemCreate.StockStatusId = (int)StockStatus.InStock;
-                                await unlockabledPhoneService.TryAssignUnlockabledPhoneIdAsync(itemCreate);
-                                await unlockProbabilityService.SetUnlockProbabilityAsync(itemCreate);
-
-                                mappedItemList.Add(itemCreate);
+                                item.BidCount = itemSummary!.BidCount;
+                                item.ConditionId = GetConditionId(itemSummary);
+                                item.Image = GetImage(itemSummary);
+                                item.IsAuction = itemSummary.CurrentBidPrice != null;
+                                item.ItemEndDate = itemSummary.ItemEndDate?.AddHours(-4);
+                                item.ItemTypeId = (int)ItemType.Phone;
+                                item.OnlineStoreId = (int)OnlineStore.eBay;
+                                item.Price = GetPrice(itemSummary);
+                                item.StockStatusId = (int)StockStatus.InStock;
+                                await unlockabledPhoneService.TryAssignUnlockabledPhoneIdAsync(item);
+                                await unlockProbabilityService.SetUnlockProbabilityAsync(item);
+                                mappedItems.Add(item);
                             }
                         }
                     }
@@ -77,7 +76,7 @@ namespace DealNotifier.Infrastructure.EbayDataSyncWorker.Services
                 _logger.Warning("itemSummaries is null");
             }
 
-            return mappedItemList;
+            return mappedItems;
         }
 
         private decimal GetPrice(ItemSummary itemSummary)

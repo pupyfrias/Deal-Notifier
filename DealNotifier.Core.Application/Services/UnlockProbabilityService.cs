@@ -27,7 +27,7 @@ namespace DealNotifier.Core.Application.Services
             _itemValidationService = itemValidationService;
         }
 
-        public async Task SetUnlockProbabilityAsync(ItemCreateRequest itemCreate)
+        public async Task SetUnlockProbabilityAsync(ItemDto itemCreate)
         {
             if (_itemValidationService.ContainsWordUnlocked(itemCreate.Name) || await _unlockVerificationService.CanBeUnlockedBasedOnUnlockabledPhoneIdAsync(itemCreate))
             {

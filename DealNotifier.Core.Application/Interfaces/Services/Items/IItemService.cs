@@ -10,7 +10,7 @@ namespace DealNotifier.Core.Application.Interfaces.Services.Items
         Task<TDestination?> GetByPublicIdProjectedAsync<TDestination>(Guid id);
         Task UpdateAsync<TSource>(Guid id, TSource source) where TSource : IHasId<Guid>;
         Task DeleteAsync(Guid id);
-        Task SaveOrUpdateRangeAsync(ConcurrentBag<ItemCreateRequest> itemCreateList);
+        Task SaveOrUpdateRangeAsync(ConcurrentBag<ItemDto> itemsToProcess);
         Task UpdateStockStatusAsync(OnlineStore onlineStore);
     }
 }

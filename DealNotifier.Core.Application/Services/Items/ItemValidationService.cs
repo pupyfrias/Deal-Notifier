@@ -16,7 +16,7 @@ namespace DealNotifier.Core.Application.Services.Items
 
         #region Public Method
 
-        public bool CanBeSaved(ItemCreateRequest itemCreate)
+        public bool CanBeSaved(ItemDto itemCreate)
         {
             var hasBanKeywords = HasBanKeywords(itemCreate);
             var isLinkBanned = IsLinkBanned(itemCreate);
@@ -35,7 +35,7 @@ namespace DealNotifier.Core.Application.Services.Items
             return keywordList.Any(keyword => title.Contains(keyword, StringComparison.OrdinalIgnoreCase));
         }
 
-        public bool CanItemBeUpdated(Item oldItem, ItemCreateRequest item)
+        public bool CanItemBeUpdated(Item oldItem, ItemDto item)
         {
             return oldItem.Price != item.Price || oldItem.UnlockProbabilityId != item.UnlockProbabilityId ||
                    oldItem.Image != item.Image || item.IsAuction;
@@ -45,13 +45,13 @@ namespace DealNotifier.Core.Application.Services.Items
 
         #region Private Method
 
-        private bool HasBanKeywords(ItemCreateRequest itemCreate)
+        private bool HasBanKeywords(ItemDto itemCreate)
         {
             return _cacheDataService.BanKeywordList.Any(element => itemCreate.Name.Contains(element.Keyword,
                 StringComparison.OrdinalIgnoreCase));
         }
 
-        private bool IsLinkBanned(ItemCreateRequest itemCreate)
+        private bool IsLinkBanned(ItemDto itemCreate)
         {
             return _cacheDataService.BanLinkList.Any(x => x.Link == itemCreate.Link);
         }
