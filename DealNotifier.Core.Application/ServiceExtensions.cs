@@ -32,7 +32,7 @@ namespace DealNotifier.Core.Application
             #region Dependency Injection
 
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
-            services.AddScoped(typeof(IGenericService<>), typeof(GenericService<>));
+            services.AddScoped(typeof(IAsyncService<>), typeof(ServiceBase<>));
             services.AddScoped<IItemService, ItemService>();
             services.AddScoped<IBanKeywordService, BanKeywordService>();
             services.AddScoped<IBanLinkService, BanLinkService>();

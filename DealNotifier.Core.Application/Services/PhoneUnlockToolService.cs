@@ -7,7 +7,7 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace DealNotifier.Core.Application.Services
 {
-    public class PhoneUnlockToolService : GenericService<PhoneUnlockTool>, IPhoneUnlockToolService
+    public class PhoneUnlockToolService : ServiceBase<PhoneUnlockTool>, IPhoneUnlockToolService
     {
         public PhoneUnlockToolService(IPhoneUnlockToolRepository repository, IMapper mapper, IHttpContextAccessor httpContext, IMemoryCache cache) : base(repository, mapper, httpContext, cache)
         {

@@ -5,7 +5,7 @@ using DealNotifier.Persistence.DbContexts;
 
 namespace DealNotifier.Persistence.Repositories
 {
-    public class BanLinkRepository : GenericRepository<BanLink>, IBanLinkRepository
+    public class BanLinkRepository : RepositoryBase<BanLink>, IBanLinkRepository
     {
         #region Constructor
 

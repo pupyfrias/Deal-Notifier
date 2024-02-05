@@ -5,7 +5,7 @@ using DealNotifier.Persistence.DbContexts;
 
 namespace DealNotifier.Persistence.Repositories
 {
-    public class ItemTypeRepository : GenericRepository<ItemType>, IItemTypeRepository
+    public class ItemTypeRepository : RepositoryBase<ItemType>, IItemTypeRepository
     {
         #region Constructor
 

@@ -1,6 +1,8 @@
-﻿using DealNotifier.Core.Domain.Entities;
+﻿using DealNotifier.Core.Application.Enums;
+using DealNotifier.Core.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using StockStatus = DealNotifier.Core.Application.Enums.StockStatus;
 
 namespace DealNotifier.Persistence.Configuration
 {
@@ -68,18 +70,21 @@ namespace DealNotifier.Persistence.Configuration
             .HasColumnType("DateTime")
             .IsRequired(false);
 
-            builder.Property(x => x.UnlockabledPhoneId)
-           .IsRequired(false);
-
-            builder.Property(x => x.UnlockProbabilityId)
-            .IsRequired(false);
 
             builder.Property(x => x.BidCount)
            .HasColumnType("Int");
 
+            builder.Property(x => x.UnlockabledPhoneId)
+                .IsRequired(false);
+
             #endregion Properties
 
             #region Keys
+
+            builder.HasOne(x => x.Brand)
+            .WithMany(x => x.Items)
+            .HasForeignKey(x => x.BrandId)
+            .HasConstraintName("FK_Item_Brand");
 
 
             builder.HasOne(x => x.StockStatus)
@@ -105,15 +110,13 @@ namespace DealNotifier.Persistence.Configuration
             builder.HasOne(x => x.UnlockabledPhone)
             .WithMany(x => x.Items)
             .HasForeignKey(x => x.UnlockabledPhoneId)
-            .HasConstraintName("FK_Item_UnlockabledPhone");
+            .HasConstraintName("FK_Item_UnlockabledPhone")
+            .OnDelete(DeleteBehavior.NoAction);
 
             builder.HasOne(x => x.UnlockProbability)
             .WithMany(x => x.Items)
             .HasForeignKey(x => x.UnlockProbabilityId)
-            .HasConstraintName("FK_Item_UnlockProbability")
-            .IsRequired(false);
-
-
+            .HasConstraintName("FK_Item_UnlockProbability");
 
             #endregion Keys
 
@@ -124,7 +127,7 @@ namespace DealNotifier.Persistence.Configuration
             builder.HasIndex(e => e.PublicId)
             .IsUnique();
             #endregion Indexes
-
+            
             base.Configure(builder);
         }
     }

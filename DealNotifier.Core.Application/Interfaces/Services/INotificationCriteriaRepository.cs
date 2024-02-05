@@ -3,7 +3,7 @@ using DealNotifier.Core.Domain.Entities;
 
 namespace DealNotifier.Core.Application.Interfaces.Services
 {
-    public interface INotificationCriteriaRepository : IGenericRepository<NotificationCriteria>
+    public interface INotificationCriteriaRepository : IAsyncRepository<NotificationCriteria>
     {
     }
 }

@@ -14,17 +14,14 @@ namespace DealNotifier.Infrastructure.EbayDataSyncWorker.Services
         private readonly ILogger _logger;
         private readonly IItemValidationService _itemValidationService;
         private readonly IServiceScopeFactory _serviceScopeFactory;
+        private readonly IItemManagerService _itemManagerService;
 
-        public ItemSummaryManagerService(
-            IItemValidationService itemValidationService,
-            ILogger logger,
-            IServiceScopeFactory serviceScopeFactory
-            )
+        public ItemSummaryManagerService(ILogger logger, IItemValidationService itemValidationService, IServiceScopeFactory serviceScopeFactory, IItemManagerService itemManagerService)
         {
-            _itemValidationService = itemValidationService;
             _logger = logger;
+            _itemValidationService = itemValidationService;
             _serviceScopeFactory = serviceScopeFactory;
-
+            _itemManagerService = itemManagerService;
         }
 
         public async Task<ConcurrentBag<ItemDto>> MapToItemAsync(List<ItemSummary>? itemSummaries)
@@ -57,6 +54,7 @@ namespace DealNotifier.Infrastructure.EbayDataSyncWorker.Services
                                 item.OnlineStoreId = (int)OnlineStore.eBay;
                                 item.Price = GetPrice(itemSummary);
                                 item.StockStatusId = (int)StockStatus.InStock;
+                                _itemManagerService.SetBrand(item);
                                 await unlockabledPhoneService.TryAssignUnlockabledPhoneIdAsync(item);
                                 await unlockProbabilityService.SetUnlockProbabilityAsync(item);
                                 mappedItems.Add(item);

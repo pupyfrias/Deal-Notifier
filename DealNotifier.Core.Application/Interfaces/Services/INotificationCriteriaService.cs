@@ -2,7 +2,7 @@
 
 namespace DealNotifier.Core.Application.Interfaces.Services
 {
-    public interface INotificationCriteriaService : IGenericService<NotificationCriteria>
+    public interface INotificationCriteriaService : IAsyncService<NotificationCriteria>
     {
     }
 }

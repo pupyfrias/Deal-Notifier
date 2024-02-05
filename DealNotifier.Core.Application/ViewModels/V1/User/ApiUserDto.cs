@@ -2,7 +2,7 @@
 
 namespace DealNotifier.Core.Application.ViewModels.V1.User
 {
-    public class ApiUserDto : LoginDto
+    public class ApiUserDto
     {
         [Required]
         public string FirstName { get; set; }
@@ -12,5 +12,13 @@ namespace DealNotifier.Core.Application.ViewModels.V1.User
 
         [Required]
         public string UserName { get; set; }
+
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
+
+        [Required]
+        [StringLength(15, ErrorMessage = "Your password id limited to {2} to {1}", MinimumLength = 6)]
+        public string Password { get; set; }
     }
 }

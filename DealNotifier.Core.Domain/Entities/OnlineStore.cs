@@ -2,7 +2,7 @@
 
 namespace DealNotifier.Core.Domain.Entities
 {
-    public class OnlineStore : AuditableEntity
+    public class OnlineStore : EntityBase
     {
         
         public string Name { get; set; }

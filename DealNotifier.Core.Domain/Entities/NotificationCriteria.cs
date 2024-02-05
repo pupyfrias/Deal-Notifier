@@ -2,7 +2,7 @@
 
 namespace DealNotifier.Core.Domain.Entities
 {
-    public class NotificationCriteria : AuditableEntity
+    public class NotificationCriteria : EntityBase
     {
         public string Keywords { get; set; }
         public decimal MaxPrice { get; set; }

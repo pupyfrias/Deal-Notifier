@@ -2,7 +2,7 @@
 
 namespace DealNotifier.Core.Application.Interfaces.Repositories
 {
-    public interface IUnlockabledPhoneRepository : IGenericRepository<UnlockabledPhone>
+    public interface IUnlockabledPhoneRepository : IAsyncRepository<UnlockabledPhone>
     {
         Task<bool> ExistsAsync(string modelName);
     }

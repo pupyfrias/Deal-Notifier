@@ -2,7 +2,7 @@
 
 namespace DealNotifier.Core.Application.Interfaces.Services
 {
-    public interface IPhoneCarrierService : IGenericService<PhoneCarrier>
+    public interface IPhoneCarrierService : IAsyncService<PhoneCarrier>
     {
     }
 }

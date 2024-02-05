@@ -27,7 +27,7 @@ namespace DealNotifier.Persistence
 
             #region Dependency Injection
 
-            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddScoped(typeof(IAsyncRepository<>), typeof(RepositoryBase<>));
             services.AddScoped<IBanKeywordRepository, BanKeywordRepository>();
             services.AddScoped<IBanLinkRepository, BanLinkRepository>();
             services.AddScoped<IBrandRepository, BrandRepository>();

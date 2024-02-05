@@ -7,7 +7,7 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace DealNotifier.Core.Application.Services
 {
-    public class NotificationCriteriaService : GenericService<NotificationCriteria>, INotificationCriteriaService
+    public class NotificationCriteriaService : ServiceBase<NotificationCriteria>, INotificationCriteriaService
     {
         public NotificationCriteriaService(INotificationCriteriaRepository repository, IMapper mapper, IHttpContextAccessor httpContext, IMemoryCache cache) : base(repository, mapper, httpContext, cache)
         {

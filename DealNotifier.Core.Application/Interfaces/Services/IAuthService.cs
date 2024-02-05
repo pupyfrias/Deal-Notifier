@@ -5,6 +5,6 @@ namespace DealNotifier.Core.Application.Interfaces.Services
 {
     public interface IAuthService
     {
-        Task<Response<AuthenticationResponse>> LoginAsync(AuthenticationRequest request);
+        Task<ApiResponse<AuthenticationResponse>> LoginAsync(AuthenticationRequest request);
     }
 }

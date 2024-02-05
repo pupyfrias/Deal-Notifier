@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DealNotifier.Persistence.Repositories
 {
-    public class UnlockabledPhoneRepository : GenericRepository<UnlockabledPhone>, IUnlockabledPhoneRepository
+    public class UnlockabledPhoneRepository : RepositoryBase<UnlockabledPhone>, IUnlockabledPhoneRepository
     {
         private readonly ApplicationDbContext _dbContext;
 

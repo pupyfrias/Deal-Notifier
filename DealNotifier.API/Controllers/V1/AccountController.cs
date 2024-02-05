@@ -13,20 +13,20 @@ namespace DealNotifier.API.Controllers.V1
     public class AccountController : ControllerBase
     {
         private readonly IAccountService _accountService;
-        private readonly IAuthService _authService;
+        //private readonly IAuthService _authService;
         private readonly ILogger _logger;
 
-        public AccountController(IAccountService accountService, ILogger logger, IAuthService authService)
+        public AccountController(IAccountService accountService, ILogger logger)
         {
             _accountService = accountService;
             _logger = logger;
-            _authService = authService;
+           // _authService = authService;
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> LoginAsync(AuthenticationRequest request)
         {
-            var response = await _authService.LoginAsync(request);
+            var response = await _accountService.LoginAsync(request);
             SetRefreshTokenInCookie(response.Data.RefreshToken);
             return Ok(response);
         }

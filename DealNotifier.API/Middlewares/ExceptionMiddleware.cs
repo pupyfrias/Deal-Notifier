@@ -113,7 +113,7 @@ namespace DealNotifier.API.Middlewares
                 LogContext.PushProperty("UserName", userName);
                 _logger.Error(e, e.Message);
 
-                var response = new Response<string>(message);
+                var response = new ApiResponse<string>(message);
                 context.Response.ContentType = "application/json";
                 await context.Response.WriteAsJsonAsync(response);
             }

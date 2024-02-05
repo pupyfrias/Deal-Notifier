@@ -6,10 +6,12 @@ using DealNotifier.Persistence.DbContexts;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace DealNotifier.Persistence.Repositories
 {
-    public class ItemRepository : GenericRepository<Item>, IItemRepository
+    public class ItemRepository : RepositoryBase<Item>, IItemRepository
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly ILogger _logger;
@@ -28,6 +30,12 @@ namespace DealNotifier.Persistence.Repositories
             _dbContext = context;
             _configurationProvider = configurationProvider;
             _logger = logger;
+        }
+
+
+        public async Task DeleteRangeAsync(Expression<Func<Item, bool>> predicate)
+        {
+            await _dbContext.Items.Where(predicate).ExecuteDeleteAsync();
         }
 
         public async Task CreateRangeAsync(IEnumerable<Item> items)

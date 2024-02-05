@@ -68,6 +68,14 @@ namespace DealNotifier.API.Controllers.V1
         }
 
 
+        [HttpDelete("bulk")]
+        public async Task<ActionResult> BulkDeleteItem( [FromBody] IEnumerable<int> ids)
+        {
+            await _itemService.BulkDeleteAsync(ids);
+            return NoContent();
+        }
+
+
         [AllowAnonymous]
         [HttpGet("{id}/cancel-notification")]
         public async Task<ActionResult> CancelNotification(Guid id)

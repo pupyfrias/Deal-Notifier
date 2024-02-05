@@ -52,6 +52,7 @@ namespace DealNotifier.Infrastructure.SamkeyDataSyncWorker.Services
 
                 if (possibleUnlockedPhone == null)
                 {
+                    unlockedPhoneDetail.Carriers = phoneDetails.SupportCarriers;
                     await _unlockabledPhoneService.HandleNewUnlockedPhoneAsync(unlockedPhoneDetail, Brand.Samsung,
                         UnlockTool.SamKey);
                 }

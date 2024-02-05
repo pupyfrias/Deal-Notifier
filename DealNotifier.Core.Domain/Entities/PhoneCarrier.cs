@@ -2,7 +2,7 @@
 
 namespace DealNotifier.Core.Domain.Entities
 {
-    public class PhoneCarrier : AuditableEntity
+    public class PhoneCarrier : EntityBase
     {
         
         public string Name { get; set; }

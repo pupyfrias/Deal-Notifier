@@ -5,7 +5,7 @@ using DealNotifier.Persistence.DbContexts;
 
 namespace DealNotifier.Persistence.Repositories
 {
-    public class UnlockProbabilityRepository : GenericRepository<UnlockProbability>, IUnlockProbabilityRepository
+    public class UnlockProbabilityRepository : RepositoryBase<UnlockProbability>, IUnlockProbabilityRepository
     {
         #region Constructor
 

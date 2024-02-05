@@ -2,7 +2,7 @@
 
 namespace DealNotifier.Core.Application.Interfaces.Services
 {
-    public interface IConditionService : IGenericService<Condition>
+    public interface IConditionService : IAsyncService<Condition>
     {
     }
 }

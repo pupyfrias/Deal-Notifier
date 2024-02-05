@@ -2,7 +2,7 @@
 
 namespace DealNotifier.Core.Domain.Entities
 {
-    public class ItemType : AuditableEntity
+    public class ItemType : EntityBase
     {
         public string Name { get; set; }
         public IEnumerable<Item> Items { get; set; }

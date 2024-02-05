@@ -30,7 +30,6 @@ namespace DealNotifier.Core.Application.ViewModels.V1.Item
         public int? StockStatusId { get; set; }
         [Required]
         public int? ItemTypeId { get; set; }
-        [Required]
-        public int? UnlockProbabilityId { get; set; }
+        public int UnlockProbabilityId { get; set; }
     }
 }

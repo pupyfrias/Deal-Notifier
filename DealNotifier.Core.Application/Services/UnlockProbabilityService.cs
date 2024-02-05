@@ -9,7 +9,7 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace DealNotifier.Core.Application.Services
 {
-    public class UnlockProbabilityService : GenericService<UnlockProbability>, IUnlockProbabilityService
+    public class UnlockProbabilityService : ServiceBase<UnlockProbability>, IUnlockProbabilityService
     {
         private readonly IItemValidationService _itemValidationService;
         private readonly IUnlockVerificationService _unlockVerificationService;

@@ -5,7 +5,7 @@ using DealNotifier.Persistence.DbContexts;
 
 namespace DealNotifier.Persistence.Repositories
 {
-    public class PhoneCarrierRepository : GenericRepository<PhoneCarrier>, IPhoneCarrierRepository
+    public class PhoneCarrierRepository : RepositoryBase<PhoneCarrier>, IPhoneCarrierRepository
     {
         #region Constructor
 

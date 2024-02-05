@@ -5,7 +5,7 @@ using DealNotifier.Core.Domain.Entities;
 
 namespace DealNotifier.Core.Application.Interfaces.Services
 {
-    public interface IUnlockabledPhoneService : IGenericService<UnlockabledPhone>
+    public interface IUnlockabledPhoneService : IAsyncService<UnlockabledPhone>
     {
         Task HandleNewUnlockedPhoneAsync(UnlockedPhoneDetailsDto unlockedPhoneDetails, Enums.Brand brand, UnlockTool unlockTool);
         Task HandleExistingUnlockedPhoneAsync(UnlockabledPhone possibleUnlockedPhone, string carriers, UnlockTool unlockTool);

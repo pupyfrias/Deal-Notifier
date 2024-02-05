@@ -2,7 +2,7 @@
 
 namespace DealNotifier.Core.Application.Interfaces.Services
 {
-    public interface IBanKeywordService : IGenericService<BanKeyword>
+    public interface IBanKeywordService : IAsyncService<BanKeyword>
     {
     }
 }

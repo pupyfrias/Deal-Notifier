@@ -25,11 +25,13 @@ namespace DealNotifier.Core.Application.Specification
                     string currentName = storageList[i];
                     if (i == 0)
                     {
-                        expression = item => item.Name.Contains(currentName);
+                        expression = item => item.Name.Contains($"{currentName} gb");
+                        expression = expression.Or(item => item.Name.Contains($"{currentName}gb"));
                     }
                     else
                     {
-                        expression = expression.Or(item => item.Name.Contains(currentName));
+                        expression = expression.Or(item => item.Name.Contains($"{currentName} gb"));
+                        expression = expression.Or(item => item.Name.Contains($"{currentName}gb"));
                     }
                 }
 
@@ -38,17 +40,17 @@ namespace DealNotifier.Core.Application.Specification
 
             #endregion Storages
 
-            #region Shops
+            #region Stores
 
-            if (request.Shops != null)
+            if (request.Stores != null)
             {
-                var shopList = request.Shops.Split(",").Select(int.Parse);
-                Expression<Func<Item, bool>> expression = item => shopList.Contains(item.OnlineStoreId);
+                var storeList = request.Stores.Split(",").Select(int.Parse);
+                Expression<Func<Item, bool>> expression = item => storeList.Contains(item.OnlineStoreId);
 
                 Criteria = Criteria is null ? expression : Criteria.And(expression);
             }
 
-            #endregion Shops
+            #endregion Stores
 
             #region Conditions
 
@@ -76,25 +78,25 @@ namespace DealNotifier.Core.Application.Specification
 
             #region Brands
 
-/*            if (request.Brands != null)
+            if (request.Brands != null)
             {
                 var brandList = request.Brands.Split(",").Select(int.Parse);
                 Expression<Func<Item, bool>> expression = item => brandList.Contains(item.BrandId);
 
                 Criteria = Criteria is null ? expression : Criteria.And(expression);
-            }*/
+            }
 
             #endregion Brands
 
             #region PhoneCarriers
 
-/*            if (request.PhoneCarriers != null)
-            {
-                var phoneCarrierList = request.PhoneCarriers.Split(",").Select(int.Parse);
-                Expression<Func<Item, bool>> expression = item => phoneCarrierList.Equals(item.PhoneCarrierId);
+            /*            if (request.PhoneCarriers != null)
+                        {
+                            var phoneCarrierList = request.PhoneCarriers.Split(",").Select(int.Parse);
+                            Expression<Func<Item, bool>> expression = item => phoneCarrierList.Equals(item.PhoneCarrierId);
 
-                Criteria = Criteria is null ? expression : Criteria.And(expression);
-            }*/
+                            Criteria = Criteria is null ? expression : Criteria.And(expression);
+                        }*/
 
             #endregion PhoneCarriers
 
@@ -103,7 +105,7 @@ namespace DealNotifier.Core.Application.Specification
             if (request.UnlockProbabilities != null)
             {
                 var phoneCarrierList = request.UnlockProbabilities.Split(",").Select(int.Parse);
-                Expression<Func<Item, bool>> expression = item => phoneCarrierList.Equals(item.UnlockProbabilityId);
+                Expression<Func<Item, bool>> expression = item => phoneCarrierList.Contains(item.UnlockProbabilityId);
 
                 Criteria = Criteria is null ? expression : Criteria.And(expression);
             }

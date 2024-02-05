@@ -2,7 +2,7 @@
 
 namespace DealNotifier.Core.Application.Interfaces.Services
 {
-    public interface IBanLinkService : IGenericService<BanLink>
+    public interface IBanLinkService : IAsyncService<BanLink>
     {
 
     }

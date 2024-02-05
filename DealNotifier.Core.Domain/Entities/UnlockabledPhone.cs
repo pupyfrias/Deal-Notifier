@@ -2,7 +2,7 @@
 
 namespace DealNotifier.Core.Domain.Entities
 {
-    public class UnlockabledPhone : AuditableEntity
+    public class UnlockabledPhone : EntityBase
     {
         public int BrandId { get; set; }
         public string? Comment { get; set; }

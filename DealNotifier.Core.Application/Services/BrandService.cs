@@ -7,7 +7,7 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace DealNotifier.Core.Application.Services
 {
-    public class BrandService : GenericService<Brand>, IBrandService
+    public class BrandService : ServiceBase<Brand>, IBrandService
     {
         public BrandService(IBrandRepository repository, IMapper mapper, IHttpContextAccessor httpContext, IMemoryCache cache) : base(repository, mapper, httpContext, cache)
         {

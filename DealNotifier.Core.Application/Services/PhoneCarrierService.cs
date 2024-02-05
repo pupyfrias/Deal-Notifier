@@ -7,7 +7,7 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace DealNotifier.Core.Application.Services
 {
-    public class PhoneCarrierService : GenericService<PhoneCarrier>, IPhoneCarrierService
+    public class PhoneCarrierService : ServiceBase<PhoneCarrier>, IPhoneCarrierService
     {
         public PhoneCarrierService(IPhoneCarrierRepository repository, IMapper mapper, IHttpContextAccessor httpContext, IMemoryCache cache) : base(repository, mapper, httpContext, cache)
         {

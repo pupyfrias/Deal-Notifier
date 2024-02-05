@@ -2,7 +2,7 @@
 
 namespace DealNotifier.Core.Application.Interfaces.Services
 {
-    public interface IStockStatusService : IGenericService<StockStatus>
+    public interface IStockStatusService : IAsyncService<StockStatus>
     {
     }
 }

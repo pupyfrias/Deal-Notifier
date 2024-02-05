@@ -2,7 +2,7 @@
 
 namespace DealNotifier.Core.Application.Interfaces.Repositories
 {
-    public interface IPhoneCarrierRepository : IGenericRepository<PhoneCarrier>
+    public interface IPhoneCarrierRepository : IAsyncRepository<PhoneCarrier>
     {
     }
 }

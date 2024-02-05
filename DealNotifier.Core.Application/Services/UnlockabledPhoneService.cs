@@ -13,7 +13,7 @@ using Brand = DealNotifier.Core.Application.Enums.Brand;
 
 namespace DealNotifier.Core.Application.Services
 {
-    public class UnlockabledPhoneService : GenericService<UnlockabledPhone>, IUnlockabledPhoneService
+    public class UnlockabledPhoneService : ServiceBase<UnlockabledPhone>, IUnlockabledPhoneService
     {
 
         private readonly IUnlockabledPhoneRepository _unlockabledPhoneRepository;

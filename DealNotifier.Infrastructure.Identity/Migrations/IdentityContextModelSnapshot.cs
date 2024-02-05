@@ -17,217 +17,37 @@ namespace DealNotifier.Infrastructure.Identity.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.11")
+                .HasAnnotation("ProductVersion", "7.0.13")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nnvarchar(450)");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nnvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("nnvarchar(256)");
-
-                    b.Property<string>("NormalizedName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nnvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasDatabaseName("RoleNameIndex")
-                        .HasFilter("[NormalizedName] IS NOT NULL");
-
-                    b.ToTable("Roles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "19064d13-08ad-4bee-89f0-65fea5e27f2f",
-                            ConcurrencyStamp = "986c4753-f4fb-461f-b64a-92612085db03",
-                            Name = "SuperAdmin",
-                            NormalizedName = "SUPERADMIN"
-                        },
-                        new
-                        {
-                            Id = "b6aadd3d-33e2-48c8-aa63-90728530faaf",
-                            ConcurrencyStamp = "0eb76056-b88c-4d4e-81b4-033ca9a7ad04",
-                            Name = "Admin",
-                            NormalizedName = "ADMIN"
-                        },
-                        new
-                        {
-                            Id = "afaf62bb-83e2-489b-81b8-8510618e39f3",
-                            ConcurrencyStamp = "2de3b762-cf66-44b6-982c-66ca69677789",
-                            Name = "Moderator",
-                            NormalizedName = "MODERATOR"
-                        },
-                        new
-                        {
-                            Id = "99d509e0-12a2-42e1-935f-395fdc44b7c1",
-                            ConcurrencyStamp = "ca3f3cc0-aff6-4a84-9017-e607dbb6c683",
-                            Name = "Basic",
-                            NormalizedName = "BASIC"
-                        });
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("ClaimType")
-                        .HasColumnType("nnvarchar(max)");
-
-                    b.Property<string>("ClaimValue")
-                        .HasColumnType("nnvarchar(max)");
-
-                    b.Property<string>("RoleId")
-                        .IsRequired()
-                        .HasColumnType("nnvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("RoleClaims", (string)null);
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("ClaimType")
-                        .HasColumnType("nnvarchar(max)");
-
-                    b.Property<string>("ClaimValue")
-                        .HasColumnType("nnvarchar(max)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nnvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserClaims", (string)null);
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
-                {
-                    b.Property<string>("LoginProvider")
-                        .HasColumnType("nnvarchar(450)");
-
-                    b.Property<string>("ProviderKey")
-                        .HasColumnType("nnvarchar(450)");
-
-                    b.Property<string>("ProviderDisplayName")
-                        .HasColumnType("nnvarchar(max)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nnvarchar(450)");
-
-                    b.HasKey("LoginProvider", "ProviderKey");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserLogins", (string)null);
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nnvarchar(450)");
-
-                    b.Property<string>("RoleId")
-                        .HasColumnType("nnvarchar(450)");
-
-                    b.HasKey("UserId", "RoleId");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("UserRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = "377d278f-2088-48b6-b0ea-b8bbae8e518d",
-                            RoleId = "19064d13-08ad-4bee-89f0-65fea5e27f2f"
-                        },
-                        new
-                        {
-                            UserId = "377d278f-2088-48b6-b0ea-b8bbae8e518d",
-                            RoleId = "99d509e0-12a2-42e1-935f-395fdc44b7c1"
-                        },
-                        new
-                        {
-                            UserId = "0e270601-d417-4c8a-9a81-3d841026a509",
-                            RoleId = "99d509e0-12a2-42e1-935f-395fdc44b7c1"
-                        });
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nnvarchar(450)");
-
-                    b.Property<string>("LoginProvider")
-                        .HasColumnType("nnvarchar(450)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nnvarchar(450)");
-
-                    b.Property<string>("Value")
-                        .HasColumnType("nnvarchar(max)");
-
-                    b.HasKey("UserId", "LoginProvider", "Name");
-
-                    b.ToTable("UserTokens", (string)null);
-                });
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("DealNotifier.Infrastructure.Identity.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("nnvarchar(450)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("nnvarchar(max)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
-                        .HasColumnType("nnvarchar(256)");
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("nnvarchar(max)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("nnvarchar(max)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -237,30 +57,30 @@ namespace DealNotifier.Infrastructure.Identity.Migrations
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
-                        .HasColumnType("nnvarchar(256)");
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
-                        .HasColumnType("nnvarchar(256)");
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("PasswordHash")
-                        .HasColumnType("nnvarchar(max)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("nnvarchar(max)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
                     b.Property<string>("SecurityStamp")
-                        .HasColumnType("nnvarchar(max)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
-                        .HasColumnType("nnvarchar(256)");
+                        .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
 
@@ -277,9 +97,9 @@ namespace DealNotifier.Infrastructure.Identity.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "377d278f-2088-48b6-b0ea-b8bbae8e518d",
+                            Id = "fa07b71a-edb2-4467-82f6-bb0406accc8e",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "5b1a9eb3-f28f-4bce-989f-f686453f61af",
+                            ConcurrencyStamp = "7181af87-7255-45dd-8a41-eb180ac33017",
                             Email = "superuser@gmail.com",
                             EmailConfirmed = true,
                             FirstName = "John",
@@ -287,17 +107,17 @@ namespace DealNotifier.Infrastructure.Identity.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "SUPERUSER@GMAIL.COM",
                             NormalizedUserName = "SUPERUSER",
-                            PasswordHash = "AQAAAAEAACcQAAAAEI3H3kOljInjP4Et/c2v2hJb6kMHQB2Zqd56lHcF32crh9Wp8FkeZiNSnqknosVsGg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAELZY20Dc1ufVzEcbEAa9+AbZg29tlfI45iJ6abmPRUaT5xBwUspYlcmNlNb47YnvTg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "713f4d75-eb71-44f7-8d21-2a1ec02f7ca8",
+                            SecurityStamp = "a87480f4-aa26-4036-8634-644352592493",
                             TwoFactorEnabled = false,
                             UserName = "superuser"
                         },
                         new
                         {
-                            Id = "0e270601-d417-4c8a-9a81-3d841026a509",
+                            Id = "3badeb88-18b3-4330-93de-17e60c0fcfd5",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "31c91a4b-5760-43a6-a529-099fb2304e34",
+                            ConcurrencyStamp = "ae94b1b8-5ad6-472e-a10f-c50e7f152e7b",
                             Email = "basicuser@gmail.com",
                             EmailConfirmed = true,
                             FirstName = "John",
@@ -305,12 +125,188 @@ namespace DealNotifier.Infrastructure.Identity.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "BASICUSER@GMAIL.COM",
                             NormalizedUserName = "BASICUSER",
-                            PasswordHash = "AQAAAAEAACcQAAAAEK7fNvuHnJD05jfViJlAeIy8yK+C+Znfp/7TSZq1Kt3rdmLHfrrxQI/xcfeJ3Qv74g==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEJm0QICJvOFczHcccKNabWiZkIwQdGie9ZU51hLc8Teov1drKe9uHWZWmRfpiK5Mbg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "ff1ae7ec-d052-43bf-a2d1-5fa5535274ab",
+                            SecurityStamp = "5aec2348-ff9b-42b9-b91b-f5a8d9831a45",
                             TwoFactorEnabled = false,
                             UserName = "basicuser"
                         });
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
+
+                    b.ToTable("Roles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "710965c5-bcf1-4a2d-86bf-e4b401f4849b",
+                            Name = "SuperAdmin",
+                            NormalizedName = "SUPERADMIN"
+                        },
+                        new
+                        {
+                            Id = "6cf6e5b3-6f17-4d17-82fb-57c7e8a36e78",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "c7c1ccaa-b9fc-4744-9eb4-606b3f82c791",
+                            Name = "Moderator",
+                            NormalizedName = "MODERATOR"
+                        },
+                        new
+                        {
+                            Id = "893f21b6-e686-4e08-8f04-bc2dae8f5e8e",
+                            Name = "Basic",
+                            NormalizedName = "BASIC"
+                        });
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RoleId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("RoleClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+                {
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProviderKey")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProviderDisplayName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("LoginProvider", "ProviderKey");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserLogins", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("RoleId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("UserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "fa07b71a-edb2-4467-82f6-bb0406accc8e",
+                            RoleId = "710965c5-bcf1-4a2d-86bf-e4b401f4849b"
+                        },
+                        new
+                        {
+                            UserId = "fa07b71a-edb2-4467-82f6-bb0406accc8e",
+                            RoleId = "893f21b6-e686-4e08-8f04-bc2dae8f5e8e"
+                        },
+                        new
+                        {
+                            UserId = "3badeb88-18b3-4330-93de-17e60c0fcfd5",
+                            RoleId = "893f21b6-e686-4e08-8f04-bc2dae8f5e8e"
+                        });
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UserId", "LoginProvider", "Name");
+
+                    b.ToTable("UserTokens", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

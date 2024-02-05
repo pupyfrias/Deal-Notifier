@@ -12,7 +12,7 @@ namespace DealNotifier.Core.Application.ViewModels.V1.Item
         public string? Offer { get; set; }
         public string? PhoneCarriers { get; set; }
         public string? Search { get; set; }
-        public string? Shops { get; set; }
+        public string? Stores { get; set; }
         public string? Sort_by { get; set; }
         public string? Storages { get; set; }
         public string? Types { get; set; }

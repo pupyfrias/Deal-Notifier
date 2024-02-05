@@ -22,12 +22,12 @@ namespace DealNotifier.Infrastructure.Identity.Services
             authClient = new AuthProto.AuthService.AuthServiceClient(channel);
         }
 
-        public async Task<Response<Core.Application.ViewModels.V1.Auth.AuthenticationResponse>> LoginAsync(Core.Application.ViewModels.V1.Auth.AuthenticationRequest request)
+        public async Task<ApiResponse<Core.Application.ViewModels.V1.Auth.AuthenticationResponse>> LoginAsync(Core.Application.ViewModels.V1.Auth.AuthenticationRequest request)
         {
             var mappedRequest = _mapper.Map<AuthProto.AuthenticationRequest>(request);
             var response = await authClient.loginAsync(mappedRequest);
             var mappedResponse = _mapper.Map<Core.Application.ViewModels.V1.Auth.AuthenticationResponse>(response);
-            return new Response<Core.Application.ViewModels.V1.Auth.AuthenticationResponse>(mappedResponse);
+            return new ApiResponse<Core.Application.ViewModels.V1.Auth.AuthenticationResponse>(mappedResponse);
         }
     }
 }

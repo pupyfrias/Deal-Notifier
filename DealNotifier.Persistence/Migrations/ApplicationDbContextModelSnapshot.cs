@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace DealNotifier.Infrastructure.Persistence.Migrations
+namespace DealNotifier.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
@@ -17,7 +17,7 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.12")
+                .HasAnnotation("ProductVersion", "7.0.13")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -272,6 +272,9 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                     b.Property<int>("BidCount")
                         .HasColumnType("Int");
 
+                    b.Property<int>("BrandId")
+                        .HasColumnType("int");
+
                     b.Property<int>("ConditionId")
                         .HasColumnType("int");
 
@@ -361,6 +364,8 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BrandId");
 
                     b.HasIndex("ConditionId");
 
@@ -792,6 +797,20 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Dish",
                             ShortName = "DSH"
+                        },
+                        new
+                        {
+                            Id = 28,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Bahama",
+                            ShortName = "BAA"
+                        },
+                        new
+                        {
+                            Id = 29,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Puerto Rico",
+                            ShortName = "PCT"
                         });
                 });
 
@@ -1038,6 +1057,13 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("DealNotifier.Core.Domain.Entities.Item", b =>
                 {
+                    b.HasOne("DealNotifier.Core.Domain.Entities.Brand", "Brand")
+                        .WithMany("Items")
+                        .HasForeignKey("BrandId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_Item_Brand");
+
                     b.HasOne("DealNotifier.Core.Domain.Entities.Condition", "Condition")
                         .WithMany("Items")
                         .HasForeignKey("ConditionId")
@@ -1074,9 +1100,11 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
                     b.HasOne("DealNotifier.Core.Domain.Entities.UnlockabledPhone", "UnlockabledPhone")
                         .WithMany("Items")
                         .HasForeignKey("UnlockabledPhoneId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired()
                         .HasConstraintName("FK_Item_UnlockabledPhone");
+
+                    b.Navigation("Brand");
 
                     b.Navigation("Condition");
 
@@ -1154,6 +1182,8 @@ namespace DealNotifier.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("DealNotifier.Core.Domain.Entities.Brand", b =>
                 {
+                    b.Navigation("Items");
+
                     b.Navigation("UnlockabledPhones");
                 });
 

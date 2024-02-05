@@ -6,14 +6,14 @@ using System.Reflection;
 
 namespace DealNotifier.Core.Application.Specification
 {
-    public abstract class Specification<TEntity> : ISpecification<TEntity> where TEntity : AuditableEntity
+    public abstract class Specification<TEntity> : ISpecification<TEntity> where TEntity : EntityBase
     {
         protected Specification(IPaginationBase pagination)
         {
             Skip = pagination.Offset;
             Take = pagination.Limit;
-            Descending = pagination?.Descending ?? false;
-            ApplyOrderBy(pagination?.OrderBy ?? "Created");
+            Descending = pagination.Descending;
+            ApplyOrderBy(pagination.OrderBy ?? "Created");
         }
 
         public Expression<Func<TEntity, bool>> Criteria { get; protected set; }

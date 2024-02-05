@@ -2,7 +2,7 @@
 {
     public class ItemResponse
     {
-        public string Id { get; set; }
+        public int Id { get; set; }
         public int BidCount { get; set; }
         public int ConditionId { get; set; }
         public string ConditionName { get; set; }

@@ -2,7 +2,7 @@
 
 namespace DealNotifier.Core.Domain.Entities
 {
-    public class BanLink : AuditableEntity
+    public class BanLink : EntityBase
     {
         public string Link { get; set; }
     }

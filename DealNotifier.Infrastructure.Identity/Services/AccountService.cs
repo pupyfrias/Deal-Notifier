@@ -42,7 +42,7 @@ namespace DealNotifier.Infrastructure.Identity.Services
             _mapper = mapper;
         }
 
-        public async Task<Response<AuthenticationResponse>> LoginAsync(AuthenticationRequest request)
+        public async Task<ApiResponse<AuthenticationResponse>> LoginAsync(AuthenticationRequest request)
         {
             _user = await _userManager.FindByNameAsync(request.UserName);
 
@@ -81,7 +81,7 @@ namespace DealNotifier.Infrastructure.Identity.Services
 
             _logger.Information("User {UserName} logged in", _user.UserName);
 
-            var response = new Response<AuthenticationResponse>(authentication);
+            var response = new ApiResponse<AuthenticationResponse>(authentication);
             response.Message = "Successs Authentication.";
 
             return response;
@@ -144,7 +144,7 @@ namespace DealNotifier.Infrastructure.Identity.Services
             return token;
         }
 
-        public async Task<Response<RefreshTokenResponseDto?>> VerifyRefreshToken(RefreshTokenRequestDto request)
+        public async Task<ApiResponse<RefreshTokenResponseDto?>> VerifyRefreshToken(RefreshTokenRequestDto request)
         {
             var jwtTokenHandler = new JwtSecurityTokenHandler();
             var tokenContent = jwtTokenHandler.ReadJwtToken(request.AccessToken);
@@ -167,7 +167,7 @@ namespace DealNotifier.Infrastructure.Identity.Services
                     RefreshToken = await CreateRefreshTokenAsync()
                 };
 
-                var response = new Response<RefreshTokenResponseDto>(tokenResponse);
+                var response = new ApiResponse<RefreshTokenResponseDto>(tokenResponse);
                 response.Message = "Successs Refresh AccessToken.";
                 _logger.Information("Access Token refreshed to user {UseName}", _user.UserName);
                 return response;

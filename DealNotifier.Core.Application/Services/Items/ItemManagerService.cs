@@ -7,18 +7,16 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Concurrent;
 using System.Data;
 
+
 namespace DealNotifier.Core.Application.Services.Items
 {
     public class ItemManagerService : IItemManagerService
     {
         private const decimal _minPriceDifferenceForNotification = 5m;
-        private readonly IServiceScopeFactory _serviceScopeFactory;
-        private readonly IMapper _mapper;
-        private readonly IItemValidationService _itemValidationService;
         private readonly IItemNotificationService _itemNotificationService;
-
-        public ConcurrentBag<int> EvaluatedItemIds { get; set; } = new();
-
+        private readonly IItemValidationService _itemValidationService;
+        private readonly IMapper _mapper;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
         public ItemManagerService(
             IServiceScopeFactory serviceScopeFactory,
             IMapper mapper,
@@ -32,6 +30,7 @@ namespace DealNotifier.Core.Application.Services.Items
             _itemNotificationService = itemNotificationService;
         }
 
+        public ConcurrentBag<int> EvaluatedItemIds { get; set; } = new();
         public void AddNewItemIdToEvaluatedIdList(IEnumerable<Item> itemListToCreate)
         {
             foreach (var item in itemListToCreate)
@@ -40,32 +39,19 @@ namespace DealNotifier.Core.Application.Services.Items
             }
         }
 
-
-        private void HandleExistingItem(Item oldItem, ItemDto newItem, ConcurrentBag<Item> itemsToUpdate)
+        public void SetBrand(ItemDto item)
         {
-            EvaluatedItemIds.Add(oldItem.Id);
-            
-            if (!_itemValidationService.CanItemBeUpdated(oldItem, newItem)) return;
-            
-            UpdateOldItemFromNew(oldItem, newItem);
-            itemsToUpdate.Add(oldItem);
+            int brandId = Enum.GetNames(typeof(Enums.Brand))
+                   .Select((e, i) => new { Name = e, Id = i + 1 })
+                   .Where(e => item.Name.Contains(e.Name, StringComparison.OrdinalIgnoreCase))
+                   .Select(e => e.Id)
+                   .FirstOrDefault();
 
-            decimal priceDifference = oldItem.Price - newItem.Price;
-
-            if (priceDifference >= _minPriceDifferenceForNotification || (bool)oldItem.IsAuction!)
-            {
-                _itemNotificationService.EvaluateIfNotifiable(oldItem);
-            }
+            item.BrandId = brandId != 0 ? brandId : (int) Enums.Brand.Unknown;
         }
 
-        private void HandleNewItem(ItemDto itemCreate, ConcurrentBag<Item> itemsToCreate)
-        {
-            Item newItem = _mapper.Map<Item>(itemCreate);
-            itemsToCreate.Add(newItem);
-            _itemNotificationService.EvaluateIfNotifiable(newItem);
-        }
 
-        public async Task<(ConcurrentBag<Item> ,ConcurrentBag<Item>)> SplitExistingItemsFromNewItems(ConcurrentBag<ItemDto> itemsToProcess)
+        public async Task<(ConcurrentBag<Item>, ConcurrentBag<Item>)> SplitExistingItemsFromNewItems(ConcurrentBag<ItemDto> itemsToProcess)
         {
 
             ConcurrentBag<Item> itemsToCreate = new();
@@ -91,6 +77,30 @@ namespace DealNotifier.Core.Application.Services.Items
 
             await Task.WhenAll(tasks);
             return (itemsToCreate, itemsToUpdate);
+        }
+
+        private void HandleExistingItem(Item oldItem, ItemDto newItem, ConcurrentBag<Item> itemsToUpdate)
+        {
+            EvaluatedItemIds.Add(oldItem.Id);
+            
+            if (!_itemValidationService.CanItemBeUpdated(oldItem, newItem)) return;
+            
+            UpdateOldItemFromNew(oldItem, newItem);
+            itemsToUpdate.Add(oldItem);
+
+            decimal priceDifference = oldItem.Price - newItem.Price;
+
+            if (priceDifference >= _minPriceDifferenceForNotification || (bool)oldItem.IsAuction!)
+            {
+                _itemNotificationService.EvaluateIfNotifiable(oldItem);
+            }
+        }
+
+        private void HandleNewItem(ItemDto itemCreate, ConcurrentBag<Item> itemsToCreate)
+        {
+            Item newItem = _mapper.Map<Item>(itemCreate);
+            itemsToCreate.Add(newItem);
+            _itemNotificationService.EvaluateIfNotifiable(newItem);
         }
         private void UpdateItemPrice(Item oldItem, decimal newPrice, decimal oldPrice)
         {

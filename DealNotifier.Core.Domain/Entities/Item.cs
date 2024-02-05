@@ -2,7 +2,7 @@
 
 namespace DealNotifier.Core.Domain.Entities
 {
-    public class Item : AuditableEntity
+    public class Item : EntityBase
     {
         public int BidCount { get; set; }
         public int ConditionId { get; set; }
@@ -21,9 +21,12 @@ namespace DealNotifier.Core.Domain.Entities
         public decimal Saving { get; set; }
         public decimal SavingsPercentage { get; set; }
         public int StockStatusId { get; set; }
-        public int? UnlockProbabilityId { get; set; }
+        public int UnlockProbabilityId { get; set; }
         public int? UnlockabledPhoneId { get; set; }
+        public int BrandId { get; set; }
+
         public UnlockabledPhone UnlockabledPhone { get; set; }
+        public Brand Brand { get; set; }
         public Condition Condition { get; set; }
         public ItemType ItemType { get; set; }
         public OnlineStore OnlineStore { get; set; }

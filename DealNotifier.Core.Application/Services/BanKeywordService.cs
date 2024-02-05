@@ -7,7 +7,7 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace DealNotifier.Core.Application.Services
 {
-    public class BanKeywordService : GenericService<BanKeyword>, IBanKeywordService
+    public class BanKeywordService : ServiceBase<BanKeyword>, IBanKeywordService
     {
         public BanKeywordService(IBanKeywordRepository repository, IMapper mapper, IHttpContextAccessor httpContext, IMemoryCache cache) : base(repository, mapper, httpContext, cache)
         {

@@ -33,7 +33,7 @@ namespace DealNotifier.Infrastructure.Identity
             {
                 services.AddDbContext<IdentityContext>(option =>
                 {
-                    option.UseSqlServer(configuration.GetConnectionString("DealNotifierSecurityConnection"),
+                    option.UseSqlServer(configuration.GetConnectionString("DealNotifierIdentityConnection"),
                         optionAction => optionAction.MigrationsAssembly(typeof(IdentityContext).Assembly.FullName));
                 });
             }

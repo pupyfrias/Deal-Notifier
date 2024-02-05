@@ -7,10 +7,10 @@ namespace DealNotifier.Core.Application.Setups
         public static readonly Action<CorsOptions> Configure = options =>
         {
             options.AddPolicy("AllowAll", policy =>
-               policy.WithOrigins("http://localhost")
+               policy
                      .AllowAnyMethod()
                      .AllowAnyHeader()
-                     .AllowCredentials());
+                     .AllowAnyOrigin());
         };
     }
 }

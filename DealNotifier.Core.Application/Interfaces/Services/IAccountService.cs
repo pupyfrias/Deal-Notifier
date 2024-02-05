@@ -6,8 +6,8 @@ namespace DealNotifier.Core.Application.Interfaces.Services
 {
     public interface IAccountService
     {
-        Task<Response<AuthenticationResponse>> LoginAsync(AuthenticationRequest request);
+        Task<ApiResponse<AuthenticationResponse>> LoginAsync(AuthenticationRequest request);
 
-        Task<Response<RefreshTokenResponseDto?>> VerifyRefreshToken(RefreshTokenRequestDto request);
+        Task<ApiResponse<RefreshTokenResponseDto?>> VerifyRefreshToken(RefreshTokenRequestDto request);
     }
 }

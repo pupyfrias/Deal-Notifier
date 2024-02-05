@@ -10,6 +10,8 @@ namespace DealNotifier.Core.Application.Interfaces.Services.Items
 
         void AddNewItemIdToEvaluatedIdList(IEnumerable<Item> itemListToCreate);
 
+        void SetBrand(ItemDto item);
+
         Task<(ConcurrentBag<Item> itemListToCreate, ConcurrentBag<Item> itemListToUpdate)> SplitExistingItemsFromNewItems(
             ConcurrentBag<ItemDto> itemsToProcess);
     }

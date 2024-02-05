@@ -2,7 +2,7 @@
 
 namespace DealNotifier.Core.Application.Interfaces.Repositories
 {
-    public interface IStockStatusRepository : IGenericRepository<StockStatus>
+    public interface IStockStatusRepository : IAsyncRepository<StockStatus>
     {
     }
 }

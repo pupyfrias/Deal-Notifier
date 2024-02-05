@@ -12,12 +12,13 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Concurrent;
 using System.Data;
+using System.Data.Common;
 using ILogger = Serilog.ILogger;
 using OnlineStore = DealNotifier.Core.Application.Enums.OnlineStore;
 
 namespace DealNotifier.Core.Application.Services.Items
 {
-    public class ItemService : GenericService<Item>, IItemService
+    public class ItemService : ServiceBase<Item>, IItemService
     {
         private readonly IItemManagerService _itemManager;
         private readonly IItemRepository _itemRepository;
@@ -45,6 +46,11 @@ namespace DealNotifier.Core.Application.Services.Items
             _logger = logger;
             _itemManager = itemManager;
             _serviceScopeFactory = serviceScopeFactory;
+        }
+
+        public async Task BulkDeleteAsync(IEnumerable<int> ids)
+        {
+           await _itemRepository.DeleteRangeAsync(x=>  ids.Contains(x.Id));
         }
 
         public async Task DeleteAsync(Guid id)
@@ -77,7 +83,7 @@ namespace DealNotifier.Core.Application.Services.Items
         {
             try
             {
-                (var itemsToCreate, var itemsToUpdate) = await _itemManager.SplitExistingItemsFromNewItems(itemsToProcess);
+                (var itemsToCreate, var itemsToUpdate) = await _itemManager.SplitExistingItemsFromNewItems(itemsToProcess);                
                 var createTask = CreateRangeAsync(itemsToCreate);
                 var updateTask = UpdateRangeAsync(itemsToUpdate);
                 await Task.WhenAll(updateTask, createTask);

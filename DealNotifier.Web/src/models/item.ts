@@ -1,0 +1,23 @@
+export type Item = {
+    id: number;
+    bidCount: number;
+    conditionId: number;
+    conditionName: string;
+    image: string;
+    isAuction: boolean;
+    itemEndDate: string | null;
+    link: string;
+    name: string;
+    oldPrice: number;
+    price: number;
+    saving: number;
+    savingsPercentage: number;
+    shopId: number;
+    shopName: string | null;
+    stockStatusId: number;
+    stockStatusName: string;
+    itemTypeId: number;
+    itemTypeName: string;
+    unlockProbabilityId: number;
+    unlockProbabilityName: string;
+  };
