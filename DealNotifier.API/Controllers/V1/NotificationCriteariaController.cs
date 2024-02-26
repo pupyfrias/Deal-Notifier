@@ -8,6 +8,7 @@ using DealNotifier.Core.Application.Wrappers;
 using DealNotifier.Core.Domain.Entities;
 using DealNotifier.Persistence.DbContexts;
 using Microsoft.AspNetCore.Mvc;
+using Asp.Versioning;
 
 namespace DealNotifier.API.Controllers.V1
 {

@@ -7,6 +7,8 @@ using DealNotifier.Core.Application.ViewModels.V1.PhoneUnlockTool;
 using DealNotifier.Core.Application.Wrappers;
 using DealNotifier.Core.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Asp.Versioning;
+
 
 namespace DealNotifier.API.Controllers.V1
 {

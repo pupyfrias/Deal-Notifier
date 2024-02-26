@@ -22,6 +22,11 @@ namespace DealNotifier.Persistence.Repositories
             return await _dbContext.UnlockabledPhones.AnyAsync(unlockabledPhone => unlockabledPhone.ModelName.Equals(modelName));
         }
 
+
+        public IEnumerable<UnlockabledPhone> Where(Func<UnlockabledPhone, bool> predate)
+        {
+            return _dbContext.UnlockabledPhones.Where(predate);
+        }
         #endregion Constructor
     }
 }

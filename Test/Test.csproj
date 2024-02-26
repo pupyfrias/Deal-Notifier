@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DealNotifier.Core.Application\DealNotifier.Core.Application.csproj" />
+    <ProjectReference Include="..\DealNotifier.Infrastructure.Email\DealNotifier.Infrastructure.Email.csproj" />
     <ProjectReference Include="..\DealNotifier.Persistence\DealNotifier.Persistence.csproj" />
   </ItemGroup>
 

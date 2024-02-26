@@ -16,7 +16,8 @@ namespace DealNotifier.Core.Application
     {
         public static void AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddApiVersioning(ApiVersionSetup.Configure);
+            services.AddApiVersioning(ApiVersionSetup.Configure)
+                .AddApiExplorer(VersionedApiExplorerSetup.Configure);
             services.AddAuthorization();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddControllers();
@@ -25,7 +26,6 @@ namespace DealNotifier.Core.Application
             services.AddHttpContextAccessor();
             services.AddMemoryCache();
             services.AddSwaggerGen(SwaggerGenSetup.Configure);
-            services.AddVersionedApiExplorer(VersionedApiExplorerSetup.Configure);
 
 
 
@@ -50,9 +50,12 @@ namespace DealNotifier.Core.Application
             services.AddScoped<IUnlockProbabilityService, UnlockProbabilityService>();
             services.AddScoped<IItemManagerService, ItemManagerService>();
             services.AddScoped<IItemValidationService, ItemValidationService>();
-            services.AddScoped<ICacheDataService, CacheDataService>();
-            services.AddScoped<IItemNotificationService, ItemNotificationService>();
+            
+            
             services.AddScoped<IUnlockVerificationService, UnlockVerificationService>();
+
+            services.AddSingleton<ICacheDataService, CacheDataService>();
+            services.AddSingleton<IItemNotificationService, ItemNotificationService>();
 
             #endregion Dependency Injection
         }

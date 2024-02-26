@@ -14,7 +14,7 @@ namespace WorkerService.T_Unlock_WebScraping.Services
         private readonly IHttpService _httpService;
   
 
-        public TUnlockFetchService(ILogger logger, IOptions<TUnlockUrlConfig> tUnlockUrlConfig, IHttpService httpService)
+        public TUnlockFetchService(ILogger logger, IOptions<GlobalUnlockerUrlConfig> tUnlockUrlConfig, IHttpService httpService)
         {
             _logger = logger;
             _baseUrl = tUnlockUrlConfig.Value.Base;

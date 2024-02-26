@@ -72,11 +72,13 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddScoped<IUnlockabledPhoneService, UnlockabledPhoneService>();
         services.AddScoped<IItemDependencyLoaderService, ItemDependencyLoaderService>();
         services.AddScoped<IItemManagerService,ItemManagerService>();
-        services.AddScoped<IItemNotificationService,ItemNotificationService>();
+
         services.AddScoped<IItemValidationService,ItemValidationService>();
-        services.AddScoped<ICacheDataService, CacheDataService>();
         services.AddScoped<IUnlockVerificationService,UnlockVerificationService>();
         services.AddScoped<IItemService,ItemService>();
+
+        services.AddSingleton<ICacheDataService, CacheDataService>();
+        services.AddSingleton<IItemNotificationService, ItemNotificationService>();
         #endregion Services
     })
    .Build();

@@ -10,7 +10,7 @@
         public bool IsAuction { get; set; }
         public DateTime? ItemEndDate { get; set; }
         public string Link { get; set; }
-        public string Name { get; set; }
+        public string Title { get; set; }
         public decimal OldPrice { get; set; }
         public decimal Price { get; set; }
         public decimal Saving { get; set; }
@@ -23,6 +23,7 @@
         public string ItemTypeName { get; set; }
         public int UnlockProbabilityId { get; set; }
         public string UnlockProbabilityName { get; set; }
+        public string ShortDescription { get; set; }
 
     }
 }

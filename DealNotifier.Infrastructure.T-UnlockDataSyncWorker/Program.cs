@@ -47,7 +47,7 @@ IHost host = Host.CreateDefaultBuilder(args)
 
         #region Configure
 
-        services.Configure<TUnlockUrlConfig>(hostContext.Configuration.GetSection("TUnlockUrlConfig"));
+        services.Configure<GlobalUnlockerUrlConfig>(hostContext.Configuration.GetSection("TUnlockUrlConfig"));
 
         #endregion Configure
     })

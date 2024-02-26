@@ -24,12 +24,17 @@ namespace WorkerService.T_Unlock_WebScraping.Services
         public async Task ProcessAsync(string pageHtml, Brand brand)
         {
             var htmlNodeCollection = HtmlNodeMapper.MapStringToHtmlNodeCollection(pageHtml);
-            var tasks = htmlNodeCollection.Select(async htmlNode =>
+
+            foreach (var htmlNode in htmlNodeCollection)
+            {
+                await ProcessSinglePhoneAsync(htmlNode, brand);
+            }
+           /* var tasks = htmlNodeCollection.Select(async htmlNode =>
             {
                 await ProcessSinglePhoneAsync(htmlNode, brand);
             });
 
-            await Task.WhenAll(tasks);
+            await Task.WhenAll(tasks);*/
         }
 
 

@@ -57,6 +57,11 @@ namespace DealNotifier.Persistence.Repositories
             return await _dbContext.UnlockabledPhonePhoneCarriers.FirstOrDefaultAsync(predicate);
         }
 
+        public bool Any(Func<UnlockabledPhonePhoneCarrier, bool> predate)
+        {
+           return _dbContext.UnlockabledPhonePhoneCarriers.Any(predate);
+        }
+
         #endregion Constructor
     }
 }

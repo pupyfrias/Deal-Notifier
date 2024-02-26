@@ -20,25 +20,40 @@ namespace DealNotifier.Core.Application.Services.Items
         {
             var hasBanKeywords = HasBanKeywords(itemCreate);
             var isLinkBanned = IsLinkBanned(itemCreate);
-            return !(hasBanKeywords || isLinkBanned);
+            var isChecked = _cacheDataService.CheckedList.Any(x => x == itemCreate.Link);
+
+            return !(hasBanKeywords || isLinkBanned || isChecked );
         }
 
-        public bool ContainsWordUnlocked(string title)
+        public bool ContainsWordUnlocked(string description)
         {
-            return title.Contains("unlocked", StringComparison.OrdinalIgnoreCase) || title.Contains("ulk",
+            return description.Contains("unlocked", StringComparison.OrdinalIgnoreCase) || description.Contains("ulk",
                 StringComparison.OrdinalIgnoreCase);
         }
 
-        public bool TitleContainsKeyword(string title, string keywords)
+        public bool DescriptionMatchesIncludeExcludeCriteria(string description, string includeKeywords, string excludeKeywords)
         {
-            var keywordList = keywords.Split(',').Select(keyword => keyword.Trim());
-            return keywordList.Any(keyword => title.Contains(keyword, StringComparison.OrdinalIgnoreCase));
+            var includeKeywordList = includeKeywords.Split(',')
+                                                    .Select(keyword => keyword.Trim())
+                                                    .Where(keyword => !string.IsNullOrEmpty(keyword));
+            var excludeKeywordList = excludeKeywords.Split(',')
+                                                    .Select(keyword => keyword.Trim())
+                                                    .Where(keyword => !string.IsNullOrEmpty(keyword));
+
+            bool includes = includeKeywordList.Any(keyword => description.Contains(keyword, StringComparison.OrdinalIgnoreCase));
+            bool excludes = excludeKeywordList.Any(keyword => description.Contains(keyword, StringComparison.OrdinalIgnoreCase));
+
+            return (includes && !excludes) || (string.IsNullOrEmpty(includeKeywords) && !excludes);
         }
 
         public bool CanItemBeUpdated(Item oldItem, ItemDto item)
         {
-            return oldItem.Price != item.Price || oldItem.UnlockProbabilityId != item.UnlockProbabilityId ||
-                   oldItem.Image != item.Image || item.IsAuction;
+            return oldItem.Price != item.Price 
+                   || oldItem.UnlockProbabilityId != item.UnlockProbabilityId 
+                   || oldItem.Image != item.Image 
+                   || item.IsAuction 
+                   || oldItem.Title != item.Title
+                   || oldItem.ShortDescription != item.ShortDescription;
         }
 
         #endregion Public Method
@@ -47,7 +62,7 @@ namespace DealNotifier.Core.Application.Services.Items
 
         private bool HasBanKeywords(ItemDto itemCreate)
         {
-            return _cacheDataService.BanKeywordList.Any(element => itemCreate.Name.Contains(element.Keyword,
+            return _cacheDataService.BanKeywordList.Any(element => itemCreate.Title.Contains(element.Keyword,
                 StringComparison.OrdinalIgnoreCase));
         }
 

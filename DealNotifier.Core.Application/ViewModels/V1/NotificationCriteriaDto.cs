@@ -2,7 +2,8 @@
 {
     public class NotificationCriteriaDto
     {
-        public string Keywords { get; set; }
+        public string IncludeKeywords { get; set; }
+        public string ExcludeKeywords { get; set; }
         public decimal MaxPrice { get; set; }
         public int ConditionId { get; set; }
     }

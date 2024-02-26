@@ -4,6 +4,7 @@ using DealNotifier.Core.Application.ViewModels.Common;
 using DealNotifier.Core.Application.ViewModels.V1.Condition;
 using DealNotifier.Core.Application.Wrappers;
 using Microsoft.AspNetCore.Mvc;
+using Asp.Versioning;
 
 namespace DealNotifier.API.Controllers.V1
 {

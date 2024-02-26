@@ -9,6 +9,7 @@ namespace DealNotifier.Core.Application.Mappings
     {
         public ConditionMapperConfig()
         {
+            CreateMap<Condition, ConditionDto>().ReverseMap();
             CreateMap<ConditionCreateRequest, Condition>().IgnoreAllSourceNullProperties();
             CreateMap<ConditionUpdateRequest, Condition>().IgnoreAllSourceNullProperties();
             CreateMap<Condition, ConditionResponse>().IgnoreAllSourceNullProperties();

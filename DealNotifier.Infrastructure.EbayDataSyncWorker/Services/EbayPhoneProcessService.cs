@@ -3,6 +3,7 @@ using DealNotifier.Core.Application.Constants;
 using DealNotifier.Core.Application.Enums;
 using DealNotifier.Core.Application.Interfaces.Services.Items;
 using DealNotifier.Infrastructure.EbayDataSyncWorker.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using ILogger = Serilog.ILogger;
 
@@ -24,8 +25,8 @@ namespace DealNotifier.Infrastructure.EbayDataSyncWorker.Services
             ILogger logger,
             IOptions<EbayUrlConfig> ebayUrlConfig,
             IItemDependencyLoaderService itemDependencyLoaderService,
-            IItemNotificationService itemNotificationService,
-            IItemService itemService
+            IItemService itemService,
+            IServiceScopeFactory serviceScopeFactory
 
             )
         {
@@ -34,7 +35,8 @@ namespace DealNotifier.Infrastructure.EbayDataSyncWorker.Services
             _itemSummaryManagerService = itemSummaryManagerService;
             _logger = logger;
             _itemDependencyLoaderService = itemDependencyLoaderService;
-            _itemNotificationService = itemNotificationService;
+            _itemNotificationService = serviceScopeFactory.CreateScope()
+                 .ServiceProvider.GetRequiredService<IItemNotificationService>();
             _itemService = itemService;
         }
 
@@ -49,8 +51,10 @@ namespace DealNotifier.Infrastructure.EbayDataSyncWorker.Services
                 {
                     string url = $"{baseUrl}{path}";
                     await ProcessURLAsync(url);
+                    _logger.Information($"Processed URL: {url}");
                 }
 
+                await _itemService.UpdateStockStatusAsync(OnlineStore.eBay);
                 await _itemNotificationService.NotifyUsersOfItemsByEmail();
             }
             catch (Exception ex)
@@ -68,11 +72,19 @@ namespace DealNotifier.Infrastructure.EbayDataSyncWorker.Services
                 if (ebayResponse == null) break;
                 var itemsToProcess = await _itemSummaryManagerService.MapToItemAsync(ebayResponse.ItemSummaries);
                 await _itemService.SaveOrUpdateRangeAsync(itemsToProcess);
+
+
+
+                if (ebayResponse.Total < ebayResponse.Limit + ebayResponse.Offset)
+                {
+                    _logger.Information($"total itmes: {ebayResponse.Total}. limit: {ebayResponse.Limit}. offset: {ebayResponse.Offset}");
+                    break;
+                }
                 currentUrl = ebayResponse.Next;
             }
             while (currentUrl != null);
 
-            await _itemService.UpdateStockStatusAsync(OnlineStore.eBay);
+            
         }
     }
 }

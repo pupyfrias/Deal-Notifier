@@ -5,6 +5,7 @@ using DealNotifier.Core.Application.ViewModels.V1.ItemType;
 using DealNotifier.Core.Application.Wrappers;
 using DealNotifier.Core.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Asp.Versioning;
 
 namespace DealNotifier.API.Controllers.V1
 {

@@ -26,7 +26,7 @@
         public string ItemId { get; set; }
         public string ItemWebUrl { get; set; }
         public ItemLocation ItemLocation { get; set; }
-        public List<string> leafCategoryIds { get; set; }
+        public List<string> LeafCategoryIds { get; set; }
         public string LegacyItemId { get; set; }
         public string ListingMarketplaceId { get; set; }
         public MarketingPrice MarketingPrice { get; set; }

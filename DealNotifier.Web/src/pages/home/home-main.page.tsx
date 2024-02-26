@@ -54,7 +54,7 @@ const HomeMain: FC<HomeMainProps> = ({ items, updateQueryParams }) => {
     setCheckboxesValue([]);
   };
 
-  const checkAll = (event: ChangeEvent<HTMLInputElement>, checked: boolean) => {
+  const checkAll = (_event: ChangeEvent<HTMLInputElement>, checked: boolean) => {
     if (checked) {
       const ids = items.map((item) => item.id);
 
@@ -99,7 +99,7 @@ const HomeMain: FC<HomeMainProps> = ({ items, updateQueryParams }) => {
                       variant='h5'
                       component='div'
                     >
-                      {item.name}
+                      {item.title}
                     </Typography>
                   </a>
 

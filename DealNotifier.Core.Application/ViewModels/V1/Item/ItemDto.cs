@@ -18,7 +18,7 @@ namespace DealNotifier.Core.Application.ViewModels.V1.Item
         public string Link { get; set; }
 
         [Required]
-        public string Name { get; set; }
+        public string Title { get; set; }
         public bool Notify { get; set; } = true;
         [Required]
         public int? OnlineStoreId { get; set; }
@@ -30,6 +30,8 @@ namespace DealNotifier.Core.Application.ViewModels.V1.Item
         public int? UnlockabledPhoneId { get; set; }
 
         public int BrandId { get; set; }
+
+        public string ShortDescription { get; set; }
 
     }
 }

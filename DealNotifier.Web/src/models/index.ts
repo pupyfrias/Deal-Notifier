@@ -1,3 +1,4 @@
+export * from './app-store';
 export * from './brand';
 export * from './condition';
 export * from './item-type';
@@ -5,6 +6,7 @@ export * from './item';
 export * from './login';
 export * from './notification-criteria';
 export * from './online-store';
+export * from './person';
 export * from './sort-by';
 export * from './unlock-probability';
 export * from './wrappers/api-response';

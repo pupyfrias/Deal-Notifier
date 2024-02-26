@@ -13,5 +13,7 @@ namespace DealNotifier.Core.Application.Interfaces.Services.Items
         Task BulkDeleteAsync(IEnumerable<int> ids);
         Task SaveOrUpdateRangeAsync(ConcurrentBag<ItemDto> itemsToProcess);
         Task UpdateStockStatusAsync(OnlineStore onlineStore);
+
+        Task DeleteByKeyword(string keyword);
     }
 }

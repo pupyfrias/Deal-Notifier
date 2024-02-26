@@ -7,11 +7,23 @@ namespace DealNotifier.Core.Application.Services
 {
     public class CacheDataService : ICacheDataService
     {
-        public ConcurrentBag<string> CheckedList { get; set; } = new ConcurrentBag<string>();
-        public HashSet<BanKeywordDto> BanKeywordList { get; set; } = new HashSet<BanKeywordDto>();
-        public HashSet<BanLinkDto> BanLinkList { get; set; } = new HashSet<BanLinkDto>();
-        public HashSet<BrandDto> BrandList { get; set; } = new HashSet<BrandDto>();
-        public HashSet<NotificationCriteriaDto> NotificationCriteriaList { get; set; } = new HashSet<NotificationCriteriaDto>();
-        public HashSet<PhoneCarrierDto> PhoneCarrierList { get; set; } = new HashSet<PhoneCarrierDto>();
+        public ConcurrentBag<string> CheckedList { get; set; } 
+        public HashSet<BanKeywordDto> BanKeywordList { get; set; } 
+        public HashSet<BanLinkDto> BanLinkList { get; set; }
+        public HashSet<BrandDto> BrandList { get; set; }
+        public HashSet<NotificationCriteriaDto> NotificationCriteriaList { get; set; } 
+        public HashSet<PhoneCarrierDto> PhoneCarrierList { get; set; }
+
+        public CacheDataService()
+        {
+            PhoneCarrierList = new HashSet<PhoneCarrierDto>();
+            BanKeywordList = new HashSet<BanKeywordDto>();
+            BanLinkList = new HashSet<BanLinkDto>();
+            BrandList = new HashSet<BrandDto>();
+            NotificationCriteriaList = new HashSet<NotificationCriteriaDto>();
+            CheckedList = new ConcurrentBag<string>();
+            
+
+        }
     }
 }

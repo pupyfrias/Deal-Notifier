@@ -13,7 +13,7 @@ namespace DealNotifier.Persistence.Repositories
     {
         #region Private Variables
 
-        private readonly ApplicationDbContext _dbContext;
+        protected readonly ApplicationDbContext dbContext;
         private readonly IConfigurationProvider _configurationProvider;
 
         #endregion Private Variables
@@ -22,7 +22,7 @@ namespace DealNotifier.Persistence.Repositories
 
         public RepositoryBase(ApplicationDbContext context, IConfigurationProvider configurationProvider)
         {
-            _dbContext = context;
+            dbContext = context;
             _configurationProvider = configurationProvider;
         }
 
@@ -32,20 +32,20 @@ namespace DealNotifier.Persistence.Repositories
 
         public async Task<TEntity> CreateAsync(TEntity entity)
         {
-            await _dbContext.AddAsync(entity);
-            await _dbContext.SaveChangesAsync();
+            await dbContext.AddAsync(entity);
+            await dbContext.SaveChangesAsync();
             return entity;
         }
 
         public async Task DeleteAsync(TEntity entity)
         {
-            _dbContext.Set<TEntity>().Remove(entity);
-            await _dbContext.SaveChangesAsync();
+            dbContext.Set<TEntity>().Remove(entity);
+            await dbContext.SaveChangesAsync();
         }
 
         public async Task<TDestination?> GetByIdProjectedAsync<TDestination>(int id)
         {
-            var query = _dbContext.Set<TEntity>().AsQueryable();
+            var query = dbContext.Set<TEntity>().AsQueryable();
             return await query.Where(x => x.Id.Equals(id))
                               .AsNoTracking()
                               .ProjectTo<TDestination>(_configurationProvider)
@@ -54,7 +54,7 @@ namespace DealNotifier.Persistence.Repositories
 
         public async Task<TEntity?> GetByIdAsync(int id)
         {
-            var query = _dbContext.Set<TEntity>().AsQueryable();
+            var query = dbContext.Set<TEntity>().AsQueryable();
             return await query.Where(x => x.Id.Equals(id))
                               .FirstOrDefaultAsync();
         }
@@ -63,23 +63,23 @@ namespace DealNotifier.Persistence.Repositories
         {
             if (predicate == null)
             {
-                return await _dbContext.Set<TEntity>().CountAsync();
+                return await dbContext.Set<TEntity>().CountAsync();
             }
             else
             {
-                return await _dbContext.Set<TEntity>().Where(predicate).CountAsync();
+                return await dbContext.Set<TEntity>().Where(predicate).CountAsync();
             }
         }
 
         public async Task UpdateAsync(TEntity entity)
         {
-            _dbContext.Update(entity);
-            await _dbContext.SaveChangesAsync();
+            dbContext.Update(entity);
+            await dbContext.SaveChangesAsync();
         }
 
         public async Task<List<TDestination>> GetAllProjectedAsync<TDestination>(ISpecification<TEntity> spec)
         {
-            var query = _dbContext.Set<TEntity>().AsQueryable().AsNoTracking();
+            var query = dbContext.Set<TEntity>().AsQueryable().AsNoTracking();
             query = ApplySpecification(query, spec);
 
             return await query.ProjectTo<TDestination>(_configurationProvider).ToListAsync();
@@ -87,7 +87,7 @@ namespace DealNotifier.Persistence.Repositories
 
         public async Task<List<TDestination>> GetAllProjectedAsync<TDestination>()
         {
-            return await _dbContext.Set<TEntity>()
+            return await dbContext.Set<TEntity>()
                                    .AsNoTracking()
                                    .ProjectTo<TDestination>(_configurationProvider)
                                    .ToListAsync();
@@ -95,7 +95,7 @@ namespace DealNotifier.Persistence.Repositories
 
         public async Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
         {
-            return await _dbContext.Set<TEntity>().FirstOrDefaultAsync(predicate);
+            return await dbContext.Set<TEntity>().FirstOrDefaultAsync(predicate);
         }
 
 

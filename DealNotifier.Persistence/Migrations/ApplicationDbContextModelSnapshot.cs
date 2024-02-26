@@ -90,6 +90,9 @@ namespace DealNotifier.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Keyword")
+                        .IsUnique();
+
                     b.ToTable("BanKeyword", (string)null);
                 });
 
@@ -315,10 +318,6 @@ namespace DealNotifier.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(254)");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime?>("Notified")
                         .HasColumnType("datetime2");
 
@@ -354,10 +353,17 @@ namespace DealNotifier.Persistence.Migrations
                         .HasColumnType("decimal(13,2)")
                         .HasDefaultValueSql("0");
 
+                    b.Property<string>("ShortDescription")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("StockStatusId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("UnlockProbabilityId")
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UnlockProbabilityId")
                         .HasColumnType("int");
 
                     b.Property<int?>("UnlockabledPhoneId")
@@ -494,7 +500,11 @@ namespace DealNotifier.Persistence.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasDefaultValue("default");
 
-                    b.Property<string>("Keywords")
+                    b.Property<string>("ExcludeKeywords")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(MAX)");
+
+                    b.Property<string>("IncludeKeywords")
                         .IsRequired()
                         .HasColumnType("nvarchar(MAX)");
 
@@ -1095,6 +1105,8 @@ namespace DealNotifier.Persistence.Migrations
                     b.HasOne("DealNotifier.Core.Domain.Entities.UnlockProbability", "UnlockProbability")
                         .WithMany("Items")
                         .HasForeignKey("UnlockProbabilityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
                         .HasConstraintName("FK_Item_UnlockProbability");
 
                     b.HasOne("DealNotifier.Core.Domain.Entities.UnlockabledPhone", "UnlockabledPhone")

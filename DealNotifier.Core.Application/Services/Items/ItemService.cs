@@ -2,14 +2,17 @@
 using DealNotifier.Core.Application.Exceptions;
 using DealNotifier.Core.Application.Interfaces;
 using DealNotifier.Core.Application.Interfaces.Repositories;
+using DealNotifier.Core.Application.Interfaces.Services;
 using DealNotifier.Core.Application.Interfaces.Services.Items;
 using DealNotifier.Core.Application.Utilities;
+using DealNotifier.Core.Application.ViewModels.Common;
 using DealNotifier.Core.Application.ViewModels.V1.Item;
 using DealNotifier.Core.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
+using Polly;
 using System.Collections.Concurrent;
 using System.Data;
 using System.Data.Common;
@@ -26,6 +29,7 @@ namespace DealNotifier.Core.Application.Services.Items
         private readonly IMapper _mapper;
         private readonly IMemoryCache _memoryCache;
         private readonly IServiceScopeFactory _serviceScopeFactory;
+        private readonly IBanLinkService _banLinkService;
         #region Constructor
 
         public ItemService(
@@ -35,7 +39,8 @@ namespace DealNotifier.Core.Application.Services.Items
             IItemRepository itemRepository,
             ILogger logger,
             IItemManagerService itemManager,
-            IServiceScopeFactory serviceScopeFactory
+            IServiceScopeFactory serviceScopeFactory,
+            IBanLinkService banLinkService
 
             ) :
             base(itemRepository, mapper, httpContext, memoryCache)
@@ -46,11 +51,14 @@ namespace DealNotifier.Core.Application.Services.Items
             _logger = logger;
             _itemManager = itemManager;
             _serviceScopeFactory = serviceScopeFactory;
+            _banLinkService = banLinkService;
         }
 
         public async Task BulkDeleteAsync(IEnumerable<int> ids)
         {
-           await _itemRepository.DeleteRangeAsync(x=>  ids.Contains(x.Id));
+            await _banLinkService.CreateRangeAsync(ids);
+            await _itemRepository.DeleteRangeAsync(x=>  ids.Contains(x.Id));
+
         }
 
         public async Task DeleteAsync(Guid id)
@@ -155,7 +163,15 @@ namespace DealNotifier.Core.Application.Services.Items
             
         }
 
+        public async Task DeleteByKeyword(string keyword)
+        {
+            await _itemRepository.DeleteByKeyword(keyword);
+        }
 
 
+        public override Task<PagedCollection<TDestination>> GetAllWithPaginationAsync<TDestination, TSpecification>(IPaginationBase request)
+        {
+            return base.GetAllWithPaginationAsync<TDestination, TSpecification>(request);
+        }
     }
 }

@@ -5,8 +5,8 @@ namespace DealNotifier.Core.Application.Interfaces.Services.Items
 {
     public interface IItemValidationService
     {
-        bool TitleContainsKeyword(string title, string keywords);
-        bool ContainsWordUnlocked(string title);
+        bool DescriptionMatchesIncludeExcludeCriteria(string description, string includeKeywords, string excludeKeywords);
+        bool ContainsWordUnlocked(string description);
         bool CanBeSaved(ItemDto itemCreate);
         bool CanItemBeUpdated(Item oldItem, ItemDto item);
 

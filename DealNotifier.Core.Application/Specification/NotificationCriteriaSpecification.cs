@@ -24,7 +24,7 @@ namespace DealNotifier.Core.Application.Specification
             #region Keywords
             if (request.Keywords != null)
             {
-                Expression<Func<NotificationCriteria, bool>> expression = item => item.Keywords.Contains(request.Keywords);
+                Expression<Func<NotificationCriteria, bool>> expression = item => item.IncludeKeywords.Contains(request.Keywords);
 
                 Criteria = Criteria is null ? expression : Criteria.And(expression);
             }

@@ -5,6 +5,7 @@ using DealNotifier.Core.Domain.Entities;
 using DealNotifier.Persistence.DbContexts;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Polly;
 using Serilog;
 using System.Linq;
 using System.Linq.Expressions;
@@ -73,6 +74,15 @@ namespace DealNotifier.Persistence.Repositories
 
         }
 
+        public async Task DeleteByKeyword(string keyword)
+        {
+            await _dbContext.Items.Where(i => i.Title.Contains(keyword)).ExecuteDeleteAsync();
+        }
+
+        public IQueryable<Item> Where(Expression<Func<Item, bool>> predicate)
+        {
+           return _dbContext.Items.Where(predicate);
+        }
 
         #endregion Constructor
     }

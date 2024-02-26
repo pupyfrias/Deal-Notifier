@@ -25,34 +25,30 @@ namespace DealNotifier.Core.Application.Services
 
         public async Task<bool> CanBeUnlockedBasedOnModelNameAsync(ItemDto itemCreate)
         {
-            var possibleModelName = Regex.Match(itemCreate.Name, RegExPattern.ModelName, RegexOptions.IgnoreCase).Value;
+
+            var possibleModelName = Regex.Match(itemCreate.Title, RegExPattern.ModelName, RegexOptions.IgnoreCase).Value;
 
             if (possibleModelName != null)
             {
-                var possibleUnlockedPhone = await _unlockabledPhoneRepository.FirstOrDefaultAsync(item => item.ModelName!.Contains(possibleModelName));
+                var possibleUnlockedPhones = _unlockabledPhoneRepository.Where(item => item.ModelName.Contains(possibleModelName, StringComparison.OrdinalIgnoreCase)).ToList();
 
-                if (possibleUnlockedPhone != null)
+                if (possibleUnlockedPhones.Any())
                 {
-                    var carrierId = TryGetPhoneCarrierId(itemCreate.Name);
-                    if (carrierId != null)
-                    {
-                        return await ExistsUnlockabledPhonePhoneCarrier(possibleUnlockedPhone.Id, (int)carrierId);
-                    }
+                    var carrierId = TryGetPhoneCarrierId(itemCreate.Title) ?? (int)Enums.PhoneCarrier.UNK;
+                    return ExistsUnlockabledPhonePhoneCarrier(possibleUnlockedPhones, carrierId);
+                    
                 }
             }
 
             return false;
         }
 
-        public async Task<bool> CanBeUnlockedBasedOnUnlockabledPhoneIdAsync(ItemDto itemCreate)
+        public bool CanBeUnlockedBasedOnUnlockabledPhoneId(ItemDto itemCreate)
         {
             if (itemCreate.UnlockabledPhoneId != null)
             {
-                var carrierId = TryGetPhoneCarrierId(itemCreate.Name);
-                if (carrierId != null)
-                {
-                    return await ExistsUnlockabledPhonePhoneCarrier((int)itemCreate.UnlockabledPhoneId, (int)carrierId);
-                }
+                var carrierId = TryGetPhoneCarrierId(itemCreate.Title) ?? (int) Enums.PhoneCarrier.UNK;
+                return ExistsUnlockabledPhonePhoneCarrier((int)itemCreate.UnlockabledPhoneId, carrierId);
             }
 
             return false;
@@ -71,15 +67,19 @@ namespace DealNotifier.Core.Application.Services
             return matchedPhoneCarrier?.Id ?? null;
         }
 
-        private async Task<bool> ExistsUnlockabledPhonePhoneCarrier(int unlockabledPhoneId, int carrierId)
+        private bool ExistsUnlockabledPhonePhoneCarrier(int unlockabledPhoneId, int carrierId)
         {
-            var unlockabledPhonePhoneCarrier = new UnlockabledPhonePhoneCarrier
-            {
-                PhoneCarrierId = carrierId,
-                UnlockabledPhoneId = unlockabledPhoneId
-            };
+            return  _unlockabledPhonePhoneCarrierRepository.Any(x=> x.UnlockabledPhoneId.Equals(unlockabledPhoneId) 
+            && (x.PhoneCarrierId.Equals(carrierId) || x.PhoneCarrierId.Equals((int) Enums.PhoneCarrier.ALL)));
+        }
 
-            return await _unlockabledPhonePhoneCarrierRepository.ExistsAsync(unlockabledPhonePhoneCarrier);
+        private bool ExistsUnlockabledPhonePhoneCarrier(List<UnlockabledPhone> unlockabledPhones, int carrierId)
+        {
+            var unlockabledPhoneIds = unlockabledPhones.Select(x => x.Id);
+
+            return  _unlockabledPhonePhoneCarrierRepository.Any(x=> unlockabledPhoneIds.Contains(x.UnlockabledPhoneId)
+            && (x.PhoneCarrierId.Equals(carrierId) || x.PhoneCarrierId.Equals((int) Enums.PhoneCarrier.ALL))
+            );
         }
     }
 

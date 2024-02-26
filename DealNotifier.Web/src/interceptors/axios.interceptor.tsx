@@ -1,6 +1,6 @@
 
 import { useLoading, useToast } from "@/hooks";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { FC, useEffect } from "react";
 
 const AxiosSetup: FC = () => {
@@ -18,7 +18,7 @@ const AxiosSetup: FC = () => {
           setIsLoading(false);
           return response;
         },
-        (error: AxiosError) => {
+        (error) => {
           setIsLoading(false);
           showToast(error.response?.data?.message, 'error')
           return Promise.reject(error);

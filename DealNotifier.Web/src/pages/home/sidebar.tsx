@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useDebounce, useFirstRender } from '@/hooks';
 import { Brand, Condition, ItemType, OnlineStore, SortBy, UnlockProbability } from '@/models';
-import { getBrands, getConditions, getItemTypes, getUnlockProbabilities } from '@/services';
+import { getBrands, getConditions, getItemTypes, getUnlockProbabilities, banKeywords } from '@/services';
 import { getOnlineStores } from '@/services/online-store.service';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Checkbox, FormControl, FormControlLabel, FormGroup, Radio, RadioGroup, TextField } from '@mui/material';
+import { Button, Checkbox, FormControl, FormControlLabel, FormGroup, Radio, RadioGroup, TextField } from '@mui/material';
 import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -25,6 +25,7 @@ const Sidebar: FC = () => {
   const debouncedMinimum = useDebounce(minimum, 500);
   const debouncedMaximum = useDebounce(maximum, 500);
   const isFirstRender = useFirstRender();
+  const [keyword, setKeyword] = useState('');
 
   const sortBy: SortBy[] = [
     { name: 'Price: low-high', value: 'orderBy=price' },
@@ -36,11 +37,7 @@ const Sidebar: FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [brandsResponse,
-           unlockProbabilitiesResponse, 
-           onlineStoresResponse, 
-           conditionsResponse, 
-           itemTypesResponse] = await Promise.all([
+        const [brandsResponse, unlockProbabilitiesResponse, onlineStoresResponse, conditionsResponse, itemTypesResponse] = await Promise.all([
           getBrands(),
           getUnlockProbabilities(),
           getOnlineStores(),
@@ -148,6 +145,21 @@ const Sidebar: FC = () => {
     const target = event.target as HTMLInputElement;
     const value = target.value;
     setMaximum(value);
+  };
+
+
+  const handleBanKeywordChange = (event: SyntheticEvent) => {
+    const target = event.target as HTMLInputElement;
+    const value = target.value;
+    setKeyword(value);
+  };
+
+
+  const handleBanKeyword = async () => {
+    
+    await banKeywords(keyword);
+    setKeyword('');
+    navigate('/');
   };
 
   return (
@@ -354,6 +366,28 @@ const Sidebar: FC = () => {
               onChange={handleChangeMaximum}
             />
           </FormControl>
+        </AccordionDetails>
+      </Accordion>
+      <Accordion>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls='panel4bh-content'
+          id='panel8bh-header'
+        >
+          <Typography>Ban keywords</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+        <FormControl>
+          <TextField
+            id="Keyword"
+            label="Keyword"
+            variant="outlined"
+            value={keyword} // Paso 2: Vincular el valor del input al estado
+            onChange={handleBanKeywordChange} // Actualizar el estado cada vez que el input cambia
+            sx={{ marginBottom: '10px' }}
+          />
+      <Button onClick={handleBanKeyword}>Ban</Button>
+    </FormControl>
         </AccordionDetails>
       </Accordion>
     </div>

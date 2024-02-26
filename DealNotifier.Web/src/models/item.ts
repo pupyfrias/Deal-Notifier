@@ -7,7 +7,7 @@ export type Item = {
     isAuction: boolean;
     itemEndDate: string | null;
     link: string;
-    name: string;
+    title: string;
     oldPrice: number;
     price: number;
     saving: number;

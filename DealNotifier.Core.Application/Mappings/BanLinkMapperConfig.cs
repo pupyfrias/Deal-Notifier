@@ -14,6 +14,7 @@ namespace DealNotifier.Core.Application.Mappings
             CreateMap<BanLinkUpdateRequest, BanLink>().IgnoreAllSourceNullProperties();
             CreateMap<BanLink, BanLinkResponse>().IgnoreAllSourceNullProperties();
             CreateMap<BanLink, BanLinkDto>().IgnoreAllSourceNullProperties();
+            CreateMap<BanLink, BanLink>().ReverseMap();
         }
     }
 }

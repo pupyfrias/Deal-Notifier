@@ -9,10 +9,11 @@ namespace DealNotifier.Persistence.Repositories
     {
         #region Constructor
 
+
         public BanKeywordRepository(ApplicationDbContext context, IConfigurationProvider configurationProvider) : base(context, configurationProvider)
         {
         }
-
         #endregion Constructor
+
     }
 }

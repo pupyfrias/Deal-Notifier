@@ -16,7 +16,11 @@ namespace DealNotifier.Persistence.Configuration
 
             #region Properties
 
-            builder.Property(x => x.Keywords)
+            builder.Property(x => x.IncludeKeywords)
+                   .HasColumnType("nvarchar(MAX)")
+                   .IsRequired();
+
+            builder.Property(x => x.ExcludeKeywords)
                    .HasColumnType("nvarchar(MAX)")
                    .IsRequired();
 

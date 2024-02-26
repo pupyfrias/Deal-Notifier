@@ -13,6 +13,7 @@ namespace DealNotifier.Core.Application.Services
     {
         private readonly IItemValidationService _itemValidationService;
         private readonly IUnlockVerificationService _unlockVerificationService;
+
         public UnlockProbabilityService(
             IUnlockProbabilityRepository repository,
             IMapper mapper, 
@@ -29,7 +30,10 @@ namespace DealNotifier.Core.Application.Services
 
         public async Task SetUnlockProbabilityAsync(ItemDto itemCreate)
         {
-            if (_itemValidationService.ContainsWordUnlocked(itemCreate.Name) || await _unlockVerificationService.CanBeUnlockedBasedOnUnlockabledPhoneIdAsync(itemCreate))
+            string description = $"{itemCreate.Title}. {itemCreate.ShortDescription}";
+
+            if (_itemValidationService.ContainsWordUnlocked(description) 
+                ||  _unlockVerificationService.CanBeUnlockedBasedOnUnlockabledPhoneId(itemCreate))
             {
                 itemCreate.UnlockProbabilityId = (int)Enums.UnlockProbability.High;
             }

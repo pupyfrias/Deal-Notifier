@@ -43,7 +43,7 @@ namespace DealNotifier.Core.Application.Services.Items
         {
             int brandId = Enum.GetNames(typeof(Enums.Brand))
                    .Select((e, i) => new { Name = e, Id = i + 1 })
-                   .Where(e => item.Name.Contains(e.Name, StringComparison.OrdinalIgnoreCase))
+                   .Where(e => item.Title.Contains(e.Name, StringComparison.OrdinalIgnoreCase))
                    .Select(e => e.Id)
                    .FirstOrDefault();
 

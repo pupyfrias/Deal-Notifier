@@ -1,5 +1,6 @@
 ﻿using DealNotifier.Core.Application.ViewModels.V1.UnlockabledPhone;
 using HtmlAgilityPack;
+using System.Xml.Linq;
 
 namespace WorkerService.T_Unlock_WebScraping.Helpers
 {
@@ -15,12 +16,15 @@ namespace WorkerService.T_Unlock_WebScraping.Helpers
 
         public static UnlockedPhoneDetailsDto MapHtmlNodeToPhoneDetails(HtmlNode htmlNode)
         {
-            var thead = htmlNode.SelectSingleNode(".//thead");
-            var h7List = thead.Descendants("h7").ToList();
-            var h4 = htmlNode.SelectSingleNode(".//h4");
+            var thNode = htmlNode.SelectSingleNode("//th");
+            var tdNode = htmlNode.SelectSingleNode("//tr/td");
+            
+            var h7s = thNode.SelectNodes(".//h7");
+            var h4 = tdNode.SelectSingleNode(".//h4");
 
-            string modelNumber = h7List[0].InnerText;
-            string modelName = h7List[1].InnerText;
+
+            string modelNumber = h7s[0].InnerText;
+            string modelName = h7s[1].InnerText;
             string carrierList = h4.InnerText;
 
 

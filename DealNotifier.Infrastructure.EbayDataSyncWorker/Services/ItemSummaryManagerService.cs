@@ -1,6 +1,7 @@
 ﻿using DealNotifier.Core.Application.Enums;
 using DealNotifier.Core.Application.Interfaces.Services;
 using DealNotifier.Core.Application.Interfaces.Services.Items;
+using DealNotifier.Core.Application.Services;
 using DealNotifier.Core.Application.ViewModels.eBay;
 using DealNotifier.Core.Application.ViewModels.V1.Item;
 using DealNotifier.Infrastructure.EbayDataSyncWorker.Interfaces;
@@ -15,13 +16,21 @@ namespace DealNotifier.Infrastructure.EbayDataSyncWorker.Services
         private readonly IItemValidationService _itemValidationService;
         private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly IItemManagerService _itemManagerService;
+        private readonly ICacheDataService _cacheDataService;
 
-        public ItemSummaryManagerService(ILogger logger, IItemValidationService itemValidationService, IServiceScopeFactory serviceScopeFactory, IItemManagerService itemManagerService)
+        public ItemSummaryManagerService(
+            ILogger logger,
+            IItemValidationService itemValidationService,
+            IServiceScopeFactory serviceScopeFactory, 
+            IItemManagerService itemManagerService,
+            ICacheDataService cacheDataService
+            )
         {
             _logger = logger;
             _itemValidationService = itemValidationService;
             _serviceScopeFactory = serviceScopeFactory;
             _itemManagerService = itemManagerService;
+            _cacheDataService = cacheDataService;
         }
 
         public async Task<ConcurrentBag<ItemDto>> MapToItemAsync(List<ItemSummary>? itemSummaries)
@@ -35,9 +44,9 @@ namespace DealNotifier.Infrastructure.EbayDataSyncWorker.Services
                     try
                     {
                         var item = new ItemDto();
-                        item.Name = itemSummary.Title;
+                        item.Title = itemSummary.Title;
                         item.Link = itemSummary.ItemWebUrl.Substring(0, itemSummary.ItemWebUrl.IndexOf("?"));
-
+                        
                         if (_itemValidationService.CanBeSaved(item))
                         {
                             using (var scope = _serviceScopeFactory.CreateScope())
@@ -45,6 +54,7 @@ namespace DealNotifier.Infrastructure.EbayDataSyncWorker.Services
                                 var unlockabledPhoneService = scope.ServiceProvider.GetRequiredService<IUnlockabledPhoneService>();
                                 var unlockProbabilityService = scope.ServiceProvider.GetRequiredService<IUnlockProbabilityService>();
 
+                                item.ShortDescription = itemSummary.ShortDescription;
                                 item.BidCount = itemSummary!.BidCount;
                                 item.ConditionId = GetConditionId(itemSummary);
                                 item.Image = GetImage(itemSummary);
@@ -58,6 +68,7 @@ namespace DealNotifier.Infrastructure.EbayDataSyncWorker.Services
                                 await unlockabledPhoneService.TryAssignUnlockabledPhoneIdAsync(item);
                                 await unlockProbabilityService.SetUnlockProbabilityAsync(item);
                                 mappedItems.Add(item);
+                                _cacheDataService.CheckedList.Add(item.Link);
                             }
                         }
                     }

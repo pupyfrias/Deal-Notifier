@@ -20,6 +20,8 @@ namespace DealNotifier.Core.Application.Interfaces.Repositories
         #region Sync
         bool Exists(UnlockabledPhonePhoneCarrier entity);
 
+        bool Any(Func<UnlockabledPhonePhoneCarrier, bool> predate);
+
         UnlockabledPhonePhoneCarrier? FirstOrDefault(Expression<Func<UnlockabledPhonePhoneCarrier, bool>> predicate);
         #endregion Sync
     }

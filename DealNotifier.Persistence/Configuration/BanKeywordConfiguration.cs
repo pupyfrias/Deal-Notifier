@@ -20,6 +20,8 @@ namespace DealNotifier.Persistence.Configuration
                 .HasColumnType("nvarchar(50)")
                 .IsRequired();
 
+            builder.HasIndex(x => x.Keyword)
+                .IsUnique();
             #endregion Properties
 
         }

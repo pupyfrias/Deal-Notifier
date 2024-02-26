@@ -10,7 +10,7 @@ const Toast: FC = ()=> {
     const {isOpen, severity, autoHideDuration, setIsOpen, message, setSeverity} = useToast();
 
 
-    const handleClose = (event?: SyntheticEvent | Event, reason?: string) => {
+    const handleClose = (_event?: SyntheticEvent | Event, reason?: string) => {
       if (reason === 'clickaway') {
         return;
       }

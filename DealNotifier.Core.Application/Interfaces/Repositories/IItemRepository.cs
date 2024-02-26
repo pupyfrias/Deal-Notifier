@@ -17,5 +17,8 @@ namespace DealNotifier.Core.Application.Interfaces.Repositories
 
         Task UpdateStockStatusAsync(string query, SqlParameter idListString, SqlParameter onlineStoreId, 
             SqlParameter outputResult, SqlParameter errorMessage);
+
+        Task DeleteByKeyword(string keyword);
+        IQueryable<Item> Where(Expression<Func<Item, bool>> predicate);
     }
 }

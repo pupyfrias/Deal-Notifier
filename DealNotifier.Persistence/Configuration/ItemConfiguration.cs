@@ -21,7 +21,7 @@ namespace DealNotifier.Persistence.Configuration
             builder.Property(x => x.PublicId)
                    .HasDefaultValueSql("NEWID()");
 
-            builder.Property(x => x.Name)
+            builder.Property(x => x.Title)
                     .HasColumnType("nvarchar(max)")
                     .IsRequired();
 
@@ -73,6 +73,9 @@ namespace DealNotifier.Persistence.Configuration
 
             builder.Property(x => x.BidCount)
            .HasColumnType("Int");
+
+            builder.Property(x => x.ShortDescription)
+            .IsRequired(false);
 
             builder.Property(x => x.UnlockabledPhoneId)
                 .IsRequired(false);

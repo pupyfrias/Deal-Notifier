@@ -1,4 +1,5 @@
-﻿using DealNotifier.Core.Application.Interfaces.Services;
+﻿using Asp.Versioning;
+using DealNotifier.Core.Application.Interfaces.Services;
 using DealNotifier.Core.Application.Specification;
 using DealNotifier.Core.Application.ViewModels.Common;
 using DealNotifier.Core.Application.ViewModels.V1.Brand;

@@ -1,4 +1,5 @@
-﻿using DealNotifier.Core.Application.Interfaces.Services;
+﻿using Asp.Versioning;
+using DealNotifier.Core.Application.Interfaces.Services;
 using DealNotifier.Core.Application.Specification;
 using DealNotifier.Core.Application.ViewModels.Common;
 using DealNotifier.Core.Application.ViewModels.V1.BanKeyword;
@@ -51,7 +52,7 @@ namespace DealNotifier.API.Controllers.V1
         [HttpPost]
         public async Task<ActionResult<BanKeywordResponse>> PostBanKeyword(BanKeywordCreateRequest request)
         {
-            var createdBanKeyword = await _banKeywordService.CreateAsync<BanKeywordCreateRequest, BanKeywordResponse>(request);
+            var createdBanKeyword = await _banKeywordService.BanAndRemoveItemsByKeywordAsync(request);
             var response = new ApiResponse<BanKeywordResponse>(createdBanKeyword);
             return CreatedAtAction("GetBanKeyword", new { id = createdBanKeyword.Id }, response);
         }

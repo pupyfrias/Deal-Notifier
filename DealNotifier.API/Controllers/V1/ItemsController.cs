@@ -1,4 +1,5 @@
-﻿using DealNotifier.Core.Application.Interfaces.Services.Items;
+﻿using Asp.Versioning;
+using DealNotifier.Core.Application.Interfaces.Services.Items;
 using DealNotifier.Core.Application.Specification;
 using DealNotifier.Core.Application.ViewModels.Common;
 using DealNotifier.Core.Application.ViewModels.V1.Item;
@@ -80,7 +81,7 @@ namespace DealNotifier.API.Controllers.V1
         [HttpGet("{id}/cancel-notification")]
         public async Task<ActionResult> CancelNotification(Guid id)
         {
-            var item = await _dbContext.Items.FindAsync(id);
+            var item =  _dbContext.Items.FirstOrDefault(x=> x.PublicId.Equals(id));
 
             if (item == null)
             {

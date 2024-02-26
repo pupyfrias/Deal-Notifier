@@ -12,7 +12,7 @@ namespace DealNotifier.Core.Domain.Entities
         public DateTime? ItemEndDate { get; set; }
         public int ItemTypeId { get; set; }
         public string Link { get; set; }
-        public string Name { get; set; }
+        public string Title { get; set; }
         public DateTime? Notified { get; set; }
         public bool? Notify { get; set; }
         public decimal OldPrice { get; set; }
@@ -24,6 +24,8 @@ namespace DealNotifier.Core.Domain.Entities
         public int UnlockProbabilityId { get; set; }
         public int? UnlockabledPhoneId { get; set; }
         public int BrandId { get; set; }
+        public string ShortDescription { get; set; }
+
 
         public UnlockabledPhone UnlockabledPhone { get; set; }
         public Brand Brand { get; set; }

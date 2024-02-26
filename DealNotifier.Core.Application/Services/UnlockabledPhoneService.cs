@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿// Ignore Spelling: Unlockabled
+
+using AutoMapper;
 using DealNotifier.Core.Application.Constants;
 using DealNotifier.Core.Application.Enums;
 using DealNotifier.Core.Application.Interfaces.Repositories;
@@ -19,6 +21,8 @@ namespace DealNotifier.Core.Application.Services
         private readonly IUnlockabledPhoneRepository _unlockabledPhoneRepository;
         private readonly IUnlockabledPhonePhoneUnlockToolService _unlockabledPhonePhoneUnlockToolService;
         private readonly IUnlockabledPhonePhoneCarrierService _unlockabledPhonePhoneCarrierService;
+
+
 
         public UnlockabledPhoneService(
             IUnlockabledPhoneRepository unlockedPhoneRepository, 
@@ -51,7 +55,8 @@ namespace DealNotifier.Core.Application.Services
 
         public async Task TryAssignUnlockabledPhoneIdAsync(ItemDto itemCreate)
         {
-            var possibleModelNumber = Regex.Match(itemCreate.Name, RegExPattern.ModelNumber, RegexOptions.IgnoreCase).Value;
+            string description = $"{itemCreate.Title}. {itemCreate.ShortDescription}";
+            var possibleModelNumber = Regex.Match(description, RegExPattern.ModelNumber, RegexOptions.IgnoreCase).Value;
 
             if (!string.IsNullOrEmpty(possibleModelNumber))
             {

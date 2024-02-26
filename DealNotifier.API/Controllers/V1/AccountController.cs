@@ -1,4 +1,5 @@
-﻿using DealNotifier.Core.Application.Interfaces.Services;
+﻿using Asp.Versioning;
+using DealNotifier.Core.Application.Interfaces.Services;
 using DealNotifier.Core.Application.ViewModels.V1.Auth;
 using DealNotifier.Core.Application.ViewModels.V1.Token;
 using Microsoft.AspNetCore.Mvc;

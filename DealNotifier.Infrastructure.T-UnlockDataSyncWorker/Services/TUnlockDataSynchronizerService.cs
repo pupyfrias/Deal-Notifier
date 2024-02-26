@@ -11,13 +11,13 @@ namespace WorkerService.T_Unlock_WebScraping.Services
         private readonly ILogger _logger;
         private readonly ITUnlockFetchService _tUnlockFetchService;
         private readonly ITUnlockPhoneProcessService _tUnlockPhoneProcessService;
-        private readonly TUnlockUrlConfig _tUnlockUrlConfig;
+        private readonly GlobalUnlockerUrlConfig _tUnlockUrlConfig;
 
         public TUnlockDataSynchronizerService(
             ILogger logger, 
             ITUnlockFetchService fetchTUnlock, 
             ITUnlockPhoneProcessService processPhoneTUnlock,
-            IOptions<TUnlockUrlConfig> tUnlockUrlConfig
+            IOptions<GlobalUnlockerUrlConfig> tUnlockUrlConfig
             
             )
         {

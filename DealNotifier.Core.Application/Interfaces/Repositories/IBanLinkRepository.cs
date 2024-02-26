@@ -4,5 +4,7 @@ namespace DealNotifier.Core.Application.Interfaces.Repositories
 {
     public interface IBanLinkRepository : IAsyncRepository<BanLink>
     {
+        Task CreateRangeAsync(IEnumerable<BanLink> banLinks);
+
     }
 }

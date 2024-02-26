@@ -25,13 +25,13 @@ namespace DealNotifier.Core.Application.Specification
                     string currentName = storageList[i];
                     if (i == 0)
                     {
-                        expression = item => item.Name.Contains($"{currentName} gb");
-                        expression = expression.Or(item => item.Name.Contains($"{currentName}gb"));
+                        expression = item => item.Title.Contains($"{currentName} gb");
+                        expression = expression.Or(item => item.Title.Contains($"{currentName}gb"));
                     }
                     else
                     {
-                        expression = expression.Or(item => item.Name.Contains($"{currentName} gb"));
-                        expression = expression.Or(item => item.Name.Contains($"{currentName}gb"));
+                        expression = expression.Or(item => item.Title.Contains($"{currentName} gb"));
+                        expression = expression.Or(item => item.Title.Contains($"{currentName}gb"));
                     }
                 }
 
@@ -144,7 +144,7 @@ namespace DealNotifier.Core.Application.Specification
 
             if (request.Search != null)
             {
-                Expression<Func<Item, bool>> expression = item => item.Name.Contains(request.Search);
+                Expression<Func<Item, bool>> expression = item => item.Title.Contains(request.Search);
                 Criteria = Criteria is null ? expression : Criteria.And(expression);
             }
 
@@ -169,6 +169,13 @@ namespace DealNotifier.Core.Application.Specification
             }
 
             #endregion Offer
+
+
+            #region Status
+            Expression<Func<Item, bool>> statusExpression;
+            statusExpression = item => item.StockStatusId == (int) Enums.StockStatus.InStock;
+            Criteria = Criteria is null ? statusExpression : Criteria.And(statusExpression);
+            #endregion Status
 
             #endregion Criteria
         }

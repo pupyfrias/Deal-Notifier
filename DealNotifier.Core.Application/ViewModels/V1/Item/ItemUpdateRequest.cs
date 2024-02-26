@@ -17,7 +17,7 @@ namespace DealNotifier.Core.Application.ViewModels.V1.Item
         [Required]
         public string Link { get; set; }
         [Required]
-        public string Name { get; set; }
+        public string Title { get; set; }
         public bool Notify { get; set; }
         public decimal OldPrice { get; set; }
         public int PhoneCarrierId { get; set; }
@@ -31,5 +31,7 @@ namespace DealNotifier.Core.Application.ViewModels.V1.Item
         [Required]
         public int? ItemTypeId { get; set; }
         public int UnlockProbabilityId { get; set; }
+
+        public string ShortDescription { get; set; }
     }
 }

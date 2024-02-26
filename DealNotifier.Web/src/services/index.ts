@@ -1,4 +1,5 @@
 export * from './auth.service';
+export * from './ban-keyword.service';
 export * from './brand.service';
 export * from './condition.service';
 export * from './item-type.service';
