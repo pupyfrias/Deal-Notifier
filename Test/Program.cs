@@ -91,7 +91,7 @@ var unlockabledPhonePhoneUnlockToolService = new UnlockabledPhonePhoneUnlockTool
 
 var unlockabledPhoneService = new UnlockabledPhoneService(unlockabledPhoneRepository,mapper,httpContext,cache,unlockabledPhonePhoneCarrierService,unlockabledPhonePhoneUnlockToolService );
 var unlockProbabilityService = new UnlockProbabilityService(unlockProbabilityRepository,mapper,httpContext,cache, itemValidationService,unlockVerificationService);
-var itemNotificationService = new ItemNotificationService(cacheDataService,serilog, serviceScopeFactory);
+var itemNotificationService = new ItemNotificationService(cacheDataService,serilog, serviceScopeFactory, mapper,unlockabledPhonePhoneUnlockToolService);
 var notificationCriteriaRepository = new NotificationCriteriaRepository(context, configurationProvider);
 
 
@@ -100,8 +100,8 @@ async Task evaluateUnlockProbability()
     var item = new ItemDto
     {
         BrandId = 1,
-        Title = "Samsung Galaxy S9+ 64GB Black SM-G965U1 (Unlocked) Damaged See Details MD7849",
-        ShortDescription = "Be sure to look through the photos so you can see the condition of this device. This is being sold AS IS. Screen cracked (see photos). Let us help you find your next great thing! ADD TO FAVORITES. Not Included.",
+        Title = "MetroPCS T-Mobile Samsung Galaxy A14 5G 4GB RAM 128GB SM-A156U Blue Black",
+        ShortDescription = "Functionality condition: This phone has been tested and is fully functional. Model Galaxy A14 5G. Storage Size 128GB. RAM 4GB RAM. Sub-Collection Samsung Phone. Sorry, no box or anything else is included.",
         BidCount = 0,
         ConditionId = 2,
         Image = "https://i.ebayimg.com/images/g/GKEAAOSwooBjF1Gl/s-l1600.jpg",
@@ -159,3 +159,4 @@ async Task evaluateUnlockProbability()
 }
 
 await EvaluateNotification();
+//await evaluateUnlockProbability();

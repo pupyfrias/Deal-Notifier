@@ -14,6 +14,8 @@ using DealNotifier.Infrastructure.Email.Settings;
 using DealNotifier.Persistence.DbContexts;
 using DealNotifier.Persistence.Repositories;
 using DealNotifier.Persistence.Setup;
+using Polly.Extensions.Http;
+using Polly;
 using Serilog;
 using System.Reflection;
 
@@ -76,13 +78,13 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddScoped<IItemValidationService,ItemValidationService>();
         services.AddScoped<IUnlockVerificationService,UnlockVerificationService>();
         services.AddScoped<IItemService,ItemService>();
+        services.AddScoped<IBanLinkService, BanLinkService>();
 
         services.AddSingleton<ICacheDataService, CacheDataService>();
         services.AddSingleton<IItemNotificationService, ItemNotificationService>();
         #endregion Services
     })
    .Build();
-
 
 
 await host.RunAsync();

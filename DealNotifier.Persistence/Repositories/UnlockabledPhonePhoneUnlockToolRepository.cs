@@ -39,6 +39,14 @@ namespace DealNotifier.Persistence.Repositories
                               x.UnlockabledPhoneId == entity.UnlockabledPhoneId);
         }
 
+        public async Task<string[]> GetAllUnlocKToolsByUnlockabledPhoneId(int unlockabledPhoneId)
+        {
+           return  await _dbContext.UnlockabledPhonePhoneUnlockTools
+                .Where(x => x.UnlockabledPhoneId == unlockabledPhoneId)
+                .Select(x => x.PhoneUnlockTool.Name)
+                .ToArrayAsync();
+        }
+
         #endregion Constructor
     }
 }

@@ -1,35 +1,45 @@
-﻿ using DealNotifier.Core.Application.Constants;
+﻿using AutoMapper;
+using DealNotifier.Core.Application.Constants;
 using DealNotifier.Core.Application.Interfaces.Services;
 using DealNotifier.Core.Application.Interfaces.Services.Items;
 using DealNotifier.Core.Application.ViewModels.V1;
 using DealNotifier.Core.Application.ViewModels.V1.Email;
+using DealNotifier.Core.Application.ViewModels.V1.Item;
 using DealNotifier.Core.Domain.Entities;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using System.Collections.Concurrent;
+using System.Linq;
 using System.Text;
 
 namespace DealNotifier.Core.Application.Services.Items
 {
     public class ItemNotificationService : IItemNotificationService
     {
+       
         private const int _maxBidCount = 5;
         private const int _maxTimeDifference = 1;
         private readonly ICacheDataService _cacheDataService;
+        private readonly IMapper _mapper;
         private readonly IEmailService _emailService;
         private readonly IItemValidationService _itemValidationService;
         private readonly ILogger _logger;
-        private readonly ConcurrentBag<Item> _notifiableItems = new();
+        private readonly IUnlockabledPhonePhoneUnlockToolService _unlockabledPhonePhoneUnlockToolService;
+        private readonly ConcurrentBag<NotifiableItem> _notifiableItems = new();
         public ItemNotificationService(
             ICacheDataService cacheDataService,
             ILogger logger,
-            IServiceScopeFactory serviceScopeFactory
+            IServiceScopeFactory serviceScopeFactory,
+            IMapper mapper,
+            IUnlockabledPhonePhoneUnlockToolService unlockabledPhonePhoneUnlockToolService
             )
         {
             _cacheDataService = cacheDataService;
             _itemValidationService  = serviceScopeFactory.CreateScope()
                 .ServiceProvider.GetRequiredService<IItemValidationService>();
             _logger = logger;
+            _mapper = mapper;
+            _unlockabledPhonePhoneUnlockToolService = unlockabledPhonePhoneUnlockToolService;
             _emailService =  serviceScopeFactory.CreateScope()
                 .ServiceProvider.GetRequiredService<IEmailService>();
         }
@@ -63,6 +73,7 @@ namespace DealNotifier.Core.Application.Services.Items
                 {
                     var probability = Enum.GetValues<Enums.UnlockProbability>().First(e => (int)e == item.UnlockProbabilityId);
                     var condition = Enum.GetValues<Enums.Condition>().First(e => (int)e == item.ConditionId);
+                    var unlockTools = string.Join( ", ", item.UnlockTools);
 
                     stringBuilder.AppendFormat(@$"<div style="" margin: 1rem; background-color: #fff; border-bottom: 2px solid rgba(0, 0, 0, 0.125); background-color: #fff; border-radius: 1rem; padding: 1rem"">
                                                     <div style=""margin: 1rem"">
@@ -70,7 +81,8 @@ namespace DealNotifier.Core.Application.Services.Items
                                                       <p style=""font-size: large; margin: 0""><strong>US$</strong>{item.Price} {(item.OldPrice > 0 ? $"<del style=\"font-size: small\">{item.OldPrice}</del></p>" : "")}
                                                       <p style=""font-size: large; margin: 0""><strong>Unlock Probability: </strong>{probability}</p>
                                                       <p style=""font-size: large; margin: 0""><strong>Condition: </strong>{condition}</p>
-                                                      {((bool)item?.IsAuction ? "<p style='font-size: large; margin: 0'><strong>Auction </strong></p>":"")}
+                                                       {(!string.IsNullOrEmpty(unlockTools)? $"< p style='font-size: large; margin: 0'><strong>UnlockTools: </strong>{unlockTools}</p>": "")}
+                                                      {((bool)(item?.IsAuction) ? $"<p style='font-size: large; margin: 0'><strong>Auction: </strong> {item.BidCount}</p>" : "")}
                                                     </div>
 
                                                     <div style=""text-align: center; margin-top: 15px"">
@@ -141,10 +153,13 @@ namespace DealNotifier.Core.Application.Services.Items
                    && criteria.MaxPrice >= item.Price
                    && _itemValidationService.DescriptionMatchesIncludeExcludeCriteria(description, criteria.IncludeKeywords, criteria.ExcludeKeywords);
         }
-        private void NotifyItem(Item item)
+        private async Task NotifyItem(Item item)
         {
-            _notifiableItems.Add(item);
+            var notifiableItem = _mapper.Map<NotifiableItem>(item);
+            _notifiableItems.Add(notifiableItem);
             item.Notified = DateTime.Now;
+            if (item.UnlockabledPhoneId is null) return;
+            notifiableItem.UnlockTools = await _unlockabledPhonePhoneUnlockToolService.GetAllUnlocKToolsByUnlockabledPhoneId((int)item.UnlockabledPhoneId);
         }
     }
 }

@@ -25,22 +25,14 @@ namespace DealNotifier.Core.Application.Services
 
         public async Task<bool> CanBeUnlockedBasedOnModelNameAsync(ItemDto itemCreate)
         {
-
             var possibleModelName = Regex.Match(itemCreate.Title, RegExPattern.ModelName, RegexOptions.IgnoreCase).Value;
+            if (possibleModelName is null) return false;
 
-            if (possibleModelName != null)
-            {
-                var possibleUnlockedPhones = _unlockabledPhoneRepository.Where(item => item.ModelName.Contains(possibleModelName, StringComparison.OrdinalIgnoreCase)).ToList();
-
-                if (possibleUnlockedPhones.Any())
-                {
-                    var carrierId = TryGetPhoneCarrierId(itemCreate.Title) ?? (int)Enums.PhoneCarrier.UNK;
-                    return ExistsUnlockabledPhonePhoneCarrier(possibleUnlockedPhones, carrierId);
-                    
-                }
-            }
-
-            return false;
+            var possibleUnlockedPhones = _unlockabledPhoneRepository.Where(item => item.ModelName.Contains(possibleModelName, StringComparison.OrdinalIgnoreCase)).ToList();
+            if (!possibleUnlockedPhones.Any()) return false;
+            
+            var carrierId = TryGetPhoneCarrierId(itemCreate.Title) ?? (int)Enums.PhoneCarrier.UNK;
+            return ExistsUnlockabledPhonePhoneCarrier(possibleUnlockedPhones, carrierId);
         }
 
         public bool CanBeUnlockedBasedOnUnlockabledPhoneId(ItemDto itemCreate)

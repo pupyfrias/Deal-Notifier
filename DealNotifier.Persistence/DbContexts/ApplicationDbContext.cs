@@ -62,7 +62,7 @@ namespace DealNotifier.Persistence.DbContexts
 
             foreach (var entry in ChangeTracker.Entries<EntityBase>())
             {
-                if (entry.State == EntityState.Detached || entry.State == EntityState.Unchanged)
+                if (entry.State is EntityState.Detached or EntityState.Unchanged)
                     continue;
 
                 var auditEntry = new AuditEntry();

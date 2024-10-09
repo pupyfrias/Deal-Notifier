@@ -8,7 +8,6 @@ namespace DealNotifier.Core.Application.Interfaces.Repositories
         Task CreateAsync(UnlockabledPhonePhoneUnlockTool entity);
 
         Task<bool> ExistsAsync(UnlockabledPhonePhoneUnlockTool entity);
-
-
+        Task<string[]> GetAllUnlocKToolsByUnlockabledPhoneId(int unlockabledPhoneId);
     }
 }

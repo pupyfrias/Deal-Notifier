@@ -62,5 +62,10 @@ namespace DealNotifier.Core.Application.Services
                 await CreateAsync(unlockabledPhoneId, phoneUnlockToolId);
             }
         }
+
+        public Task<string[]> GetAllUnlocKToolsByUnlockabledPhoneId(int unlockabledPhoneId)
+        {
+            return _repository.GetAllUnlocKToolsByUnlockabledPhoneId(unlockabledPhoneId);
+        }
     }
 }

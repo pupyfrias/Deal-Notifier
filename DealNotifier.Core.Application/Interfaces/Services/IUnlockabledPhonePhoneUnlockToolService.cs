@@ -10,5 +10,7 @@ namespace DealNotifier.Core.Application.Interfaces.Services
         Task<bool> ExistsAsync(UnlockabledPhonePhoneUnlockToolDto entity);
 
         Task CreateIfNotExists(int unlockabledPhoneId, int phoneUnlockToolId);
+
+        Task<string[]> GetAllUnlocKToolsByUnlockabledPhoneId(int unlockabledPhoneId);
     }
 }

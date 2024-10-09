@@ -12,6 +12,7 @@ namespace DealNotifier.Core.Application.Mappings
             CreateMap<ItemDto, Item>().IgnoreAllSourceNullProperties();
             CreateMap<ItemUpdateRequest, Item>().IgnoreAllSourceNullProperties();
             CreateMap<Item, ItemResponse>().IgnoreAllSourceNullProperties();
+            CreateMap<Item, NotifiableItem>().IgnoreAllSourceNullProperties();
 
             CreateMap<Item, BanLink>()
                .ForMember(dest => dest.Link, opts => opts.MapFrom(src => src.Link))

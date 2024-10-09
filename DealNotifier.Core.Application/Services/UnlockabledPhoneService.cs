@@ -58,15 +58,13 @@ namespace DealNotifier.Core.Application.Services
             string description = $"{itemCreate.Title}. {itemCreate.ShortDescription}";
             var possibleModelNumber = Regex.Match(description, RegExPattern.ModelNumber, RegexOptions.IgnoreCase).Value;
 
-            if (!string.IsNullOrEmpty(possibleModelNumber))
-            {
-                var possibleUnlockabledPhone = await _unlockabledPhoneRepository.FirstOrDefaultAsync(element => element.ModelNumber.Equals(possibleModelNumber));
+            if (string.IsNullOrEmpty(possibleModelNumber)) return;
 
-                if (possibleUnlockabledPhone != null)
-                {
-                    itemCreate.UnlockabledPhoneId = possibleUnlockabledPhone.Id;
-                }
-            }
+            var possibleUnlockabledPhone = await _unlockabledPhoneRepository.FirstOrDefaultAsync(element => element.ModelNumber.Equals(possibleModelNumber));
+
+            if (possibleUnlockabledPhone is null) return;
+            itemCreate.UnlockabledPhoneId = possibleUnlockabledPhone.Id;
+
         }
 
 

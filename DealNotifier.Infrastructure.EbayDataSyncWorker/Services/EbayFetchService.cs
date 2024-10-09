@@ -101,7 +101,6 @@ namespace DealNotifier.Infrastructure.EbayDataSyncWorker.Services
         {
             string clientId = Environment.GetEnvironmentVariable("ClientId") ?? string.Empty;
             string clientSecret = Environment.GetEnvironmentVariable("ClientSecret") ?? string.Empty;
-            string refreshToken = Environment.GetEnvironmentVariable("RefreshToken") ?? string.Empty;
             string scope = _ebayUrlConfig.Scope;
 
             string tokenUrl = _baseUrl + _ebayUrlConfig.Paths.Token;
@@ -110,8 +109,7 @@ namespace DealNotifier.Infrastructure.EbayDataSyncWorker.Services
 
             var requestBody = new Dictionary<string, string>()
             {
-                { "grant_type", "refresh_token" },
-                { "refresh_token", refreshToken },
+                { "grant_type", "client_credentials" },
                 {"scope", scope }
             };
 
