@@ -20,6 +20,6 @@
         public int? UnlockabledPhoneId { get; set; }
         public int BrandId { get; set; }
         public string ShortDescription { get; set; }
-        public string[] UnlockTools { get; set; }
+        public string[]? UnlockTools { get; set; }
     }
 }

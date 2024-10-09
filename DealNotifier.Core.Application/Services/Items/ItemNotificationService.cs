@@ -30,8 +30,7 @@ namespace DealNotifier.Core.Application.Services.Items
             ICacheDataService cacheDataService,
             ILogger logger,
             IServiceScopeFactory serviceScopeFactory,
-            IMapper mapper,
-            IUnlockabledPhonePhoneUnlockToolService unlockabledPhonePhoneUnlockToolService
+            IMapper mapper
             )
         {
             _cacheDataService = cacheDataService;
@@ -39,9 +38,11 @@ namespace DealNotifier.Core.Application.Services.Items
                 .ServiceProvider.GetRequiredService<IItemValidationService>();
             _logger = logger;
             _mapper = mapper;
-            _unlockabledPhonePhoneUnlockToolService = unlockabledPhonePhoneUnlockToolService;
+            _unlockabledPhonePhoneUnlockToolService = serviceScopeFactory.CreateScope()
+                .ServiceProvider.GetRequiredService<IUnlockabledPhonePhoneUnlockToolService>();
             _emailService =  serviceScopeFactory.CreateScope()
                 .ServiceProvider.GetRequiredService<IEmailService>();
+
         }
 
         public void EvaluateIfNotifiable(Item item)
@@ -73,7 +74,7 @@ namespace DealNotifier.Core.Application.Services.Items
                 {
                     var probability = Enum.GetValues<Enums.UnlockProbability>().First(e => (int)e == item.UnlockProbabilityId);
                     var condition = Enum.GetValues<Enums.Condition>().First(e => (int)e == item.ConditionId);
-                    var unlockTools = string.Join( ", ", item.UnlockTools);
+                    var unlockTools = item.UnlockTools?.Length > 0 ? string.Join(", ", item.UnlockTools) : string.Empty;
 
                     stringBuilder.AppendFormat(@$"<div style="" margin: 1rem; background-color: #fff; border-bottom: 2px solid rgba(0, 0, 0, 0.125); background-color: #fff; border-radius: 1rem; padding: 1rem"">
                                                     <div style=""margin: 1rem"">
@@ -81,8 +82,8 @@ namespace DealNotifier.Core.Application.Services.Items
                                                       <p style=""font-size: large; margin: 0""><strong>US$</strong>{item.Price} {(item.OldPrice > 0 ? $"<del style=\"font-size: small\">{item.OldPrice}</del></p>" : "")}
                                                       <p style=""font-size: large; margin: 0""><strong>Unlock Probability: </strong>{probability}</p>
                                                       <p style=""font-size: large; margin: 0""><strong>Condition: </strong>{condition}</p>
-                                                       {(!string.IsNullOrEmpty(unlockTools)? $"< p style='font-size: large; margin: 0'><strong>UnlockTools: </strong>{unlockTools}</p>": "")}
-                                                      {((bool)(item?.IsAuction) ? $"<p style='font-size: large; margin: 0'><strong>Auction: </strong> {item.BidCount}</p>" : "")}
+                                                       {(!string.IsNullOrEmpty(unlockTools)? $"<p style=\"font-size: large; margin: 0\"><strong>UnlockTools: </strong> {unlockTools}</p>": "")}
+                                                      {((bool)(item?.IsAuction) ? $"<p style=\"font-size: large; margin: 0\"><strong>Auction: </strong> {item.BidCount}</p>" : "")}
                                                     </div>
 
                                                     <div style=""text-align: center; margin-top: 15px"">
